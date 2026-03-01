@@ -1,12 +1,10 @@
-import { PrismaClient } from '@prisma/client';
-import 'dotenv/config';
-
-const prisma = new PrismaClient();
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const client_1 = require("@prisma/client");
+require("dotenv/config");
+const prisma = new client_1.PrismaClient();
 async function main() {
     console.log('🌱 Start seeding...');
-
-    // 1. Clear existing data
     await prisma.$transaction([
         prisma.review.deleteMany(),
         prisma.orderItem.deleteMany(),
@@ -16,8 +14,6 @@ async function main() {
         prisma.category.deleteMany(),
         prisma.adminUser.deleteMany(),
     ]);
-
-    // 2. Create Categories
     const categories = await Promise.all([
         prisma.category.create({
             data: {
@@ -52,10 +48,7 @@ async function main() {
             },
         }),
     ]);
-
     const [gelCat, vernisCat, outilsCat, strassCat] = categories;
-
-    // 3. Create Products
     const products = [
         {
             name: 'Gel UV Rose Quartz',
@@ -119,7 +112,6 @@ async function main() {
             reviewCount: 53,
         },
     ];
-
     for (const p of products) {
         await prisma.product.create({
             data: {
@@ -128,17 +120,13 @@ async function main() {
             },
         });
     }
-
-    // 4. Create dummy admin
     await prisma.adminUser.create({
         data: {
             name: 'Meynail Admin',
             email: 'admin@meey.fr',
-            password: 'strong-password', // Note: should be hashed in real apps
+            password: 'strong-password',
         },
     });
-
-    // 5. Create some dummy orders for the dashboard
     for (let i = 0; i < 10; i++) {
         await prisma.order.create({
             data: {
@@ -152,15 +140,14 @@ async function main() {
             },
         });
     }
-
     console.log('✅ Seeding complete.');
 }
-
 main()
     .catch((e) => {
-        console.error(e);
-        process.exit(1);
-    })
+    console.error(e);
+    process.exit(1);
+})
     .finally(async () => {
-        await prisma.$disconnect();
-    });
+    await prisma.$disconnect();
+});
+//# sourceMappingURL=seed.js.map
