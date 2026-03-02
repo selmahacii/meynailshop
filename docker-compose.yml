@@ -1,26 +1,69 @@
+version: "3.8"
+
 services:
   postgres:
-    image: postgres:16
-    container_name: meey-postgres
-    restart: always
-    ports:
-      - "5433:5432"
+    image: postgres:15-alpine
+    container_name: meey_postgres
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: meey_shop
+      POSTGRES_USER: meey
+      POSTGRES_PASSWORD: meey_password_2026
+      POSTGRES_DB: meey_nail_shop
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U meey"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - meey_network
 
   redis:
-    image: redis:alpine
-    container_name: meey-redis
-    restart: always
+    image: redis:7-alpine
+    container_name: meey_redis
     ports:
-      - "6380:6379"
+      - "6379:6379"
     volumes:
       - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - meey_network
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: meey_api
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://meey:meey_password_2026@postgres:5432/meey_nail_shop
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev_jwt_secret_change_in_production_2026
+      JWT_REFRESH_SECRET: dev_refresh_secret_change_in_production_2026
+      JWT_EXPIRES_IN: 15m
+      JWT_REFRESH_EXPIRES_IN: 7d
+      FRONTEND_URL: http://localhost:3000
+      API_PORT: 3001
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - meey_network
 
 volumes:
   postgres_data:
   redis_data:
+
+networks:
+  meey_network:
+    driver: bridge

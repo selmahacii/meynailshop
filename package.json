@@ -1,0 +1,31 @@
+{
+  "name": "meey-nail-shop",
+  "version": "1.0.0",
+  "description": "Premium nail products e-commerce platform",
+  "private": true,
+  "workspaces": [
+    "packages/shared",
+    "apps/api",
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm:dev:*\"",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspace=packages/shared && npm run build --workspace=apps/api && npm run build --workspace=apps/web",
+    "build:api": "npm run build --workspace=apps/api",
+    "build:web": "npm run build --workspace=apps/web",
+    "start": "npm run start:prod --workspace=apps/api",
+    "db:migrate": "npm run migrate --workspace=apps/api",
+    "db:seed": "npm run seed --workspace=apps/api",
+    "lint": "npm run lint --workspace=packages/shared && npm run lint --workspace=apps/api && npm run lint --workspace=apps/web",
+    "type-check": "npm run type-check --workspace=packages/shared && npm run type-check --workspace=apps/api && npm run type-check --workspace=apps/web"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: #FAF5EF;
+  color: #18080A;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Libre Baskerville', serif;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-or text-encre px-6 py-3 rounded font-semibold hover:bg-or-light transition;
+  }
+  
+  .btn-ghost {
+    @apply border border-or text-or px-6 py-3 rounded font-semibold hover:bg-or hover:text-encre transition;
+  }
+}

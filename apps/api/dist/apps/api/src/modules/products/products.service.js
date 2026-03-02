@@ -1,0 +1,153 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ProductsService = void 0;
+const common_1 = require("@nestjs/common");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const product_entity_1 = require("../../database/entities/product.entity");
+const category_entity_1 = require("../../database/entities/category.entity");
+const slug_util_1 = require("../../common/utils/slug.util");
+let ProductsService = class ProductsService {
+    constructor(productRepository, categoryRepository) {
+        this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
+    }
+    async create(createProductDto) {
+        const slug = createProductDto.slug || (0, slug_util_1.generateSlug)(createProductDto.name);
+        const existingProduct = await this.productRepository.findOne({
+            where: [{ slug }, { sku: createProductDto.sku }],
+        });
+        if (existingProduct) {
+            throw new common_1.BadRequestException('Product with this slug or SKU already exists');
+        }
+        const product = this.productRepository.create({
+            ...createProductDto,
+            slug,
+        });
+        return await this.productRepository.save(product);
+    }
+    async findAll(query) {
+        const skip = (query.page - 1) * query.limit;
+        const where = { isActive: true };
+        if (query.search) {
+            where.name = (0, typeorm_2.Like)(`%${query.search}%`);
+        }
+        if (query.category) {
+            where.category = { slug: query.category };
+        }
+        if (query.minPrice || query.maxPrice) {
+            where.price = (0, typeorm_2.Between)(query.minPrice || 0, query.maxPrice || 999999);
+        }
+        if (query.badge) {
+            where.badge = query.badge;
+        }
+        if (query.inStock === 'true') {
+            where.stock = (0, typeorm_2.Between)(1, 999999);
+        }
+        const order = {};
+        if (query.sortBy) {
+            order[query.sortBy] = query.order === 'asc' ? 'ASC' : 'DESC';
+        }
+        else {
+            order.createdAt = 'DESC';
+        }
+        const [products, total] = await this.productRepository.findAndCount({
+            where,
+            relations: ['category'],
+            skip,
+            take: query.limit,
+            order,
+        });
+        return {
+            items: products,
+            total,
+            page: query.page,
+            limit: query.limit,
+            totalPages: Math.ceil(total / query.limit),
+            hasNext: skip + query.limit < total,
+            hasPrev: query.page > 1,
+        };
+    }
+    async findBySlug(slug) {
+        const product = await this.productRepository.findOne({
+            where: { slug, isActive: true },
+            relations: ['category'],
+        });
+        if (!product) {
+            throw new common_1.NotFoundException('Product not found');
+        }
+        return product;
+    }
+    async findFeatured(limit = 6) {
+        return this.productRepository.find({
+            where: { isFeatured: true, isActive: true },
+            relations: ['category'],
+            take: limit,
+            order: { createdAt: 'DESC' },
+        });
+    }
+    async findOne(id) {
+        const product = await this.productRepository.findOne({
+            where: { id },
+            relations: ['category'],
+        });
+        if (!product) {
+            throw new common_1.NotFoundException('Product not found');
+        }
+        return product;
+    }
+    async update(id, updateProductDto) {
+        const product = await this.productRepository.findOne({ where: { id } });
+        if (!product) {
+            throw new common_1.NotFoundException('Product not found');
+        }
+        if (updateProductDto.slug && updateProductDto.slug !== product.slug) {
+            const existed = await this.productRepository.findOne({
+                where: { slug: updateProductDto.slug },
+            });
+            if (existed) {
+                throw new common_1.BadRequestException('Slug already exists');
+            }
+        }
+        Object.assign(product, updateProductDto);
+        return await this.productRepository.save(product);
+    }
+    async remove(id) {
+        const product = await this.productRepository.findOne({ where: { id } });
+        if (!product) {
+            throw new common_1.NotFoundException('Product not found');
+        }
+        product.isActive = false;
+        await this.productRepository.save(product);
+        return { message: 'Product deactivated' };
+    }
+    async updateStock(id, quantity) {
+        const product = await this.productRepository.findOne({ where: { id } });
+        if (!product) {
+            throw new common_1.NotFoundException('Product not found');
+        }
+        product.stock = quantity;
+        return await this.productRepository.save(product);
+    }
+};
+exports.ProductsService = ProductsService;
+exports.ProductsService = ProductsService = __decorate([
+    (0, common_1.Injectable)(),
+    __param(0, (0, typeorm_1.InjectRepository)(product_entity_1.Product)),
+    __param(1, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository])
+], ProductsService);
+//# sourceMappingURL=products.service.js.map
