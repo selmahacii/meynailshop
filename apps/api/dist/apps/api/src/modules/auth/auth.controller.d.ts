@@ -13,7 +13,7 @@ export declare class AuthController {
             email: string;
             firstName: string;
             lastName: string;
-            role: "admin" | "client";
+            role: "client" | "admin";
         };
     }>;
     login(loginDto: LoginDto): Promise<{

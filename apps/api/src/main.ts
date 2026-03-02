@@ -1,5 +1,4 @@
 import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
@@ -41,23 +40,13 @@ async function bootstrap() {
   // Global filters
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  // Swagger
-  const config = new DocumentBuilder()
-    .setTitle('MEEY Nail Shop API')
-    .setDescription('E-commerce API for premium nail products')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
-
   const port = process.env.API_PORT || 3001;
   await app.listen(port, '0.0.0.0');
-  console.log(`API running on http://localhost:${port}`);
-  console.log(`Swagger docs: http://localhost:${port}/api/docs`);
+  console.log(`✅ API running on http://localhost:${port}`);
+  console.log(`📚 Health check: http://localhost:${port}/api/health`);
 }
 
 bootstrap().catch((err) => {
-  console.error(err);
+  console.error('❌ API startup failed:', err);
   process.exit(1);
 });

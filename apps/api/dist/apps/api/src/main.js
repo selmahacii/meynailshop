@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@nestjs/core");
-const swagger_1 = require("@nestjs/swagger");
 const common_1 = require("@nestjs/common");
 const helmet_1 = __importDefault(require("helmet"));
 const app_module_1 = require("./app.module");
@@ -27,21 +26,13 @@ async function bootstrap() {
     }));
     app.useGlobalInterceptors(new response_interceptor_1.ResponseInterceptor(), new logging_interceptor_1.LoggingInterceptor());
     app.useGlobalFilters(new http_exception_filter_1.HttpExceptionFilter());
-    const config = new swagger_1.DocumentBuilder()
-        .setTitle('MEEY Nail Shop API')
-        .setDescription('E-commerce API for premium nail products')
-        .setVersion('1.0')
-        .addBearerAuth()
-        .build();
-    const document = swagger_1.SwaggerModule.createDocument(app, config);
-    swagger_1.SwaggerModule.setup('api/docs', app, document);
     const port = process.env.API_PORT || 3001;
     await app.listen(port, '0.0.0.0');
-    console.log(`API running on http://localhost:${port}`);
-    console.log(`Swagger docs: http://localhost:${port}/api/docs`);
+    console.log(`✅ API running on http://localhost:${port}`);
+    console.log(`📚 Health check: http://localhost:${port}/api/health`);
 }
 bootstrap().catch((err) => {
-    console.error(err);
+    console.error('❌ API startup failed:', err);
     process.exit(1);
 });
 //# sourceMappingURL=main.js.map

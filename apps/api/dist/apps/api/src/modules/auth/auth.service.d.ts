@@ -16,7 +16,7 @@ export declare class AuthService {
         email: string;
         firstName: string;
         lastName: string;
-        role: "admin" | "client";
+        role: "client" | "admin";
     }>;
     refreshToken(token: string): Promise<{
         accessToken: string;
