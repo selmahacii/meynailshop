@@ -592,3 +592,271 @@ Import trace:
   Server Component:
     ./apps/web/components/admin/layout/AdminSidebar.tsx
     ./apps/web/app/admin/layout.tsx
+[00:10:53.712] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:10:53.712] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:10:53.712] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:10:53.712] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:10:53.712] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:10:53.712] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:10:53.713] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:10:53.713] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:10:57.079] Server  ERROR   ⨯ ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+
+
+
+./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+
+
+[00:10:57.421] Browser ERROR   uncaughtError: Error: ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+
+
+[00:10:57.612] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:10:57.612] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:10:57.612] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:10:57.612] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:12:11.587] Server  LOG     ✓ Compiled in 123ms
+[00:12:12.624] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:12:14.701] Browser ERROR   Error fetching badges: {}
+[00:13:49.348] Browser ERROR   Error fetching metrics: {}
+[00:14:12.027] Server  LOG     ✓ Compiled in 78ms
+[00:14:15.814] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:14:19.736] Browser ERROR   Error fetching metrics: {}
+[00:14:19.855] Browser ERROR   Error fetching metrics: {}
+[00:14:21.729] Browser ERROR   Error fetching metrics: {}
+[00:14:49.666] Browser ERROR   Error fetching metrics: {}
+[00:15:19.705] Browser ERROR   Error fetching metrics: {}
+[00:15:44.197] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:15:50.709] Browser ERROR   Error fetching metrics: {}
+[00:15:53.743] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:16:20.699] Browser ERROR   Error fetching metrics: {}
+[00:16:50.703] Browser ERROR   Error fetching metrics: {}
+[00:17:20.708] Browser ERROR   Error fetching metrics: {}
+[00:17:52.712] Browser ERROR   Error fetching metrics: {}
+[00:18:52.709] Browser ERROR   Error fetching metrics: {}
+[00:18:57.033] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:19:00.052] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold

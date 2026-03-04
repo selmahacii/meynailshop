@@ -1,3 +1,13 @@
 {
-  "/admin/dashboard/page": "app/admin/dashboard/page.js"
+  "/(store)/catalogue/page": "app/(store)/catalogue/page.js",
+  "/(store)/categories/[slug]/page": "app/(store)/categories/[slug]/page.js",
+  "/(store)/compte/commandes/page": "app/(store)/compte/commandes/page.js",
+  "/(store)/compte/page": "app/(store)/compte/page.js",
+  "/(store)/page": "app/(store)/page.js",
+  "/(store)/panier/page": "app/(store)/panier/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/admin/commandes/page": "app/admin/commandes/page.js",
+  "/admin/dashboard/page": "app/admin/dashboard/page.js",
+  "/admin/produits/page": "app/admin/produits/page.js",
+  "/admin/stock/page": "app/admin/stock/page.js"
 }

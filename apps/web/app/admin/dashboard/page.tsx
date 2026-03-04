@@ -129,7 +129,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h1 className="text-3xl font-serif text-encre mb-1">Tableau de Bord</h1>
-                    <p className="text-sm text-encre/60">Bienvenue, Admin MEEY 👋</p>
+                    <p className="text-sm text-encre/60">Bienvenue, Maya</p>
                 </div>
                 <button
                     onClick={() => fetchMetrics(true)}
