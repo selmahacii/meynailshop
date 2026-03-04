@@ -42,7 +42,7 @@ import {
         ],
         synchronize: configService.get('NODE_ENV') === 'development',
         logging: configService.get('NODE_ENV') === 'development',
-        migrations: ['src/database/migrations/*.ts'],
+        migrationsRun: false,
         migrationsTableName: 'migrations',
       }),
     }),

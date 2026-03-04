@@ -12,6 +12,7 @@ function generateSlug(text) {
         .replace(/^-+|-+$/g, '');
 }
 function validateSlug(slug) {
-    var slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+    const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
     return slugRegex.test(slug);
 }
+//# sourceMappingURL=slug.util.js.map
