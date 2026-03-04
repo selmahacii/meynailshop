@@ -19,10 +19,10 @@ export class DashboardService {
   async getMetrics() {
     // Get total revenue
     const orders = await this.orderRepository.find({
-      select: ['totalAmount', 'status', 'createdAt'],
+      select: ['id', 'total', 'status', 'createdAt'],
     });
 
-    const totalRevenue = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+    const totalRevenue = orders.reduce((sum, order) => sum + (Number(order.total) || 0), 0);
     const completedOrders = orders.filter((o) => o.status === 'delivered').length;
 
     // Get active clients
@@ -69,7 +69,7 @@ export class DashboardService {
   }
 
   private _getMonthlyTrend(orders: any[]): any[] {
-    const months = [];
+    const months: Array<{ name: string; revenue: number }> = [];
     for (let i = 5; i >= 0; i--) {
       const date = new Date();
       date.setMonth(date.getMonth() - i);
@@ -88,7 +88,7 @@ export class DashboardService {
             orderDate.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }),
         );
         if (monthIndex >= 0) {
-          months[monthIndex].revenue += order.totalAmount || 0;
+          months[monthIndex].revenue += Number(order.total) || 0;
         }
       }
     });
@@ -105,15 +105,16 @@ export class DashboardService {
   }
 
   private _getOrderStatusBreakdown(orders: any[]): any[] {
-    const statuses = {
+    const statuses: Record<string, number> = {
       pending: 0,
       delivered: 0,
       cancelled: 0,
     };
 
     orders.forEach((order) => {
-      if (order.status in statuses) {
-        statuses[order.status]++;
+      const status = order.status as string;
+      if (status === 'pending' || status === 'delivered' || status === 'cancelled') {
+        statuses[status]++;
       }
     });
 

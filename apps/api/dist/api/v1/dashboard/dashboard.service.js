@@ -27,9 +27,9 @@ let DashboardService = class DashboardService {
     }
     async getMetrics() {
         const orders = await this.orderRepository.find({
-            select: ['totalAmount', 'status', 'createdAt'],
+            select: ['id', 'total', 'status', 'createdAt'],
         });
-        const totalRevenue = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+        const totalRevenue = orders.reduce((sum, order) => sum + (Number(order.total) || 0), 0);
         const completedOrders = orders.filter((o) => o.status === 'delivered').length;
         const activeClients = await this.userRepository.count({
             where: { role: 'client', isActive: true },
@@ -75,7 +75,7 @@ let DashboardService = class DashboardService {
                 const monthIndex = months.findIndex((m) => m.name ===
                     orderDate.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }));
                 if (monthIndex >= 0) {
-                    months[monthIndex].revenue += order.totalAmount || 0;
+                    months[monthIndex].revenue += Number(order.total) || 0;
                 }
             }
         });
@@ -95,8 +95,9 @@ let DashboardService = class DashboardService {
             cancelled: 0,
         };
         orders.forEach((order) => {
-            if (order.status in statuses) {
-                statuses[order.status]++;
+            const status = order.status;
+            if (status === 'pending' || status === 'delivered' || status === 'cancelled') {
+                statuses[status]++;
             }
         });
         return [

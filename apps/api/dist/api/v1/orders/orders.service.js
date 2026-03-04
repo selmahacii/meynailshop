@@ -58,7 +58,7 @@ let OrdersService = class OrdersService {
             pending: orders.filter((o) => o.status === 'pending').length,
             delivered: orders.filter((o) => o.status === 'delivered').length,
             cancelled: orders.filter((o) => o.status === 'cancelled').length,
-            totalRevenue: orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0),
+            totalRevenue: orders.reduce((sum, o) => sum + (Number(o.total) || 0), 0),
         };
         return stats;
     }

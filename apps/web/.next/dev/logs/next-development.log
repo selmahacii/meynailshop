@@ -1,3 +1,594 @@
 [00:00:01.370] Server  WARN    ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
 [00:00:01.560] Server  LOG     ✓ Ready in 1081ms
 [00:00:13.668] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:04:27.135] Server  ERROR   ⨯ ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+
+
+
+./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+
+
+[00:04:28.135] Server  LOG     ✓ Compiled in 2.9s
+[00:04:28.399] Browser ERROR   uncaughtError: Error: ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+
+
+[00:04:28.700] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:04:28.700] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:04:28.700] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:04:28.700] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:04:45.699] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:04:45.700] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:04:52.486] Server  ERROR   ⨯ ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+
+
+
+./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+
+
+[00:04:52.753] Browser ERROR   uncaughtError: Error: ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+
+
+[00:04:52.913] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:04:52.913] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:04:52.913] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:04:52.913] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:05:08.701] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:05:08.701] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:05:08.701] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:05:08.701] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:05:08.701] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:05:08.701] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:05:11.698] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:05:11.698] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:05:49.699] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:05:49.699] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:05:50.709] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:05:50.709] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:06:19.711] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:06:19.711] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:07:06.710] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:07:06.710] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:07:49.703] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:07:49.703] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:08:13.699] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                         ^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx
+[00:08:13.699] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
+Parsing ecmascript source code failed
+  224 | }
+  225 |                                             {item.badge}
+> 226 |                                         </span>
+      |                                          ^^^^^^
+  227 |                                     )}
+  228 |                                 </Link>
+  229 |                             </li>
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./apps/web/components/admin/layout/AdminSidebar.tsx
+    ./apps/web/app/admin/layout.tsx

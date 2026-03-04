@@ -51,10 +51,10 @@ export class OrdersService {
 
     const stats = {
       total: orders.length,
-      pending: orders.filter((o) => o.status === 'pending').length,
-      delivered: orders.filter((o) => o.status === 'delivered').length,
-      cancelled: orders.filter((o) => o.status === 'cancelled').length,
-      totalRevenue: orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0),
+      pending: orders.filter((o: any) => o.status === 'pending').length,
+      delivered: orders.filter((o: any) => o.status === 'delivered').length,
+      cancelled: orders.filter((o: any) => o.status === 'cancelled').length,
+      totalRevenue: orders.reduce((sum: number, o: any) => sum + (Number(o.total) || 0), 0),
     };
 
     return stats;

@@ -20,6 +20,42 @@ h1, h2, h3, h4, h5, h6 {
   font-family: 'Libre Baskerville', serif;
 }
 
+/* Modern Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #CD7A2C 0%, #B85F1F 100%);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #E89A4A 0%, #D97D2A 100%);
+  box-shadow: 0 0 8px rgba(205, 122, 26, 0.4);
+}
+
+/* Firefox Scrollbar */
+* {
+  scrollbar-color: #CD7A2C transparent;
+  scrollbar-width: thin;
+}
+
+*:hover {
+  scrollbar-color: #E89A4A transparent;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
 @layer components {
   .btn-primary {
     @apply bg-or text-encre px-6 py-3 rounded font-semibold hover:bg-or-light transition;
@@ -28,4 +64,37 @@ h1, h2, h3, h4, h5, h6 {
   .btn-ghost {
     @apply border border-or text-or px-6 py-3 rounded font-semibold hover:bg-or hover:text-encre transition;
   }
+
+  /* Scrollbar utilities */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-thumb-or\/30 {
+    scrollbar-color: rgba(205, 122, 26, 0.3) transparent;
+  }
+
+  .scrollbar-thumb-or\/50 {
+    scrollbar-color: rgba(205, 122, 26, 0.5) transparent;
+  }
+
+  .scrollbar-track-transparent {
+    scrollbar-color: rgba(205, 122, 26, 0.3) transparent;
+  }
+}
+
+/* Custom animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out;
 }

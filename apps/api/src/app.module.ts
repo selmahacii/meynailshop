@@ -18,6 +18,11 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 
+// API v1 modules
+import { DashboardModule as DashboardV1 } from './api/v1/dashboard/dashboard.module';
+import { ProductsModule as ProductsV1 } from './api/v1/products/products.module';
+import { OrdersModule as OrdersV1 } from './api/v1/orders/orders.module';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -42,6 +47,9 @@ import { AppService } from './app.service';
     AnalyticsModule,
     SettingsModule,
     NotificationsModule,
+    DashboardV1,
+    ProductsV1,
+    OrdersV1,
   ],
   controllers: [AppController],
   providers: [AppService],
