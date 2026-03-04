@@ -1,21 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { ProductCard } from '@/components/store/products/ProductCard';
+import ProductCard from '@/components/store/products/ProductCard';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { ArrowRight } from 'lucide-react';
-
-interface Product {
-  id: string;
-  name: string;
-  slug: string;
-  shortDescription?: string;
-  price: number;
-  images: string[];
-  badge?: 'new' | 'sale' | 'bestseller';
-  inStock: boolean;
-  discountPercentage?: number;
-}
+import { Product } from '@/types/product';
 
 interface FeaturedProductsProps {
   title?: string;

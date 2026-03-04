@@ -29,7 +29,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         toast.success(`${product.name} ajouté au panier`);
     };
 
-    const mainImage = product.images[0] || '/images/placeholder-product.webp';
+    const mainImage = product.images[0] || '/images/placeholder-product.png';
 
     return (
         <motion.div

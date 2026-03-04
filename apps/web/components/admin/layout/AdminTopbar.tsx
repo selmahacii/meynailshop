@@ -1,9 +1,28 @@
 'use client';
 
-import { Bell, Search, User, Globe } from 'lucide-react';
+import { useState } from 'react';
+import { Bell, Search, User, Globe, LogOut } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/lib/store/authStore';
+import { toast } from 'sonner';
 
 export default function AdminTopbar() {
+    const [showDropdown, setShowDropdown] = useState(false);
+    const router = useRouter();
+    const { logout } = useAuthStore();
+
+    const handleLogout = async () => {
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            logout();
+            toast.success('Déconnecté avec succès');
+            router.push('/connexion');
+        } catch (error) {
+            toast.error('Erreur lors de la déconnexion');
+        }
+    };
+
     return (
         <header className="h-16 bg-white border-b border-creme2 sticky top-0 z-40 px-8 flex items-center justify-between">
             <div className="flex items-center flex-grow max-w-md">
@@ -36,16 +55,34 @@ export default function AdminTopbar() {
 
                 <div className="h-8 w-[1px] bg-creme2"></div>
 
-                <div className="flex items-center space-x-3 cursor-pointer group">
-                    <div className="text-right hidden sm:block">
-                        <p className="text-sm font-semibold text-encre leading-none mb-1">Admin MEEY</p>
-                        <p className="text-[10px] uppercase font-bold text-or">Propriétaire</p>
-                    </div>
-                    <div className="h-10 w-10 rounded-full bg-creme border border-or/20 flex items-center justify-center text-or group-hover:bg-or group-hover:text-creme transition-all">
-                        <User size={20} />
-                    </div>
+                <div className="relative">
+                    <button
+                        onClick={() => setShowDropdown(!showDropdown)}
+                        className="flex items-center space-x-3 cursor-pointer group rounded-lg hover:bg-creme/50 px-3 py-2 transition-all"
+                    >
+                        <div className="text-right hidden sm:block">
+                            <p className="text-sm font-semibold text-encre leading-none mb-1">Admin MEEY</p>
+                            <p className="text-[10px] uppercase font-bold text-or">Propriétaire</p>
+                        </div>
+                        <div className="h-10 w-10 rounded-full bg-creme border border-or/20 flex items-center justify-center text-or group-hover:bg-or group-hover:text-creme transition-all">
+                            <User size={20} />
+                        </div>
+                    </button>
+
+                    {showDropdown && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white border border-creme2 rounded-lg shadow-lg z-50">
+                            <button
+                                onClick={handleLogout}
+                                className="w-full flex items-center space-x-3 px-4 py-3 text-sm text-rouge hover:bg-rouge-deep/5 transition-colors border-b border-creme2 last:border-0"
+                            >
+                                <LogOut size={16} />
+                                <span>Déconnexion</span>
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </header>
     );
+}
 }

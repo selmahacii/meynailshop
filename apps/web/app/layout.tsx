@@ -16,7 +16,7 @@ const libreBaskerille = Libre_Baskerville({
 });
 
 export const metadata: Metadata = {
-  title: 'MEEY - Boutique de vernis et produits pour ongles',
+  title: 'MEEY',
   description: 'Découvrez notre collection premium de vernis, gels UV et produits pour magnifier vos ongles',
   keywords: 'vernis, gel UV, produits ongles, décoration, boutique en ligne, Algérie',
   openGraph: {

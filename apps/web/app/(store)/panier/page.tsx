@@ -61,7 +61,7 @@ export default function CartPage() {
                                 {/* Product Image */}
                                 <Link href={`/catalogue/${item.productId}`} className="w-full sm:w-32 aspect-square relative bg-creme2 shrink-0 border border-creme2">
                                     <Image
-                                        src={item.image || '/images/placeholder-product.webp'}
+                                        src={item.image || '/images/placeholder-product.png'}
                                         alt={item.name}
                                         fill
                                         className="object-cover"

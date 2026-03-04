@@ -1,14 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import ProductCard from '@/components/store/products/ProductCard';
 import ProductFilters from '@/components/store/products/ProductFilters';
 import ProductSort from '@/components/store/products/ProductSort';
 import { Product } from '@/types/product';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SlidersHorizontal, X } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
 
-// Mock data
+// Fallback mock data in case API is unavailable
 const MOCK_PRODUCTS: Product[] = [
     {
         id: '1',
@@ -98,15 +99,36 @@ const MOCK_PRODUCTS: Product[] = [
 
 export default function CataloguePage() {
     const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const { productsApi } = await import('@/lib/api/products');
+                const response = await productsApi.getAll({ limit: 50 });
+                const data = response?.data;
+                // Handle both paginated { items: [...] } and plain array responses
+                const items = Array.isArray(data) ? data : (data?.items ?? []);
+                setProducts(items.length > 0 ? items : MOCK_PRODUCTS);
+            } catch {
+                // API not available — use mock data
+                setProducts(MOCK_PRODUCTS);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProducts();
+    }, []);
 
     return (
         <div className="pt-32 pb-24 bg-creme min-h-screen">
             <div className="container mx-auto px-4">
                 {/* Header */}
                 <div className="mb-12">
-                    <nav className="text-[10px] uppercase tracking-widest text-encre3 mb-4">
-                        <Link href="/" className="hover:text-or">Accueil</Link>
-                        <span className="mx-2">/</span>
+                    <nav className="text-[10px] uppercase tracking-widest text-encre3 mb-4 flex items-center space-x-2">
+                        <Link href="/" className="hover:text-or transition-colors">Accueil</Link>
+                        <span>/</span>
                         <span className="text-encre font-bold">Catalogue</span>
                     </nav>
                     <h1 className="font-serif text-4xl md:text-5xl text-encre">Toute la Collection</h1>
@@ -127,24 +149,32 @@ export default function CataloguePage() {
                     {/* Main Content */}
                     <section className="flex-grow">
                         <ProductSort
-                            total={MOCK_PRODUCTS.length}
+                            total={products.length}
                             onOpenFilters={() => setIsMobileFiltersOpen(true)}
                         />
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
-                            {MOCK_PRODUCTS.map((product) => (
-                                <ProductCard key={product.id} product={product} />
-                            ))}
-                        </div>
-
-                        {/* Pagination Scaffolding */}
-                        <div className="mt-16 flex justify-center">
-                            <div className="flex space-x-2">
-                                <button className="w-10 h-10 border border-or bg-or text-rouge-deep flex items-center justify-center text-sm font-bold">1</button>
-                                <button className="w-10 h-10 border border-creme2 text-encre3 hover:border-or hover:text-or transition-colors flex items-center justify-center text-sm font-bold">2</button>
-                                <button className="w-10 h-10 border border-creme2 text-encre3 hover:border-or hover:text-or transition-colors flex items-center justify-center text-sm font-bold">3</button>
+                        {loading ? (
+                            <div className="flex items-center justify-center h-64">
+                                <Loader2 size={32} className="animate-spin text-or" />
                             </div>
-                        </div>
+                        ) : (
+                            <>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+                                    {products.map((product) => (
+                                        <ProductCard key={product.id} product={product} />
+                                    ))}
+                                </div>
+
+                                {/* Pagination */}
+                                <div className="mt-16 flex justify-center">
+                                    <div className="flex space-x-2">
+                                        <button className="w-10 h-10 border border-or bg-or text-rouge-deep flex items-center justify-center text-sm font-bold">1</button>
+                                        <button className="w-10 h-10 border border-creme2 text-encre3 hover:border-or hover:text-or transition-colors flex items-center justify-center text-sm font-bold">2</button>
+                                        <button className="w-10 h-10 border border-creme2 text-encre3 hover:border-or hover:text-or transition-colors flex items-center justify-center text-sm font-bold">3</button>
+                                    </div>
+                                </div>
+                            </>
+                        )}
                     </section>
                 </div>
             </div>
@@ -181,5 +211,3 @@ export default function CataloguePage() {
         </div>
     );
 }
-
-import Link from 'next/link';

@@ -5,7 +5,7 @@ import { useAuthStore } from '@/lib/store/authStore';
 export function useCurrentUser() {
   return useQuery({
     queryKey: ['auth', 'me'],
-    queryFn: () => authApi.getCurrentUser().then(r => r.data.data),
+    queryFn: () => authApi.getCurrentUser().then(r => r.data),
     staleTime: 10 * 60 * 1000,
   });
 }
@@ -14,7 +14,7 @@ export function useLogin() {
   const setUser = useAuthStore((s) => s.setUser);
   return useMutation({
     mutationFn: (p: { email: string; password: string; }) =>
-      authApi.login(p.email, p.password).then(r => r.data.data),
+      authApi.login(p.email, p.password).then(r => r.data),
     onSuccess: (data) => {
       localStorage.setItem('accessToken', data.accessToken);
       if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
@@ -25,6 +25,6 @@ export function useLogin() {
 
 export function useRegister() {
   return useMutation({
-    mutationFn: (data: any) => authApi.register(data).then(r => r.data.data),
+    mutationFn: (data: any) => authApi.register(data).then(r => r.data),
   });
 }

@@ -1,134 +1,185 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Filter, Eye, MoreHorizontal, CheckCircle, Package, Truck, XCircle, ArrowRight } from 'lucide-react';
-import { formatPrice } from '@/lib/utils/currency';
+import {
+    Search,
+    Bell,
+    Download,
+    Plus,
+    FileText,
+    Edit2,
+    CheckCircle2,
+    RotateCcw,
+    ChevronDown,
+    ExternalLink
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
-// Mock data
-const mockOrders = [
-    { id: 'ORD-2026-001', customer: 'Sarah N.', date: '02 Mars 2026', items: 3, total: 4500, wilaya: 'Alger (16)', status: 'processing', payment: 'cod' },
-    { id: 'ORD-2026-002', customer: 'Amira B.', date: '01 Mars 2026', items: 1, total: 1800, wilaya: 'Oran (31)', status: 'shipped', payment: 'baridimob' },
-    { id: 'ORD-2026-003', customer: 'Ines K.', date: '01 Mars 2026', items: 5, total: 12500, wilaya: 'Blida (09)', status: 'delivered', payment: 'baridimob' },
-    { id: 'ORD-2026-004', customer: 'Lina M.', date: '28 Fév 2026', items: 2, total: 3200, wilaya: 'Constantine (25)', status: 'cancelled', payment: 'cod' },
+const tabs = [
+    { name: 'Toutes', count: 142, key: 'all' },
+    { name: 'En attente', count: 8, key: 'pending' },
+    { name: 'Expédiées', count: 31, key: 'shipped' },
+    { name: 'Livrées', count: 97, key: 'delivered' },
+    { name: 'Annulées', count: 6, key: 'cancelled' },
 ];
 
-const statusConfig: Record<string, { label: string, color: string, icon: any }> = {
-    pending: { label: 'En attente', color: 'bg-yellow-100 text-yellow-800 border-yellow-200', icon: MoreHorizontal },
-    processing: { label: 'Préparation', color: 'bg-blue-100 text-blue-800 border-blue-200', icon: Package },
-    shipped: { label: 'Expédiée', color: 'bg-indigo-100 text-indigo-800 border-indigo-200', icon: Truck },
-    delivered: { label: 'Livrée', color: 'bg-green-100 text-green-800 border-green-200', icon: CheckCircle },
-    cancelled: { label: 'Annulée', color: 'bg-red-100 text-red-800 border-red-200', icon: XCircle },
-};
-
-const paymentConfig: Record<string, string> = {
-    cod: 'À la livraison',
-    baridimob: 'Baridimob',
-};
+const mockOrders = [
+    { id: '#4521', client: 'Sarah Benali', location: 'Alger Centre', date: '28 Fév 2026', amount: '2 400 DA', status: 'Expédié', statusColor: 'bg-blue-100 text-blue-600', actions: ['Facture', 'Éditer'] },
+    { id: '#4520', client: 'Amina Khelifi', location: 'Oran', date: '28 Fév 2026', amount: '850 DA', status: 'En attente', statusColor: 'bg-yellow-100 text-yellow-700', actions: ['Confirmer'] },
+    { id: '#4519', client: 'Yasmine Mansouri', location: 'Constantine', date: '27 Fév 2026', amount: '4 200 DA', status: 'Livré', statusColor: 'bg-green-100 text-green-700', actions: ['Facture'] },
+    { id: '#4518', client: 'Fatima Ziri', location: 'Blida', date: '26 Fév 2026', amount: '1 600 DA', status: 'Annulé', statusColor: 'bg-red-100 text-red-600', actions: ['Rembourser'] },
+];
 
 export default function AdminOrdersPage() {
-    const [searchTerm, setSearchTerm] = useState('');
+    const [activeTab, setActiveTab] = useState('all');
 
     return (
-        <div className="space-y-6 flex flex-col min-h-full">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-creme2">
+        <div className="space-y-8 pb-12">
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-serif text-encre">Commandes</h1>
-                    <p className="text-encre3 text-sm mt-1">Gérez vos commandes, de la préparation à la livraison.</p>
+                    <h1 className="text-3xl font-serif text-encre">Commandes</h1>
+                    <p className="text-encre3 text-[10px] uppercase tracking-widest font-bold mt-1">Gestion des commandes client — 04 Mars 2026</p>
                 </div>
 
-                {/* Toolbar */}
-                <div className="flex flex-wrap items-center gap-3">
-                    <div className="relative">
-                        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-encre3" />
+                <div className="flex items-center space-x-3">
+                    <div className="relative group">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-encre3 group-focus-within:text-or transition-colors" size={16} />
                         <input
                             type="text"
-                            placeholder="Rechercher ORD-..."
-                            className="w-full md:w-64 pl-10 pr-4 py-2 border border-creme2 focus:outline-none focus:ring-1 focus:ring-or focus:border-or rounded-sm text-sm"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            placeholder="Rechercher..."
+                            className="pl-10 pr-4 py-2.5 bg-white border border-creme2 rounded-sm text-sm focus:outline-none focus:border-or focus:ring-1 focus:ring-or w-64 shadow-sm transition-all"
                         />
                     </div>
-                    <button className="flex items-center justify-center px-4 py-2 border border-creme2 bg-white text-encre hover:text-or hover:border-or text-sm font-semibold transition-all rounded-sm flex-grow sm:flex-grow-0 cursor-pointer shadow-sm">
-                        <Filter size={16} className="mr-2" />
-                        Filtres
+                    <button className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
+                        <Bell size={18} />
                     </button>
+                    <button className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
+                        <Download size={18} />
+                    </button>
+                    <button className="flex items-center space-x-2 px-5 py-2.5 bg-rouge-deep text-creme rounded-sm text-sm font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md">
+                        <Plus size={16} />
+                        <span>Nouveau</span>
+                    </button>
+                    <Link href="/" className="px-5 py-2.5 border border-encre text-encre rounded-sm text-sm font-bold hover:bg-encre hover:text-creme transition-all">
+                        Voir la boutique
+                    </Link>
                 </div>
             </div>
 
-            {/* Analytics Mini-Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white p-4 border border-creme2 rounded-sm shadow-sm flex flex-col items-center justify-center text-center">
-                    <p className="text-[10px] uppercase font-bold text-encre3 tracking-widest mb-1">Aujourd'hui</p>
-                    <p className="text-2xl font-serif text-encre">12</p>
-                </div>
-                <div className="bg-white p-4 border border-creme2 rounded-sm shadow-sm flex flex-col items-center justify-center text-center">
-                    <p className="text-[10px] uppercase font-bold text-blue-600 tracking-widest mb-1">Préparation</p>
-                    <p className="text-2xl font-serif text-blue-700">8</p>
-                </div>
-                <div className="bg-white p-4 border border-creme2 rounded-sm shadow-sm flex flex-col items-center justify-center text-center">
-                    <p className="text-[10px] uppercase font-bold text-indigo-600 tracking-widest mb-1">Expédiées</p>
-                    <p className="text-2xl font-serif text-indigo-700">23</p>
-                </div>
-                <div className="bg-white p-4 border border-creme2 rounded-sm shadow-sm flex flex-col items-center justify-center text-center">
-                    <p className="text-[10px] uppercase font-bold text-yellow-600 tracking-widest mb-1">PAIEMENTS (Baridimob)</p>
-                    <p className="text-2xl font-serif text-yellow-700">5 <span className="text-xs uppercase">à valider</span></p>
-                </div>
-            </div>
+            {/* Content Section */}
+            <div className="bg-white rounded-sm border border-creme2 shadow-lg overflow-hidden">
+                {/* Tabs & Toolbar */}
+                <div className="p-6 border-b border-creme2 bg-creme/10 flex flex-wrap items-center justify-between gap-6">
+                    <div className="flex items-center bg-white p-1 rounded-sm border border-creme2">
+                        {tabs.map((tab) => (
+                            <button
+                                key={tab.key}
+                                onClick={() => setActiveTab(tab.key)}
+                                className={cn(
+                                    "px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-sm transition-all flex items-center space-x-2",
+                                    activeTab === tab.key
+                                        ? "bg-encre text-creme shadow-md transition-all scale-105"
+                                        : "text-encre3 hover:bg-creme/50"
+                                )}
+                            >
+                                <span>{tab.name}</span>
+                                <span className={cn(
+                                    "text-[10px] opacity-60",
+                                    activeTab === tab.key ? "text-or" : "text-encre3"
+                                )}>({tab.count})</span>
+                            </button>
+                        ))}
+                    </div>
 
-            {/* Table */}
-            <div className="bg-white border border-creme2 rounded-sm shadow-sm overflow-hidden flex-grow">
+                    <div className="flex items-center space-x-3">
+                        <button className="flex items-center space-x-2 px-6 py-2 bg-creme border border-creme2 text-encre text-xs font-bold uppercase tracking-widest rounded-sm hover:border-or transition-all">
+                            <span>Rapport</span>
+                        </button>
+                        <button className="flex items-center space-x-2 px-6 py-2 bg-[#1A0A0A] text-creme text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-lg group">
+                            <Plus size={14} className="text-or" />
+                            <span>Créer commande</span>
+                        </button>
+                    </div>
+                </div>
+
+                {/* Table */}
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse whitespace-nowrap">
-                        <thead>
-                            <tr className="bg-creme">
-                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-encre border-b border-creme2">ID Commande</th>
-                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-encre border-b border-creme2">Client</th>
-                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-encre border-b border-creme2">Date</th>
-                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-encre border-b border-creme2">Total (Articles)</th>
-                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-encre border-b border-creme2">Statut</th>
-                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-encre border-b border-creme2 text-right">Action</th>
+                    <table className="w-full">
+                        <thead className="bg-creme/30 text-[10px] uppercase tracking-widest text-encre3 font-black border-b border-creme2">
+                            <tr>
+                                <th className="px-8 py-6 text-left w-20">#</th>
+                                <th className="px-8 py-6 text-left">Client</th>
+                                <th className="px-8 py-6 text-left">Date</th>
+                                <th className="px-8 py-6 text-left">Montant</th>
+                                <th className="px-8 py-6 text-left">Statut</th>
+                                <th className="px-8 py-6 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-creme2">
-                            {mockOrders.map((order) => {
-                                const status = statusConfig[order.status];
-                                const StatusIcon = status.icon;
-
-                                return (
-                                    <tr key={order.id} className="hover:bg-creme/50 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <span className="font-bold font-mono text-sm text-encre">{order.id}</span>
-                                            <div className="text-[10px] uppercase tracking-widest text-encre3 mt-1">
-                                                {paymentConfig[order.payment]}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="font-semibold text-sm text-encre">{order.customer}</div>
-                                            <div className="text-xs text-encre3">{order.wilaya}</div>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-encre3">
-                                            {order.date}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="font-bold text-sm text-rouge-deep">{formatPrice(order.total)}</div>
-                                            <div className="text-xs text-encre3">{order.items} article(s)</div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className={`inline-flex items-center px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full border ${status.color}`}>
-                                                <StatusIcon size={12} className="mr-1.5" />
-                                                {status.label}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <button className="inline-flex items-center justify-center p-2 bg-creme2 hover:bg-or hover:text-white rounded-full transition-all text-encre" title="Détails">
-                                                <ArrowRight size={16} />
+                            {mockOrders.map((order) => (
+                                <tr key={order.id} className="hover:bg-creme/5 transition-colors group">
+                                    <td className="px-8 py-6">
+                                        <span className="text-sm font-bold text-rouge-mid font-mono tracking-tighter">{order.id}</span>
+                                    </td>
+                                    <td className="px-8 py-6">
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-bold text-encre">{order.client}</span>
+                                            <span className="text-[10px] text-encre3 uppercase tracking-wide font-medium">{order.location}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-6 text-[11px] font-bold text-encre3 uppercase">
+                                        {order.date}
+                                    </td>
+                                    <td className="px-8 py-6 text-sm font-black text-encre">
+                                        {order.amount}
+                                    </td>
+                                    <td className="px-8 py-6">
+                                        <span className={cn(
+                                            "text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm shadow-sm inline-block",
+                                            order.statusColor
+                                        )}>
+                                            {order.status}
+                                        </span>
+                                    </td>
+                                    <td className="px-8 py-6 flex items-center justify-end space-x-2">
+                                        {order.actions.map((action, i) => (
+                                            <button
+                                                key={i}
+                                                className={cn(
+                                                    "px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border",
+                                                    action === 'Confirmer' ? "bg-green-700 text-white border-green-800 hover:bg-green-800" :
+                                                        action === 'Éditer' ? "bg-[#1A0A0A] text-white border-[#2A1A1A] hover:bg-rouge-deep" :
+                                                            "bg-white border-creme2 text-encre hover:border-or hover:text-or"
+                                                )}
+                                            >
+                                                {action}
                                             </button>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
+                                        ))}
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Pagination Placeholder */}
+                <div className="p-8 border-t border-creme2 bg-creme/5 flex justify-between items-center">
+                    <p className="text-[10px] uppercase font-bold text-encre3 tracking-widest">Affichage de 4 sur 142 commandes</p>
+                    <div className="flex space-x-2">
+                        {[1, 2, 3, '...', 12].map((p, i) => (
+                            <button
+                                key={i}
+                                className={cn(
+                                    "w-8 h-8 flex items-center justify-center text-[10px] font-bold border transition-all rounded-sm",
+                                    p === 1 ? "bg-encre text-creme border-encre" : "bg-white text-encre3 border-creme2 hover:border-or"
+                                )}
+                            >
+                                {p}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>

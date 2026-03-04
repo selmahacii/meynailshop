@@ -16,3 +16,5 @@ export interface CartState {
   discount: number;
   total: number;
 }
+
+export type CartResponse = CartState;

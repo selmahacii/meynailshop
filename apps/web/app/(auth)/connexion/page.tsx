@@ -2,25 +2,69 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuthStore } from '@/lib/store/authStore';
 
 export default function LoginPage() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirectUrl = searchParams.get('redirect') || '/';
+    const setUser = useAuthStore((state) => state.setUser);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
-        // Simulating login for now
-        setTimeout(() => {
-            setLoading(false);
+        try {
+            // Call the real API
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+                credentials: 'include', // Include cookies
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                toast.error(error.message || 'Connexion échouée');
+                setLoading(false);
+                return;
+            }
+
+            const data = await response.json();
+            const { accessToken, user } = data.data || data;
+
+            // Save token to localStorage and cookies
+            if (accessToken) {
+                localStorage.setItem('accessToken', accessToken);
+                // Set cookie for middleware
+                document.cookie = `accessToken=${accessToken}; path=/; max-age=86400`;
+            }
+
+            // Save user to Zustand store
+            if (user) {
+                setUser(user);
+            }
+
             toast.success('Connexion réussie !');
-            router.push('/');
-        }, 1500);
+
+            // Redirect admin users to dashboard, others to redirect URL
+            const redirectPath = user?.role === 'admin' ? '/admin/dashboard' : redirectUrl;
+            
+            router.push(redirectPath);
+        } catch (error) {
+            console.error('Login error:', error);
+            toast.error('Erreur de connexion. Essayez à nouveau.');
+            setLoading(false);
+        }
     };
 
     return (
@@ -41,6 +85,8 @@ export default function LoginPage() {
                             name="email"
                             type="email"
                             autoComplete="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             required
                             className="appearance-none block w-full pl-10 pr-3 py-3 border border-creme2 text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or focus:border-or sm:text-sm transition-all"
                             placeholder="votre@email.com"
@@ -61,6 +107,8 @@ export default function LoginPage() {
                             name="password"
                             type={showPassword ? 'text' : 'password'}
                             autoComplete="current-password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             required
                             className="appearance-none block w-full pl-10 pr-10 py-3 border border-creme2 text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or focus:border-or sm:text-sm transition-all"
                             placeholder="••••••••"

@@ -21,8 +21,8 @@ export default function HeroSection() {
                         transition={{ duration: 0.8 }}
                     >
                         <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-creme mb-6 leading-[1.1]">
-                            L'art des ongles, <br />
-                            élevé à <span className="italic text-or">l'excellence.</span>
+                            L'excellence de l'onglerie <br />
+                            à portée <span className="italic text-or">de main.</span>
                         </h1>
                     </motion.div>
 
@@ -32,8 +32,7 @@ export default function HeroSection() {
                         transition={{ duration: 0.8, delay: 0.2 }}
                         className="text-lg md:text-xl text-creme2/80 mb-10 max-w-xl font-light leading-relaxed"
                     >
-                        Découvrez une sélection exclusive de vernis gel, gels UV et matériel professionnel
-                        conçus pour les artistes de l'onglerie les plus exigeants.
+                        Découvrez notre collection de produits professionnels pour sublimer vos créations.
                     </motion.p>
 
                     <motion.div

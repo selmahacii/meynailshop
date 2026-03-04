@@ -7,7 +7,12 @@ import { useRouter } from 'next/navigation';
 import { ChevronLeft, ShieldCheck, Truck, Check, CreditCard, Banknote } from 'lucide-react';
 import { useCartStore } from '@/lib/store/cartStore';
 import { formatPrice } from '@/lib/utils/currency';
-import { PaymentMethod } from '../../../../../packages/shared/types/api';
+// Payment methods defined locally to avoid cross-workspace import issues
+enum PaymentMethod {
+    CASH_ON_DELIVERY = 'cash_on_delivery',
+    BARIDIMOB = 'baridimob',
+    CIB = 'cib',
+}
 import { toast } from 'sonner';
 
 export default function CheckoutPage() {
@@ -46,13 +51,37 @@ export default function CheckoutPage() {
 
         setLoading(true);
 
-        // Simulate API call
-        setTimeout(() => {
-            setLoading(false);
+        try {
+            const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+
+            if (token) {
+                // Authenticated: use real API
+                const { ordersApi } = await import('@/lib/api/orders');
+                await ordersApi.createOrder({
+                    shippingAddress: {
+                        firstName: formData.firstName,
+                        lastName: formData.lastName,
+                        phone: formData.phone,
+                        address: formData.address,
+                        wilaya: formData.wilaya,
+                        commune: formData.commune,
+                    },
+                    paymentMethod,
+                    items: items.map(i => ({ productId: i.productId, quantity: i.quantity })),
+                });
+            } else {
+                // Guest: simulate a 1.5s processing time
+                await new Promise(resolve => setTimeout(resolve, 1500));
+            }
+
             clear();
-            toast.success('Commande confirmée avec succès !');
+            toast.success('🎉 Commande confirmée avec succès !');
             router.push('/checkout/succes');
-        }, 2000);
+        } catch (err: any) {
+            toast.error(err?.response?.data?.message || 'Une erreur est survenue. Veuillez réessayer.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -275,7 +304,7 @@ export default function CheckoutPage() {
                     {items.map(item => (
                         <div key={item.productId} className="flex items-center">
                             <div className="relative w-16 h-16 border border-creme2 bg-white shrink-0 mr-4">
-                                <Image src={item.image || '/images/placeholder-product.webp'} alt={item.name} fill className="object-cover p-1" />
+                                <Image src={item.image || '/images/placeholder-product.png'} alt={item.name} fill className="object-cover p-1" />
                                 <span className="absolute -top-2 -right-2 bg-encre text-creme w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold">
                                     {item.quantity}
                                 </span>

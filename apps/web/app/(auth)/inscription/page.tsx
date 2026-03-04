@@ -3,22 +3,79 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Mail, Lock, User, Phone, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Mail, Lock, User, Phone, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuthStore } from '@/lib/store/authStore';
 
 export default function RegisterPage() {
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        password: '',
+        terms: false,
+    });
+    const [errors, setErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const setUser = useAuthStore((state) => state.setUser);
+
+    const validateForm = () => {
+        const newErrors: Record<string, string> = {};
+
+        if (!formData.firstName.trim()) newErrors.firstName = 'Le prénom est requis';
+        if (!formData.lastName.trim()) newErrors.lastName = 'Le nom est requis';
+        if (!formData.email.includes('@')) newErrors.email = 'Email invalide';
+        if (!formData.phone.trim()) newErrors.phone = 'Le téléphone est requis';
+        if (formData.password.length < 8) newErrors.password = 'Au moins 8 caractères';
+        if (!formData.terms) newErrors.terms = 'Vous devez accepter les conditions';
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value, type, checked } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value,
+        }));
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!validateForm()) {
+            toast.error('Veuillez corriger les erreurs');
+            return;
+        }
+
         setLoading(true);
 
-        setTimeout(() => {
+        try {
+            // Create new user via API (or mock)
+            const newUser = {
+                id: Date.now().toString(),
+                email: formData.email,
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                phone: formData.phone,
+                role: 'client',
+                isActive: true,
+            };
+
+            // Save user to Zustand
+            setUser(newUser);
+
+            toast.success('Compte créé avec succès !');
+            router.push('/connexion?registered=true');
+        } catch (error) {
+            console.error('Registration error:', error);
+            toast.error('Erreur lors de la création du compte');
+        } finally {
             setLoading(false);
-            toast.success('Votre compte a été créé avec succès !');
-            router.push('/connexion');
-        }, 1500);
+        }
     };
 
     return (
@@ -35,10 +92,15 @@ export default function RegisterPage() {
                             id="firstName"
                             name="firstName"
                             type="text"
+                            value={formData.firstName}
+                            onChange={handleChange}
                             required
-                            className="appearance-none block w-full px-3 py-3 border border-creme2 text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or focus:border-or sm:text-sm transition-all"
+                            className={`appearance-none block w-full px-3 py-3 border text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or sm:text-sm transition-all ${
+                                errors.firstName ? 'border-rouge' : 'border-creme2 focus:border-or'
+                            }`}
                             placeholder="Sarah"
                         />
+                        {errors.firstName && <p className="text-rouge text-xs mt-1">{errors.firstName}</p>}
                     </div>
                     <div>
                         <label htmlFor="lastName" className="block text-xs font-semibold uppercase tracking-wider text-encre3 mb-2">
@@ -48,10 +110,15 @@ export default function RegisterPage() {
                             id="lastName"
                             name="lastName"
                             type="text"
+                            value={formData.lastName}
+                            onChange={handleChange}
                             required
-                            className="appearance-none block w-full px-3 py-3 border border-creme2 text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or focus:border-or sm:text-sm transition-all"
+                            className={`appearance-none block w-full px-3 py-3 border text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or sm:text-sm transition-all ${
+                                errors.lastName ? 'border-rouge' : 'border-creme2 focus:border-or'
+                            }`}
                             placeholder="Naili"
                         />
+                        {errors.lastName && <p className="text-rouge text-xs mt-1">{errors.lastName}</p>}
                     </div>
                 </div>
 
@@ -67,12 +134,16 @@ export default function RegisterPage() {
                             id="email"
                             name="email"
                             type="email"
-                            autoComplete="email"
+                            value={formData.email}
+                            onChange={handleChange}
                             required
-                            className="appearance-none block w-full pl-10 pr-3 py-3 border border-creme2 text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or focus:border-or sm:text-sm transition-all"
+                            className={`appearance-none block w-full pl-10 pr-3 py-3 border text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or sm:text-sm transition-all ${
+                                errors.email ? 'border-rouge' : 'border-creme2 focus:border-or'
+                            }`}
                             placeholder="votre@email.com"
                         />
                     </div>
+                    {errors.email && <p className="text-rouge text-xs mt-1">{errors.email}</p>}
                 </div>
 
                 <div>
@@ -87,12 +158,16 @@ export default function RegisterPage() {
                             id="phone"
                             name="phone"
                             type="tel"
-                            autoComplete="tel"
+                            value={formData.phone}
+                            onChange={handleChange}
                             required
-                            className="appearance-none block w-full pl-10 pr-3 py-3 border border-creme2 text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or focus:border-or sm:text-sm transition-all"
+                            className={`appearance-none block w-full pl-10 pr-3 py-3 border text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or sm:text-sm transition-all ${
+                                errors.phone ? 'border-rouge' : 'border-creme2 focus:border-or'
+                            }`}
                             placeholder="05 XX XX XX XX"
                         />
                     </div>
+                    {errors.phone && <p className="text-rouge text-xs mt-1">{errors.phone}</p>}
                 </div>
 
                 <div>
@@ -107,12 +182,17 @@ export default function RegisterPage() {
                             id="password"
                             name="password"
                             type="password"
+                            value={formData.password}
+                            onChange={handleChange}
                             required
-                            className="appearance-none block w-full pl-10 pr-3 py-3 border border-creme2 text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or focus:border-or sm:text-sm transition-all"
+                            className={`appearance-none block w-full pl-10 pr-3 py-3 border text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or sm:text-sm transition-all ${
+                                errors.password ? 'border-rouge' : 'border-creme2 focus:border-or'
+                            }`}
                             placeholder="••••••••"
                         />
                     </div>
                     <p className="mt-1 text-[10px] text-encre3/60 italic">8 caractères minimum, une majuscule et un chiffre.</p>
+                    {errors.password && <p className="text-rouge text-xs mt-1">{errors.password}</p>}
                 </div>
 
                 <div className="flex items-center">
@@ -120,13 +200,15 @@ export default function RegisterPage() {
                         id="terms"
                         name="terms"
                         type="checkbox"
-                        required
+                        checked={formData.terms}
+                        onChange={handleChange}
                         className="h-4 w-4 text-or focus:ring-or border-creme2 rounded cursor-pointer"
                     />
                     <label htmlFor="terms" className="ml-2 block text-xs text-encre3">
                         J'accepte les <Link href="/cgv" className="text-rouge-mid hover:underline">conditions générales</Link> et la politique de confidentialité.
                     </label>
                 </div>
+                {errors.terms && <p className="text-rouge text-xs">{errors.terms}</p>}
 
                 <div>
                     <button

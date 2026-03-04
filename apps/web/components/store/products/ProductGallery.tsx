@@ -13,7 +13,7 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isZoomOpen, setIsZoomOpen] = useState(false);
 
-    const displayImages = images.length > 0 ? images : ['/images/placeholder-product.webp'];
+    const displayImages = images.length > 0 ? images : ['/images/placeholder-product.png'];
 
     const next = () => setCurrentIndex((prev) => (prev + 1) % displayImages.length);
     const prev = () => setCurrentIndex((prev) => (prev - 1 + displayImages.length) % displayImages.length);

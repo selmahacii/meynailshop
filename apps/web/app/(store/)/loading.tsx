@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/ui/Skeleton';
 
-export default function StoreLo ading() {
+export default function StoreLoading(): React.ReactNode {
   return (
     <div className="min-h-screen bg-creme">
       {/* Hero skeleton */}
