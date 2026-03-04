@@ -7,10 +7,6 @@ import {
   OneToMany,
   Unique,
 } from 'typeorm';
-import { Address } from './address.entity';
-import { Order } from './order.entity';
-import { Review } from './review.entity';
-import { WishlistItem } from './wishlist-item.entity';
 
 @Entity('users')
 @Unique(['email'])
@@ -49,27 +45,27 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => Address, (address) => address.user, {
+  @OneToMany('Address', 'user', {
     cascade: true,
     eager: false,
   })
-  addresses: Address[];
+  addresses: any[];
 
-  @OneToMany(() => Order, (order) => order.user, {
+  @OneToMany('Order', 'user', {
     cascade: false,
     eager: false,
   })
-  orders: Order[];
+  orders: any[];
 
-  @OneToMany(() => Review, (review) => review.user, {
+  @OneToMany('Review', 'user', {
     cascade: false,
     eager: false,
   })
-  reviews: Review[];
+  reviews: any[];
 
-  @OneToMany(() => WishlistItem, (wishlistItem) => wishlistItem.user, {
+  @OneToMany('WishlistItem', 'user', {
     cascade: true,
     eager: false,
   })
-  wishlistItems: WishlistItem[];
+  wishlistItems: any[];
 }

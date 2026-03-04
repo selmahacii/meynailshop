@@ -1,10 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Order } from '../../database/entities/order.entity';
-import { OrderItem } from '../../database/entities/order-item.entity';
-import { Address } from '../../database/entities/address.entity';
-import { Product } from '../../database/entities/product.entity';
-import { Coupon } from '../../database/entities/coupon.entity';
+import { Order, OrderItem, Address, Product, Coupon } from '../../database/entities';
 import { OrdersService } from './orders.service';
 import { OrderItemsService } from './order-items.service';
 import { OrdersController } from './orders.controller';

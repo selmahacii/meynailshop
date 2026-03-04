@@ -16,8 +16,8 @@
     "build:api": "npm run build --workspace=apps/api",
     "build:web": "npm run build --workspace=apps/web",
     "start": "npm run start:prod --workspace=apps/api",
-    "db:migrate": "npm run migrate --workspace=apps/api",
-    "db:seed": "npm run seed --workspace=apps/api",
+    "db:migrate": "npm run db:migrate --workspace=apps/api",
+    "db:seed": "npm run db:seed --workspace=apps/api",
     "lint": "npm run lint --workspace=packages/shared && npm run lint --workspace=apps/api && npm run lint --workspace=apps/web",
     "type-check": "npm run type-check --workspace=packages/shared && npm run type-check --workspace=apps/api && npm run type-check --workspace=apps/web"
   },

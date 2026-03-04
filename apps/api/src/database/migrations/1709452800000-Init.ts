@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table, Index } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
 
 export class Init1709452800000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -310,12 +310,12 @@ export class Init1709452800000 implements MigrationInterface {
     );
 
     // Create indexes
-    await queryRunner.createIndex('products', new Index({ name: 'idx_product_slug', columnNames: ['slug'] }));
-    await queryRunner.createIndex('products', new Index({ name: 'idx_product_category', columnNames: ['categoryId'] }));
-    await queryRunner.createIndex('categories', new Index({ name: 'idx_category_slug', columnNames: ['slug'] }));
-    await queryRunner.createIndex('users', new Index({ name: 'idx_user_email', columnNames: ['email'] }));
-    await queryRunner.createIndex('orders', new Index({ name: 'idx_order_user', columnNames: ['userId'] }));
-    await queryRunner.createIndex('orders', new Index({ name: 'idx_order_status', columnNames: ['status'] }));
+    await queryRunner.createIndex('products', new TableIndex({ name: 'idx_product_slug', columnNames: ['slug'] }));
+    await queryRunner.createIndex('products', new TableIndex({ name: 'idx_product_category', columnNames: ['categoryId'] }));
+    await queryRunner.createIndex('categories', new TableIndex({ name: 'idx_category_slug', columnNames: ['slug'] }));
+    await queryRunner.createIndex('users', new TableIndex({ name: 'idx_user_email', columnNames: ['email'] }));
+    await queryRunner.createIndex('orders', new TableIndex({ name: 'idx_order_user', columnNames: ['userId'] }));
+    await queryRunner.createIndex('orders', new TableIndex({ name: 'idx_order_status', columnNames: ['status'] }));
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

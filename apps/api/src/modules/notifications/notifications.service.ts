@@ -32,4 +32,33 @@ export class NotificationsService {
     `;
         await this.sendEmail(adminEmail, subject, html);
     }
+
+    // User notification methods (database-backed notifications)
+    async getNotifications(userId: string) {
+        // TODO: Implement database-backed notifications
+        this.logger.log(`Fetching notifications for user ${userId}`);
+        return [];
+    }
+
+    async getUnreadCount(userId: string): Promise<number> {
+        // TODO: Implement database-backed unread count
+        this.logger.log(`Fetching unread count for user ${userId}`);
+        return 0;
+    }
+
+    async markAsRead(notificationId: string, userId: string): Promise<void> {
+        // TODO: Implement mark as read in database
+        this.logger.log(`Marking notification ${notificationId} as read for user ${userId}`);
+    }
+
+    async deleteNotification(notificationId: string, userId: string): Promise<void> {
+        // TODO: Implement delete notification from database
+        this.logger.log(`Deleting notification ${notificationId} for user ${userId}`);
+    }
+
+    async markAllAsRead(userId: string): Promise<void> {
+        // TODO: Implement mark all as read in database
+        this.logger.log(`Marking all notifications as read for user ${userId}`);
+    }
 }
+

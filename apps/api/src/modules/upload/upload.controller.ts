@@ -14,7 +14,7 @@ import { UploadService } from './upload.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
-import { UserRole } from '../../../../../packages/shared/types/api';
+import { UserRole } from '@meey/shared';
 
 @Controller('upload')
 @UseGuards(JwtAuthGuard, RolesGuard)

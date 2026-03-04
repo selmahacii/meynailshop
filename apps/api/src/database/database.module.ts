@@ -1,17 +1,19 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { User } from './entities/user.entity';
-import { Address } from './entities/address.entity';
-import { Category } from './entities/category.entity';
-import { Product } from './entities/product.entity';
-import { Order } from './entities/order.entity';
-import { OrderItem } from './entities/order-item.entity';
-import { Review } from './entities/review.entity';
-import { Coupon } from './entities/coupon.entity';
-import { WishlistItem } from './entities/wishlist-item.entity';
-import { StockMovement } from './entities/stock-movement.entity';
-import { SiteSettings } from './entities/site-settings.entity';
+import {
+  User,
+  Address,
+  Category,
+  Product,
+  Order,
+  OrderItem,
+  Review,
+  Coupon,
+  WishlistItem,
+  StockMovement,
+  SiteSettings,
+} from './entities';
 
 @Module({
   imports: [

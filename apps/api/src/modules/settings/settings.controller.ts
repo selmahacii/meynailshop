@@ -4,7 +4,7 @@ import { UpdateSettingsDto } from './dto/update-settings.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
-import { UserRole } from '../../../../../packages/shared/types/api';
+import { UserRole } from '@meey/shared';
 
 @Controller('settings')
 export class SettingsController {

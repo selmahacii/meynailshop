@@ -5,6 +5,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 import { Repository, FindOptionsWhere, Between, DataSource } from 'typeorm';
 import { Order } from '../../database/entities/order.entity';
 import { OrderItem } from '../../database/entities/order-item.entity';
@@ -30,6 +31,7 @@ export class OrdersService {
     private productRepository: Repository<Product>,
     @InjectRepository(Coupon)
     private couponRepository: Repository<Coupon>,
+    @InjectDataSource()
     private dataSource: DataSource,
   ) { }
 
