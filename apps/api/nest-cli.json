@@ -3,7 +3,6 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "outDir": "./dist",
-    "webpack": false,
     "detailedSourceMap": false,
     "externalDepsIgnore": ["bcrypt", "sharp", "canvas"]
   }
