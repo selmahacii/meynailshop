@@ -63,10 +63,12 @@ export default function RegisterPage() {
                 phone: formData.phone,
                 role: 'client',
                 isActive: true,
+                createdAt: new Date(),
+                updatedAt: new Date(),
             };
 
             // Save user to Zustand
-            setUser(newUser);
+            setUser(newUser as any);
 
             toast.success('Compte créé avec succès !');
             router.push('/connexion?registered=true');

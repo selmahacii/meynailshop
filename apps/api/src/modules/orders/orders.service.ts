@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { Repository, FindOptionsWhere, Between, DataSource } from 'typeorm';
+import { Repository, Between, DataSource } from 'typeorm';
 import { Order } from '../../database/entities/order.entity';
 import { OrderItem } from '../../database/entities/order-item.entity';
 import { Address } from '../../database/entities/address.entity';
@@ -184,7 +184,7 @@ export class OrdersService {
     isAdmin: boolean = false,
   ): Promise<PaginatedResult<Order>> {
     const skip = (query.page - 1) * query.limit;
-    const where: FindOptionsWhere<Order> = {};
+    const where: Record<string, any> = {};
 
     if (!isAdmin) {
       where.userId = userId;

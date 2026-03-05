@@ -7,12 +7,12 @@ import {
     Package,
     ShoppingCart,
     Download,
-    Plus,
     AlertTriangle,
-    ChevronRight,
-    BarChart3,
+    Sparkles,
+    Eye,
+    Zap,
+    Calendar,
     Loader,
-    RefreshCw,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -33,48 +33,35 @@ import {
     AreaChart,
     Area,
 } from 'recharts';
+import { DashboardAPI } from '@/lib/api/client';
 
-const COLORS = {
-    revenue: '#CD7A2C',
-    orders: '#B85F1F',
-    clients: '#E89A4A',
-    cart: '#F5A623',
-    green: '#10B981',
-    red: '#EF4444',
-    yellow: '#F59E0B',
-    blue: '#3B82F6',
-};
+const COLORS = ['#10B981', '#F59E0B', '#EF4444', '#3B82F6', '#8B5CF6', '#EC4899'];
 
 export default function AdminDashboard() {
-    const [metrics, setMetrics] = useState<any>(null);
+    const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchMetrics = async (showRefresh = false) => {
-        try {
-            if (showRefresh) setRefreshing(true);
-            else setLoading(true);
-
-            const response = await fetch('/api/v1/admin/dashboard/metrics');
-            if (!response.ok) throw new Error('Failed to fetch metrics');
-
-            const data = await response.json();
-            setMetrics(data.data);
-            setError(null);
-        } catch (err) {
-            console.error('Error fetching metrics:', err);
-            setError('Erreur lors du chargement des données');
-        } finally {
-            setLoading(false);
-            setRefreshing(false);
-        }
-    };
-
     useEffect(() => {
-        fetchMetrics();
-        const interval = setInterval(() => fetchMetrics(false), 30000); // Refresh every 30 seconds
-        return () => clearInterval(interval);
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const result = await DashboardAPI.getMetrics();
+                
+                if (result.success && result.data) {
+                    setData(result.data);
+                } else {
+                    setError(result.error || 'Erreur lors du chargement');
+                }
+            } catch (err) {
+                setError('Impossible de charger le dashboard');
+                console.error('Dashboard error:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
     }, []);
 
     if (loading) {
@@ -88,40 +75,22 @@ export default function AdminDashboard() {
         );
     }
 
-    const kpis = [
-        {
-            name: 'REVENUS TOTAUX',
-            value: metrics?.kpis?.totalRevenue?.toLocaleString('fr-FR') || '0',
-            currency: 'DA',
-            icon: TrendingUp,
-            color: 'text-green-600',
-            delta: '+24%',
-        },
-        {
-            name: 'COMMANDES',
-            value: metrics?.kpis?.totalOrders || '0',
-            currency: '',
-            icon: ShoppingCart,
-            color: 'text-blue-600',
-            delta: '+12%',
-        },
-        {
-            name: 'CLIENTS ACTIFS',
-            value: metrics?.kpis?.activeClients || '0',
-            currency: '',
-            icon: Users,
-            color: 'text-purple-600',
-            delta: '+8%',
-        },
-        {
-            name: 'PANIER MOYEN',
-            value: metrics?.kpis?.averageCart?.toLocaleString('fr-FR') || '0',
-            currency: 'DA',
-            icon: Package,
-            color: 'text-orange-600',
-            delta: '+3%',
-        },
-    ];
+    if (error) {
+        return (
+            <div className="p-8">
+                <div className="bg-rouge-deep/10 border border-rouge-deep/20 rounded-lg p-6 text-rouge-deep">
+                    <AlertTriangle className="inline mr-2" />
+                    {error}
+                </div>
+            </div>
+        );
+    }
+
+    const kpis = data?.kpis || {};
+    const charts = data?.charts || {};
+    const alerts = data?.alerts || {};
+     
+       
 
     return (
         <div className="p-8 bg-gradient-to-br from-[#FAF5EF] via-[#F9F4EE] to-[#F5EFEA] min-h-screen">

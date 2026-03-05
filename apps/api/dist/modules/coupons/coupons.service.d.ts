@@ -1,0 +1,18 @@
+import { Repository } from 'typeorm';
+import { Coupon } from '../../database/entities/coupon.entity';
+export declare class CouponsService {
+    private couponRepository;
+    constructor(couponRepository: Repository<Coupon>);
+    create(dto: any): Promise<Coupon[]>;
+    findAll(): Promise<Coupon[]>;
+    findByCode(code: string): Promise<Coupon | null>;
+    validateCoupon(code: string, orderAmount: number): Promise<{
+        coupon: Coupon;
+        discount: number;
+    } | null>;
+    useCoupon(code: string): Promise<void>;
+    update(id: string, dto: any): Promise<Coupon | null>;
+    remove(id: string): Promise<{
+        message: string;
+    }>;
+}

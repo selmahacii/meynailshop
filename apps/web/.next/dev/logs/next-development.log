@@ -1,862 +1,736 @@
-[00:00:01.370] Server  WARN    ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
-[00:00:01.560] Server  LOG     ✓ Ready in 1081ms
-[00:00:13.668] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:04:27.135] Server  ERROR   ⨯ ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+[00:00:01.358] Server  WARN    ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+[00:00:01.539] Server  LOG     ✓ Ready in 1058ms
+[00:11:09.241] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/lib/trace/tracer.js:13:11
+Module not found: Can't resolve '@opentelemetry/api'
 
-Expression expected
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/lib/trace/tracer.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
 
 
+[00:11:09.242] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
 
-./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
 
-Unterminated regexp literal
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.242] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.243] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.244] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.251] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/lib/trace/tracer.js:13:11
+Module not found: Can't resolve '@opentelemetry/api'
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/lib/trace/tracer.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
 
 
-[00:04:28.135] Server  LOG     ✓ Compiled in 2.9s
-[00:04:28.399] Browser ERROR   uncaughtError: Error: ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+[00:11:09.253] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
 
-Expression expected
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.254] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.256] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.257] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.276] Server  LOG     ✓ Compiled in 301ms
+[00:11:09.343] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/lib/trace/tracer.js:13:11
+Module not found: Can't resolve '@opentelemetry/api'
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/lib/trace/tracer.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
 
 
-[00:04:28.700] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+[00:11:09.344] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
 
-Expression expected
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.345] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.346] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.346] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.347] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/api-utils/index.js:65:27
+Module not found: Can't resolve 'next/dist/compiled/cookie'
+Import map: aliased to module 'next' with subpath '/dist/compiled/cookie' inside of [project]/apps/web
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:04:28.700] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/api-utils/index.js
+    ./node_modules/next/dist/esm/server/async-storage/draft-mode-provider.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
 
-Unterminated regexp literal
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.382] Server  LOG     ✓ Compiled in 89ms
+[00:11:09.668] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/lib/trace/tracer.js:13:11
+Module not found: Can't resolve '@opentelemetry/api'
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:04:28.700] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/lib/trace/tracer.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
 
-Expression expected
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.668] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.668] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.669] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.669] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.669] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/api-utils/index.js:65:27
+Module not found: Can't resolve 'next/dist/compiled/cookie'
+Import map: aliased to module 'next' with subpath '/dist/compiled/cookie' inside of [project]/apps/web
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:04:28.700] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/api-utils/index.js
+    ./node_modules/next/dist/esm/server/async-storage/draft-mode-provider.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
 
-Unterminated regexp literal
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.669] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/after/after-context.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/p-queue'
+Import map: aliased to module 'next' with subpath '/dist/compiled/p-queue' inside of [project]/apps/web
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:04:45.699] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/after/after-context.js
+    ./node_modules/next/dist/esm/server/async-storage/work-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
 
-Expression expected
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.670] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/after/after-context.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/p-queue'
+Import map: aliased to module 'next' with subpath '/dist/compiled/p-queue' inside of [project]/apps/web
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:04:45.700] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/after/after-context.js
+    ./node_modules/next/dist/esm/server/async-storage/work-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
 
-Unterminated regexp literal
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.707] Server  LOG     ✓ Compiled in 124ms
+[00:11:09.957] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/lib/trace/tracer.js:13:11
+Module not found: Can't resolve '@opentelemetry/api'
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:04:52.486] Server  ERROR   ⨯ ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/lib/trace/tracer.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
 
-Expression expected
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
+https://nextjs.org/docs/messages/module-not-found
 
 
-
-./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Unterminated regexp literal
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
+[00:11:09.958] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
 
 
-[00:04:52.753] Browser ERROR   uncaughtError: Error: ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
 
-Expression expected
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
 
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
+https://nextjs.org/docs/messages/module-not-found
 
 
-[00:04:52.913] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+[00:11:09.958] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
 
-Expression expected
 
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:04:52.913] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
 
-Unterminated regexp literal
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
 
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:04:52.913] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+https://nextjs.org/docs/messages/module-not-found
 
-Expression expected
+
+[00:11:09.959] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.959] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.959] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/api-utils/index.js:65:27
+Module not found: Can't resolve 'next/dist/compiled/cookie'
+Import map: aliased to module 'next' with subpath '/dist/compiled/cookie' inside of [project]/apps/web
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:04:52.913] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/api-utils/index.js
+    ./node_modules/next/dist/esm/server/async-storage/draft-mode-provider.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
 
-Unterminated regexp literal
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.959] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/after/after-context.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/p-queue'
+Import map: aliased to module 'next' with subpath '/dist/compiled/p-queue' inside of [project]/apps/web
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:05:08.701] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/after/after-context.js
+    ./node_modules/next/dist/esm/server/async-storage/work-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
 
-Expression expected
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.959] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/after/after-context.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/p-queue'
+Import map: aliased to module 'next' with subpath '/dist/compiled/p-queue' inside of [project]/apps/web
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:05:08.701] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/after/after-context.js
+    ./node_modules/next/dist/esm/server/async-storage/work-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
 
-Unterminated regexp literal
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.960] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/user-agent.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/ua-parser-js'
+Import map: aliased to module 'next' with subpath '/dist/compiled/ua-parser-js' inside of [project]/apps/web
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:05:08.701] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/web/spec-extension/user-agent.js
+    ./node_modules/next/dist/esm/server/web/exports/index.js
+    ./apps/web/middleware.ts
 
-Expression expected
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.960] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/user-agent.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/ua-parser-js'
+Import map: aliased to module 'next' with subpath '/dist/compiled/ua-parser-js' inside of [project]/apps/web
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:05:08.701] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/web/spec-extension/user-agent.js
+    ./node_modules/next/dist/esm/server/web/exports/index.js
+    ./apps/web/middleware.ts
 
-Unterminated regexp literal
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:09.988] Server  LOG     ✓ Compiled in 87ms
+[00:11:10.131] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/lib/trace/tracer.js:13:11
+Module not found: Can't resolve '@opentelemetry/api'
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:05:08.701] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/lib/trace/tracer.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
 
-Expression expected
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:10.132] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:10.132] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:10.132] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:10.133] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/@edge-runtime/cookies'
+Import map: aliased to module 'next' with subpath '/dist/compiled/@edge-runtime/cookies' inside of [project]/apps/web
+
+
+Import traces:
+  #1 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+  #2 [Edge Middleware]:
+    ./node_modules/next/dist/esm/server/web/spec-extension/cookies.js
+    ./node_modules/next/dist/esm/server/web/spec-extension/response.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:10.134] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/api-utils/index.js:65:27
+Module not found: Can't resolve 'next/dist/compiled/cookie'
+Import map: aliased to module 'next' with subpath '/dist/compiled/cookie' inside of [project]/apps/web
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:05:08.701] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/api-utils/index.js
+    ./node_modules/next/dist/esm/server/async-storage/draft-mode-provider.js
+    ./node_modules/next/dist/esm/server/async-storage/request-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
 
-Unterminated regexp literal
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:10.134] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/after/after-context.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/p-queue'
+Import map: aliased to module 'next' with subpath '/dist/compiled/p-queue' inside of [project]/apps/web
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:05:11.698] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/after/after-context.js
+    ./node_modules/next/dist/esm/server/async-storage/work-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
 
-Expression expected
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:10.134] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/after/after-context.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/p-queue'
+Import map: aliased to module 'next' with subpath '/dist/compiled/p-queue' inside of [project]/apps/web
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:05:11.698] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/after/after-context.js
+    ./node_modules/next/dist/esm/server/async-storage/work-store.js
+    ./node_modules/next/dist/esm/server/web/adapter.js
 
-Unterminated regexp literal
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:10.134] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/user-agent.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/ua-parser-js'
+Import map: aliased to module 'next' with subpath '/dist/compiled/ua-parser-js' inside of [project]/apps/web
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:05:49.699] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/web/spec-extension/user-agent.js
+    ./node_modules/next/server.js
+    ./apps/web/middleware.ts
 
-Expression expected
+https://nextjs.org/docs/messages/module-not-found
+
+
+[00:11:10.134] Server  ERROR   ⨯ ./node_modules/next/dist/esm/server/web/spec-extension/user-agent.js:1:1
+Module not found: Can't resolve 'next/dist/compiled/ua-parser-js'
+Import map: aliased to module 'next' with subpath '/dist/compiled/ua-parser-js' inside of [project]/apps/web
+
 
 Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:05:49.699] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
+  Edge Middleware:
+    ./node_modules/next/dist/esm/server/web/spec-extension/user-agent.js
+    ./node_modules/next/server.js
+    ./apps/web/middleware.ts
 
-Unterminated regexp literal
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:05:50.709] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Expression expected
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:05:50.709] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Unterminated regexp literal
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:06:19.711] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Expression expected
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:06:19.711] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Unterminated regexp literal
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:07:06.710] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Expression expected
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:07:06.710] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Unterminated regexp literal
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:07:49.703] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Expression expected
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:07:49.703] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Unterminated regexp literal
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:08:13.699] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Expression expected
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:08:13.699] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Unterminated regexp literal
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:10:53.712] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Expression expected
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:10:53.712] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Unterminated regexp literal
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:10:53.712] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Expression expected
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:10:53.712] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Unterminated regexp literal
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:10:53.712] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Expression expected
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:10:53.712] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Unterminated regexp literal
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:10:53.713] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Expression expected
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:10:53.713] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Unterminated regexp literal
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:10:57.079] Server  ERROR   ⨯ ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Expression expected
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
+https://nextjs.org/docs/messages/module-not-found
 
 
-
-./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Unterminated regexp literal
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-
-
-[00:10:57.421] Browser ERROR   uncaughtError: Error: ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Expression expected
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-
-
-[00:10:57.612] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Expression expected
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:10:57.612] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Unterminated regexp literal
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:10:57.612] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:41
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                         ^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Expression expected
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:10:57.612] Browser ERROR   ./apps/web/components/admin/layout/AdminSidebar.tsx:226:42
-Parsing ecmascript source code failed
-  224 | }
-  225 |                                             {item.badge}
-> 226 |                                         </span>
-      |                                          ^^^^^^
-  227 |                                     )}
-  228 |                                 </Link>
-  229 |                             </li>
-
-Unterminated regexp literal
-
-Import trace:
-  Server Component:
-    ./apps/web/components/admin/layout/AdminSidebar.tsx
-    ./apps/web/app/admin/layout.tsx
-[00:12:11.587] Server  LOG     ✓ Compiled in 123ms
-[00:12:12.624] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:12:14.701] Browser ERROR   Error fetching badges: {}
-[00:13:49.348] Browser ERROR   Error fetching metrics: {}
-[00:14:12.027] Server  LOG     ✓ Compiled in 78ms
-[00:14:15.814] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
-[00:14:19.736] Browser ERROR   Error fetching metrics: {}
-[00:14:19.855] Browser ERROR   Error fetching metrics: {}
-[00:14:21.729] Browser ERROR   Error fetching metrics: {}
-[00:14:49.666] Browser ERROR   Error fetching metrics: {}
-[00:15:19.705] Browser ERROR   Error fetching metrics: {}
-[00:15:44.197] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:15:50.709] Browser ERROR   Error fetching metrics: {}
-[00:15:53.743] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
-[00:16:20.699] Browser ERROR   Error fetching metrics: {}
-[00:16:50.703] Browser ERROR   Error fetching metrics: {}
-[00:17:20.708] Browser ERROR   Error fetching metrics: {}
-[00:17:52.712] Browser ERROR   Error fetching metrics: {}
-[00:18:52.709] Browser ERROR   Error fetching metrics: {}
-[00:18:57.033] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:19:00.052] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:11:10.160] Server  LOG     ✓ Compiled in 151ms
+[00:11:10.254] Server  LOG     ✓ Compiled in 31ms

@@ -6,8 +6,6 @@ import { DatabaseModule } from './database/database.module';
 // Modules
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
-import { ProductsModule } from './modules/products/products.module';
-import { OrdersModule } from './modules/orders/orders.module';
 import { CartModule } from './modules/cart/cart.module';
 import { ReviewsModule } from './modules/reviews/reviews.module';
 import { StockModule } from './modules/stock/stock.module';
@@ -18,7 +16,7 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 
-// API v1 modules
+// API v1 modules (new)
 import { DashboardModule as DashboardV1 } from './api/v1/dashboard/dashboard.module';
 import { ProductsModule as ProductsV1 } from './api/v1/products/products.module';
 import { OrdersModule as OrdersV1 } from './api/v1/orders/orders.module';
@@ -36,8 +34,6 @@ import { AppService } from './app.service';
     DatabaseModule,
     AuthModule,
     UsersModule,
-    ProductsModule,
-    OrdersModule,
     CartModule,
     ReviewsModule,
     StockModule,

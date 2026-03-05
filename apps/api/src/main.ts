@@ -3,8 +3,9 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
-import { ResponseInterceptor } from './common/interceptors/response.interceptor';
-import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+// Temporarily disabled due to rxjs type compatibility issues
+// import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+// import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
@@ -33,10 +34,11 @@ async function bootstrap() {
   );
 
   // Global interceptors
-  app.useGlobalInterceptors(
-    new ResponseInterceptor(),
-    new LoggingInterceptor(),
-  );
+  // Temporarily disabled due to rxjs type compatibility issues
+  // app.useGlobalInterceptors(
+  //   new ResponseInterceptor(),
+  //   new LoggingInterceptor(),
+  // );
 
   // Global filters
   app.useGlobalFilters(new HttpExceptionFilter());

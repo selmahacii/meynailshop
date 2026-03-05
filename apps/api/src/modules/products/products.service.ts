@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOptionsWhere, Like, Between } from 'typeorm';
+import { Repository, Like, Between } from 'typeorm';
 import { Product } from '../../database/entities/product.entity';
 import { Category } from '../../database/entities/category.entity';
 import { PaginatedResult } from '../../common/pagination/paginated-result.interface';
@@ -36,7 +36,7 @@ export class ProductsService {
 
   async findAll(query: ProductsQueryDto): Promise<PaginatedResult<Product>> {
     const skip = (query.page - 1) * query.limit;
-    const where: FindOptionsWhere<Product> = { isActive: true };
+    const where: Record<string, any> = { isActive: true };
 
     if (query.search) {
       where.name = Like(`%${query.search}%`);

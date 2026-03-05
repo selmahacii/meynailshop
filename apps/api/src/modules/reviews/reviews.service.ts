@@ -5,7 +5,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOptionsWhere, In } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Review } from '../../database/entities/review.entity';
 import { Product } from '../../database/entities/product.entity';
 import { Order } from '../../database/entities/order.entity';
@@ -159,7 +159,7 @@ export class ReviewsService {
     const limit = query.limit || 10;
     const skip = (page - 1) * limit;
 
-    const where: FindOptionsWhere<Review> = {};
+    const where: Record<string, any> = {};
 
     if (query.status) {
       where.status = query.status;
