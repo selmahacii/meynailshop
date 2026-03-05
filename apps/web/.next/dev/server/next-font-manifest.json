@@ -1,6 +1,47 @@
 {
-  "app": {},
-  "appUsingSizeAdjust": false,
+  "app": {
+    "[project]/apps/web/app/(auth)/connexion/page": [
+      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2",
+      "static/media/38df7484fe560b25-s.p.60f15535.woff2"
+    ],
+    "[project]/apps/web/app/(store)/page": [
+      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2",
+      "static/media/38df7484fe560b25-s.p.60f15535.woff2"
+    ],
+    "[project]/apps/web/app/_not-found/page": [
+      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2",
+      "static/media/38df7484fe560b25-s.p.60f15535.woff2"
+    ],
+    "[project]/apps/web/app/admin/avis/page": [
+      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2",
+      "static/media/38df7484fe560b25-s.p.60f15535.woff2"
+    ],
+    "[project]/apps/web/app/admin/clients/page": [
+      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2",
+      "static/media/38df7484fe560b25-s.p.60f15535.woff2"
+    ],
+    "[project]/apps/web/app/admin/commandes/page": [
+      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2",
+      "static/media/38df7484fe560b25-s.p.60f15535.woff2"
+    ],
+    "[project]/apps/web/app/admin/dashboard/page": [
+      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2",
+      "static/media/38df7484fe560b25-s.p.60f15535.woff2"
+    ],
+    "[project]/apps/web/app/admin/historique/page": [
+      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2",
+      "static/media/38df7484fe560b25-s.p.60f15535.woff2"
+    ],
+    "[project]/apps/web/app/admin/produits/page": [
+      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2",
+      "static/media/38df7484fe560b25-s.p.60f15535.woff2"
+    ],
+    "[project]/apps/web/app/admin/stock/page": [
+      "static/media/1b99372b3eaef0c8-s.p.758e15a8.woff2",
+      "static/media/38df7484fe560b25-s.p.60f15535.woff2"
+    ]
+  },
+  "appUsingSizeAdjust": true,
   "pages": {},
   "pagesUsingSizeAdjust": false
 }

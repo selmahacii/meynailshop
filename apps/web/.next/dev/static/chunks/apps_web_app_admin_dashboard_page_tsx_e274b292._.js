@@ -3,8 +3,8 @@
     chunks: [
   "static/chunks/node_modules_lodash_0ce7be08._.js",
   "static/chunks/node_modules_recharts_es6_003ddadf._.js",
-  "static/chunks/node_modules_de87ae76._.js",
-  "static/chunks/apps_web_app_admin_dashboard_page_tsx_d071d7fd._.js"
+  "static/chunks/node_modules_c7529006._.js",
+  "static/chunks/apps_web_34af21ac._.js"
 ],
     source: "dynamic"
 });
