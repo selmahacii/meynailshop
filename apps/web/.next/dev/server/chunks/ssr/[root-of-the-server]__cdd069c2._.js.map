@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 10, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/ZBOOK/Desktop/Meynailshop/apps/web/components/providers/Providers.tsx"],"sourcesContent":["'use client';\r\n\r\nimport { useState } from 'react';\r\nimport { QueryClient, QueryClientProvider } from '@tanstack/react-query';\r\nimport { Toaster } from 'sonner';\r\n\r\nexport default function Providers({ children }: { children: React.ReactNode }) {\r\n    const [queryClient] = useState(\r\n        () =>\r\n            new QueryClient({\r\n                defaultOptions: {\r\n                    queries: {\r\n                        staleTime: 60 * 1000,\r\n                        retry: 1,\r\n                    },\r\n                },\r\n            })\r\n    );\r\n\r\n    return (\r\n        <QueryClientProvider client={queryClient}>\r\n            {children}\r\n            <Toaster position=\"top-right\" closeButton richColors />\r\n        </QueryClientProvider>\r\n    );\r\n}\r\n"],"names":[],"mappings":";;;;;AAEA;AACA;AAAA;AACA;AAJA;;;;;AAMe,SAAS,UAAU,EAAE,QAAQ,EAAiC;IACzE,MAAM,CAAC,YAAY,GAAG,IAAA,iNAAQ,EAC1B,IACI,IAAI,4LAAW,CAAC;YACZ,gBAAgB;gBACZ,SAAS;oBACL,WAAW,KAAK;oBAChB,OAAO;gBACX;YACJ;QACJ;IAGR,qBACI,8OAAC,6MAAmB;QAAC,QAAQ;;YACxB;0BACD,8OAAC,mJAAO;gBAAC,UAAS;gBAAY,WAAW;gBAAC,UAAU;;;;;;;;;;;;AAGhE"}}]
-}
