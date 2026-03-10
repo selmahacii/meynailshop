@@ -1,53 +1,55 @@
 /**
  * API Client v1.0
  * Centralized API management with version support
- * Enhanced with error handling and mock fallbacks
+ * Uses real backend API endpoints only
  */
 
-import * as MOCK from '../mocks/api';
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+// Normalise BASE_URL pour éviter les doublons de /api
+const RAW_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const BASE_URL = RAW_BASE_URL.endsWith('/api')
+  ? RAW_BASE_URL.replace(/\/api\/?$/, '')
+  : RAW_BASE_URL;
 const API_VERSION = 'v1';
 
 export const API_ENDPOINTS = {
-  // Dashboard
+  // Admin (versioned)
   DASHBOARD_METRICS: `/api/${API_VERSION}/admin/dashboard/metrics`,
-  
-  // Products
-  PRODUCTS_LIST: `/api/${API_VERSION}/admin/products`,
+
+  // Admin products
+  PRODUCTS_ADMIN_LIST: `/api/${API_VERSION}/admin/products`,
   PRODUCTS_LOW_STOCK: `/api/${API_VERSION}/admin/products/low-stock`,
-  PRODUCT_DETAIL: (id: string) => `/api/${API_VERSION}/admin/products/${id}`,
-  PRODUCT_CREATE: `/api/${API_VERSION}/admin/products`,
-  PRODUCT_UPDATE: (id: string) => `/api/${API_VERSION}/admin/products/${id}`,
-  PRODUCT_DELETE: (id: string) => `/api/${API_VERSION}/admin/products/${id}`,
-  
-  // Orders
-  ORDERS_LIST: `/api/${API_VERSION}/admin/orders`,
+  PRODUCT_ADMIN_DETAIL: (id: string) => `/api/${API_VERSION}/admin/products/${id}`,
+  PRODUCT_ADMIN_CREATE: `/api/${API_VERSION}/admin/products`,
+  PRODUCT_ADMIN_UPDATE: (id: string) => `/api/${API_VERSION}/admin/products/${id}`,
+  PRODUCT_ADMIN_DELETE: (id: string) => `/api/${API_VERSION}/admin/products/${id}`,
+
+  // Admin orders
+  ORDERS_ADMIN_LIST: `/api/${API_VERSION}/admin/orders`,
   ORDERS_STATS: `/api/${API_VERSION}/admin/orders/stats`,
-  ORDER_DETAIL: (id: string) => `/api/${API_VERSION}/admin/orders/${id}`,
-  ORDER_UPDATE_STATUS: (id: string) => `/api/${API_VERSION}/admin/orders/${id}/status`,
+  ORDER_ADMIN_DETAIL: (id: string) => `/api/${API_VERSION}/admin/orders/${id}`,
+  ORDER_ADMIN_UPDATE_STATUS: (id: string) => `/api/${API_VERSION}/admin/orders/${id}/status`,
+
+  // Public store endpoints (no version prefix)
+  STORE_PRODUCTS_LIST: `/api/products`,
+  STORE_PRODUCT_DETAIL: (slug: string) => `/api/products/${slug}`,
+  STORE_FEATURED: `/api/products/featured`,
+  STORE_CATEGORIES: `/api/categories`,
+
+  // Cart / checkout (public)
+  CART: `/api/cart`,
+  CART_ADD_ITEM: `/api/cart/items`,
+
+  // Auth (public)
+  AUTH_LOGIN: `/api/auth/login`,
+  AUTH_REGISTER: `/api/auth/register`,
+  AUTH_ME: `/api/auth/me`,
 };
 
 interface RequestOptions extends RequestInit {
   timeout?: number;
 }
 
-// Get mock data fallback
-function getMockData(endpoint: string): any {
-  if (endpoint.includes('/dashboard/metrics')) return MOCK.mockDashboardMetrics;
-  if (endpoint.includes('/orders/stats')) return MOCK.mockOrdersStats;
-  if (endpoint.includes('/products/low-stock')) return MOCK.mockProductsLowStock;
-  if (endpoint.includes('/products')) return MOCK.mockProducts;
-  if (endpoint.includes('/orders')) return MOCK.mockOrders;
-  if (endpoint.includes('/reviews')) return MOCK.mockReviews;
-  if (endpoint.includes('/clients')) return MOCK.mockClients;
-  if (endpoint.includes('/stock')) return MOCK.mockStock;
-  return { success: false, data: null };
-}
 
-/**
- * Enhanced fetch wrapper with error handling and mock fallbacks
- */
 export async function apiFetch<T = any>(
   endpoint: string,
   options: RequestOptions = {},
@@ -56,9 +58,11 @@ export async function apiFetch<T = any>(
 
   const url = `${BASE_URL}${endpoint}`;
 
-  const headers = {
+  console.log(`🔄 API Request: ${fetchOptions.method || 'GET'} ${url}`);
+
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...fetchOptions.headers,
+    ...fetchOptions.headers as Record<string, string>,
   };
 
   const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
@@ -68,7 +72,10 @@ export async function apiFetch<T = any>(
 
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    const timeoutId = setTimeout(() => {
+      console.warn(`⏰ API Request timeout: ${url}`);
+      controller.abort();
+    }, timeout);
 
     const response = await fetch(url, {
       ...fetchOptions,
@@ -78,19 +85,33 @@ export async function apiFetch<T = any>(
 
     clearTimeout(timeoutId);
 
+    console.log(`📡 API Response: ${response.status} ${response.statusText} for ${url}`);
+
     if (!response.ok) {
-      // Use mock data as fallback
-      const mockData = getMockData(endpoint);
-      return { data: mockData.data, success: true };
+      const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+      console.error(`❌ API Error: ${response.status} ${response.statusText}`, {
+        url,
+        status: response.status,
+        error: errorData
+      });
+      return {
+        data: null as T,
+        success: false,
+        error: errorData.message || `HTTP ${response.status}: ${response.statusText}`
+      };
     }
 
     const data = await response.json();
+    console.log(`✅ API Success: ${url}`, { dataKeys: Object.keys(data) });
+
     return { data: data.data || data, success: true };
   } catch (error) {
-    // Fallback to mock data on error
-    const mockData = getMockData(endpoint);
-    console.warn(`API call failed for ${endpoint}, using mock data`);
-    return { data: mockData.data, success: true };
+    console.error(`💥 API Network Error: ${url}`, error);
+    return {
+      data: null as T,
+      success: false,
+      error: error instanceof Error ? error.message : 'Network error'
+    };
   }
 }
 
@@ -127,7 +148,7 @@ export class DashboardAPI {
 
 export class ProductsAPI {
   static async getAll(page = 1, limit = 10) {
-    return apiGet(API_ENDPOINTS.PRODUCTS_LIST + `?page=${page}&limit=${limit}`);
+    return apiGet(API_ENDPOINTS.PRODUCTS_ADMIN_LIST + `?page=${page}&limit=${limit}`);
   }
 
   static async getLowStock(threshold = 10) {
@@ -135,19 +156,19 @@ export class ProductsAPI {
   }
 
   static async getById(id: string) {
-    return apiGet(API_ENDPOINTS.PRODUCT_DETAIL(id));
+    return apiGet(API_ENDPOINTS.PRODUCT_ADMIN_DETAIL(id));
   }
 
   static async create(data: any) {
-    return apiPost(API_ENDPOINTS.PRODUCT_CREATE, data);
+    return apiPost(API_ENDPOINTS.PRODUCT_ADMIN_CREATE, data);
   }
 
   static async update(id: string, data: any) {
-    return apiPatch(API_ENDPOINTS.PRODUCT_UPDATE(id), data);
+    return apiPatch(API_ENDPOINTS.PRODUCT_ADMIN_UPDATE(id), data);
   }
 
   static async delete(id: string) {
-    return apiDelete(API_ENDPOINTS.PRODUCT_DELETE(id));
+    return apiDelete(API_ENDPOINTS.PRODUCT_ADMIN_DELETE(id));
   }
 }
 
@@ -157,7 +178,7 @@ export class OrdersAPI {
     query.append('page', String(page));
     query.append('limit', String(limit));
     if (status) query.append('status', status);
-    return apiGet(API_ENDPOINTS.ORDERS_LIST + `?${query.toString()}`);
+    return apiGet(API_ENDPOINTS.ORDERS_ADMIN_LIST + `?${query.toString()}`);
   }
 
   static async getStats() {
@@ -165,11 +186,57 @@ export class OrdersAPI {
   }
 
   static async getById(id: string) {
-    return apiGet(API_ENDPOINTS.ORDER_DETAIL(id));
+    return apiGet(API_ENDPOINTS.ORDER_ADMIN_DETAIL(id));
   }
 
   static async updateStatus(id: string, status: string) {
-    return apiPatch(API_ENDPOINTS.ORDER_UPDATE_STATUS(id), { status });
+    return apiPatch(API_ENDPOINTS.ORDER_ADMIN_UPDATE_STATUS(id), { status });
+  }
+}
+
+// Public store APIs
+export class StoreAPI {
+  static async getProducts(page = 1, limit = 12, params: Record<string, any> = {}) {
+    const query = new URLSearchParams({ page: String(page), limit: String(limit), ...params });
+    return apiGet(API_ENDPOINTS.STORE_PRODUCTS_LIST + `?${query.toString()}`);
+  }
+
+  static async getProductBySlug(slug: string) {
+    return apiGet(API_ENDPOINTS.STORE_PRODUCT_DETAIL(slug));
+  }
+
+  static async getCategories() {
+    return apiGet(API_ENDPOINTS.STORE_CATEGORIES);
+  }
+
+  static async getFeatured() {
+    return apiGet(API_ENDPOINTS.STORE_FEATURED);
+  }
+
+  static async getCart() {
+    return apiGet(API_ENDPOINTS.CART);
+  }
+
+  static async addCartItem(item: any) {
+    return apiPost(API_ENDPOINTS.CART_ADD_ITEM, item);
+  }
+  
+  static async getMyOrders(page = 1, limit = 10) {
+    return apiGet(`/api/orders/my?page=${page}&limit=${limit}`);
+  }
+}
+
+export class AuthAPI {
+  static async login(email: string, password: string) {
+    return apiPost(API_ENDPOINTS.AUTH_LOGIN, { email, password });
+  }
+
+  static async register(data: any) {
+    return apiPost(API_ENDPOINTS.AUTH_REGISTER, data);
+  }
+
+  static async me() {
+    return apiGet(API_ENDPOINTS.AUTH_ME);
   }
 }
 
@@ -184,12 +251,15 @@ export class ReviewsAPI {
 }
 
 export class ClientsAPI {
-  static async getAll(page = 1) {
-    return apiGet(`/api/${API_VERSION}/admin/clients?page=${page}`);
+  static async getAll(page = 1, limit = 10) {
+    const query = new URLSearchParams();
+    query.append('page', String(page));
+    query.append('limit', String(limit));
+    return apiGet(`/users?${query.toString()}`);
   }
 
   static async getById(id: string) {
-    return apiGet(`/api/${API_VERSION}/admin/clients/${id}`);
+    return apiGet(`/users/${id}`);
   }
 }
 

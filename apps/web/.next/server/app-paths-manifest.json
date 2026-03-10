@@ -23,5 +23,9 @@
   "/admin/produits/page": "app/admin/produits/page.js",
   "/admin/stock/page": "app/admin/stock/page.js",
   "/api/auth/login/route": "app/api/auth/login/route.js",
-  "/api/auth/logout/route": "app/api/auth/logout/route.js"
+  "/api/auth/logout/route": "app/api/auth/logout/route.js",
+  "/cgv/page": "app/cgv/page.js",
+  "/contact/page": "app/contact/page.js",
+  "/mot-de-passe-oublie/page": "app/mot-de-passe-oublie/page.js",
+  "/nouveautes/page": "app/nouveautes/page.js"
 }

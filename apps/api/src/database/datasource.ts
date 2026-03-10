@@ -32,6 +32,6 @@ export const AppDataSource = new DataSource({
     SiteSettings,
   ],
   migrations: ['src/database/migrations/*.ts'],
-  synchronize: false,
+  synchronize: false, // Temporarily disabled for seeding
   logging: true,
 });

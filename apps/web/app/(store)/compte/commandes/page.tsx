@@ -3,31 +3,30 @@
 import { Package, MapPin, Search, ChevronRight } from 'lucide-react';
 import { formatPrice } from '@/lib/utils/currency';
 import Link from 'next/link';
-
-// Mock Client Orders
-const mockOrders = [
-    {
-        id: 'ORD-2026-001',
-        date: '02 Mars 2026',
-        status: 'en cours',
-        total: 4500,
-        items: [
-            { name: 'Vernis Gel "Royal Red"', qty: 2 },
-            { name: 'Top Coat Mirror Shine', qty: 1 }
-        ]
-    },
-    {
-        id: 'ORD-2025-089',
-        date: '15 Décembre 2025',
-        status: 'Livrée',
-        total: 3200,
-        items: [
-            { name: 'Gel UV de Construction', qty: 1 }
-        ]
-    },
-];
+import { useEffect, useState } from 'react';
+import { ordersApi } from '@/lib/api/orders';
 
 export default function ClientOrdersPage() {
+    const [orders, setOrders] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        let mounted = true;
+        async function load() {
+            setLoading(true);
+            try {
+                const res = await ordersApi.getMyOrders({ page: 1, limit: 20 });
+                if (mounted) setOrders(res.data?.data?.items || []);
+            } catch (err) {
+                console.error('Load orders error:', err);
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        }
+        load();
+        return () => { mounted = false; };
+    }, []);
+
     return (
         <div className="bg-white p-8 border border-creme2 shadow-sm min-h-[500px]">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 pb-4 border-b border-creme2 gap-4">
@@ -43,7 +42,7 @@ export default function ClientOrdersPage() {
             </div>
 
             <div className="space-y-6">
-                {mockOrders.length === 0 ? (
+                {(!loading && orders.length === 0) ? (
                     <div className="text-center py-12 text-encre3">
                         <Package className="mx-auto mb-4 text-encre3/30" size={48} />
                         <p>Vous n'avez pas encore passé de commande.</p>
@@ -52,7 +51,7 @@ export default function ClientOrdersPage() {
                         </Link>
                     </div>
                 ) : (
-                    mockOrders.map((order) => (
+                    orders.map((order) => (
                         <div key={order.id} className="border border-creme2 rounded-sm overflow-hidden hover:shadow-md transition-shadow group">
                             <div className="bg-creme p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                                 <div>
@@ -79,10 +78,10 @@ export default function ClientOrdersPage() {
                                     </div>
 
                                     <div className="flex flex-col gap-2">
-                                        {order.items.map((item, idx) => (
+                                        {(order.items || []).map((item: any, idx: number) => (
                                             <div key={idx} className="flex items-center text-sm">
-                                                <span className="w-6 h-6 bg-creme2 flex justify-center items-center text-xs font-bold mr-3">{item.qty}x</span>
-                                                <span className="text-encre3">{item.name}</span>
+                                                <span className="w-6 h-6 bg-creme2 flex justify-center items-center text-xs font-bold mr-3">{item.qty || item.quantity}x</span>
+                                                <span className="text-encre3">{item.name || item.productName}</span>
                                             </div>
                                         ))}
                                     </div>

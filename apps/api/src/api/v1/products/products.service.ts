@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Product } from '@/database/entities/product.entity';
+import { Repository, LessThanOrEqual } from 'typeorm';
+import { Product } from '../../../database/entities/product.entity';
 
 @Injectable()
 export class ProductsService {
@@ -53,7 +53,7 @@ export class ProductsService {
 
   async getLowStockProducts(threshold: number = 10) {
     return await this.productRepository.find({
-      where: { stock: threshold },
+      where: { stock: LessThanOrEqual(threshold) },
     });
   }
 }

@@ -6,96 +6,11 @@ import ProductCard from '@/components/store/products/ProductCard';
 import ProductFilters from '@/components/store/products/ProductFilters';
 import ProductSort from '@/components/store/products/ProductSort';
 import { Product } from '@/types/product';
+import { StoreAPI } from '@/lib/api/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2 } from 'lucide-react';
 
-// Fallback mock data in case API is unavailable
-const MOCK_PRODUCTS: Product[] = [
-    {
-        id: '1',
-        name: 'Vernis Gel "Royal Red"',
-        slug: 'vernis-gel-royal-red',
-        description: 'Un rouge profond et élégant pour des ongles majestueux.',
-        shortDescription: 'Rouge royal intense, 15ml.',
-        sku: 'VG-RR-001',
-        price: 1800,
-        comparePrice: 2200,
-        stock: 25,
-        images: [],
-        categoryId: 'cat1',
-        category: { id: 'cat1', name: 'Vernis Gel', slug: 'vernis-gel', description: '', imageUrl: '', displayOrder: 1, isActive: true },
-        badge: 'top',
-        isActive: true,
-        isFeatured: true,
-        weight: 100,
-        tags: ['rouge', 'premium'],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        averageRating: 4.8
-    },
-    {
-        id: '2',
-        name: 'Gel UV de Construction - Rose Pastel',
-        slug: 'gel-uv-pastel-pink',
-        description: 'Gel auto-égalisant haute performance.',
-        shortDescription: 'Pastel doux, 30g.',
-        sku: 'GUV-PP-002',
-        price: 3500,
-        stock: 12,
-        images: [],
-        categoryId: 'cat2',
-        category: { id: 'cat2', name: 'Gel UV', slug: 'gel-uv', description: '', imageUrl: '', displayOrder: 2, isActive: true },
-        badge: 'new',
-        isActive: true,
-        isFeatured: false,
-        weight: 150,
-        tags: ['gel', 'construction'],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        averageRating: 4.9
-    },
-    {
-        id: '3',
-        name: 'Finition "Mirror Shine" Ultra-Brillante',
-        slug: 'top-coat-mirror-shine',
-        description: 'Une brillance miroir qui dure 4 semaines.',
-        shortDescription: 'High gloss top coat, 15ml.',
-        sku: 'TC-MS-003',
-        price: 1500,
-        comparePrice: 1800,
-        stock: 50,
-        images: [],
-        categoryId: 'cat3',
-        category: { id: 'cat3', name: 'Finition', slug: 'finition', description: '', imageUrl: '', displayOrder: 3, isActive: true },
-        badge: 'promo',
-        isActive: true,
-        isFeatured: true,
-        weight: 100,
-        tags: ['topcoat', 'brillance'],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        averageRating: 5.0
-    },
-    {
-        id: '4',
-        name: 'Lampe UV/LED Professionnelle 48W',
-        slug: 'lampe-led-48w',
-        description: 'Séchage ultra-rapide pour tous les types de gels.',
-        shortDescription: 'Pro LED lamp, sensor system.',
-        sku: 'MAT-LP-004',
-        price: 8500,
-        stock: 8,
-        images: [],
-        categoryId: 'cat4',
-        category: { id: 'cat4', name: 'Matériel', slug: 'materiel', description: '', imageUrl: '', displayOrder: 4, isActive: true },
-        isActive: true,
-        isFeatured: false,
-        weight: 800,
-        tags: ['lampe', 'professionnel'],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-    }
-];
+// Products will be fetched from backend
 
 export default function CataloguePage() {
     const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
@@ -105,15 +20,18 @@ export default function CataloguePage() {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const { productsApi } = await import('@/lib/api/products');
-                const response = await productsApi.getAll({ limit: 50 });
-                const data = response?.data;
-                // Handle both paginated { items: [...] } and plain array responses
-                const items = Array.isArray(data) ? data : (data?.items ?? []);
-                setProducts(items.length > 0 ? items : MOCK_PRODUCTS);
-            } catch {
-                // API not available — use mock data
-                setProducts(MOCK_PRODUCTS);
+                const res = await StoreAPI.getProducts(1, 50);
+                if (res.success) {
+                    // res.data may be paginated
+                    const paginated = res.data?.data || res.data;
+                    const items = paginated?.items || paginated || [];
+                    setProducts(items);
+                } else {
+                    setProducts([]);
+                }
+            } catch (err) {
+                console.error('Catalogue fetch error:', err);
+                setProducts([]);
             } finally {
                 setLoading(false);
             }

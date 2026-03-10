@@ -5,12 +5,22 @@
 __turbopack_context__.s([
     "API_ENDPOINTS",
     ()=>API_ENDPOINTS,
+    "AuthAPI",
+    ()=>AuthAPI,
+    "ClientsAPI",
+    ()=>ClientsAPI,
     "DashboardAPI",
     ()=>DashboardAPI,
     "OrdersAPI",
     ()=>OrdersAPI,
     "ProductsAPI",
     ()=>ProductsAPI,
+    "ReviewsAPI",
+    ()=>ReviewsAPI,
+    "StockAPI",
+    ()=>StockAPI,
+    "StoreAPI",
+    ()=>StoreAPI,
     "apiDelete",
     ()=>apiDelete,
     "apiFetch",
@@ -28,28 +38,41 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 /**
  * API Client v1.0
  * Centralized API management with version support
- * Enhanced with error handling, retry logic, and organized endpoints
- */ const BASE_URL = ("TURBOPACK compile-time value", "http://localhost:3001/api") || 'http://localhost:3000';
+ * Uses real backend API endpoints only
+ */ const BASE_URL = ("TURBOPACK compile-time value", "http://localhost:3001/api") || 'http://localhost:3001';
 const API_VERSION = 'v1';
 const API_ENDPOINTS = {
-    // Dashboard
+    // Admin (versioned)
     DASHBOARD_METRICS: `/api/${API_VERSION}/admin/dashboard/metrics`,
-    // Products
-    PRODUCTS_LIST: `/api/${API_VERSION}/admin/products`,
+    // Admin products
+    PRODUCTS_ADMIN_LIST: `/api/${API_VERSION}/admin/products`,
     PRODUCTS_LOW_STOCK: `/api/${API_VERSION}/admin/products/low-stock`,
-    PRODUCT_DETAIL: (id)=>`/api/${API_VERSION}/admin/products/${id}`,
-    PRODUCT_CREATE: `/api/${API_VERSION}/admin/products`,
-    PRODUCT_UPDATE: (id)=>`/api/${API_VERSION}/admin/products/${id}`,
-    PRODUCT_DELETE: (id)=>`/api/${API_VERSION}/admin/products/${id}`,
-    // Orders
-    ORDERS_LIST: `/api/${API_VERSION}/admin/orders`,
+    PRODUCT_ADMIN_DETAIL: (id)=>`/api/${API_VERSION}/admin/products/${id}`,
+    PRODUCT_ADMIN_CREATE: `/api/${API_VERSION}/admin/products`,
+    PRODUCT_ADMIN_UPDATE: (id)=>`/api/${API_VERSION}/admin/products/${id}`,
+    PRODUCT_ADMIN_DELETE: (id)=>`/api/${API_VERSION}/admin/products/${id}`,
+    // Admin orders
+    ORDERS_ADMIN_LIST: `/api/${API_VERSION}/admin/orders`,
     ORDERS_STATS: `/api/${API_VERSION}/admin/orders/stats`,
-    ORDER_DETAIL: (id)=>`/api/${API_VERSION}/admin/orders/${id}`,
-    ORDER_UPDATE_STATUS: (id)=>`/api/${API_VERSION}/admin/orders/${id}/status`
+    ORDER_ADMIN_DETAIL: (id)=>`/api/${API_VERSION}/admin/orders/${id}`,
+    ORDER_ADMIN_UPDATE_STATUS: (id)=>`/api/${API_VERSION}/admin/orders/${id}/status`,
+    // Public store endpoints (no version prefix)
+    STORE_PRODUCTS_LIST: `/api/products`,
+    STORE_PRODUCT_DETAIL: (slug)=>`/api/products/${slug}`,
+    STORE_FEATURED: `/api/products/featured`,
+    STORE_CATEGORIES: `/api/categories`,
+    // Cart / checkout (public)
+    CART: `/api/cart`,
+    CART_ADD_ITEM: `/api/cart/items`,
+    // Auth (public)
+    AUTH_LOGIN: `/api/auth/login`,
+    AUTH_REGISTER: `/api/auth/register`,
+    AUTH_ME: `/api/auth/me`
 };
 async function apiFetch(endpoint, options = {}) {
     const { timeout = 10000, ...fetchOptions } = options;
     const url = `${BASE_URL}${endpoint}`;
+    console.log(`🔄 API Request: ${fetchOptions.method || 'GET'} ${url}`);
     const headers = {
         'Content-Type': 'application/json',
         ...fetchOptions.headers
@@ -60,28 +83,46 @@ async function apiFetch(endpoint, options = {}) {
     }
     try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(()=>controller.abort(), timeout);
+        const timeoutId = setTimeout(()=>{
+            console.warn(`⏰ API Request timeout: ${url}`);
+            controller.abort();
+        }, timeout);
         const response = await fetch(url, {
             ...fetchOptions,
             headers,
             signal: controller.signal
         });
         clearTimeout(timeoutId);
+        console.log(`📡 API Response: ${response.status} ${response.statusText} for ${url}`);
         if (!response.ok) {
-            throw new Error(`API Error: ${response.statusText}`);
+            const errorData = await response.json().catch(()=>({
+                    message: 'Unknown error'
+                }));
+            console.error(`❌ API Error: ${response.status} ${response.statusText}`, {
+                url,
+                status: response.status,
+                error: errorData
+            });
+            return {
+                data: null,
+                success: false,
+                error: errorData.message || `HTTP ${response.status}: ${response.statusText}`
+            };
         }
         const data = await response.json();
+        console.log(`✅ API Success: ${url}`, {
+            dataKeys: Object.keys(data)
+        });
         return {
             data: data.data || data,
             success: true
         };
     } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        console.error(`API Error at ${endpoint}:`, errorMessage);
+        console.error(`💥 API Network Error: ${url}`, error);
         return {
             data: null,
             success: false,
-            error: errorMessage
+            error: error instanceof Error ? error.message : 'Network error'
         };
     }
 }
@@ -118,13 +159,13 @@ class DashboardAPI {
 }
 class ProductsAPI {
     static async getAll(page = 1, limit = 10) {
-        return apiGet(API_ENDPOINTS.PRODUCTS_LIST + `?page=${page}&limit=${limit}`);
+        return apiGet(API_ENDPOINTS.PRODUCTS_ADMIN_LIST + `?page=${page}&limit=${limit}`);
     }
     static async getLowStock(threshold = 10) {
         return apiGet(API_ENDPOINTS.PRODUCTS_LOW_STOCK + `?threshold=${threshold}`);
     }
     static async getById(id) {
-        return apiGet(API_ENDPOINTS.PRODUCT_DETAIL(id));
+        return apiGet(API_ENDPOINTS.PRODUCT_ADMIN_DETAIL(id));
     }
     static async create(data) {
         return apiPost(API_ENDPOINTS.PRODUCT_CREATE, data);
@@ -133,7 +174,7 @@ class ProductsAPI {
         return apiPatch(API_ENDPOINTS.PRODUCT_UPDATE(id), data);
     }
     static async delete(id) {
-        return apiDelete(API_ENDPOINTS.PRODUCT_DELETE(id));
+        return apiDelete(API_ENDPOINTS.PRODUCT_ADMIN_DELETE(id));
     }
 }
 class OrdersAPI {
@@ -142,17 +183,92 @@ class OrdersAPI {
         query.append('page', String(page));
         query.append('limit', String(limit));
         if (status) query.append('status', status);
-        return apiGet(API_ENDPOINTS.ORDERS_LIST + `?${query.toString()}`);
+        return apiGet(API_ENDPOINTS.ORDERS_ADMIN_LIST + `?${query.toString()}`);
     }
     static async getStats() {
         return apiGet(API_ENDPOINTS.ORDERS_STATS);
     }
     static async getById(id) {
-        return apiGet(API_ENDPOINTS.ORDER_DETAIL(id));
+        return apiGet(API_ENDPOINTS.ORDER_ADMIN_DETAIL(id));
     }
     static async updateStatus(id, status) {
-        return apiPatch(API_ENDPOINTS.ORDER_UPDATE_STATUS(id), {
+        return apiPatch(API_ENDPOINTS.ORDER_ADMIN_UPDATE_STATUS(id), {
             status
+        });
+    }
+}
+class StoreAPI {
+    static async getProducts(page = 1, limit = 12, params = {}) {
+        const query = new URLSearchParams({
+            page: String(page),
+            limit: String(limit),
+            ...params
+        });
+        return apiGet(API_ENDPOINTS.STORE_PRODUCTS_LIST + `?${query.toString()}`);
+    }
+    static async getProductBySlug(slug) {
+        return apiGet(API_ENDPOINTS.STORE_PRODUCT_DETAIL(slug));
+    }
+    static async getCategories() {
+        return apiGet(API_ENDPOINTS.STORE_CATEGORIES);
+    }
+    static async getFeatured() {
+        return apiGet(API_ENDPOINTS.STORE_FEATURED);
+    }
+    static async getCart() {
+        return apiGet(API_ENDPOINTS.CART);
+    }
+    static async addCartItem(item) {
+        return apiPost(API_ENDPOINTS.CART_ADD_ITEM, item);
+    }
+    static async getMyOrders(page = 1, limit = 10) {
+        return apiGet(`/api/orders/my?page=${page}&limit=${limit}`);
+    }
+}
+class AuthAPI {
+    static async login(email, password) {
+        return apiPost(API_ENDPOINTS.AUTH_LOGIN, {
+            email,
+            password
+        });
+    }
+    static async register(data) {
+        return apiPost(API_ENDPOINTS.AUTH_REGISTER, data);
+    }
+    static async me() {
+        return apiGet(API_ENDPOINTS.AUTH_ME);
+    }
+}
+class ReviewsAPI {
+    static async getAll(page = 1) {
+        return apiGet(`/api/${API_VERSION}/admin/reviews?page=${page}`);
+    }
+    static async moderate(id, status) {
+        return apiPatch(`/api/${API_VERSION}/admin/reviews/${id}`, {
+            status
+        });
+    }
+}
+class ClientsAPI {
+    static async getAll(page = 1, limit = 10) {
+        const query = new URLSearchParams();
+        query.append('page', String(page));
+        query.append('limit', String(limit));
+        return apiGet(`/users?${query.toString()}`);
+    }
+    static async getById(id) {
+        return apiGet(`/users/${id}`);
+    }
+}
+class StockAPI {
+    static async getAll(page = 1) {
+        return apiGet(`/api/${API_VERSION}/admin/stock?page=${page}`);
+    }
+    static async recordMovement(productId, quantity, type) {
+        return apiPost(`/api/${API_VERSION}/admin/stock/movement`, {
+            productId,
+            quantity,
+            type
         });
     }
 }
@@ -165,7 +281,10 @@ const __TURBOPACK__default__export__ = {
     apiDelete,
     DashboardAPI,
     ProductsAPI,
-    OrdersAPI
+    OrdersAPI,
+    ReviewsAPI,
+    ClientsAPI,
+    StockAPI
 };
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
@@ -181,12 +300,13 @@ __turbopack_context__.s([
 var __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$web$2f$lib$2f$api$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/apps/web/lib/api/client.ts [app-client] (ecmascript)");
 ;
 const productsApi = {
-    getAll: (params)=>__TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$web$2f$lib$2f$api$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get('/products', {
-            params
-        }),
-    getBySlug: (slug)=>__TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$web$2f$lib$2f$api$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get(`/products/${slug}`),
-    getFeatured: ()=>__TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$web$2f$lib$2f$api$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get('/products/featured'),
-    getCategories: ()=>__TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$web$2f$lib$2f$api$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get('/categories')
+    getAll: (params)=>{
+        const query = params ? `?${new URLSearchParams(params).toString()}` : '';
+        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$web$2f$lib$2f$api$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiGet"])(`/products${query}`);
+    },
+    getBySlug: (slug)=>(0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$web$2f$lib$2f$api$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiGet"])(`/products/${slug}`),
+    getFeatured: ()=>(0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$web$2f$lib$2f$api$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiGet"])('/products/featured'),
+    getCategories: ()=>(0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$web$2f$lib$2f$api$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiGet"])('/categories')
 };
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);

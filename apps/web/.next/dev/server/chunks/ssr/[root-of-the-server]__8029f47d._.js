@@ -114,7 +114,7 @@ const metadata = {
     description: 'Découvrez notre collection premium de vernis, gels UV et produits pour magnifier vos ongles',
     keywords: 'vernis, gel UV, produits ongles, décoration, boutique en ligne, Algérie',
     openGraph: {
-        title: 'MEEY - Boutique de vernis et produits pour ongles',
+        title: 'MEEY',
         description: 'Collection premium de vernis et produits pour ongles',
         type: 'website',
         locale: 'fr_FR'
@@ -144,7 +144,8 @@ function RootLayout({ children }) {
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("link", {
                         rel: "icon",
-                        href: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='50' font-size='90' fill='%236B0F1A'>M</text></svg>"
+                        type: "image/x-icon",
+                        href: "apps/Assets/logo.png"
                     }, void 0, false, {
                         fileName: "[project]/apps/web/app/layout.tsx",
                         lineNumber: 40,

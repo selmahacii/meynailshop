@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from "next/image";
 import { usePathname } from 'next/navigation';
 import {
     LayoutDashboard,
@@ -48,7 +49,7 @@ export default function AdminSidebar() {
                 setBadges({
                     orders: ordersData?.data?.pending || 0,
                     stock: productsData?.data?.length || 0,
-                    reviews: Math.floor(Math.random() * 15),
+                    reviews: ordersData?.data?.pendingReviews || 0,
                 });
             } catch (error) {
                 console.error('Error fetching badges:', error);
@@ -64,11 +65,16 @@ export default function AdminSidebar() {
         <aside className="w-64 bg-gradient-to-b from-[#1A0A0A] to-[#0F0505] border-r border-[#2A1A1A] h-screen fixed left-0 top-0 z-50 flex flex-col shadow-2xl">
             {/* Header */}
             <div className="p-6 border-b border-[#2A1A1A] flex items-center space-x-3 group hover:border-or/20 transition-all duration-300">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-rouge-deep via-rouge-mid to-or flex items-center justify-center text-creme font-serif text-xl border border-or/30 shadow-xl group-hover:shadow-or/20 group-hover:border-or/60 transition-all duration-300">
-                    <Zap size={24} strokeWidth={1.5} />
-                </div>
+                <div >
+ <Image
+  src="/logo.png"
+  alt="Logo"
+  width={50}
+  height={50}
+/>
+</div>
                 <div className="flex flex-col">
-                    <span className="font-serif text-lg text-creme leading-none tracking-wide group-hover:text-or transition-colors duration-300">MEEY</span>
+                    <span className="font-serif text-lg text-creme leading-none tracking-wide group-hover:text-or transition-colors duration-300">MEEaY</span>
                     <span className="text-[9px] uppercase tracking-[0.3em] text-or/60 font-bold mt-1.5 group-hover:text-or transition-colors duration-300">Dashboard</span>
                 </div>
             </div>
@@ -213,12 +219,7 @@ export default function AdminSidebar() {
             </nav>
 
             {/* Footer Info */}
-            <div className="p-4 border-t border-[#2A1A1A] bg-gradient-to-t from-[#0F0505]/50 to-transparent">
-                <div className="text-[10px] text-creme/40 text-center">
-                    <p className="font-semibold text-creme/60">v1.0.0</p>
-                    <p className="text-creme/30 mt-1">API Dashboard</p>
-                </div>
-            </div>
+            
         </aside>
     );
 }

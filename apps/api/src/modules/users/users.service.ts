@@ -41,12 +41,23 @@ export class UsersService {
     return this.formatUser(user);
   }
 
-  async findAll(paginationDto: PaginationDto): Promise<PaginatedResult<any>> {
+  async findAll(paginationDto: PaginationDto & { isActive?: boolean; role?: string }): Promise<PaginatedResult<any>> {
     const skip = (paginationDto.page - 1) * paginationDto.limit;
+
+    const where: any = {};
+    if (typeof paginationDto.isActive === 'boolean') {
+      where.isActive = paginationDto.isActive;
+    }
+    if (paginationDto.role) {
+      where.role = paginationDto.role;
+    }
+
     const [users, total] = await this.userRepository.findAndCount({
+      where,
       skip,
       take: paginationDto.limit,
       relations: ['addresses'],
+      order: { createdAt: 'DESC' },
     });
 
     return {

@@ -134,6 +134,7 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/client/app-dir/link.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/image.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$layout$2d$dashboard$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__LayoutDashboard$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/layout-dashboard.js [app-client] (ecmascript) <export default as LayoutDashboard>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$package$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Package$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/package.js [app-client] (ecmascript) <export default as Package>");
@@ -145,13 +146,13 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$box$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Box$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/box.js [app-client] (ecmascript) <export default as Box>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$layers$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Layers$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/layers.js [app-client] (ecmascript) <export default as Layers>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronRight$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/chevron-right.js [app-client] (ecmascript) <export default as ChevronRight>");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$zap$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Zap$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/zap.js [app-client] (ecmascript) <export default as Zap>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$web$2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/apps/web/lib/utils.ts [app-client] (ecmascript) <locals>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$web$2f$lib$2f$utils$2f$cn$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/apps/web/lib/utils/cn.ts [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
 'use client';
+;
 ;
 ;
 ;
@@ -230,7 +231,7 @@ function AdminSidebar() {
                         setBadges({
                             orders: ordersData?.data?.pending || 0,
                             stock: productsData?.data?.length || 0,
-                            reviews: Math.floor(Math.random() * 15)
+                            reviews: ordersData?.data?.pendingReviews || 0
                         });
                     } catch (error) {
                         console.error('Error fetching badges:', error);
@@ -249,18 +250,19 @@ function AdminSidebar() {
                 className: "p-6 border-b border-[#2A1A1A] flex items-center space-x-3 group hover:border-or/20 transition-all duration-300",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "w-12 h-12 rounded-2xl bg-gradient-to-tr from-rouge-deep via-rouge-mid to-or flex items-center justify-center text-creme font-serif text-xl border border-or/30 shadow-xl group-hover:shadow-or/20 group-hover:border-or/60 transition-all duration-300",
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$zap$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Zap$3e$__["Zap"], {
-                            size: 24,
-                            strokeWidth: 1.5
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                            src: "/logo.png",
+                            alt: "Logo",
+                            width: 50,
+                            height: 50
                         }, void 0, false, {
                             fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                            lineNumber: 68,
-                            columnNumber: 21
+                            lineNumber: 69,
+                            columnNumber: 2
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                        lineNumber: 67,
+                        lineNumber: 68,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -268,10 +270,10 @@ function AdminSidebar() {
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 className: "font-serif text-lg text-creme leading-none tracking-wide group-hover:text-or transition-colors duration-300",
-                                children: "MEEY"
+                                children: "MEEaY"
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                lineNumber: 71,
+                                lineNumber: 77,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -279,19 +281,19 @@ function AdminSidebar() {
                                 children: "Dashboard"
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                lineNumber: 72,
+                                lineNumber: 78,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                        lineNumber: 70,
+                        lineNumber: 76,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                lineNumber: 66,
+                lineNumber: 67,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
@@ -305,7 +307,7 @@ function AdminSidebar() {
                                 children: "Principal"
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                lineNumber: 79,
+                                lineNumber: 85,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -322,7 +324,7 @@ function AdminSidebar() {
                                                     className: "absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-or to-or/50 rounded-r-full shadow-lg shadow-or/50"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                                    lineNumber: 98,
+                                                    lineNumber: 104,
                                                     columnNumber: 45
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -334,7 +336,7 @@ function AdminSidebar() {
                                                             strokeWidth: isActive ? 2 : 1.5
                                                         }, void 0, false, {
                                                             fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                                            lineNumber: 101,
+                                                            lineNumber: 107,
                                                             columnNumber: 45
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -342,13 +344,13 @@ function AdminSidebar() {
                                                             children: item.name
                                                         }, void 0, false, {
                                                             fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                                            lineNumber: 111,
+                                                            lineNumber: 117,
                                                             columnNumber: 45
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                                    lineNumber: 100,
+                                                    lineNumber: 106,
                                                     columnNumber: 41
                                                 }, this),
                                                 badge !== null && badge > 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -356,37 +358,37 @@ function AdminSidebar() {
                                                     children: badge
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                                    lineNumber: 116,
+                                                    lineNumber: 122,
                                                     columnNumber: 45
                                                 }, this) : isActive && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronRight$3e$__["ChevronRight"], {
                                                     size: 16,
                                                     className: "text-or/70 relative z-10"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                                    lineNumber: 120,
+                                                    lineNumber: 126,
                                                     columnNumber: 57
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                            lineNumber: 88,
+                                            lineNumber: 94,
                                             columnNumber: 37
                                         }, this)
                                     }, item.name, false, {
                                         fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                        lineNumber: 87,
+                                        lineNumber: 93,
                                         columnNumber: 33
                                     }, this);
                                 })
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                lineNumber: 80,
+                                lineNumber: 86,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                        lineNumber: 78,
+                        lineNumber: 84,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -397,7 +399,7 @@ function AdminSidebar() {
                                 children: "Clients"
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                lineNumber: 130,
+                                lineNumber: 136,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -414,7 +416,7 @@ function AdminSidebar() {
                                                     className: "absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-or to-or/50 rounded-r-full shadow-lg shadow-or/50"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                                    lineNumber: 148,
+                                                    lineNumber: 154,
                                                     columnNumber: 45
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -426,20 +428,20 @@ function AdminSidebar() {
                                                             strokeWidth: isActive ? 2 : 1.5
                                                         }, void 0, false, {
                                                             fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                                            lineNumber: 151,
+                                                            lineNumber: 157,
                                                             columnNumber: 45
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                             children: item.name
                                                         }, void 0, false, {
                                                             fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                                            lineNumber: 161,
+                                                            lineNumber: 167,
                                                             columnNumber: 45
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                                    lineNumber: 150,
+                                                    lineNumber: 156,
                                                     columnNumber: 41
                                                 }, this),
                                                 badge !== null && badge > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -447,30 +449,30 @@ function AdminSidebar() {
                                                     children: badge
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                                    lineNumber: 164,
+                                                    lineNumber: 170,
                                                     columnNumber: 45
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                            lineNumber: 138,
+                                            lineNumber: 144,
                                             columnNumber: 37
                                         }, this)
                                     }, item.name, false, {
                                         fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                        lineNumber: 137,
+                                        lineNumber: 143,
                                         columnNumber: 33
                                     }, this);
                                 })
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                lineNumber: 131,
+                                lineNumber: 137,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                        lineNumber: 129,
+                        lineNumber: 135,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -481,7 +483,7 @@ function AdminSidebar() {
                                 children: "Système"
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                lineNumber: 176,
+                                lineNumber: 182,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -497,7 +499,7 @@ function AdminSidebar() {
                                                     className: "absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-or to-or/50 rounded-r-full shadow-lg shadow-or/50"
                                                 }, void 0, false, {
                                                     fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                                    lineNumber: 192,
+                                                    lineNumber: 198,
                                                     columnNumber: 45
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -509,87 +511,55 @@ function AdminSidebar() {
                                                             strokeWidth: isActive ? 2 : 1.5
                                                         }, void 0, false, {
                                                             fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                                            lineNumber: 195,
+                                                            lineNumber: 201,
                                                             columnNumber: 45
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                             children: item.name
                                                         }, void 0, false, {
                                                             fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                                            lineNumber: 205,
+                                                            lineNumber: 211,
                                                             columnNumber: 45
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                                    lineNumber: 194,
+                                                    lineNumber: 200,
                                                     columnNumber: 41
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                            lineNumber: 182,
+                                            lineNumber: 188,
                                             columnNumber: 37
                                         }, this)
                                     }, item.name, false, {
                                         fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                        lineNumber: 181,
+                                        lineNumber: 187,
                                         columnNumber: 33
                                     }, this);
                                 })
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                                lineNumber: 177,
+                                lineNumber: 183,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                        lineNumber: 175,
+                        lineNumber: 181,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                lineNumber: 77,
-                columnNumber: 13
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "p-4 border-t border-[#2A1A1A] bg-gradient-to-t from-[#0F0505]/50 to-transparent",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "text-[10px] text-creme/40 text-center",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                            className: "font-semibold text-creme/60",
-                            children: "v1.0.0"
-                        }, void 0, false, {
-                            fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                            lineNumber: 218,
-                            columnNumber: 21
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                            className: "text-creme/30 mt-1",
-                            children: "API Dashboard"
-                        }, void 0, false, {
-                            fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                            lineNumber: 219,
-                            columnNumber: 21
-                        }, this)
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                    lineNumber: 217,
-                    columnNumber: 17
-                }, this)
-            }, void 0, false, {
-                fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-                lineNumber: 216,
+                lineNumber: 83,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/apps/web/components/admin/layout/AdminSidebar.tsx",
-        lineNumber: 64,
+        lineNumber: 65,
         columnNumber: 9
     }, this);
 }

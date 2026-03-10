@@ -3,9 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
-// Temporarily disabled due to rxjs type compatibility issues
-// import { ResponseInterceptor } from './common/interceptors/response.interceptor';
-// import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
@@ -15,8 +13,11 @@ async function bootstrap() {
   app.use(helmet());
 
   // CORS
+  const isProd = process.env.NODE_ENV === 'production';
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: isProd ? [frontendUrl] : [frontendUrl, 'http://127.0.0.1:3000', 'http://localhost:3001'],
     credentials: true,
   });
 
@@ -34,11 +35,9 @@ async function bootstrap() {
   );
 
   // Global interceptors
-  // Temporarily disabled due to rxjs type compatibility issues
-  // app.useGlobalInterceptors(
-  //   new ResponseInterceptor(),
-  //   new LoggingInterceptor(),
-  // );
+  app.useGlobalInterceptors(
+    new LoggingInterceptor(),
+  );
 
   // Global filters
   app.useGlobalFilters(new HttpExceptionFilter());

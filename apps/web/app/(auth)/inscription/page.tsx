@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Mail, Lock, User, Phone, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/lib/store/authStore';
+import { AuthAPI } from '@/lib/api/client';
 
 export default function RegisterPage() {
     const [formData, setFormData] = useState({
@@ -54,24 +55,29 @@ export default function RegisterPage() {
         setLoading(true);
 
         try {
-            // Create new user via API (or mock)
-            const newUser = {
-                id: Date.now().toString(),
+            const payload = {
                 email: formData.email,
+                password: formData.password,
                 firstName: formData.firstName,
                 lastName: formData.lastName,
                 phone: formData.phone,
-                role: 'client',
-                isActive: true,
-                createdAt: new Date(),
-                updatedAt: new Date(),
             };
 
-            // Save user to Zustand
-            setUser(newUser as any);
-
-            toast.success('Compte créé avec succès !');
-            router.push('/connexion?registered=true');
+            const res = await AuthAPI.register(payload);
+            if (res.success) {
+                // backend returns created user and tokens
+                const data = res.data;
+                if (data && data.user) {
+                    setUser(data.user as any);
+                }
+                if (data && data.accessToken) {
+                    try { localStorage.setItem('accessToken', data.accessToken); } catch (e) {}
+                }
+                toast.success('Compte créé avec succès !');
+                router.push('/connexion?registered=true');
+            } else {
+                toast.error(res.error || 'Erreur lors de la création du compte');
+            }
         } catch (error) {
             console.error('Registration error:', error);
             toast.error('Erreur lors de la création du compte');

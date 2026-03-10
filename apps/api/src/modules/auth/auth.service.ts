@@ -41,9 +41,15 @@ export class AuthService {
       sub: user.id,
       role: user.role,
     };
+    const accessToken = await this.jwtService.signAsync(payload, { expiresIn: '15m' });
+    const refreshToken = await this.jwtService.signAsync(
+      { ...payload, tokenType: 'refresh' },
+      { expiresIn: '7d' },
+    );
+
     return {
-      accessToken: this.jwtService.sign(payload, { expiresIn: '15m' }),
-      refreshToken: this.jwtService.sign(payload, { expiresIn: '7d' }),
+      accessToken,
+      refreshToken,
     };
   }
 
@@ -75,7 +81,7 @@ export class AuthService {
 
   async refreshToken(token: string) {
     try {
-      const payload = this.jwtService.verify(token);
+      const payload = await this.jwtService.verifyAsync(token);
       const user = await this.userRepository.findOne({
         where: { id: payload.sub },
       });
@@ -84,14 +90,25 @@ export class AuthService {
         throw new UnauthorizedException('User not found or inactive');
       }
 
+      if (payload.tokenType !== 'refresh') {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+
       const newPayload = {
         email: user.email,
         sub: user.id,
         role: user.role,
       };
 
+      const accessToken = await this.jwtService.signAsync(newPayload, { expiresIn: '15m' });
+      const newRefreshToken = await this.jwtService.signAsync(
+        { ...newPayload, tokenType: 'refresh' },
+        { expiresIn: '7d' },
+      );
+
       return {
-        accessToken: this.jwtService.sign(newPayload, { expiresIn: '15m' }),
+        accessToken,
+        refreshToken: newRefreshToken,
       };
     } catch {
       throw new UnauthorizedException('Invalid refresh token');

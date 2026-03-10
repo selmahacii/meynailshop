@@ -14,6 +14,7 @@ enum PaymentMethod {
     CIB = 'cib',
 }
 import { toast } from 'sonner';
+import { WILAYAS } from '@/lib/constants/wilayas';
 
 export default function CheckoutPage() {
     const { items, getSubtotal, getTotal, clear } = useCartStore();
@@ -33,13 +34,7 @@ export default function CheckoutPage() {
 
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(PaymentMethod.CASH_ON_DELIVERY);
 
-    // Mock Wilayas
-    const wilayas = [
-        { code: '16', name: 'Alger' },
-        { code: '31', name: 'Oran' },
-        { code: '09', name: 'Blida' },
-        { code: '25', name: 'Constantine' },
-    ];
+    const wilayas = WILAYAS.map((name, idx) => ({ code: String(idx + 1).padStart(2, '0'), name }));
 
     // Simulated shipping
     const shippingCost = formData.wilaya ? (formData.wilaya === '16' ? 400 : 800) : 0;

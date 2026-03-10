@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Search,
     Bell,
@@ -11,28 +11,132 @@ import {
     CheckCircle2,
     RotateCcw,
     ChevronDown,
-    ExternalLink
+    ExternalLink,
+    Loader
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { OrdersAPI } from '@/lib/api/client';
 
 const tabs = [
-    { name: 'Toutes', count: 142, key: 'all' },
-    { name: 'En attente', count: 8, key: 'pending' },
-    { name: 'Expédiées', count: 31, key: 'shipped' },
-    { name: 'Livrées', count: 97, key: 'delivered' },
-    { name: 'Annulées', count: 6, key: 'cancelled' },
-];
-
-const mockOrders = [
-    { id: '#4521', client: 'Sarah Benali', location: 'Alger Centre', date: '28 Fév 2026', amount: '2 400 DA', status: 'Expédié', statusColor: 'bg-blue-100 text-blue-600', actions: ['Facture', 'Éditer'] },
-    { id: '#4520', client: 'Amina Khelifi', location: 'Oran', date: '28 Fév 2026', amount: '850 DA', status: 'En attente', statusColor: 'bg-yellow-100 text-yellow-700', actions: ['Confirmer'] },
-    { id: '#4519', client: 'Yasmine Mansouri', location: 'Constantine', date: '27 Fév 2026', amount: '4 200 DA', status: 'Livré', statusColor: 'bg-green-100 text-green-700', actions: ['Facture'] },
-    { id: '#4518', client: 'Fatima Ziri', location: 'Blida', date: '26 Fév 2026', amount: '1 600 DA', status: 'Annulé', statusColor: 'bg-red-100 text-red-600', actions: ['Rembourser'] },
+    { name: 'Toutes', count: 0, key: 'all' },
+    { name: 'En attente', count: 0, key: 'pending' },
+    { name: 'Expédiées', count: 0, key: 'shipped' },
+    { name: 'Livrées', count: 0, key: 'delivered' },
+    { name: 'Annulées', count: 0, key: 'cancelled' },
 ];
 
 export default function AdminOrdersPage() {
     const [activeTab, setActiveTab] = useState('all');
+    const [orders, setOrders] = useState<any[]>([]);
+    const [stats, setStats] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
+
+    useEffect(() => {
+        fetchOrders();
+        fetchStats();
+    }, []);
+
+    const fetchOrders = async (status?: string) => {
+        try {
+            console.log('🔄 Orders: Starting data fetch', status ? `for status: ${status}` : '');
+            setLoading(true);
+            const result = await OrdersAPI.getAll(1, 50, status);
+            console.log('📋 Orders: API result received', result);
+
+            if (result.success) {
+                console.log('✅ Orders: Data loaded successfully', result.data);
+                setOrders(result.data.data || []);
+            } else {
+                console.error('❌ Orders: API returned error', result.error);
+                setError(result.error || 'Erreur lors du chargement des commandes');
+            }
+        } catch (err) {
+            console.error('💥 Orders: Network error', err);
+            setError('Impossible de charger les commandes');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchStats = async () => {
+        try {
+            console.log('🔄 Orders Stats: Starting stats fetch');
+            const result = await OrdersAPI.getStats();
+            console.log('📊 Orders Stats: API result received', result);
+
+            if (result.success) {
+                console.log('✅ Orders Stats: Stats loaded successfully', result.data);
+                setStats(result.data);
+                // Update tab counts
+                tabs[0].count = result.data.total || 0;
+                tabs[1].count = result.data.pending || 0;
+                tabs[2].count = result.data.shipped || 0;
+                tabs[3].count = result.data.delivered || 0;
+                tabs[4].count = result.data.cancelled || 0;
+            } else {
+                console.error('❌ Orders Stats: API returned error', result.error);
+            }
+        } catch (err) {
+            console.error('💥 Orders Stats: Network error', err);
+        }
+    };
+
+    const updateOrderStatus = async (orderId: string, newStatus: string) => {
+        try {
+            setUpdatingOrder(orderId);
+            const result = await OrdersAPI.updateStatus(orderId, newStatus);
+            if (result.success) {
+                // Refresh orders and stats
+                await fetchOrders(activeTab === 'all' ? undefined : activeTab);
+                await fetchStats();
+            } else {
+                setError(result.error || 'Erreur lors de la mise à jour');
+            }
+        } catch (err) {
+            setError('Impossible de mettre à jour la commande');
+            console.error('Update error:', err);
+        } finally {
+            setUpdatingOrder(null);
+        }
+    };
+
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case 'pending': return 'bg-yellow-100 text-yellow-700';
+            case 'shipped': return 'bg-blue-100 text-blue-600';
+            case 'delivered': return 'bg-green-100 text-green-700';
+            case 'cancelled': return 'bg-red-100 text-red-600';
+            default: return 'bg-gray-100 text-gray-600';
+        }
+    };
+
+    const getStatusText = (status: string) => {
+        switch (status) {
+            case 'pending': return 'En attente';
+            case 'shipped': return 'Expédié';
+            case 'delivered': return 'Livré';
+            case 'cancelled': return 'Annulé';
+            default: return status;
+        }
+    };
+
+    const filteredOrders = activeTab === 'all' 
+        ? orders 
+        : orders.filter(order => order.status === activeTab);
+
+    if (loading && orders.length === 0) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <div className="text-center">
+                    <Loader className="w-12 h-12 text-or animate-spin mx-auto mb-4" />
+                    <p className="text-lg text-encre/60">Chargement des commandes...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8 pb-12">
@@ -76,7 +180,10 @@ export default function AdminOrdersPage() {
                         {tabs.map((tab) => (
                             <button
                                 key={tab.key}
-                                onClick={() => setActiveTab(tab.key)}
+                                onClick={() => {
+                                    setActiveTab(tab.key);
+                                    fetchOrders(tab.key === 'all' ? undefined : tab.key);
+                                }}
                                 className={cn(
                                     "px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-sm transition-all flex items-center space-x-2",
                                     activeTab === tab.key
@@ -118,45 +225,56 @@ export default function AdminOrdersPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-creme2">
-                            {mockOrders.map((order) => (
+                            {filteredOrders.map((order) => (
                                 <tr key={order.id} className="hover:bg-creme/5 transition-colors group">
                                     <td className="px-8 py-6">
-                                        <span className="text-sm font-bold text-rouge-mid font-mono tracking-tighter">{order.id}</span>
+                                        <span className="text-sm font-bold text-rouge-mid font-mono tracking-tighter">#{order.id.slice(-4)}</span>
                                     </td>
                                     <td className="px-8 py-6">
                                         <div className="flex flex-col">
-                                            <span className="text-sm font-bold text-encre">{order.client}</span>
-                                            <span className="text-[10px] text-encre3 uppercase tracking-wide font-medium">{order.location}</span>
+                                            <span className="text-sm font-bold text-encre">{order.user?.name || 'Client inconnu'}</span>
+                                            <span className="text-[10px] text-encre3 uppercase tracking-wide font-medium">{order.address?.wilaya || 'N/A'}</span>
                                         </div>
                                     </td>
                                     <td className="px-8 py-6 text-[11px] font-bold text-encre3 uppercase">
-                                        {order.date}
+                                        {new Date(order.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
                                     </td>
                                     <td className="px-8 py-6 text-sm font-black text-encre">
-                                        {order.amount}
+                                        {Number(order.total).toLocaleString('fr-FR')} DA
                                     </td>
                                     <td className="px-8 py-6">
                                         <span className={cn(
                                             "text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm shadow-sm inline-block",
-                                            order.statusColor
+                                            getStatusColor(order.status)
                                         )}>
-                                            {order.status}
+                                            {getStatusText(order.status)}
                                         </span>
                                     </td>
                                     <td className="px-8 py-6 flex items-center justify-end space-x-2">
-                                        {order.actions.map((action, i) => (
+                                        {order.status === 'pending' && (
                                             <button
-                                                key={i}
-                                                className={cn(
-                                                    "px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border",
-                                                    action === 'Confirmer' ? "bg-green-700 text-white border-green-800 hover:bg-green-800" :
-                                                        action === 'Éditer' ? "bg-[#1A0A0A] text-white border-[#2A1A1A] hover:bg-rouge-deep" :
-                                                            "bg-white border-creme2 text-encre hover:border-or hover:text-or"
-                                                )}
+                                                onClick={() => updateOrderStatus(order.id, 'shipped')}
+                                                disabled={updatingOrder === order.id}
+                                                className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-green-700 text-white border-green-800 hover:bg-green-800 disabled:opacity-50"
                                             >
-                                                {action}
+                                                {updatingOrder === order.id ? '...' : 'Confirmer'}
                                             </button>
-                                        ))}
+                                        )}
+                                        {order.status === 'shipped' && (
+                                            <button
+                                                onClick={() => updateOrderStatus(order.id, 'delivered')}
+                                                disabled={updatingOrder === order.id}
+                                                className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-blue-700 text-white border-blue-800 hover:bg-blue-800 disabled:opacity-50"
+                                            >
+                                                Livrer
+                                            </button>
+                                        )}
+                                        <button className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-white border-creme2 text-encre hover:border-or hover:text-or">
+                                            Facture
+                                        </button>
+                                        <button className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-[#1A0A0A] text-white border-[#2A1A1A] hover:bg-rouge-deep">
+                                            Éditer
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
@@ -164,9 +282,11 @@ export default function AdminOrdersPage() {
                     </table>
                 </div>
 
-                {/* Pagination Placeholder */}
+                {/* Pagination */}
                 <div className="p-8 border-t border-creme2 bg-creme/5 flex justify-between items-center">
-                    <p className="text-[10px] uppercase font-bold text-encre3 tracking-widest">Affichage de 4 sur 142 commandes</p>
+                    <p className="text-[10px] uppercase font-bold text-encre3 tracking-widest">
+                        Affichage de {filteredOrders.length} sur {orders.length} commandes
+                    </p>
                     <div className="flex space-x-2">
                         {[1, 2, 3, '...', 12].map((p, i) => (
                             <button

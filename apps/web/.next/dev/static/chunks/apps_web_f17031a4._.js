@@ -136,12 +136,16 @@ function Navbar() {
     const [isScrolled, setIsScrolled] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const pathname = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"])();
+    const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
     const cartItemsCount = (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$web$2f$lib$2f$store$2f$cartStore$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCartStore"])({
         "Navbar.useCartStore[cartItemsCount]": (state)=>state.items.length
     }["Navbar.useCartStore[cartItemsCount]"]);
     const { user, isAuthenticated } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$web$2f$lib$2f$store$2f$authStore$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useAuthStore"])();
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "Navbar.useEffect": ()=>{
+            console.log('[Navbar] mount', {
+                pathname
+            });
             const handleScroll = {
                 "Navbar.useEffect.handleScroll": ()=>{
                     setIsScrolled(window.scrollY > 20);
@@ -153,6 +157,22 @@ function Navbar() {
             })["Navbar.useEffect"];
         }
     }["Navbar.useEffect"], []);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "Navbar.useEffect": ()=>{
+            console.log('[Navbar] state', {
+                pathname,
+                isMobileMenuOpen,
+                isAuthenticated,
+                role: user?.role || null
+            });
+        }
+    }["Navbar.useEffect"], [
+        pathname,
+        isMobileMenuOpen,
+        isAuthenticated,
+        user?.role
+    ]);
+    const accountTarget = isAuthenticated ? '/compte' : `/connexion?redirect=${user?.role === 'admin' ? '/admin/dashboard' : '/compte'}`;
     const navLinks = [
         {
             name: 'Accueil',
@@ -176,6 +196,15 @@ function Navbar() {
         }
     ];
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
+        onClickCapture: (e)=>{
+            const t = e.target;
+            console.log('[Navbar] click capture', {
+                pathname,
+                tag: t?.tagName,
+                id: t?.id,
+                className: t?.className
+            });
+        },
         className: `fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-rouge-deep/95 backdrop-blur-md py-3 shadow-lg' : 'bg-transparent py-5'}`,
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -188,12 +217,12 @@ function Navbar() {
                             size: 24
                         }, void 0, false, {
                             fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                            lineNumber: 45,
+                            lineNumber: 64,
                             columnNumber: 21
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                        lineNumber: 41,
+                        lineNumber: 60,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -205,7 +234,7 @@ function Navbar() {
                                 children: "MEEY"
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                                lineNumber: 50,
+                                lineNumber: 69,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -213,13 +242,13 @@ function Navbar() {
                                 children: "Nail Shop"
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                                lineNumber: 51,
+                                lineNumber: 70,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                        lineNumber: 49,
+                        lineNumber: 68,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -230,12 +259,12 @@ function Navbar() {
                                 children: link.name
                             }, link.name, false, {
                                 fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                                lineNumber: 57,
+                                lineNumber: 76,
                                 columnNumber: 25
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                        lineNumber: 55,
+                        lineNumber: 74,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -248,12 +277,12 @@ function Navbar() {
                                     strokeWidth: 1.5
                                 }, void 0, false, {
                                     fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                                    lineNumber: 71,
+                                    lineNumber: 90,
                                     columnNumber: 25
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                                lineNumber: 70,
+                                lineNumber: 89,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -264,28 +293,30 @@ function Navbar() {
                                     strokeWidth: 1.5
                                 }, void 0, false, {
                                     fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                                    lineNumber: 75,
+                                    lineNumber: 94,
                                     columnNumber: 25
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                                lineNumber: 74,
+                                lineNumber: 93,
                                 columnNumber: 21
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                href: "/compte",
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                type: "button",
+                                onClick: handleAccountClick,
                                 className: "text-creme hover:text-or transition-colors",
+                                "aria-label": "Compte / Connexion",
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$user$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__User$3e$__["User"], {
                                     size: 20,
                                     strokeWidth: 1.5
                                 }, void 0, false, {
                                     fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                                    lineNumber: 79,
+                                    lineNumber: 103,
                                     columnNumber: 25
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                                lineNumber: 78,
+                                lineNumber: 97,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -297,7 +328,7 @@ function Navbar() {
                                         strokeWidth: 1.5
                                     }, void 0, false, {
                                         fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                                        lineNumber: 83,
+                                        lineNumber: 107,
                                         columnNumber: 25
                                     }, this),
                                     cartItemsCount > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -305,25 +336,25 @@ function Navbar() {
                                         children: cartItemsCount
                                     }, void 0, false, {
                                         fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                                        lineNumber: 85,
+                                        lineNumber: 109,
                                         columnNumber: 29
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                                lineNumber: 82,
+                                lineNumber: 106,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                        lineNumber: 69,
+                        lineNumber: 88,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                lineNumber: 39,
+                lineNumber: 58,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -343,7 +374,7 @@ function Navbar() {
                             className: "fixed inset-0 bg-encre/60 backdrop-blur-sm z-[60]"
                         }, void 0, false, {
                             fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                            lineNumber: 97,
+                            lineNumber: 121,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$dom$2f$motion$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -371,7 +402,7 @@ function Navbar() {
                                             children: "MEEY"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                                            lineNumber: 112,
+                                            lineNumber: 136,
                                             columnNumber: 33
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -381,18 +412,18 @@ function Navbar() {
                                                 size: 24
                                             }, void 0, false, {
                                                 fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                                                lineNumber: 114,
+                                                lineNumber: 138,
                                                 columnNumber: 37
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                                            lineNumber: 113,
+                                            lineNumber: 137,
                                             columnNumber: 33
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                                    lineNumber: 111,
+                                    lineNumber: 135,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -404,37 +435,38 @@ function Navbar() {
                                             children: link.name
                                         }, link.name, false, {
                                             fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                                            lineNumber: 120,
+                                            lineNumber: 144,
                                             columnNumber: 37
                                         }, this))
                                 }, void 0, false, {
                                     fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                                    lineNumber: 118,
+                                    lineNumber: 142,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                            lineNumber: 104,
+                            lineNumber: 128,
                             columnNumber: 25
                         }, this)
                     ]
                 }, void 0, true)
             }, void 0, false, {
                 fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-                lineNumber: 94,
+                lineNumber: 118,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/apps/web/components/store/layout/Navbar.tsx",
-        lineNumber: 35,
+        lineNumber: 45,
         columnNumber: 9
     }, this);
 }
-_s(Navbar, "+CWXmWLG8BQFsm//xDUom3vsxyo=", false, function() {
+_s(Navbar, "3SaTvAlYFApx1adIWvRR7/2S3Vg=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"],
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"],
         __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$web$2f$lib$2f$store$2f$cartStore$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCartStore"],
         __TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$web$2f$lib$2f$store$2f$authStore$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useAuthStore"]
     ];

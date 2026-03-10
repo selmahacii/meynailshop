@@ -958,10 +958,14 @@ function CataloguePage() {
                 const response = await productsApi.getAll({
                     limit: 50
                 });
-                const data = response?.data;
-                // Handle both paginated { items: [...] } and plain array responses
-                const items = Array.isArray(data) ? data : data?.items ?? [];
-                setProducts(items.length > 0 ? items : MOCK_PRODUCTS);
+                if (response.success && response.data) {
+                    // response.data is { data: PaginatedData<Product> }
+                    const paginatedData = response.data.data;
+                    const items = paginatedData?.items || [];
+                    setProducts(items.length > 0 ? items : MOCK_PRODUCTS);
+                } else {
+                    setProducts(MOCK_PRODUCTS);
+                }
             } catch  {
                 // API not available — use mock data
                 setProducts(MOCK_PRODUCTS);
@@ -989,14 +993,14 @@ function CataloguePage() {
                                         children: "Accueil"
                                     }, void 0, false, {
                                         fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                        lineNumber: 130,
+                                        lineNumber: 134,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         children: "/"
                                     }, void 0, false, {
                                         fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                        lineNumber: 131,
+                                        lineNumber: 135,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1004,13 +1008,13 @@ function CataloguePage() {
                                         children: "Catalogue"
                                     }, void 0, false, {
                                         fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                        lineNumber: 132,
+                                        lineNumber: 136,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                lineNumber: 129,
+                                lineNumber: 133,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
@@ -1018,7 +1022,7 @@ function CataloguePage() {
                                 children: "Toute la Collection"
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                lineNumber: 134,
+                                lineNumber: 138,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1026,13 +1030,13 @@ function CataloguePage() {
                                 children: "Explorez notre sélection de produits haut de gamme conçus pour révéler la beauté de chaque ongle. Des vernis vibrants aux outils haute précision."
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                lineNumber: 135,
+                                lineNumber: 139,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                        lineNumber: 128,
+                        lineNumber: 132,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1044,17 +1048,17 @@ function CataloguePage() {
                                     className: "sticky top-32",
                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$web$2f$components$2f$store$2f$products$2f$ProductFilters$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                         fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                        lineNumber: 145,
+                                        lineNumber: 149,
                                         columnNumber: 29
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                    lineNumber: 144,
+                                    lineNumber: 148,
                                     columnNumber: 25
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                lineNumber: 143,
+                                lineNumber: 147,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -1065,7 +1069,7 @@ function CataloguePage() {
                                         onOpenFilters: ()=>setIsMobileFiltersOpen(true)
                                     }, void 0, false, {
                                         fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                        lineNumber: 151,
+                                        lineNumber: 155,
                                         columnNumber: 25
                                     }, this),
                                     loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1075,12 +1079,12 @@ function CataloguePage() {
                                             className: "animate-spin text-or"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                            lineNumber: 158,
+                                            lineNumber: 162,
                                             columnNumber: 33
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                        lineNumber: 157,
+                                        lineNumber: 161,
                                         columnNumber: 29
                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                                         children: [
@@ -1090,12 +1094,12 @@ function CataloguePage() {
                                                         product: product
                                                     }, product.id, false, {
                                                         fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                                        lineNumber: 164,
+                                                        lineNumber: 168,
                                                         columnNumber: 41
                                                     }, this))
                                             }, void 0, false, {
                                                 fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                                lineNumber: 162,
+                                                lineNumber: 166,
                                                 columnNumber: 33
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1108,7 +1112,7 @@ function CataloguePage() {
                                                             children: "1"
                                                         }, void 0, false, {
                                                             fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                                            lineNumber: 171,
+                                                            lineNumber: 175,
                                                             columnNumber: 41
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1116,7 +1120,7 @@ function CataloguePage() {
                                                             children: "2"
                                                         }, void 0, false, {
                                                             fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                                            lineNumber: 172,
+                                                            lineNumber: 176,
                                                             columnNumber: 41
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1124,18 +1128,18 @@ function CataloguePage() {
                                                             children: "3"
                                                         }, void 0, false, {
                                                             fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                                            lineNumber: 173,
+                                                            lineNumber: 177,
                                                             columnNumber: 41
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                                    lineNumber: 170,
+                                                    lineNumber: 174,
                                                     columnNumber: 37
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                                lineNumber: 169,
+                                                lineNumber: 173,
                                                 columnNumber: 33
                                             }, this)
                                         ]
@@ -1143,19 +1147,19 @@ function CataloguePage() {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                lineNumber: 150,
+                                lineNumber: 154,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                        lineNumber: 141,
+                        lineNumber: 145,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                lineNumber: 126,
+                lineNumber: 130,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -1175,7 +1179,7 @@ function CataloguePage() {
                             className: "fixed inset-0 bg-encre/60 backdrop-blur-sm z-[100]"
                         }, void 0, false, {
                             fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                            lineNumber: 186,
+                            lineNumber: 190,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$dom$2f$motion$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -1203,7 +1207,7 @@ function CataloguePage() {
                                             children: "Filtres"
                                         }, void 0, false, {
                                             fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                            lineNumber: 201,
+                                            lineNumber: 205,
                                             columnNumber: 33
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1213,44 +1217,44 @@ function CataloguePage() {
                                                 size: 24
                                             }, void 0, false, {
                                                 fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                                lineNumber: 203,
+                                                lineNumber: 207,
                                                 columnNumber: 37
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                            lineNumber: 202,
+                                            lineNumber: 206,
                                             columnNumber: 33
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                    lineNumber: 200,
+                                    lineNumber: 204,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$apps$2f$web$2f$components$2f$store$2f$products$2f$ProductFilters$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                                     onClose: ()=>setIsMobileFiltersOpen(false)
                                 }, void 0, false, {
                                     fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                                    lineNumber: 206,
+                                    lineNumber: 210,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                            lineNumber: 193,
+                            lineNumber: 197,
                             columnNumber: 25
                         }, this)
                     ]
                 }, void 0, true)
             }, void 0, false, {
                 fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-                lineNumber: 183,
+                lineNumber: 187,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/apps/web/app/(store)/catalogue/page.tsx",
-        lineNumber: 125,
+        lineNumber: 129,
         columnNumber: 9
     }, this);
 }

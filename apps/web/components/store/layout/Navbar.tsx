@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { ShoppingBag, User, Search, Menu, X, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '@/lib/store/cartStore';
@@ -12,16 +12,26 @@ export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const pathname = usePathname();
+    const router = useRouter();
     const cartItemsCount = useCartStore((state) => state.items.length);
     const { user, isAuthenticated } = useAuthStore();
 
     useEffect(() => {
+        console.log('[Navbar] mount', { pathname });
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 20);
         };
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    useEffect(() => {
+        console.log('[Navbar] state', { pathname, isMobileMenuOpen, isAuthenticated, role: user?.role || null });
+    }, [pathname, isMobileMenuOpen, isAuthenticated, user?.role]);
+
+    const accountTarget = isAuthenticated
+        ? '/compte'
+        : `/connexion?redirect=${user?.role === 'admin' ? '/admin/dashboard' : '/compte'}`;
 
     const navLinks = [
         { name: 'Accueil', href: '/' },
@@ -33,6 +43,15 @@ export default function Navbar() {
 
     return (
         <nav
+            onClickCapture={(e) => {
+                const t = e.target as HTMLElement | null;
+                console.log('[Navbar] click capture', {
+                    pathname,
+                    tag: t?.tagName,
+                    id: t?.id,
+                    className: t?.className,
+                });
+            }}
             className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-rouge-deep/95 backdrop-blur-md py-3 shadow-lg' : 'bg-transparent py-5'
                 }`}
         >
@@ -75,9 +94,14 @@ export default function Navbar() {
                         <Heart size={20} strokeWidth={1.5} />
                     </Link>
 
-                    <Link href="/compte" className="text-creme hover:text-or transition-colors">
+                    <button
+                        type="button"
+                        onClick={handleAccountClick}
+                        className="text-creme hover:text-or transition-colors"
+                        aria-label="Compte / Connexion"
+                    >
                         <User size={20} strokeWidth={1.5} />
-                    </Link>
+                    </button>
 
                     <Link href="/panier" className="relative text-creme hover:text-or transition-colors">
                         <ShoppingBag size={20} strokeWidth={1.5} />

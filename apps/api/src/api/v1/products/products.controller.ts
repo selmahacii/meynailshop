@@ -7,17 +7,35 @@ export class ProductsController {
 
   @Get()
   async findAll(@Query('page') page: string, @Query('limit') limit: string) {
+    const result = await this.productsService.findAll(parseInt(page || '1'), parseInt(limit || '10'));
     return {
       success: true,
-      data: await this.productsService.findAll(parseInt(page || '1'), parseInt(limit || '10')),
+      data: {
+        items: result.data,
+        total: result.pagination.total,
+        page: result.pagination.page,
+        limit: result.pagination.limit,
+        totalPages: result.pagination.pages,
+        hasNext: result.pagination.page < result.pagination.pages,
+        hasPrev: result.pagination.page > 1,
+      },
     };
   }
 
   @Get('low-stock')
   async getLowStock(@Query('threshold') threshold: string) {
+    const data = await this.productsService.getLowStockProducts(parseInt(threshold || '10'));
     return {
       success: true,
-      data: await this.productsService.getLowStockProducts(parseInt(threshold || '10')),
+      data: {
+        items: data,
+        total: data.length,
+        page: 1,
+        limit: data.length,
+        totalPages: 1,
+        hasNext: false,
+        hasPrev: false,
+      },
     };
   }
 

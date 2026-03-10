@@ -1,14 +1,16 @@
-import apiClient from './client';
+import { apiGet } from './client';
 import { Product, Category } from '@/types/product';
 import { PaginatedData } from '@/types/api';
 
 export const productsApi = {
-  getAll: (params?: any) =>
-    apiClient.get<any, { data: PaginatedData<Product> }>('/products', { params }),
+  getAll: (params?: any) => {
+    const query = params ? `?${new URLSearchParams(params).toString()}` : '';
+    return apiGet<{ data: PaginatedData<Product> }>(`/products${query}`);
+  },
   getBySlug: (slug: string) =>
-    apiClient.get<any, { data: Product }>(`/products/${slug}`),
+    apiGet<{ data: Product }>(`/products/${slug}`),
   getFeatured: () =>
-    apiClient.get<any, { data: Product[] }>('/products/featured'),
+    apiGet<{ data: Product[] }>('/products/featured'),
   getCategories: () =>
-    apiClient.get<any, { data: Category[] }>('/categories'),
+    apiGet<{ data: Category[] }>('/categories'),
 };

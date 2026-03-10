@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Plus,
     Search,
@@ -13,10 +13,13 @@ import {
     MoreVertical,
     Edit2,
     ShoppingBag,
-    AlertCircle
+    AlertCircle,
+    Loader
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { ProductsAPI } from '@/lib/api/client';
+import { AdminProduct, AdminStats } from '@/types/admin';
 
 const tabs = [
     { name: 'Tous', key: 'all' },
@@ -26,15 +29,93 @@ const tabs = [
     { name: 'Stock faible', key: 'low' },
 ];
 
-const mockProducts = [
-    { id: '1', name: 'OPI Red Rock', category: 'Vernis gel', price: '200 DA', stock: '42 u.', imageColor: 'bg-rouge-deep', badge: 'new', color: 'bg-rouge-deep' },
-    { id: '2', name: 'Gel Builder Clear', category: 'Gel UV', price: '1 800 DA', stock: '8 u.', imageColor: 'bg-white', badge: 'low', color: 'bg-white' },
-    { id: '3', name: 'Top Coat Brillant', category: 'Finition', price: '150 DA', stock: '0 u.', imageColor: 'bg-creme2', badge: 'out', color: 'bg-creme2' },
-    { id: '4', name: 'Strass Cristal Mix', category: 'Décoration', price: '100 DA', stock: '120 u.', imageColor: 'bg-pink-600', badge: 'promo', color: 'bg-pink-600' },
-];
-
 export default function AdminProductsPage() {
     const [activeTab, setActiveTab] = useState('all');
+    const [products, setProducts] = useState<AdminProduct[]>([]);
+    const [stats, setStats] = useState<AdminStats | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        fetchProducts();
+        fetchStats();
+    }, [activeTab]);
+
+    const fetchProducts = async () => {
+        try {
+            console.log('🔄 Products: Starting data fetch');
+            setLoading(true);
+            const result = await ProductsAPI.getAll(1, 50); // Get first page with 50 items
+            console.log('📦 Products: API result received', result);
+
+            if (result.success && result.data) {
+                console.log('✅ Products: Data loaded successfully', result.data);
+                let filteredProducts = result.data.items || [];
+
+                // Filter based on active tab
+                if (activeTab === 'low') {
+                    filteredProducts = filteredProducts.filter((p: AdminProduct) => p.status === 'low_stock');
+                } else if (activeTab !== 'all') {
+                    // For category filtering, we'd need to match category names
+                    // For now, just show all products
+                }
+
+                setProducts(filteredProducts);
+            } else {
+                console.error('❌ Products: API returned error', result.error);
+                setError(result.error || 'Erreur lors du chargement des produits');
+            }
+        } catch (err) {
+            console.error('💥 Products: Network error', err);
+            setError('Impossible de charger les produits');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchStats = async () => {
+        try {
+            // Get low stock products for stats
+            const lowStockResult = await ProductsAPI.getLowStock(10);
+            const allProductsResult = await ProductsAPI.getAll(1, 1000); // Get all products for total count
+
+            if (lowStockResult.success && allProductsResult.success) {
+                const lowStockCount = lowStockResult.data?.items?.length || 0;
+                const totalProducts = allProductsResult.data?.total || 0;
+
+                setStats({
+                    totalProducts,
+                    lowStockProducts: lowStockCount,
+                    totalClients: 0, // Will be set from clients page
+                    vipClients: 0,
+                    totalRevenue: 0,
+                    averageOrdersPerClient: 0
+                });
+            }
+        } catch (err) {
+            console.error('Stats error:', err);
+        }
+    };
+
+    const getStatusBadge = (product: AdminProduct) => {
+        if (product.stock === 0) {
+            return { text: 'Rupture', color: 'bg-rouge text-creme' };
+        } else if (product.stock <= product.alertThreshold) {
+            return { text: 'Stock faible', color: 'bg-or text-encre' };
+        } else {
+            return { text: 'En stock', color: 'bg-green-600 text-white' };
+        }
+    };
+
+    const getActionButton = (product: AdminProduct) => {
+        if (product.stock === 0) {
+            return { text: 'Commander', style: 'bg-rouge text-creme hover:bg-rouge-deep' };
+        } else if (product.stock <= product.alertThreshold) {
+            return { text: 'Commander', style: 'bg-or text-encre hover:bg-encre hover:text-creme' };
+        } else {
+            return { text: 'Éditer', style: 'bg-[#1A0A0A] text-creme hover:bg-rouge-deep' };
+        }
+    };
 
     return (
         <div className="space-y-8 pb-12">
@@ -70,6 +151,27 @@ export default function AdminProductsPage() {
                 </div>
             </div>
 
+            {/* Summary Stats */}
+            {stats && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {[
+                        { label: 'Stock faible', value: stats.lowStockProducts.toString(), icon: AlertCircle, color: 'text-or', bg: 'bg-or/10' },
+                        { label: 'Total produits', value: stats.totalProducts.toString(), icon: ShoppingBag, color: 'text-encre3', bg: 'bg-creme' },
+                        { label: 'Ruptures totales', value: products.filter((p: AdminProduct) => p.status === 'out_of_stock').length.toString(), icon: AlertCircle, color: 'text-rouge', bg: 'bg-rouge/10' },
+                    ].map((stat, i) => (
+                        <div key={i} className="bg-white rounded-sm border border-creme2 p-6 flex items-center space-x-4 shadow-sm hover:border-or transition-all">
+                            <div className={cn("w-12 h-12 rounded-full flex items-center justify-center", stat.bg)}>
+                                <stat.icon size={22} className={stat.color} />
+                            </div>
+                            <div>
+                                <p className="text-[10px] uppercase font-black tracking-widest text-encre3">{stat.label}</p>
+                                <p className="text-2xl font-bold text-encre mt-1">{stat.value}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
             {/* Content Filters */}
             <div className="flex flex-wrap items-center justify-between gap-6">
                 <div className="flex items-center bg-white p-1 rounded-sm border border-creme2">
@@ -101,67 +203,69 @@ export default function AdminProductsPage() {
             </div>
 
             {/* Products Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                {mockProducts.map((product) => (
-                    <div key={product.id} className="bg-white rounded-sm border border-creme2 shadow-lg overflow-hidden group hover:border-or transition-all duration-500">
-                        {/* Image / Color Preview */}
-                        <div className="relative aspect-[4/3] p-12 bg-creme/20 flex items-center justify-center overflow-hidden">
-                            <div className={cn("w-full h-full rounded-md shadow-2xl transition-transform duration-700 group-hover:scale-110", product.color)} />
+            {loading ? (
+                <div className="flex items-center justify-center py-12">
+                    <Loader className="w-8 h-8 text-or animate-spin" />
+                    <span className="ml-2 text-encre3">Chargement des produits...</span>
+                </div>
+            ) : error ? (
+                <div className="text-center py-12">
+                    <AlertCircle className="w-12 h-12 text-rouge mx-auto mb-4" />
+                    <p className="text-rouge">{error}</p>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {products.map((product) => {
+                        const statusBadge = getStatusBadge(product);
+                        const actionButton = getActionButton(product);
 
-                            {/* Badges */}
-                            <div className="absolute top-4 right-4 flex flex-col items-end space-y-2">
-                                <span className="bg-white/90 backdrop-blur-sm text-encre px-2 py-1 rounded-sm text-[10px] font-black uppercase border border-creme2 shadow-sm">
-                                    {product.stock}
-                                </span>
-                                {product.badge === 'low' && (
-                                    <span className="bg-or text-encre px-2 py-1 rounded-sm text-[8px] font-black uppercase shadow-sm">
-                                        Stock faible
-                                    </span>
-                                )}
-                                {product.badge === 'out' && (
-                                    <span className="bg-rouge text-creme px-2 py-1 rounded-sm text-[8px] font-black uppercase shadow-sm">
-                                        Épuisé
-                                    </span>
-                                )}
-                                {product.badge === 'promo' && (
-                                    <span className="bg-green-600 text-white px-2 py-1 rounded-sm text-[8px] font-black uppercase shadow-sm">
-                                        120 u.
-                                    </span>
-                                )}
-                            </div>
-                        </div>
+                        return (
+                            <div key={product.id} className="bg-white rounded-sm border border-creme2 shadow-lg overflow-hidden group hover:border-or transition-all duration-500">
+                                {/* Image / Color Preview */}
+                                <div className="relative aspect-[4/3] p-12 bg-creme/20 flex items-center justify-center overflow-hidden">
+                                    <div className="w-full h-full rounded-md shadow-2xl transition-transform duration-700 group-hover:scale-110 bg-gradient-to-br from-rouge-deep/20 to-rouge-mid/20" />
 
-                        {/* Info Section */}
-                        <div className="p-6 border-t border-creme2">
-                            <div className="flex justify-between items-start mb-4">
-                                <div>
-                                    <p className="text-[10px] uppercase font-bold text-or tracking-[0.2em] mb-1">{product.category}</p>
-                                    <h3 className="font-serif text-lg text-encre group-hover:text-rouge-deep transition-colors">{product.name}</h3>
+                                    {/* Badges */}
+                                    <div className="absolute top-4 right-4 flex flex-col items-end space-y-2">
+                                        <span className="bg-white/90 backdrop-blur-sm text-encre px-2 py-1 rounded-sm text-[10px] font-black uppercase border border-creme2 shadow-sm">
+                                            {product.stock} u.
+                                        </span>
+                                        {product.status === 'low_stock' && (
+                                            <span className="bg-or text-encre px-2 py-1 rounded-sm text-[8px] font-black uppercase shadow-sm">
+                                                Stock faible
+                                            </span>
+                                        )}
+                                        {product.status === 'out_of_stock' && (
+                                            <span className="bg-rouge text-creme px-2 py-1 rounded-sm text-[8px] font-black uppercase shadow-sm">
+                                                Épuisé
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Info Section */}
+                                <div className="p-6 border-t border-creme2">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div>
+                                            <p className="text-[10px] uppercase font-bold text-or tracking-[0.2em] mb-1">{product.category}</p>
+                                            <h3 className="font-serif text-lg text-encre group-hover:text-rouge-deep transition-colors">{product.name}</h3>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center justify-between mt-6">
+                                        <span className="text-lg font-black text-encre">{product.price} DA</span>
+                                        <div className="flex space-x-2">
+                                            <button className={cn("px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-sm transition-all", actionButton.style)}>
+                                                {actionButton.text}
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-
-                            <div className="flex items-center justify-between mt-6">
-                                <span className="text-lg font-black text-encre">{product.price}</span>
-                                <div className="flex space-x-2">
-                                    {product.badge === 'low' ? (
-                                        <button className="bg-or text-encre px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-encre hover:text-creme transition-all">
-                                            Commander
-                                        </button>
-                                    ) : product.badge === 'out' ? (
-                                        <button className="bg-rouge text-creme px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all">
-                                            Urgent
-                                        </button>
-                                    ) : (
-                                        <button className="bg-[#1A0A0A] text-creme px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-md">
-                                            Éditer
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
+                        );
+                    })}
+                </div>
+            )}
 
             {/* Empty States / Loading Scaffolding */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 opacity-40">

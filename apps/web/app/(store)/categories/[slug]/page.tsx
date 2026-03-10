@@ -5,60 +5,45 @@ import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import ProductCard from '@/components/store/products/ProductCard';
 import ProductFilters from '@/components/store/products/ProductFilters';
+import { useEffect, useState } from 'react';
+import { StoreAPI } from '@/lib/api/client';
 
-// Mock data for categories and products (shared with catalogue for consistency)
-const CATEGORIES = {
-    'vernis-gel': { name: 'Vernis Gel', description: 'Une pigmentation intense et une tenue irréprochable.' },
-    'gel-uv': { name: 'Gel UV & Résine', description: 'La base solide pour des extensions parfaites.' },
-    'materiel': { name: 'Matériel & Lampes', description: 'Outils professionnels pour des résultats salon.' },
-    'outils': { name: 'Pinceaux & Outils', description: 'Précision et confort pour chaque détail.' },
-    'finition': { name: 'Finition & Top Coat', description: 'La touche finale pour une brillance miroir.' },
-};
-
-const MOCK_PRODUCTS = [
-    {
-        id: '1',
-        name: 'Vernis Gel "Royal Red"',
-        slug: 'vernis-gel-royal-red',
-        price: 1800,
-        comparePrice: 2200,
-        images: [],
-        category: { id: 'cat1', name: 'Vernis Gel', slug: 'vernis-gel' },
-        badge: 'top',
-        averageRating: 4.8,
-        stock: 25
-    },
-    {
-        id: '2',
-        name: 'Gel Builder Clear 50g',
-        slug: 'gel-builder-clear',
-        price: 3200,
-        comparePrice: 3800,
-        images: [],
-        category: { id: 'cat2', name: 'Gel UV', slug: 'gel-uv' },
-        badge: 'new',
-        averageRating: 4.9,
-        stock: 12
-    },
-    {
-        id: '3',
-        name: 'Lampe UV/LED Pro 48W',
-        slug: 'lampe-pro-48w',
-        price: 6500,
-        images: [],
-        category: { id: 'cat3', name: 'Matériel', slug: 'materiel' },
-        averageRating: 4.7,
-        stock: 8
-    }
-];
+const FALLBACK_CATEGORY = { name: 'Catégorie', description: 'Découvrez notre sélection.' };
 
 export default function CategoryPage() {
     const { slug } = useParams();
-    const categoryKey = slug as keyof typeof CATEGORIES;
-    const categoryInfo = CATEGORIES[categoryKey] || { name: 'Catégorie', description: 'Découvrez notre sélection.' };
+    const [categoryInfo, setCategoryInfo] = useState<any>(FALLBACK_CATEGORY);
+    const [products, setProducts] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    // Filter products by category slug
-    const filteredProducts = MOCK_PRODUCTS.filter(p => p.category.slug === slug);
+    useEffect(() => {
+        let mounted = true;
+        async function load() {
+            setLoading(true);
+            try {
+                // Try to fetch products filtered by category slug
+                const res = await StoreAPI.getProducts(1, 24, { category: slug });
+                if (res.success) {
+                    const paginated = res.data?.data || res.data;
+                    const items = paginated?.items || paginated || [];
+                    if (mounted) setProducts(items);
+                }
+                // Try to fetch categories to get description
+                const catRes = await StoreAPI.getCategories();
+                if (catRes.success) {
+                    const catList = catRes.data || [];
+                    const found = catList.find((c: any) => c.slug === slug);
+                    if (found && mounted) setCategoryInfo(found);
+                }
+            } catch (err) {
+                console.error('Category load error:', err);
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        }
+        load();
+        return () => { mounted = false; };
+    }, [slug]);
 
     return (
         <div className="pt-32 pb-24 bg-creme min-h-screen">
@@ -89,9 +74,9 @@ export default function CategoryPage() {
 
                     {/* Product Grid */}
                     <div className="flex-grow">
-                        {filteredProducts.length > 0 ? (
+                        {products.length > 0 ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
-                                {filteredProducts.map((product) => (
+                                {products.map((product) => (
                                     <ProductCard key={product.id} product={product as any} />
                                 ))}
                             </div>

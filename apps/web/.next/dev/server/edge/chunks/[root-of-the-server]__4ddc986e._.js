@@ -26,7 +26,8 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 ;
 const PROTECTED_ROUTES = [
     '/compte',
-    '/admin'
+    '/admin',
+    '/checkout'
 ];
 const AUTH_ROUTES = [
     '/connexion',

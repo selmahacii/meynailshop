@@ -14,11 +14,13 @@ export function useLogin() {
   const setUser = useAuthStore((s) => s.setUser);
   return useMutation({
     mutationFn: (p: { email: string; password: string; }) =>
-      authApi.login(p.email, p.password).then(r => r.data),
-    onSuccess: (data) => {
-      localStorage.setItem('accessToken', data.accessToken);
-      if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
-      setUser(data.user);
+      authApi.login(p.email, p.password),
+    onSuccess: (response) => {
+      if (response.success && response.data) {
+        localStorage.setItem('accessToken', response.data.accessToken);
+        if (response.data.refreshToken) localStorage.setItem('refreshToken', response.data.refreshToken);
+        setUser(response.data.user);
+      }
     },
   });
 }

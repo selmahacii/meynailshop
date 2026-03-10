@@ -9,9 +9,9 @@ export async function POST(request: NextRequest) {
     { status: 200 }
   );
 
-  // Clear token cookie
+  // Clear token cookie (httpOnly)
   response.cookies.set('accessToken', '', {
-    httpOnly: false,
+    httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     maxAge: 0,

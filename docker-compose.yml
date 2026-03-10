@@ -6,7 +6,7 @@ services:
     container_name: meey_postgres
     environment:
       POSTGRES_USER: meey
-      POSTGRES_PASSWORD: meey_password_2026
+      POSTGRES_PASSWORD: meey
       POSTGRES_DB: meey_nail_shop
     ports:
       - "5433:5432"

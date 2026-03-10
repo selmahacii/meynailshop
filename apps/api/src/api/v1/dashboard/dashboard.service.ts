@@ -153,13 +153,13 @@ export class DashboardService {
     }
 
     const earliestStart = months[0]?.start;
-    const clients = await this.userRepository.find({
-      where: {
-        role: 'client',
-        createdAt: MoreThanOrEqual(earliestStart),
-      },
-      select: ['id', 'createdAt'],
-    });
+    // Use a query builder to avoid passing TypeORM operator objects as raw query
+    const clients = await this.userRepository
+      .createQueryBuilder('u')
+      .select(['u.id', 'u.createdAt'])
+      .where('u.role = :role', { role: 'client' })
+      .andWhere('u.createdAt >= :earliestStart', { earliestStart: earliestStart.toISOString() })
+      .getMany();
 
     return months.map((m) => {
       const count = clients.filter(

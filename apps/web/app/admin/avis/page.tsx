@@ -1,16 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Bell, Download, CheckCircle, XCircle, Star, MessageSquare, Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
-const mockReviews = [
-    { id: '1', product: 'Vernis Gel "Royal Red"', rating: 5, user: 'Sarah N.', date: '02 Mars 2026', title: 'Couleur magnifique !', content: 'Le rouge est d\'une profondeur incroyable et la tenue est parfaite après 3 semaines. Je recommande vivement pour les poses élégantes.', status: 'pending' },
-    { id: '2', product: 'Gel UV de Construction', rating: 4, user: 'Amira B.', date: '28 Fév 2026', title: 'Très bon gel', content: 'Auto-égalisant vraiment efficace. Seul bémol, chauffe un tout petit peu sous la lampe au début.', status: 'approved' },
-    { id: '3', product: 'Top Coat Mirror Shine', rating: 1, user: 'Inconnue', date: '25 Fév 2026', title: 'Déçue', content: 'Produit qui pèle après 2 jours... (Ce commentaire semble être un spam ou achat concurrent)', status: 'rejected' },
-    { id: '4', product: 'Lampe UV/LED 48W', rating: 5, user: 'Lina M.', date: '20 Fév 2026', title: 'Parfait pour mon salon', content: 'Sèche très vite, les capteurs fonctionnent parfaitement. Très bon investissement.', status: 'approved' },
-];
+import { ReviewsAPI } from '@/lib/api/client';
 
 const statusConfig: Record<string, { label: string; color: string }> = {
     pending: { label: 'En attente', color: 'bg-yellow-100 text-yellow-800 border border-yellow-200' },
@@ -20,7 +15,29 @@ const statusConfig: Record<string, { label: string; color: string }> = {
 
 export default function AdminReviewsPage() {
     const [filterStatus, setFilterStatus] = useState('all');
-    const filtered = mockReviews.filter(r => filterStatus === 'all' || r.status === filterStatus);
+    const [reviews, setReviews] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        let mounted = true;
+        async function load() {
+            setLoading(true);
+            try {
+                const res = await ReviewsAPI.getAll(1);
+                if (res.success) {
+                    if (mounted) setReviews(res.data.items || res.data || []);
+                }
+            } catch (err) {
+                console.error('Reviews load error:', err);
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        }
+        load();
+        return () => { mounted = false; };
+    }, []);
+
+    const filtered = reviews.filter(r => filterStatus === 'all' || r.status === filterStatus);
 
     return (
         <div className="space-y-8 pb-12">

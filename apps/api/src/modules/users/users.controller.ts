@@ -15,6 +15,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { PaginationDto } from '../../common/pagination/pagination.dto';
+import { UsersQueryDto } from './dto/users-query.dto';
 
 @Controller('users')
 export class UsersController {
@@ -34,11 +35,29 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @Get()
-  async findAll(@Query() paginationDto: PaginationDto) {
-    const result = await this.usersService.findAll(paginationDto);
+  async findAll(@Query() query: UsersQueryDto) {
+    const isActive =
+      typeof query.isActive === 'string'
+        ? query.isActive === 'true'
+        : undefined;
+
+    const result = await this.usersService.findAll({
+      page: query.page,
+      limit: query.limit,
+      isActive,
+      role: query.role,
+    });
     return {
-      statusCode: 200,
-      data: result,
+      success: true,
+      data: {
+        items: result.items,
+        total: result.total,
+        page: result.page,
+        limit: result.limit,
+        totalPages: result.totalPages,
+        hasNext: result.hasNext,
+        hasPrev: result.hasPrev,
+      },
     };
   }
 
