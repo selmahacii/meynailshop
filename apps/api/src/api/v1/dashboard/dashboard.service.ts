@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from '@/database/entities/user.entity';
-import { Order } from '@/database/entities/order.entity';
-import { Product } from '@/database/entities/product.entity';
+import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { User } from '../../../database/entities/user.entity';
+import { Order } from '../../../database/entities/order.entity';
+import { Product } from '../../../database/entities/product.entity';
+import { OrderItem } from '../../../database/entities/order-item.entity';
 
 @Injectable()
 export class DashboardService {
@@ -14,6 +15,8 @@ export class DashboardService {
     private orderRepository: Repository<Order>,
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
+    @InjectRepository(OrderItem)
+    private orderItemRepository: Repository<OrderItem>,
   ) {}
 
   async getMetrics() {
@@ -42,8 +45,8 @@ export class DashboardService {
     // Get order status breakdown
     const orderStatusBreakdown = this._getOrderStatusBreakdown(orders);
 
-    // Get customer growth (mock - based on creation dates)
-    const customerGrowth = this._getCustomerGrowth(orders);
+    // Get customer growth based on real client registrations
+    const customerGrowth = await this._getCustomerGrowth();
 
     // Get low stock products
     const lowStockProducts = await this._getLowStockProducts();
@@ -97,10 +100,18 @@ export class DashboardService {
   }
 
   private async _getProductSales(): Promise<any[]> {
-    const products = await this.productRepository.find({ take: 5 });
-    return products.map((p) => ({
-      name: p.name,
-      value: Math.floor(Math.random() * 100) + 20,
+    const rows = await this.orderItemRepository
+      .createQueryBuilder('item')
+      .select('item.productName', 'name')
+      .addSelect('SUM(item.quantity)', 'value')
+      .groupBy('item.productName')
+      .orderBy('value', 'DESC')
+      .limit(5)
+      .getRawMany<{ name: string; value: string }>();
+
+    return rows.map((row) => ({
+      name: row.name,
+      value: Number(row.value) || 0,
     }));
   }
 
@@ -125,22 +136,50 @@ export class DashboardService {
     ];
   }
 
-  private _getCustomerGrowth(orders: any[]): any[] {
-    const months = [];
+  private async _getCustomerGrowth(): Promise<any[]> {
+    const months: Array<{ label: string; start: Date; end: Date }> = [];
+
+    const now = new Date();
+    // Build 6 last months windows [start, end)
     for (let i = 5; i >= 0; i--) {
-      const date = new Date();
-      date.setMonth(date.getMonth() - i);
+      const start = new Date(now.getFullYear(), now.getMonth() - i, 1, 0, 0, 0, 0);
+      const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 1, 0, 0, 0, 0);
+
       months.push({
-        month: date.toLocaleDateString('fr-FR', { month: 'short' }),
-        customers: Math.floor(Math.random() * 50) + 20,
+        label: start.toLocaleDateString('fr-FR', { month: 'short' }),
+        start,
+        end,
       });
     }
-    return months;
+
+    const earliestStart = months[0]?.start;
+    const clients = await this.userRepository.find({
+      where: {
+        role: 'client',
+        createdAt: MoreThanOrEqual(earliestStart),
+      },
+      select: ['id', 'createdAt'],
+    });
+
+    return months.map((m) => {
+      const count = clients.filter(
+        (c) => c.createdAt >= m.start && c.createdAt < m.end,
+      ).length;
+
+      return {
+        month: m.label,
+        customers: count,
+      };
+    });
   }
 
   private async _getLowStockProducts(): Promise<any[]> {
     const products = await this.productRepository.find({
-      where: { stock: 10 }, // Products with stock <= 10
+      where: {
+        stock: LessThanOrEqual(10),
+        isActive: true,
+      },
+      order: { stock: 'ASC' },
       take: 5,
     });
 
