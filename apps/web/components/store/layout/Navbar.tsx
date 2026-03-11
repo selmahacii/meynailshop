@@ -12,6 +12,7 @@ export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const pathname = usePathname();
+    const [mounted, setMounted] = useState(false);
     const cartItemsCount = useCartStore((state) => state.items.length);
     const { user, isAuthenticated } = useAuthStore();
 
@@ -20,10 +21,11 @@ export default function Navbar() {
             setIsScrolled(window.scrollY > 20);
         };
         window.addEventListener('scroll', handleScroll);
+        setMounted(true);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const accountTarget = isAuthenticated ? '/compte' : '/connexion';
+    const accountTarget = mounted && isAuthenticated ? '/compte' : '/login';
 
     const navLinks = [
         { name: 'Accueil', href: '/' },
