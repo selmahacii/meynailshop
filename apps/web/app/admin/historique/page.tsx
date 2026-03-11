@@ -1,32 +1,130 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, Bell, Download, Filter, ChevronDown } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, Bell, Download, Loader, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { OrdersAPI, ClientsAPI, ProductsAPI } from '@/lib/api/client';
 
-const historyEvents = [
-    { id: '1', type: 'order', title: 'Nouvelle commande #4521', detail: 'Sarah Benali — 2 400 DA', date: '28 Fév 2026 14:32', user: 'Système', color: 'bg-blue-500' },
-    { id: '2', type: 'stock', title: 'Alerte stock déclenchée', detail: 'Gel Builder Clear — Seuil atteint (8 u.)', date: '28 Fév 2026 11:10', user: 'Système', color: 'bg-yellow-500' },
-    { id: '3', type: 'product', title: 'Produit modifié', detail: 'OPI Red Rock — Prix mis à jour de 180 DA à 200 DA', date: '27 Fév 2026 16:50', user: 'Admin', color: 'bg-or' },
-    { id: '4', type: 'order', title: 'Commande expédiée #4519', detail: 'Yasmine Mansouri — Livraison Chronopost', date: '27 Fév 2026 09:20', user: 'Admin', color: 'bg-blue-500' },
-    { id: '5', type: 'review', title: 'Avis approuvé', detail: 'Amira B. — Vernis Gel (4/5 étoiles)', date: '26 Fév 2026 18:01', user: 'Admin', color: 'bg-green-500' },
-    { id: '6', type: 'user', title: 'Nouveau client inscrit', detail: 'fatima.z@hotmail.com — Blida', date: '26 Fév 2026 12:40', user: 'Système', color: 'bg-purple-500' },
-    { id: '7', type: 'settings', title: 'Paramètres modifiés', detail: 'Frais de livraison : 500 DA → 600 DA', date: '25 Fév 2026 10:15', user: 'Admin', color: 'bg-encre' },
-];
+interface ActivityEvent {
+    id: string;
+    type: 'order' | 'stock' | 'user' | 'product';
+    title: string;
+    detail: string;
+    date: string;
+    dateRaw: Date;
+    user: string;
+    color: string;
+}
 
 const typeFilters = [
     { key: 'all', label: 'Tous' },
     { key: 'order', label: 'Commandes' },
     { key: 'stock', label: 'Stock' },
-    { key: 'product', label: 'Produits' },
-    { key: 'review', label: 'Avis' },
     { key: 'user', label: 'Clients' },
 ];
 
+const statusLabels: Record<string, string> = {
+    pending: 'En attente',
+    processing: 'En cours',
+    shipped: 'Expédiée',
+    delivered: 'Livrée',
+    cancelled: 'Annulée',
+};
+
 export default function AdminHistoryPage() {
     const [filter, setFilter] = useState('all');
-    const filtered = historyEvents.filter(e => filter === 'all' || e.type === filter);
+    const [events, setEvents] = useState<ActivityEvent[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        fetchActivityLog();
+    }, []);
+
+    const fetchActivityLog = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const allEvents: ActivityEvent[] = [];
+
+            // 1. Fetch recent orders
+            const ordersResult = await OrdersAPI.getAll(1, 20);
+            if (ordersResult.success) {
+                const orders = ordersResult.data?.data || ordersResult.data?.items || [];
+                orders.forEach((order: any) => {
+                    const date = new Date(order.createdAt);
+                    const userName = order.user
+                        ? `${order.user.firstName || ''} ${order.user.lastName || ''}`.trim()
+                        : 'Client';
+                    allEvents.push({
+                        id: `order-${order.id}`,
+                        type: 'order',
+                        title: `Commande #${order.id.slice(-4)} — ${statusLabels[order.status] || order.status}`,
+                        detail: `${userName} — ${Number(order.total).toLocaleString()} DA`,
+                        date: date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) + ' ' +
+                            date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                        dateRaw: date,
+                        user: 'Système',
+                        color: order.status === 'delivered' ? 'bg-green-500' :
+                            order.status === 'cancelled' ? 'bg-red-500' :
+                                order.status === 'shipped' ? 'bg-blue-500' : 'bg-yellow-500',
+                    });
+                });
+            }
+
+            // 2. Fetch recent clients
+            const clientsResult = await ClientsAPI.getAll(1, 20);
+            if (clientsResult.success) {
+                const clients = clientsResult.data?.items || clientsResult.data || [];
+                clients.forEach((client: any) => {
+                    const date = new Date(client.createdAt);
+                    allEvents.push({
+                        id: `user-${client.id}`,
+                        type: 'user',
+                        title: 'Nouveau client inscrit',
+                        detail: `${client.firstName} ${client.lastName} — ${client.email}`,
+                        date: date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) + ' ' +
+                            date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                        dateRaw: date,
+                        user: 'Système',
+                        color: 'bg-purple-500',
+                    });
+                });
+            }
+
+            // 3. Fetch low stock alerts
+            const stockResult = await ProductsAPI.getLowStock(10);
+            if (stockResult.success) {
+                const lowStockItems = stockResult.data?.items || stockResult.data || [];
+                lowStockItems.forEach((product: any) => {
+                    const date = new Date(product.updatedAt || product.createdAt);
+                    allEvents.push({
+                        id: `stock-${product.id}`,
+                        type: 'stock',
+                        title: product.stock === 0 ? 'Rupture de stock' : 'Alerte stock faible',
+                        detail: `${product.name} — ${product.stock} unité(s) restante(s)`,
+                        date: date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) + ' ' +
+                            date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                        dateRaw: date,
+                        user: 'Système',
+                        color: product.stock === 0 ? 'bg-red-500' : 'bg-yellow-500',
+                    });
+                });
+            }
+
+            // Sort by date descending
+            allEvents.sort((a, b) => b.dateRaw.getTime() - a.dateRaw.getTime());
+            setEvents(allEvents);
+        } catch (err) {
+            console.error('Activity log error:', err);
+            setError('Impossible de charger le journal d\'activité');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const filtered = events.filter(e => filter === 'all' || e.type === filter);
 
     return (
         <div className="space-y-8 pb-12">
@@ -34,7 +132,9 @@ export default function AdminHistoryPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-serif text-encre">Historique</h1>
-                    <p className="text-encre3 text-[10px] uppercase tracking-widest font-bold mt-1">Journal d'activité — 04 Mars 2026</p>
+                    <p className="text-encre3 text-[10px] uppercase tracking-widest font-bold mt-1">
+                        Journal d'activité — {new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                    </p>
                 </div>
                 <div className="flex items-center space-x-3">
                     <div className="relative group">
@@ -61,7 +161,20 @@ export default function AdminHistoryPage() {
 
             {/* Timeline */}
             <div className="bg-white rounded-sm border border-creme2 shadow-lg overflow-hidden">
-                {filtered.length === 0 ? (
+                {loading ? (
+                    <div className="flex items-center justify-center py-16">
+                        <Loader className="w-8 h-8 text-or animate-spin" />
+                        <span className="ml-3 text-encre3">Chargement du journal...</span>
+                    </div>
+                ) : error ? (
+                    <div className="text-center py-16">
+                        <AlertCircle className="w-12 h-12 text-rouge mx-auto mb-4" />
+                        <p className="text-rouge mb-4">{error}</p>
+                        <button onClick={fetchActivityLog} className="px-4 py-2 bg-encre text-creme text-xs font-bold rounded-sm hover:bg-rouge-deep transition-all">
+                            Réessayer
+                        </button>
+                    </div>
+                ) : filtered.length === 0 ? (
                     <div className="p-16 text-center text-encre3">Aucun événement trouvé.</div>
                 ) : (
                     <div className="relative">

@@ -144,7 +144,7 @@ export default function AdminOrdersPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-serif text-encre">Commandes</h1>
-                    <p className="text-encre3 text-[10px] uppercase tracking-widest font-bold mt-1">Gestion des commandes client — 04 Mars 2026</p>
+                    <p className="text-encre3 text-[10px] uppercase tracking-widest font-bold mt-1">Gestion des commandes client — {new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
                 </div>
 
                 <div className="flex items-center space-x-3">

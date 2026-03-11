@@ -241,12 +241,24 @@ export class AuthAPI {
 }
 
 export class ReviewsAPI {
-  static async getAll(page = 1) {
-    return apiGet(`/api/${API_VERSION}/admin/reviews?page=${page}`);
+  static async getAll(page = 1, limit = 10, status?: string) {
+    const query = new URLSearchParams();
+    query.append('page', String(page));
+    query.append('limit', String(limit));
+    if (status) query.append('status', status);
+    return apiGet(`/api/reviews?${query.toString()}`);
   }
 
   static async moderate(id: string, status: 'approved' | 'rejected') {
-    return apiPatch(`/api/${API_VERSION}/admin/reviews/${id}`, { status });
+    return apiPatch(`/api/reviews/${id}/moderate`, { status });
+  }
+}
+
+export class ActivityLogAPI {
+  static async getAll(limit = 20) {
+    // This could be a dedicated endpoint or we derive it from orders/users
+    // For now we'll keep the derivation in the frontend as implemented
+    return { success: true, data: [] }; 
   }
 }
 

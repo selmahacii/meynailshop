@@ -1,18 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, Bell, Download, Plus, AlertTriangle, TrendingDown, Package, ChevronDown, Filter } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, Bell, Download, Plus, AlertTriangle, TrendingDown, Package, ChevronDown, Filter, Loader, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-
-const stockItems = [
-    { id: '1', name: 'Vernis Gel "Royal Red"', ref: 'VG-RR-001', category: 'Vernis Gel', stock: 42, threshold: 10, status: 'ok', color: 'bg-rouge-deep' },
-    { id: '2', name: 'Gel Builder Clear 50g', ref: 'GUV-BC-002', category: 'Gel UV', stock: 8, threshold: 10, status: 'low', color: 'bg-white border border-creme2' },
-    { id: '3', name: 'Top Coat Brillant', ref: 'TC-MS-003', category: 'Finition', stock: 0, threshold: 5, status: 'out', color: 'bg-creme2' },
-    { id: '4', name: 'Lampe UV/LED Pro 48W', ref: 'MAT-LP-004', category: 'Matériel', stock: 120, threshold: 5, status: 'ok', color: 'bg-or' },
-    { id: '5', name: 'Strass Cristal Mix', ref: 'DEC-SC-005', category: 'Décoration', stock: 7, threshold: 10, status: 'low', color: 'bg-pink-600' },
-    { id: '6', name: 'Gel UV Rose Nude', ref: 'GUV-RN-006', category: 'Gel UV', stock: 55, threshold: 10, status: 'ok', color: 'bg-pink-200' },
-];
+import { ProductsAPI } from '@/lib/api/client';
 
 const statusConfig: Record<string, { label: string; color: string }> = {
     ok: { label: 'En stock', color: 'bg-green-100 text-green-700' },
@@ -20,8 +12,51 @@ const statusConfig: Record<string, { label: string; color: string }> = {
     out: { label: 'Rupture', color: 'bg-red-100 text-red-600' },
 };
 
+function getStockStatus(stock: number, threshold: number): string {
+    if (stock === 0) return 'out';
+    if (stock <= threshold) return 'low';
+    return 'ok';
+}
+
 export default function AdminStockPage() {
     const [filter, setFilter] = useState('all');
+    const [products, setProducts] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+
+    const fetchProducts = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const result = await ProductsAPI.getAll(1, 200);
+
+            if (result.success && result.data) {
+                const items = result.data.items || result.data || [];
+                setProducts(items);
+            } else {
+                setError(result.error || 'Erreur lors du chargement du stock');
+            }
+        } catch (err) {
+            console.error('Stock fetch error:', err);
+            setError('Impossible de charger les données de stock');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const stockItems = products.map((p: any) => ({
+        id: p.id,
+        name: p.name,
+        ref: p.sku || '—',
+        category: p.category?.name || p.category || '—',
+        stock: p.stock ?? 0,
+        threshold: p.stockAlert || p.alertThreshold || 5,
+        status: getStockStatus(p.stock ?? 0, p.stockAlert || p.alertThreshold || 5),
+    }));
 
     const filtered = stockItems.filter(item => filter === 'all' || item.status === filter);
     const outCount = stockItems.filter(i => i.status === 'out').length;
@@ -33,7 +68,9 @@ export default function AdminStockPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-serif text-encre">Stock</h1>
-                    <p className="text-encre3 text-[10px] uppercase tracking-widest font-bold mt-1">Gestion de l'inventaire — 04 Mars 2026</p>
+                    <p className="text-encre3 text-[10px] uppercase tracking-widest font-bold mt-1">
+                        Gestion de l'inventaire — {new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                    </p>
                 </div>
                 <div className="flex items-center space-x-3">
                     <div className="relative group">
@@ -98,60 +135,76 @@ export default function AdminStockPage() {
                             </button>
                         ))}
                     </div>
-                    <button className="flex items-center space-x-2 text-[10px] font-bold uppercase tracking-widest text-encre3 hover:text-or transition-colors">
-                        <Filter size={14} /><span>Trier par seuil</span><ChevronDown size={12} />
-                    </button>
                 </div>
 
-                <table className="w-full">
-                    <thead className="bg-creme/30 text-[10px] uppercase tracking-widest text-encre3 font-black border-b border-creme2">
-                        <tr>
-                            <th className="px-8 py-5 text-left">Produit</th>
-                            <th className="px-8 py-5 text-left">Catégorie</th>
-                            <th className="px-8 py-5 text-left">Référence</th>
-                            <th className="px-8 py-5 text-center">Stock actuel</th>
-                            <th className="px-8 py-5 text-center">Seuil alerte</th>
-                            <th className="px-8 py-5 text-center">Statut</th>
-                            <th className="px-8 py-5 text-right">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-creme2">
-                        {filtered.map((item) => (
-                            <tr key={item.id} className="hover:bg-creme/5 transition-colors group">
-                                <td className="px-8 py-5">
-                                    <div className="flex items-center space-x-4">
-                                        <div className={cn("w-10 h-10 rounded-sm shadow-inner", item.color)} />
-                                        <span className="text-sm font-bold text-encre group-hover:text-rouge-deep transition-colors">{item.name}</span>
-                                    </div>
-                                </td>
-                                <td className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-or">{item.category}</td>
-                                <td className="px-8 py-5 text-xs font-mono text-encre3">{item.ref}</td>
-                                <td className="px-8 py-5 text-center">
-                                    <span className={cn("text-lg font-black", item.status === 'out' ? "text-red-600" : item.status === 'low' ? "text-yellow-700" : "text-encre")}>
-                                        {item.stock}
-                                    </span>
-                                </td>
-                                <td className="px-8 py-5 text-center text-sm font-bold text-encre3">{item.threshold}</td>
-                                <td className="px-8 py-5 text-center">
-                                    <span className={cn("text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm shadow-sm", statusConfig[item.status].color)}>
-                                        {statusConfig[item.status].label}
-                                    </span>
-                                </td>
-                                <td className="px-8 py-5 text-right">
-                                    {item.status !== 'ok' ? (
-                                        <button className="px-4 py-1.5 bg-[#1A0A0A] text-creme text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all">
-                                            Commander
-                                        </button>
-                                    ) : (
-                                        <button className="px-4 py-1.5 bg-white border border-creme2 text-encre text-[10px] font-black uppercase tracking-widest rounded-sm hover:border-or hover:text-or transition-all">
-                                            Ajuster
-                                        </button>
-                                    )}
-                                </td>
+                {loading ? (
+                    <div className="flex items-center justify-center py-16">
+                        <Loader className="w-8 h-8 text-or animate-spin" />
+                        <span className="ml-3 text-encre3">Chargement de l'inventaire...</span>
+                    </div>
+                ) : error ? (
+                    <div className="text-center py-16">
+                        <AlertCircle className="w-12 h-12 text-rouge mx-auto mb-4" />
+                        <p className="text-rouge mb-4">{error}</p>
+                        <button onClick={fetchProducts} className="px-4 py-2 bg-encre text-creme text-xs font-bold rounded-sm hover:bg-rouge-deep transition-all">
+                            Réessayer
+                        </button>
+                    </div>
+                ) : (
+                    <table className="w-full">
+                        <thead className="bg-creme/30 text-[10px] uppercase tracking-widest text-encre3 font-black border-b border-creme2">
+                            <tr>
+                                <th className="px-8 py-5 text-left">Produit</th>
+                                <th className="px-8 py-5 text-left">Catégorie</th>
+                                <th className="px-8 py-5 text-left">Référence</th>
+                                <th className="px-8 py-5 text-center">Stock actuel</th>
+                                <th className="px-8 py-5 text-center">Seuil alerte</th>
+                                <th className="px-8 py-5 text-center">Statut</th>
+                                <th className="px-8 py-5 text-right">Action</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-creme2">
+                            {filtered.map((item) => (
+                                <tr key={item.id} className="hover:bg-creme/5 transition-colors group">
+                                    <td className="px-8 py-5">
+                                        <span className="text-sm font-bold text-encre group-hover:text-rouge-deep transition-colors">{item.name}</span>
+                                    </td>
+                                    <td className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-or">{item.category}</td>
+                                    <td className="px-8 py-5 text-xs font-mono text-encre3">{item.ref}</td>
+                                    <td className="px-8 py-5 text-center">
+                                        <span className={cn("text-lg font-black", item.status === 'out' ? "text-red-600" : item.status === 'low' ? "text-yellow-700" : "text-encre")}>
+                                            {item.stock}
+                                        </span>
+                                    </td>
+                                    <td className="px-8 py-5 text-center text-sm font-bold text-encre3">{item.threshold}</td>
+                                    <td className="px-8 py-5 text-center">
+                                        <span className={cn("text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm shadow-sm", statusConfig[item.status].color)}>
+                                            {statusConfig[item.status].label}
+                                        </span>
+                                    </td>
+                                    <td className="px-8 py-5 text-right">
+                                        {item.status !== 'ok' ? (
+                                            <button className="px-4 py-1.5 bg-[#1A0A0A] text-creme text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all">
+                                                Commander
+                                            </button>
+                                        ) : (
+                                            <button className="px-4 py-1.5 bg-white border border-creme2 text-encre text-[10px] font-black uppercase tracking-widest rounded-sm hover:border-or hover:text-or transition-all">
+                                                Ajuster
+                                            </button>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                            {filtered.length === 0 && (
+                                <tr>
+                                    <td colSpan={7} className="py-16 text-center text-encre3">
+                                        Aucun produit trouvé pour ce filtre.
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                )}
             </div>
         </div>
     );
