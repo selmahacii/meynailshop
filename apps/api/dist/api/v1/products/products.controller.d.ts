@@ -25,6 +25,11 @@ export declare class ProductsController {
             hasNext: boolean;
             hasPrev: boolean;
         };
+        error?: undefined;
+    } | {
+        success: boolean;
+        error: string;
+        data?: undefined;
     }>;
     findOne(id: string): Promise<{
         success: boolean;

@@ -178,49 +178,64 @@ export class DashboardService {
   }
 
   private async _getWilayaDistribution(): Promise<any[]> {
-    // Using raw SQL for JSONB aggregations to avoid QueryBuilder inconsistencies
-    const rawData = await this.orderRepository.query(`
-      SELECT 
-        "shippingAddressSnapshot"->>'wilaya' as "wilayaCode",
-        "shippingAddressSnapshot"->>'wilayaName' as "wilayaName",
-        COUNT(*) as "count"
-      FROM "orders"
-      WHERE "shippingAddressSnapshot"->>'wilaya' IS NOT NULL
-      GROUP BY "shippingAddressSnapshot"->>'wilaya', "shippingAddressSnapshot"->>'wilayaName'
-      ORDER BY "count" DESC
-      LIMIT 5
-    `);
+    try {
+      // Using raw SQL for JSONB aggregations to avoid QueryBuilder inconsistencies
+      const rawData = await this.orderRepository.query(`
+        SELECT 
+          "shippingAddressSnapshot"->>'wilaya' as "wilayaCode",
+          "shippingAddressSnapshot"->>'wilayaName' as "wilayaName",
+          COUNT(*) as "count"
+        FROM "orders"
+        WHERE "shippingAddressSnapshot"->>'wilaya' IS NOT NULL
+        GROUP BY "shippingAddressSnapshot"->>'wilaya', "shippingAddressSnapshot"->>'wilayaName'
+        ORDER BY "count" DESC
+        LIMIT 5
+      `);
 
-    const total = rawData.reduce((sum: number, s: any) => sum + (parseInt(s.count) || 0), 0);
-    return rawData.map((s: any) => {
-      const count = parseInt(s.count) || 0;
-      return {
-        wilaya: s.wilayaName || s.wilayaCode || 'Inconnue',
-        count,
-        percent: total > 0 ? Math.round((count / total) * 100) : 0,
-      };
-    });
+      if (!rawData || !Array.isArray(rawData)) return [];
+
+      const total = rawData.reduce((sum: number, s: any) => sum + (parseInt(s.count) || 0), 0);
+      return rawData.map((s: any) => {
+        const count = parseInt(s.count) || 0;
+        return {
+          wilaya: s.wilayaName || s.wilayaCode || 'Inconnue',
+          count,
+          percent: total > 0 ? Math.round((count / total) * 100) : 0,
+        };
+      });
+    } catch (error) {
+      console.warn('⚠️ [DashboardService] Wilaya distribution failed:', error.message);
+      return [];
+    }
   }
 
   private async _getPaymentMethodDistribution(): Promise<any[]> {
-    const stats = await this.orderRepository
-      .createQueryBuilder('order')
-      .select('order.paymentMethod', 'method')
-      .addSelect('COUNT(order.id)', 'count')
-      .groupBy('order.paymentMethod')
-      .getRawMany();
+    try {
+      const stats = await this.orderRepository
+        .createQueryBuilder('order')
+        .select('order.paymentMethod', 'method')
+        .addSelect('COUNT(order.id)', 'count')
+        .groupBy('order.paymentMethod')
+        .getRawMany();
 
-    const mapping: Record<string, string> = {
-      cash_on_delivery: 'À la livraison',
-      baridimob: 'Baridimob',
-      ccp: 'CCP',
-    };
+      const mapping: Record<string, string> = {
+        cash_on_delivery: 'À la livraison',
+        baridimob: 'Baridimob',
+        ccp: 'CCP',
+      };
 
-    const total = stats.reduce((sum, s) => sum + (parseInt(s.count) || 0), 0);
-    return stats.map(s => ({
-      name: mapping[s.method] || s.method,
-      value: parseInt(s.count) || 0,
-      percent: total > 0 ? Math.round((parseInt(s.count) / total) * 100) : 0,
-    }));
+      const total = stats.reduce((sum, s) => sum + (parseInt(s.count) || 0), 0);
+      return stats.map(s => {
+        const count = parseInt(s.count) || 0;
+        return {
+          name: mapping[s.method] || s.method || 'Inconnu',
+          value: count,
+          percent: total > 0 ? Math.round((count / total) * 100) : 0,
+        };
+      });
+    } catch (error) {
+      console.warn('⚠️ [DashboardService] Payment distribution failed:', error.message);
+      return [];
+    }
   }
 }

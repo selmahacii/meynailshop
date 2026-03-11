@@ -52,8 +52,11 @@ export class ProductsService {
   }
 
   async getLowStockProducts(threshold: number = 10) {
-    return await this.productRepository.find({
-      where: { stock: LessThanOrEqual(threshold) },
-    });
+    return await this.productRepository
+      .createQueryBuilder('p')
+      .where('p.stock <= :threshold', { threshold })
+      .andWhere('p.isActive = :isActive', { isActive: true })
+      .orderBy('p.stock', 'ASC')
+      .getMany();
   }
 }

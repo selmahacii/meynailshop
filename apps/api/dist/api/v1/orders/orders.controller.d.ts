@@ -22,6 +22,7 @@ export declare class OrdersController {
             delivered: number;
             cancelled: number;
             totalRevenue: number;
+            pendingReviews: number;
         };
     }>;
     findOne(id: string): Promise<{

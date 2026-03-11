@@ -16,10 +16,11 @@ exports.OrdersService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const order_entity_1 = require("../../../database/entities/order.entity");
+const entities_1 = require("../../../database/entities");
 let OrdersService = class OrdersService {
-    constructor(orderRepository) {
+    constructor(orderRepository, reviewRepository) {
         this.orderRepository = orderRepository;
+        this.reviewRepository = reviewRepository;
     }
     async findAll(page = 1, limit = 10, status) {
         const query = this.orderRepository.createQueryBuilder('order');
@@ -52,21 +53,40 @@ let OrdersService = class OrdersService {
         return await this.findOne(id);
     }
     async getStats() {
-        const orders = await this.orderRepository.find();
-        const stats = {
-            total: orders.length,
-            pending: orders.filter((o) => o.status === 'pending').length,
-            delivered: orders.filter((o) => o.status === 'delivered').length,
-            cancelled: orders.filter((o) => o.status === 'cancelled').length,
-            totalRevenue: orders.reduce((sum, o) => sum + (Number(o.total) || 0), 0),
-        };
-        return stats;
+        try {
+            const [orders, pendingReviews] = await Promise.all([
+                this.orderRepository.find(),
+                this.reviewRepository.count({ where: { status: 'pending' } }),
+            ]);
+            const stats = {
+                total: orders.length,
+                pending: orders.filter((o) => o.status === 'pending').length,
+                delivered: orders.filter((o) => o.status === 'delivered').length,
+                cancelled: orders.filter((o) => o.status === 'cancelled').length,
+                totalRevenue: orders.reduce((sum, o) => sum + (Number(o.total) || 0), 0),
+                pendingReviews,
+            };
+            return stats;
+        }
+        catch (error) {
+            console.error('❌ [OrdersV1] getStats Error:', error);
+            return {
+                total: 0,
+                pending: 0,
+                delivered: 0,
+                cancelled: 0,
+                totalRevenue: 0,
+                pendingReviews: 0,
+            };
+        }
     }
 };
 exports.OrdersService = OrdersService;
 exports.OrdersService = OrdersService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(order_entity_1.Order)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(0, (0, typeorm_1.InjectRepository)(entities_1.Order)),
+    __param(1, (0, typeorm_1.InjectRepository)(entities_1.Review)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository])
 ], OrdersService);
 //# sourceMappingURL=orders.service.js.map

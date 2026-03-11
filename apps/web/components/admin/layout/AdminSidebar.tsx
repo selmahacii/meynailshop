@@ -47,7 +47,7 @@ export default function AdminSidebar() {
 
                 setBadges({
                     orders: ordersRes?.data?.pending || 0,
-                    stock: productsRes?.data?.length || 0,
+                    stock: productsRes?.data?.total || productsRes?.data?.items?.length || 0,
                     reviews: ordersRes?.data?.pendingReviews || 0,
                 });
             } catch (error) {

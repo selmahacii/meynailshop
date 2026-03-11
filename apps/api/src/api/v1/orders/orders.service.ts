@@ -1,13 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Order } from '../../../database/entities/order.entity';
+import { Order, Review } from '../../../database/entities';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private orderRepository: Repository<Order>,
+    @InjectRepository(Review)
+    private reviewRepository: Repository<Review>,
   ) {}
 
   async findAll(page: number = 1, limit: number = 10, status?: string) {
@@ -47,16 +49,32 @@ export class OrdersService {
   }
 
   async getStats() {
-    const orders = await this.orderRepository.find();
+    try {
+      const [orders, pendingReviews] = await Promise.all([
+        this.orderRepository.find(),
+        this.reviewRepository.count({ where: { status: 'pending' } }),
+      ]);
 
-    const stats = {
-      total: orders.length,
-      pending: orders.filter((o: any) => o.status === 'pending').length,
-      delivered: orders.filter((o: any) => o.status === 'delivered').length,
-      cancelled: orders.filter((o: any) => o.status === 'cancelled').length,
-      totalRevenue: orders.reduce((sum: number, o: any) => sum + (Number(o.total) || 0), 0),
-    };
+      const stats = {
+        total: orders.length,
+        pending: orders.filter((o: any) => o.status === 'pending').length,
+        delivered: orders.filter((o: any) => o.status === 'delivered').length,
+        cancelled: orders.filter((o: any) => o.status === 'cancelled').length,
+        totalRevenue: orders.reduce((sum: number, o: any) => sum + (Number(o.total) || 0), 0),
+        pendingReviews,
+      };
 
-    return stats;
+      return stats;
+    } catch (error) {
+      console.error('❌ [OrdersV1] getStats Error:', error);
+      return {
+        total: 0,
+        pending: 0,
+        delivered: 0,
+        cancelled: 0,
+        totalRevenue: 0,
+        pendingReviews: 0,
+      };
+    }
   }
 }

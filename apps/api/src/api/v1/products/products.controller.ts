@@ -24,19 +24,30 @@ export class ProductsController {
 
   @Get('low-stock')
   async getLowStock(@Query('threshold') threshold: string) {
-    const data = await this.productsService.getLowStockProducts(parseInt(threshold || '10'));
-    return {
-      success: true,
-      data: {
-        items: data,
-        total: data.length,
-        page: 1,
-        limit: data.length,
-        totalPages: 1,
-        hasNext: false,
-        hasPrev: false,
-      },
-    };
+    try {
+      const thresholdVal = parseInt(threshold) || 10;
+      const data = await this.productsService.getLowStockProducts(thresholdVal);
+      const items = Array.isArray(data) ? data : [];
+      
+      return {
+        success: true,
+        data: {
+          items: items,
+          total: items.length,
+          page: 1,
+          limit: items.length,
+          totalPages: 1,
+          hasNext: false,
+          hasPrev: false,
+        },
+      };
+    } catch (error) {
+      console.error('❌ [ProductsV1] getLowStock Error:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Internal server error',
+      };
+    }
   }
 
   @Get(':id')

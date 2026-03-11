@@ -1,8 +1,9 @@
 import { Repository } from 'typeorm';
-import { Order } from '../../../database/entities/order.entity';
+import { Order, Review } from '../../../database/entities';
 export declare class OrdersService {
     private orderRepository;
-    constructor(orderRepository: Repository<Order>);
+    private reviewRepository;
+    constructor(orderRepository: Repository<Order>, reviewRepository: Repository<Review>);
     findAll(page?: number, limit?: number, status?: string): Promise<{
         data: Order[];
         pagination: {
@@ -20,5 +21,6 @@ export declare class OrdersService {
         delivered: number;
         cancelled: number;
         totalRevenue: number;
+        pendingReviews: number;
     }>;
 }
