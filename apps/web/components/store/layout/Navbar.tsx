@@ -30,8 +30,12 @@ export default function Navbar() {
     }, [pathname, isMobileMenuOpen, isAuthenticated, user?.role]);
 
     const accountTarget = isAuthenticated
-        ? '/compte'
-        : `/connexion?redirect=${user?.role === 'admin' ? '/admin/dashboard' : '/compte'}`;
+        ? (user?.role === 'admin' ? '/admin/dashboard' : '/compte')
+        : `/connexion?redirect=${typeof window !== 'undefined' && window.location.pathname.startsWith('/admin') ? '/admin/dashboard' : '/compte'}`;
+
+    const handleAccountClick = () => {
+        router.push(accountTarget);
+    };
 
     const navLinks = [
         { name: 'Accueil', href: '/' },
