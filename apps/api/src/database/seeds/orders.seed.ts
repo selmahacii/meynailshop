@@ -17,6 +17,8 @@ export async function seedOrders(connection: DataSource) {
   const products = await productRepo.find();
   const addresses = await addressRepo.find();
 
+  console.log(`📊 [SeedOrders] Found ${users.length} clients, ${products.length} products, ${addresses.length} addresses`);
+
   if (users.length === 0 || products.length === 0) {
     console.log('⚠️ Skipping orders seed - no users or products found');
     return;

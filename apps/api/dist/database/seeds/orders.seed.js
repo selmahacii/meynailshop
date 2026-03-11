@@ -15,6 +15,7 @@ async function seedOrders(connection) {
     const users = await userRepo.find({ where: { role: 'client' } });
     const products = await productRepo.find();
     const addresses = await addressRepo.find();
+    console.log(`📊 [SeedOrders] Found ${users.length} clients, ${products.length} products, ${addresses.length} addresses`);
     if (users.length === 0 || products.length === 0) {
         console.log('⚠️ Skipping orders seed - no users or products found');
         return;

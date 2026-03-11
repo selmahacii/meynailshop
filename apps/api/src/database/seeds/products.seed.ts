@@ -1,8 +1,17 @@
 import { DataSource } from 'typeorm';
 import { Product } from '../entities/product.entity';
+import { Category } from '../entities/category.entity';
 
 export async function seedProducts(connection: DataSource) {
   const productRepo = connection.getRepository(Product);
+  const categoryRepo = connection.getRepository(Category);
+
+  // Get real category IDs
+  const dbCategories = await categoryRepo.find();
+  const catMap = dbCategories.reduce((acc, cat) => {
+    acc[cat.slug] = cat.id;
+    return acc;
+  }, {} as Record<string, string>);
 
   const products = [
     { name: 'Vernis OPI Red', sku: 'MEY-001', price: 1200, category: 'vernis-gel' },
@@ -24,7 +33,7 @@ export async function seedProducts(connection: DataSource) {
       stock: 50,
       stockAlert: 10,
       images: ['https://via.placeholder.com/800x800?text=' + p.name],
-      categoryId: p.category, // This slug-based ID assumes the entity handles it
+      categoryId: catMap[p.category] || dbCategories[0]?.id, 
       isActive: true,
       isFeatured: Math.random() > 0.5,
       weight: 100,

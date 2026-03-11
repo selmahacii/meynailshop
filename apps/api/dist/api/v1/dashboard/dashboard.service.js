@@ -16,10 +16,7 @@ exports.DashboardService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const user_entity_1 = require("../../../database/entities/user.entity");
-const order_entity_1 = require("../../../database/entities/order.entity");
-const product_entity_1 = require("../../../database/entities/product.entity");
-const order_item_entity_1 = require("../../../database/entities/order-item.entity");
+const entities_1 = require("../../../database/entities");
 let DashboardService = class DashboardService {
     constructor(userRepository, orderRepository, productRepository, orderItemRepository) {
         this.userRepository = userRepository;
@@ -28,69 +25,65 @@ let DashboardService = class DashboardService {
         this.orderItemRepository = orderItemRepository;
     }
     async getMetrics() {
-        const revenueQuery = await this.orderRepository
-            .createQueryBuilder('order')
-            .select('SUM(CAST(order.total AS DECIMAL))', 'totalRevenue')
-            .addSelect('COUNT(order.id)', 'totalOrders')
-            .addSelect('COUNT(CASE WHEN order.status = \'delivered\' THEN 1 END)', 'completedOrders')
-            .addSelect('AVG(CAST(order.total AS DECIMAL))', 'averageCart')
-            .getRawOne();
-        const totalRevenue = parseFloat(revenueQuery.totalRevenue) || 0;
-        const totalOrders = parseInt(revenueQuery.totalOrders) || 0;
-        const completedOrders = parseInt(revenueQuery.completedOrders) || 0;
-        const averageCart = parseFloat(revenueQuery.averageCart) || 0;
-        const activeClients = await this.userRepository.count({
-            where: { role: 'client', isActive: true },
-        });
-        const monthlyRevenue = await this._getMonthlyTrendOptimized();
-        const productSales = await this._getProductSales();
-        const orderStatusBreakdown = await this._getOrderStatusBreakdownOptimized();
-        const customerGrowth = await this._getCustomerGrowth();
-        const lowStockProducts = await this._getLowStockProducts();
-        const wilayaDistribution = await this._getWilayaDistribution();
-        const paymentMethodDistribution = await this._getPaymentMethodDistribution();
-        return {
-            kpis: {
-                totalRevenue: Math.round(totalRevenue * 100) / 100,
-                totalOrders: totalOrders,
-                activeClients,
-                averageCart: Math.round(averageCart * 100) / 100,
-                completedOrders,
-            },
-            charts: {
-                monthlyRevenue,
-                productSales,
-                orderStatusBreakdown,
-                customerGrowth,
-                wilayaDistribution,
-                paymentMethodDistribution,
-            },
-            alerts: {
-                lowStockProducts,
-            },
-        };
+        try {
+            const revenueQuery = await this.orderRepository
+                .createQueryBuilder('order')
+                .select('SUM(order.total)', 'totalRevenue')
+                .addSelect('COUNT(order.id)', 'totalOrders')
+                .addSelect('COUNT(CASE WHEN order.status = \'delivered\' THEN 1 END)', 'completedOrders')
+                .addSelect('AVG(order.total)', 'averageCart')
+                .getRawOne();
+            const totalRevenue = parseFloat(revenueQuery?.totalRevenue ?? '0') || 0;
+            const totalOrders = parseInt(revenueQuery?.totalOrders ?? '0') || 0;
+            const completedOrders = parseInt(revenueQuery?.completedOrders ?? '0') || 0;
+            const averageCart = parseFloat(revenueQuery?.averageCart ?? '0') || 0;
+            const activeClients = await this.userRepository.count({
+                where: { role: 'client', isActive: true },
+            });
+            const monthlyRevenue = await this._getMonthlyTrendOptimized();
+            const productSales = await this._getProductSales();
+            const orderStatusBreakdown = await this._getOrderStatusBreakdownOptimized();
+            const customerGrowth = await this._getCustomerGrowth();
+            const lowStockProducts = await this._getLowStockProducts();
+            const wilayaDistribution = await this._getWilayaDistribution();
+            const paymentMethodDistribution = await this._getPaymentMethodDistribution();
+            return {
+                kpis: {
+                    totalRevenue: Math.round(totalRevenue * 100) / 100,
+                    totalOrders: totalOrders,
+                    activeClients: activeClients,
+                    averageCart: Math.round(averageCart * 100) / 100,
+                    completedOrders: completedOrders,
+                },
+                charts: {
+                    monthlyRevenue,
+                    productSales,
+                    orderStatusBreakdown,
+                    customerGrowth,
+                    wilayaDistribution,
+                    paymentMethodDistribution,
+                },
+                alerts: {
+                    lowStockProducts,
+                },
+            };
+        }
+        catch (error) {
+            console.error('❌ [DashboardService] getMetrics Error:', error);
+            throw error;
+        }
     }
     async _getMonthlyTrendOptimized() {
         const months = [];
         const now = new Date();
         for (let i = 5; i >= 0; i--) {
             const start = new Date(now.getFullYear(), now.getMonth() - i, 1);
-            const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
             months.push({
                 name: start.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }),
                 revenue: 0,
                 start: start.toISOString(),
-                end: end.toISOString(),
             });
         }
-        const trend = await this.orderRepository
-            .createQueryBuilder('order')
-            .select('SUM(CAST(order.total AS DECIMAL))', 'revenue')
-            .addSelect("TO_CHAR(order.createdAt, 'Mon YY')", 'monthYear')
-            .where('order.status = :status', { status: 'delivered' })
-            .andWhere('order.createdAt >= :start', { start: months[0].start })
-            .groupBy("TO_CHAR(order.createdAt, 'Mon YY')")
-            .getRawMany();
         const dataByMonth = await this.orderRepository
             .createQueryBuilder('order')
             .select('order.total', 'total')
@@ -133,12 +126,12 @@ let DashboardService = class DashboardService {
             .select('item.productName', 'name')
             .addSelect('SUM(item.quantity)', 'value')
             .groupBy('item.productName')
-            .orderBy('value', 'DESC')
+            .orderBy('SUM(item.quantity)', 'DESC')
             .limit(5)
             .getRawMany();
         return rows.map((row) => ({
             name: row.name,
-            value: Number(row.value) || 0,
+            value: parseInt(row.value) || 0,
         }));
     }
     async _getCustomerGrowth() {
@@ -147,60 +140,50 @@ let DashboardService = class DashboardService {
         for (let i = 5; i >= 0; i--) {
             const start = new Date(now.getFullYear(), now.getMonth() - i, 1, 0, 0, 0, 0);
             const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 1, 0, 0, 0, 0);
-            months.push({
-                label: start.toLocaleDateString('fr-FR', { month: 'short' }),
-                start,
-                end,
-            });
+            months.push({ label: start.toLocaleDateString('fr-FR', { month: 'short' }), start, end });
         }
-        const earliestStart = months[0]?.start;
         const clients = await this.userRepository
             .createQueryBuilder('u')
             .select(['u.id', 'u.createdAt'])
             .where('u.role = :role', { role: 'client' })
-            .andWhere('u.createdAt >= :earliestStart', { earliestStart: earliestStart.toISOString() })
+            .andWhere('u.createdAt >= :start', { start: months[0].start.toISOString() })
             .getMany();
-        return months.map((m) => {
-            const count = clients.filter((c) => c.createdAt >= m.start && c.createdAt < m.end).length;
-            return {
-                month: m.label,
-                customers: count,
-            };
-        });
+        return months.map((m) => ({
+            month: m.label,
+            customers: clients.filter((c) => c.createdAt >= m.start && c.createdAt < m.end).length,
+        }));
     }
     async _getLowStockProducts() {
-        const products = await this.productRepository.find({
-            where: {
-                stock: (0, typeorm_2.LessThanOrEqual)(10),
-                isActive: true,
-            },
-            order: { stock: 'ASC' },
-            take: 5,
-        });
-        return products.map((p) => ({
-            id: p.id,
-            name: p.name,
-            stock: p.stock,
-            sku: p.sku,
-        }));
+        const products = await this.productRepository
+            .createQueryBuilder('p')
+            .where('p.stock <= :limit', { limit: 10 })
+            .andWhere('p.isActive = :isActive', { isActive: true })
+            .orderBy('p.stock', 'ASC')
+            .limit(5)
+            .getMany();
+        return products.map((p) => ({ id: p.id, name: p.name, stock: p.stock, sku: p.sku }));
     }
     async _getWilayaDistribution() {
-        const stats = await this.orderRepository
-            .createQueryBuilder('order')
-            .select("order.shippingAddressSnapshot->>'wilaya' || ' - ' || (order.shippingAddressSnapshot->>'wilayaName')", 'wilaya')
-            .addSelect('COUNT(order.id)', 'count')
-            .where("order.shippingAddressSnapshot->>'wilaya' IS NOT NULL")
-            .groupBy("order.shippingAddressSnapshot->>'wilaya'")
-            .addGroupBy("order.shippingAddressSnapshot->>'wilayaName'")
-            .orderBy('count', 'DESC')
-            .limit(5)
-            .getRawMany();
-        const total = stats.reduce((sum, s) => sum + parseInt(s.count), 0);
-        return stats.map(s => ({
-            wilaya: s.wilaya || 'Inconnue',
-            count: parseInt(s.count) || 0,
-            percent: total > 0 ? Math.round((parseInt(s.count) / total) * 100) : 0,
-        }));
+        const rawData = await this.orderRepository.query(`
+      SELECT 
+        "shippingAddressSnapshot"->>'wilaya' as "wilayaCode",
+        "shippingAddressSnapshot"->>'wilayaName' as "wilayaName",
+        COUNT(*) as "count"
+      FROM "orders"
+      WHERE "shippingAddressSnapshot"->>'wilaya' IS NOT NULL
+      GROUP BY "shippingAddressSnapshot"->>'wilaya', "shippingAddressSnapshot"->>'wilayaName'
+      ORDER BY "count" DESC
+      LIMIT 5
+    `);
+        const total = rawData.reduce((sum, s) => sum + (parseInt(s.count) || 0), 0);
+        return rawData.map((s) => {
+            const count = parseInt(s.count) || 0;
+            return {
+                wilaya: s.wilayaName || s.wilayaCode || 'Inconnue',
+                count,
+                percent: total > 0 ? Math.round((count / total) * 100) : 0,
+            };
+        });
     }
     async _getPaymentMethodDistribution() {
         const stats = await this.orderRepository
@@ -214,7 +197,7 @@ let DashboardService = class DashboardService {
             baridimob: 'Baridimob',
             ccp: 'CCP',
         };
-        const total = stats.reduce((sum, s) => sum + parseInt(s.count), 0);
+        const total = stats.reduce((sum, s) => sum + (parseInt(s.count) || 0), 0);
         return stats.map(s => ({
             name: mapping[s.method] || s.method,
             value: parseInt(s.count) || 0,
@@ -225,10 +208,10 @@ let DashboardService = class DashboardService {
 exports.DashboardService = DashboardService;
 exports.DashboardService = DashboardService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
-    __param(1, (0, typeorm_1.InjectRepository)(order_entity_1.Order)),
-    __param(2, (0, typeorm_1.InjectRepository)(product_entity_1.Product)),
-    __param(3, (0, typeorm_1.InjectRepository)(order_item_entity_1.OrderItem)),
+    __param(0, (0, typeorm_1.InjectRepository)(entities_1.User)),
+    __param(1, (0, typeorm_1.InjectRepository)(entities_1.Order)),
+    __param(2, (0, typeorm_1.InjectRepository)(entities_1.Product)),
+    __param(3, (0, typeorm_1.InjectRepository)(entities_1.OrderItem)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

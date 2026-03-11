@@ -2,8 +2,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.seedProducts = seedProducts;
 const product_entity_1 = require("../entities/product.entity");
+const category_entity_1 = require("../entities/category.entity");
 async function seedProducts(connection) {
     const productRepo = connection.getRepository(product_entity_1.Product);
+    const categoryRepo = connection.getRepository(category_entity_1.Category);
+    const dbCategories = await categoryRepo.find();
+    const catMap = dbCategories.reduce((acc, cat) => {
+        acc[cat.slug] = cat.id;
+        return acc;
+    }, {});
     const products = [
         { name: 'Vernis OPI Red', sku: 'MEY-001', price: 1200, category: 'vernis-gel' },
         { name: 'Gel UV Clear', sku: 'MEY-002', price: 1500, category: 'gel-uv' },
@@ -23,7 +30,7 @@ async function seedProducts(connection) {
             stock: 50,
             stockAlert: 10,
             images: ['https://via.placeholder.com/800x800?text=' + p.name],
-            categoryId: p.category,
+            categoryId: catMap[p.category] || dbCategories[0]?.id,
             isActive: true,
             isFeatured: Math.random() > 0.5,
             weight: 100,

@@ -1,8 +1,5 @@
 import { Repository } from 'typeorm';
-import { User } from '../../../database/entities/user.entity';
-import { Order } from '../../../database/entities/order.entity';
-import { Product } from '../../../database/entities/product.entity';
-import { OrderItem } from '../../../database/entities/order-item.entity';
+import { User, Order, Product, OrderItem } from '../../../database/entities';
 export declare class DashboardService {
     private userRepository;
     private orderRepository;
