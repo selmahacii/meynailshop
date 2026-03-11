@@ -79,7 +79,7 @@ let OrdersService = class OrdersService {
                     where: {
                         code: createOrderDto.couponCode,
                         isActive: true,
-                        expiresAt: (0, typeorm_3.Between)(new Date(0), new Date()),
+                        expiresAt: (0, typeorm_3.MoreThan)(new Date()),
                     },
                 });
                 if (!coupon) {

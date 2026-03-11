@@ -28,24 +28,31 @@ let DashboardService = class DashboardService {
         this.orderItemRepository = orderItemRepository;
     }
     async getMetrics() {
-        const orders = await this.orderRepository.find({
-            select: ['id', 'total', 'status', 'createdAt'],
-        });
-        const totalRevenue = orders.reduce((sum, order) => sum + (Number(order.total) || 0), 0);
-        const completedOrders = orders.filter((o) => o.status === 'delivered').length;
+        const revenueQuery = await this.orderRepository
+            .createQueryBuilder('order')
+            .select('SUM(CAST(order.total AS DECIMAL))', 'totalRevenue')
+            .addSelect('COUNT(order.id)', 'totalOrders')
+            .addSelect('COUNT(CASE WHEN order.status = \'delivered\' THEN 1 END)', 'completedOrders')
+            .addSelect('AVG(CAST(order.total AS DECIMAL))', 'averageCart')
+            .getRawOne();
+        const totalRevenue = parseFloat(revenueQuery.totalRevenue) || 0;
+        const totalOrders = parseInt(revenueQuery.totalOrders) || 0;
+        const completedOrders = parseInt(revenueQuery.completedOrders) || 0;
+        const averageCart = parseFloat(revenueQuery.averageCart) || 0;
         const activeClients = await this.userRepository.count({
             where: { role: 'client', isActive: true },
         });
-        const averageCart = orders.length > 0 ? totalRevenue / orders.length : 0;
-        const monthlyRevenue = this._getMonthlyTrend(orders);
+        const monthlyRevenue = await this._getMonthlyTrendOptimized();
         const productSales = await this._getProductSales();
-        const orderStatusBreakdown = this._getOrderStatusBreakdown(orders);
+        const orderStatusBreakdown = await this._getOrderStatusBreakdownOptimized();
         const customerGrowth = await this._getCustomerGrowth();
         const lowStockProducts = await this._getLowStockProducts();
+        const wilayaDistribution = await this._getWilayaDistribution();
+        const paymentMethodDistribution = await this._getPaymentMethodDistribution();
         return {
             kpis: {
                 totalRevenue: Math.round(totalRevenue * 100) / 100,
-                totalOrders: orders.length,
+                totalOrders: totalOrders,
                 activeClients,
                 averageCart: Math.round(averageCart * 100) / 100,
                 completedOrders,
@@ -55,33 +62,70 @@ let DashboardService = class DashboardService {
                 productSales,
                 orderStatusBreakdown,
                 customerGrowth,
+                wilayaDistribution,
+                paymentMethodDistribution,
             },
             alerts: {
                 lowStockProducts,
             },
         };
     }
-    _getMonthlyTrend(orders) {
+    async _getMonthlyTrendOptimized() {
         const months = [];
+        const now = new Date();
         for (let i = 5; i >= 0; i--) {
-            const date = new Date();
-            date.setMonth(date.getMonth() - i);
+            const start = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
             months.push({
-                name: date.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }),
+                name: start.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }),
                 revenue: 0,
+                start: start.toISOString(),
+                end: end.toISOString(),
             });
         }
-        orders.forEach((order) => {
-            if (order.status === 'delivered') {
-                const orderDate = new Date(order.createdAt);
-                const monthIndex = months.findIndex((m) => m.name ===
-                    orderDate.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }));
-                if (monthIndex >= 0) {
-                    months[monthIndex].revenue += Number(order.total) || 0;
-                }
+        const trend = await this.orderRepository
+            .createQueryBuilder('order')
+            .select('SUM(CAST(order.total AS DECIMAL))', 'revenue')
+            .addSelect("TO_CHAR(order.createdAt, 'Mon YY')", 'monthYear')
+            .where('order.status = :status', { status: 'delivered' })
+            .andWhere('order.createdAt >= :start', { start: months[0].start })
+            .groupBy("TO_CHAR(order.createdAt, 'Mon YY')")
+            .getRawMany();
+        const dataByMonth = await this.orderRepository
+            .createQueryBuilder('order')
+            .select('order.total', 'total')
+            .addSelect('order.createdAt', 'createdAt')
+            .where('order.status = :status', { status: 'delivered' })
+            .andWhere('order.createdAt >= :start', { start: months[0].start })
+            .getRawMany();
+        dataByMonth.forEach(row => {
+            const date = new Date(row.createdAt);
+            const label = date.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' });
+            const month = months.find(m => m.name === label);
+            if (month) {
+                month.revenue += parseFloat(row.total) || 0;
             }
         });
-        return months;
+        return months.map(m => ({ name: m.name, revenue: Math.round(m.revenue * 100) / 100 }));
+    }
+    async _getOrderStatusBreakdownOptimized() {
+        const stats = await this.orderRepository
+            .createQueryBuilder('order')
+            .select('order.status', 'status')
+            .addSelect('COUNT(order.id)', 'count')
+            .groupBy('order.status')
+            .getRawMany();
+        const mapping = {
+            pending: 'En attente',
+            processing: 'En cours',
+            shipped: 'Expédiée',
+            delivered: 'Livrée',
+            cancelled: 'Annulée',
+        };
+        return stats.map(s => ({
+            name: mapping[s.status] || s.status,
+            value: parseInt(s.count) || 0,
+        }));
     }
     async _getProductSales() {
         const rows = await this.orderItemRepository
@@ -96,24 +140,6 @@ let DashboardService = class DashboardService {
             name: row.name,
             value: Number(row.value) || 0,
         }));
-    }
-    _getOrderStatusBreakdown(orders) {
-        const statuses = {
-            pending: 0,
-            delivered: 0,
-            cancelled: 0,
-        };
-        orders.forEach((order) => {
-            const status = order.status;
-            if (status === 'pending' || status === 'delivered' || status === 'cancelled') {
-                statuses[status]++;
-            }
-        });
-        return [
-            { name: 'En attente', value: statuses.pending },
-            { name: 'Livrées', value: statuses.delivered },
-            { name: 'Annulées', value: statuses.cancelled },
-        ];
     }
     async _getCustomerGrowth() {
         const months = [];
@@ -156,6 +182,43 @@ let DashboardService = class DashboardService {
             name: p.name,
             stock: p.stock,
             sku: p.sku,
+        }));
+    }
+    async _getWilayaDistribution() {
+        const stats = await this.orderRepository
+            .createQueryBuilder('order')
+            .select("order.shippingAddressSnapshot->>'wilaya' || ' - ' || (order.shippingAddressSnapshot->>'wilayaName')", 'wilaya')
+            .addSelect('COUNT(order.id)', 'count')
+            .where("order.shippingAddressSnapshot->>'wilaya' IS NOT NULL")
+            .groupBy("order.shippingAddressSnapshot->>'wilaya'")
+            .addGroupBy("order.shippingAddressSnapshot->>'wilayaName'")
+            .orderBy('count', 'DESC')
+            .limit(5)
+            .getRawMany();
+        const total = stats.reduce((sum, s) => sum + parseInt(s.count), 0);
+        return stats.map(s => ({
+            wilaya: s.wilaya || 'Inconnue',
+            count: parseInt(s.count) || 0,
+            percent: total > 0 ? Math.round((parseInt(s.count) / total) * 100) : 0,
+        }));
+    }
+    async _getPaymentMethodDistribution() {
+        const stats = await this.orderRepository
+            .createQueryBuilder('order')
+            .select('order.paymentMethod', 'method')
+            .addSelect('COUNT(order.id)', 'count')
+            .groupBy('order.paymentMethod')
+            .getRawMany();
+        const mapping = {
+            cash_on_delivery: 'À la livraison',
+            baridimob: 'Baridimob',
+            ccp: 'CCP',
+        };
+        const total = stats.reduce((sum, s) => sum + parseInt(s.count), 0);
+        return stats.map(s => ({
+            name: mapping[s.method] || s.method,
+            value: parseInt(s.count) || 0,
+            percent: total > 0 ? Math.round((parseInt(s.count) / total) * 100) : 0,
         }));
     }
 };

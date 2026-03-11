@@ -8,10 +8,8 @@ export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const token = request.cookies.get('accessToken')?.value;
 
-  // Redirect authenticated users away from auth pages
-  if (AUTH_ROUTES.some(route => pathname.startsWith(route)) && token) {
-    return NextResponse.redirect(new URL('/', request.url));
-  }
+  // No longer redirecting away from auth pages to allow users to "repair" sessions
+  // if store and cookies become inconsistent.
 
   // Protect admin routes
   if (ADMIN_ROUTES.some(route => pathname.startsWith(route))) {

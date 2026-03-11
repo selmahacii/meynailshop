@@ -22,14 +22,18 @@ export declare class DashboardService {
             productSales: any[];
             orderStatusBreakdown: any[];
             customerGrowth: any[];
+            wilayaDistribution: any[];
+            paymentMethodDistribution: any[];
         };
         alerts: {
             lowStockProducts: any[];
         };
     }>;
-    private _getMonthlyTrend;
+    private _getMonthlyTrendOptimized;
+    private _getOrderStatusBreakdownOptimized;
     private _getProductSales;
-    private _getOrderStatusBreakdown;
     private _getCustomerGrowth;
     private _getLowStockProducts;
+    private _getWilayaDistribution;
+    private _getPaymentMethodDistribution;
 }

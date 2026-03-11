@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { Repository, Between, DataSource } from 'typeorm';
+import { Repository, Between, DataSource, MoreThan } from 'typeorm';
 import { Order } from '../../database/entities/order.entity';
 import { OrderItem } from '../../database/entities/order-item.entity';
 import { Address } from '../../database/entities/address.entity';
@@ -101,7 +101,7 @@ export class OrdersService {
           where: {
             code: createOrderDto.couponCode,
             isActive: true,
-            expiresAt: Between(new Date(0), new Date()),
+            expiresAt: MoreThan(new Date()),
           },
         });
 

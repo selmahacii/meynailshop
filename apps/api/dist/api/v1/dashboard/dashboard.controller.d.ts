@@ -17,6 +17,8 @@ export declare class DashboardController {
                 productSales: any[];
                 orderStatusBreakdown: any[];
                 customerGrowth: any[];
+                wilayaDistribution: any[];
+                paymentMethodDistribution: any[];
             };
             alerts: {
                 lowStockProducts: any[];

@@ -1,16 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { X, ChevronDown, Check } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { X, ChevronDown, Check, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { StoreAPI } from '@/lib/api/client';
 
-const categories = [
-    { name: 'Vernis Gel', slug: 'vernis-gel' },
-    { name: 'Gel UV & Résine', slug: 'gel-uv' },
-    { name: 'Lampes & Appareils', slug: 'lampes' },
-    { name: 'Pinceaux & Outils', slug: 'outils' },
-    { name: 'Finition & Top Coat', slug: 'finition' },
-];
+interface Category {
+    name: string;
+    slug: string;
+}
 
 const priceRanges = [
     { label: 'Moins de 1000 DA', value: '0-1000' },
@@ -25,6 +23,24 @@ interface ProductFiltersProps {
 
 export default function ProductFilters({ onClose }: ProductFiltersProps) {
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const res = await StoreAPI.getCategories();
+                if (res.success) {
+                    setCategories(res.data || []);
+                }
+            } catch (err) {
+                console.error('Failed to fetch categories:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchCategories();
+    }, []);
 
     return (
         <div className="space-y-10">
@@ -34,16 +50,21 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
                     Catégories
                     <ChevronDown size={16} className="text-encre3" />
                 </h4>
-                <ul className="space-y-3">
-                    {categories.map((cat) => (
-                        <li key={cat.slug}>
-                            <button
-                                onClick={() => setActiveCategory(cat.slug)}
-                                className={cn(
-                                    "text-sm transition-colors flex items-center w-full",
-                                    activeCategory === cat.slug ? "text-rouge-mid font-semibold" : "text-encre3 hover:text-encre"
-                                )}
-                            >
+                {loading ? (
+                    <div className="flex justify-center py-4">
+                        <Loader2 size={20} className="animate-spin text-or" />
+                    </div>
+                ) : (
+                    <ul className="space-y-3">
+                        {categories.map((cat) => (
+                            <li key={cat.slug}>
+                                <button
+                                    onClick={() => setActiveCategory(cat.slug)}
+                                    className={cn(
+                                        "text-sm transition-colors flex items-center w-full",
+                                        activeCategory === cat.slug ? "text-rouge-mid font-semibold" : "text-encre3 hover:text-encre"
+                                    )}
+                                >
                                 <span className={cn(
                                     "w-1.5 h-1.5 rounded-full mr-3 transition-all",
                                     activeCategory === cat.slug ? "bg-rouge-mid scale-100" : "bg-transparent scale-0"
@@ -53,7 +74,8 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
                         </li>
                     ))}
                 </ul>
-            </div>
+            )}
+        </div>
 
             <div className="h-[1px] bg-creme2 w-full"></div>
 
