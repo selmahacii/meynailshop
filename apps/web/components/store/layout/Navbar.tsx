@@ -70,9 +70,9 @@ export default function Navbar() {
                     {user?.role === 'admin' && (
                         <Link
                             href="/admin/dashboard"
-                            className="bg-or/10 border border-or/30 text-or text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest hover:bg-or hover:text-rouge-deep transition-all duration-300"
+                            className="bg-or border border-or text-rouge-deep text-[11px] font-black px-4 py-1.5 rounded-sm uppercase tracking-widest hover:bg-creme hover:text-or transition-all duration-300 shadow-lg animate-pulse hover:animate-none"
                         >
-                            Panel Admin
+                            Tableau de Bord Admin
                         </Link>
                     )}
                 </div>

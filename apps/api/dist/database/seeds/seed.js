@@ -34,26 +34,25 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv = __importStar(require("dotenv"));
-const datasource_1 = require("../datasource");
+const path = __importStar(require("path"));
+const envPath = path.resolve(__dirname, '../../../.env');
+dotenv.config({ path: envPath });
+console.log('🌱 Environment loaded from:', envPath);
+console.log('DB_USER:', process.env.DB_USER);
+console.log('DB_PORT:', process.env.DB_PORT);
+const { AppDataSource } = require('../datasource');
 const users_seed_1 = require("./users.seed");
 const categories_seed_1 = require("./categories.seed");
 const products_seed_1 = require("./products.seed");
 const orders_seed_1 = require("./orders.seed");
-const envPath = require('path').resolve(__dirname, '../../../.env');
-console.log('Loading .env from:', envPath);
-dotenv.config({ path: envPath });
-console.log('DB_USER:', process.env.DB_USER);
-console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
-console.log('DB_HOST:', process.env.DB_HOST);
-console.log('DB_PORT:', process.env.DB_PORT);
-console.log('DB_NAME:', process.env.DB_NAME);
 async function seed() {
-    const connection = datasource_1.AppDataSource;
-    if (!connection.isInitialized) {
-        await connection.initialize();
-    }
-    console.log('🌱 Seeding database...');
+    const connection = AppDataSource;
     try {
+        if (!connection.isInitialized) {
+            await connection.initialize();
+        }
+        console.log('🚀 Successfully connected to database');
+        console.log('🌱 Seeding database...');
         await (0, users_seed_1.seedUsers)(connection);
         console.log('✓ Users seeded');
         await (0, categories_seed_1.seedCategories)(connection);
@@ -68,7 +67,9 @@ async function seed() {
         console.error('❌ Seeding failed:', error);
     }
     finally {
-        await connection.destroy();
+        if (connection.isInitialized) {
+            await connection.destroy();
+        }
     }
 }
 seed();

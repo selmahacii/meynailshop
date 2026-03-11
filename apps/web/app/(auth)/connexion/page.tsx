@@ -39,27 +39,32 @@ function LoginForm() {
                 return;
             }
 
-            const data = await response.json();
-            const { accessToken, user } = data.data || data;
+            const result = await response.json();
+            const authData = result.data || result;
+            
+            // Extract accessToken and user data from the flat object
+            const accessToken = authData.accessToken;
+            // The rest of the object is the user data
+            const { accessToken: _, refreshToken: __, ...userData } = authData;
 
-            // Save token to localStorage and cookies
             if (accessToken) {
                 localStorage.setItem('accessToken', accessToken);
-                // Set cookie for middleware
                 document.cookie = `accessToken=${accessToken}; path=/; max-age=86400`;
             }
 
-            // Save user to Zustand store
-            if (user) {
-                setUser(user);
+            if (userData && userData.id) {
+                setUser(userData as any);
+                toast.success(`Bienvenue, ${userData.firstName || 'Administrateur'} !`);
+                
+                // Explicit redirect based on role
+                if (userData.role === 'admin') {
+                    router.push('/admin/dashboard');
+                } else {
+                    router.push(redirectUrl);
+                }
+            } else {
+                toast.error('Données utilisateur invalides');
             }
-
-            toast.success('Connexion réussie !');
-
-            // Redirect admin users to dashboard, others to redirect URL
-            const redirectPath = user?.role === 'admin' ? '/admin/dashboard' : redirectUrl;
-            
-            router.push(redirectPath);
         } catch (error) {
             console.error('Login error:', error);
             toast.error('Erreur de connexion. Essayez à nouveau.');
