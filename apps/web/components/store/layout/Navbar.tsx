@@ -86,6 +86,14 @@ export default function Navbar() {
                             {link.name}
                         </Link>
                     ))}
+                    {user?.role === 'admin' && (
+                        <Link
+                            href="/admin/dashboard"
+                            className="bg-or/10 border border-or/30 text-or text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest hover:bg-or hover:text-rouge-deep transition-all duration-300"
+                        >
+                            Panel Admin
+                        </Link>
+                    )}
                 </div>
 
                 {/* Actions */}

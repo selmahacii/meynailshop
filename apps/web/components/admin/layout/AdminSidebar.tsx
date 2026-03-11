@@ -32,6 +32,8 @@ const menuItems = [
     { name: 'Paramètres', href: '/admin/parametres', icon: Settings, badge: null },
 ];
 
+import { OrdersAPI, ProductsAPI } from '@/lib/api/client';
+
 export default function AdminSidebar() {
     const pathname = usePathname();
     const [badges, setBadges] = useState<Record<string, number>>({});
@@ -40,16 +42,13 @@ export default function AdminSidebar() {
     useEffect(() => {
         const fetchBadges = async () => {
             try {
-                const ordersRes = await fetch('/api/v1/admin/orders/stats');
-                const ordersData = await ordersRes.json();
-                
-                const productsRes = await fetch('/api/v1/admin/products/low-stock');
-                const productsData = await productsRes.json();
+                const ordersRes = await OrdersAPI.getStats();
+                const productsRes = await ProductsAPI.getLowStock();
 
                 setBadges({
-                    orders: ordersData?.data?.pending || 0,
-                    stock: productsData?.data?.length || 0,
-                    reviews: ordersData?.data?.pendingReviews || 0,
+                    orders: ordersRes?.data?.pending || 0,
+                    stock: productsRes?.data?.length || 0,
+                    reviews: ordersRes?.data?.pendingReviews || 0,
                 });
             } catch (error) {
                 console.error('Error fetching badges:', error);

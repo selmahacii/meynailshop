@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { User } from '@/types/user';
 
 interface AuthState {
@@ -8,13 +9,23 @@ interface AuthState {
   logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  isAuthenticated: false,
-  setUser: (user) => set({ user, isAuthenticated: !!user }),
-  logout: () => {
-    set({ user: null, isAuthenticated: false });
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-  },
-}));
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      isAuthenticated: false,
+      setUser: (user) => set({ user, isAuthenticated: !!user }),
+      logout: () => {
+        set({ user: null, isAuthenticated: false });
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            document.cookie = 'accessToken=; path=/; max-age=0';
+        }
+      },
+    }),
+    {
+      name: 'meey-auth-storage',
+    }
+  )
+);
