@@ -40,29 +40,38 @@ function LoginForm() {
             }
 
             const result = await response.json();
+            console.log('[DEBUG] Login API Result:', result);
             const authData = result.data || result;
+            console.log('[DEBUG] authData extracted:', authData);
             
             // Extract accessToken and user data from the flat object
             const accessToken = authData.accessToken;
             // The rest of the object is the user data
             const { accessToken: _, refreshToken: __, ...userData } = authData;
+            console.log('[DEBUG] userData identified:', userData);
 
             if (accessToken) {
+                console.log('[DEBUG] Setting accessToken in localStorage and cookie');
                 localStorage.setItem('accessToken', accessToken);
                 document.cookie = `accessToken=${accessToken}; path=/; max-age=86400`;
             }
 
             if (userData && userData.id) {
+                console.log('[DEBUG] Calling setUser with:', userData);
                 setUser(userData as any);
                 toast.success(`Bienvenue, ${userData.firstName || 'Administrateur'} !`);
                 
+                console.log('[DEBUG] User role:', userData.role);
                 // Explicit redirect based on role
                 if (userData.role === 'admin') {
+                    console.log('[DEBUG] Redirecting to /admin/dashboard');
                     router.push('/admin/dashboard');
                 } else {
+                    console.log('[DEBUG] Redirecting to:', redirectUrl);
                     router.push(redirectUrl);
                 }
             } else {
+                console.error('[DEBUG] Invalid userData:', userData);
                 toast.error('Données utilisateur invalides');
             }
         } catch (error) {
