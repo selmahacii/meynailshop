@@ -255,11 +255,12 @@ export class ClientsAPI {
     const query = new URLSearchParams();
     query.append('page', String(page));
     query.append('limit', String(limit));
-    return apiGet(`/users?${query.toString()}`);
+    query.append('role', 'client');
+    return apiGet(`/api/users?${query.toString()}`);
   }
 
   static async getById(id: string) {
-    return apiGet(`/users/${id}`);
+    return apiGet(`/api/users/${id}`);
   }
 }
 
