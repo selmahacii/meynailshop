@@ -1,53 +1,116 @@
 'use client';
 
-import { Bell, Download, Plus, TrendingUp, TrendingDown, Users, ShoppingCart, Star, BarChart3 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { 
+    Bell, 
+    Download, 
+    Plus, 
+    TrendingUp, 
+    TrendingDown, 
+    Users, 
+    ShoppingCart, 
+    BarChart3, 
+    Loader,
+    AlertTriangle,
+    MapPin,
+    CreditCard
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-
-const kpis = [
-    { label: 'CA du mois', value: '84 500 DA', delta: '+18%', positive: true, icon: TrendingUp },
-    { label: 'Nouveaux clients', value: '28', delta: '+12%', positive: true, icon: Users },
-    { label: 'Taux conversion', value: '3,4%', delta: '-0,2%', positive: false, icon: BarChart3 },
-    { label: 'Panier moyen', value: '2 350 DA', delta: '+5%', positive: true, icon: ShoppingCart },
-];
-
-const topProducts = [
-    { name: 'OPI Red Rock', sales: 84, revenue: '16 800 DA', color: 'bg-rouge-deep' },
-    { name: 'Gel Builder Clear', sales: 71, revenue: '14 200 DA', color: 'bg-creme2' },
-    { name: 'Lampe UV Pro 48W', sales: 42, revenue: '35 700 DA', color: 'bg-or' },
-    { name: 'Top Coat Brillant', sales: 38, revenue: '5 700 DA', color: 'bg-pink-200' },
-];
-
-const months = ['Sep', 'Oct', 'Nov', 'Déc', 'Jan', 'Fév', 'Mar'];
-const revenues = [42000, 55000, 48000, 72000, 61000, 79000, 84500];
-const maxRevenue = Math.max(...revenues);
+import { formatPrice } from '@/lib/utils/currency';
+import { DashboardAPI } from '@/lib/api/client';
+import { motion } from 'framer-motion';
 
 export default function AdminAnalyticsPage() {
+    const [data, setData] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchAnalytics = async () => {
+            try {
+                setLoading(true);
+                const result = await DashboardAPI.getMetrics();
+                if (result.success) {
+                    setData(result.data);
+                } else {
+                    setError(result.error || 'Erreur lors du chargement des données');
+                }
+            } catch (err) {
+                setError('Erreur réseau');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAnalytics();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-[60vh]">
+                <div className="text-center">
+                    <Loader className="w-10 h-10 text-or animate-spin mx-auto mb-4" />
+                    <p className="text-encre3 font-bold uppercase tracking-widest text-[10px]">Chargement des analyses...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="p-8 bg-red-50 border border-red-100 rounded-sm text-red-600 flex items-center gap-3">
+                <AlertTriangle size={20} />
+                <p className="font-bold text-sm">{error}</p>
+            </div>
+        );
+    }
+
+    const { kpis = {}, charts = {} } = data || {};
+    
+    const kpiCards = [
+        { label: 'Chiffre d\'affaires', value: formatPrice(kpis.totalRevenue || 0), delta: '+12%', positive: true, icon: TrendingUp },
+        { label: 'Nouveaux clients', value: kpis.activeClients || 0, delta: '+8%', positive: true, icon: Users },
+        { label: 'Commandes', value: kpis.totalOrders || 0, delta: '+15%', positive: true, icon: ShoppingCart },
+        { label: 'Panier moyen', value: formatPrice(kpis.averageCart || 0), delta: '+5%', positive: true, icon: BarChart3 },
+    ];
+
+    const revenues = charts.monthlyRevenue || [];
+    const maxRevenue = Math.max(...revenues.map((r: any) => r.revenue), 1000);
+
     return (
         <div className="space-y-8 pb-12">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-serif text-encre">Analytiques</h1>
-                    <p className="text-encre3 text-[10px] uppercase tracking-widest font-bold mt-1">Tableau de performance — 04 Mars 2026</p>
+                    <h1 className="text-3xl font-serif text-encre">Analytiques Business</h1>
+                    <p className="text-encre3 text-[10px] uppercase tracking-widest font-bold mt-1">
+                        Performance en temps réel — {new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                    </p>
                 </div>
                 <div className="flex items-center space-x-3">
-                    <button className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm"><Bell size={18} /></button>
                     <button className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm"><Download size={18} /></button>
                     <button className="flex items-center space-x-2 px-5 py-2.5 bg-rouge-deep text-creme rounded-sm text-sm font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md">
-                        <Plus size={16} /><span>Exporter</span>
+                        <Plus size={16} /><span>Générer Rapport</span>
                     </button>
-                    <Link href="/" className="px-5 py-2.5 border border-encre text-encre rounded-sm text-sm font-bold hover:bg-encre hover:text-creme transition-all">Voir la boutique</Link>
+                    <Link href="/" className="px-5 py-2.5 border border-encre text-encre rounded-sm text-sm font-bold hover:bg-encre hover:text-creme transition-all">Voir Boutique</Link>
                 </div>
             </div>
 
             {/* KPI Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {kpis.map((kpi, i) => (
-                    <div key={i} className="bg-white rounded-sm border border-creme2 p-8 shadow-lg hover:border-or transition-all group">
+                {kpiCards.map((kpi, i) => (
+                    <motion.div 
+                        key={i} 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.1 }}
+                        className="bg-white rounded-sm border border-creme2 p-8 shadow-sm hover:shadow-xl hover:border-or transition-all group"
+                    >
                         <div className="flex justify-between items-start mb-6">
-                            <div className="p-2.5 bg-creme rounded-sm border border-creme2">
-                                <kpi.icon size={22} className="text-encre3" strokeWidth={1.5} />
+                            <div className="p-2.5 bg-creme rounded-sm border border-creme2 group-hover:bg-or/10 group-hover:border-or/30 transition-colors">
+                                <kpi.icon size={22} className="text-encre" strokeWidth={1.5} />
                             </div>
                             <span className={cn("text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-sm", kpi.positive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600")}>
                                 {kpi.delta}
@@ -55,114 +118,140 @@ export default function AdminAnalyticsPage() {
                         </div>
                         <p className="text-[10px] uppercase font-black tracking-widest text-encre3 mb-2">{kpi.label}</p>
                         <p className="text-2xl font-black text-encre">{kpi.value}</p>
-                    </div>
+                    </motion.div>
                 ))}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Revenue Chart */}
-                <div className="lg:col-span-8 bg-white rounded-sm border border-creme2 shadow-lg p-8">
+                <div className="lg:col-span-8 bg-white rounded-sm border border-creme2 shadow-sm p-8">
                     <div className="flex justify-between items-center mb-10">
                         <div>
-                            <h3 className="font-serif text-xl text-encre">Chiffre d'affaires</h3>
-                            <p className="text-[10px] text-encre3 uppercase tracking-widest font-bold mt-1">7 derniers mois</p>
+                            <h3 className="font-serif text-xl text-encre">Croissance du CA</h3>
+                            <p className="text-[10px] text-encre3 uppercase tracking-widest font-bold mt-1">Performance mensuelle</p>
                         </div>
-                        <select className="text-[10px] font-bold uppercase tracking-widest border border-creme2 rounded-sm px-3 py-2 focus:outline-none focus:border-or bg-white text-encre3 hover:border-or cursor-pointer">
-                            <option>7 derniers mois</option>
-                            <option>12 derniers mois</option>
-                        </select>
                     </div>
 
-                    <div className="flex items-end justify-between space-x-3 h-64 group">
-                        {revenues.map((val, i) => (
+                    <div className="flex items-end justify-between space-x-3 h-64">
+                        {revenues.length > 0 ? revenues.map((r: any, i: number) => (
                             <div key={i} className="flex-1 flex flex-col items-center">
-                                <span className="text-[9px] font-bold text-encre3 mb-2">{Math.round(val / 1000)}k</span>
-                                <div className="w-full relative group/bar cursor-pointer" style={{ height: `${(val / maxRevenue) * 200}px` }}>
-                                    <div className={cn(
-                                        "w-full h-full rounded-t-sm transition-all duration-500",
-                                        i === revenues.length - 1 ? "bg-rouge-deep" : "bg-creme2 group-hover/bar:bg-or/60"
-                                    )} />
+                                <div className="w-full relative group/bar cursor-pointer" style={{ height: `${(r.revenue / maxRevenue) * 180 || 2}px` }}>
+                                    <motion.div 
+                                        initial={{ height: 0 }}
+                                        animate={{ height: '100%' }}
+                                        transition={{ duration: 0.8, delay: i * 0.05 }}
+                                        className={cn(
+                                            "w-full rounded-t-sm transition-all duration-300",
+                                            i === revenues.length - 1 ? "bg-rouge-deep" : "bg-creme2 group-hover/bar:bg-or/60"
+                                        )} 
+                                    />
+                                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-encre text-creme text-[9px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap z-10">
+                                        {formatPrice(r.revenue)}
+                                    </div>
                                 </div>
-                                <span className="mt-3 text-[9px] font-bold uppercase text-encre3 tracking-widest">{months[i]}</span>
+                                <span className="mt-4 text-[9px] font-bold uppercase text-encre3 tracking-widest">{r.name}</span>
                             </div>
-                        ))}
+                        )) : (
+                            <div className="w-full flex items-center justify-center text-encre3 text-xs italic">Aucune donnée historique</div>
+                        )}
                     </div>
                 </div>
 
                 {/* Top Products */}
-                <div className="lg:col-span-4 bg-white rounded-sm border border-creme2 shadow-lg overflow-hidden">
+                <div className="lg:col-span-4 bg-white rounded-sm border border-creme2 shadow-sm overflow-hidden">
                     <div className="p-6 border-b border-creme2 bg-creme/10">
-                        <h3 className="font-serif text-lg text-encre">Top produits</h3>
-                        <p className="text-[10px] text-encre3 uppercase tracking-widest font-bold mt-1">Ce mois-ci</p>
+                        <h3 className="font-serif text-lg text-encre">Top Ventes</h3>
+                        <p className="text-[10px] text-encre3 uppercase tracking-widest font-bold mt-1">Produits les plus populaires</p>
                     </div>
                     <div className="p-6 space-y-6">
-                        {topProducts.map((p, i) => (
+                        {charts.productSales && charts.productSales.length > 0 ? charts.productSales.map((p: any, i: number) => (
                             <div key={i} className="flex items-center space-x-4 group">
                                 <span className="text-[10px] font-black text-encre3 w-4">{i + 1}</span>
-                                <div className={cn("w-10 h-10 rounded-sm shadow-inner flex-shrink-0", p.color)} />
+                                <div className="w-10 h-10 rounded-sm bg-creme border border-creme2 flex items-center justify-center flex-shrink-0 text-or font-serif font-black">
+                                    {p.name.charAt(0)}
+                                </div>
                                 <div className="flex-grow min-w-0">
                                     <p className="text-sm font-bold text-encre truncate group-hover:text-rouge-deep transition-colors">{p.name}</p>
                                     <div className="flex items-center space-x-2 mt-1">
-                                        <div className="h-1.5 bg-creme2 rounded-full flex-grow overflow-hidden">
-                                            <div className="h-full bg-or rounded-full" style={{ width: `${(p.sales / 84) * 100}%` }} />
+                                        <div className="h-1 bg-creme2 rounded-full flex-grow overflow-hidden">
+                                            <div 
+                                                className="h-full bg-or rounded-full" 
+                                                style={{ width: `${(p.value / Math.max(...charts.productSales.map((x:any)=>x.value))) * 100}%` }} 
+                                            />
                                         </div>
-                                        <span className="text-[9px] font-bold text-encre3">{p.sales}v</span>
+                                        <span className="text-[9px] font-bold text-encre3">{p.value}v</span>
                                     </div>
                                 </div>
-                                <p className="text-[10px] font-black text-rouge-deep whitespace-nowrap">{p.revenue}</p>
                             </div>
-                        ))}
+                        )) : (
+                            <p className="text-center text-encre3 text-xs italic py-10">Pas de ventes enregistrées</p>
+                        )}
                     </div>
                 </div>
             </div>
 
-            {/* Geographical Split Placeholder */}
+            {/* Geographical Split */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="bg-white rounded-sm border border-creme2 shadow-lg p-8">
-                    <h3 className="font-serif text-xl text-encre mb-8">Répartition par wilaya</h3>
+                <div className="bg-white rounded-sm border border-creme2 shadow-sm p-8">
+                    <div className="flex items-center gap-3 mb-8">
+                        <MapPin size={22} className="text-or" />
+                        <h3 className="font-serif text-xl text-encre">Répartition par Wilaya</h3>
+                    </div>
                     <div className="space-y-4">
-                        {[
-                            { wilaya: 'Alger (16)', percent: 42, color: 'bg-rouge-deep' },
-                            { wilaya: 'Oran (31)', percent: 18, color: 'bg-rouge-mid' },
-                            { wilaya: 'Constantine (25)', percent: 12, color: 'bg-or' },
-                            { wilaya: 'Blida (09)', percent: 10, color: 'bg-encre3' },
-                            { wilaya: 'Autres', percent: 18, color: 'bg-creme2' },
-                        ].map((w, i) => (
+                        {charts.wilayaDistribution && charts.wilayaDistribution.length > 0 ? charts.wilayaDistribution.map((w: any, i: number) => (
                             <div key={i} className="flex items-center space-x-4">
                                 <span className="text-[10px] font-bold uppercase text-encre3 w-32 truncate">{w.wilaya}</span>
-                                <div className="flex-grow h-2.5 bg-creme2 rounded-full overflow-hidden">
-                                    <div className={cn("h-full rounded-full transition-all duration-1000", w.color)} style={{ width: `${w.percent}%` }} />
+                                <div className="flex-grow h-2 bg-creme2 rounded-full overflow-hidden">
+                                    <div 
+                                        className={cn("h-full rounded-full", i === 0 ? "bg-rouge-deep" : "bg-or")} 
+                                        style={{ width: `${w.percent}%` }} 
+                                    />
                                 </div>
                                 <span className="text-[10px] font-black text-encre w-8 text-right">{w.percent}%</span>
                             </div>
-                        ))}
+                        )) : (
+                            <p className="text-center text-encre3 text-xs italic py-4">Données géographiques non disponibles</p>
+                        )}
                     </div>
                 </div>
-                <div className="bg-white rounded-sm border border-creme2 shadow-lg p-8">
-                    <h3 className="font-serif text-xl text-encre mb-8">Mode de paiement</h3>
-                    <div className="flex items-center justify-center h-48 space-x-8">
-                        <div className="relative w-36 h-36">
+
+                <div className="bg-white rounded-sm border border-creme2 shadow-sm p-8">
+                    <div className="flex items-center gap-3 mb-8">
+                        <CreditCard size={22} className="text-or" />
+                        <h3 className="font-serif text-xl text-encre">Mode de Paiement</h3>
+                    </div>
+                    <div className="flex items-center justify-around h-48">
+                        <div className="relative w-32 h-32">
                             <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-                                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#F5F0E8" strokeWidth="3" />
-                                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#8B0000" strokeWidth="3"
-                                    strokeDasharray="72 28" strokeDashoffset="0" />
-                                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#C5A059" strokeWidth="3"
-                                    strokeDasharray="28 72" strokeDashoffset="-72" />
+                                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#F5F0E8" strokeWidth="4" />
+                                {charts.paymentMethodDistribution?.map((m: any, i: number) => {
+                                    const total = charts.paymentMethodDistribution.reduce((s:number, x:any)=> s + x.value, 0);
+                                    let offset = 0;
+                                    for(let j=0; j<i; j++) offset += (charts.paymentMethodDistribution[j].value / total) * 100;
+                                    const percent = (m.value / total) * 100;
+                                    return (
+                                        <circle 
+                                            key={i}
+                                            cx="18" cy="18" r="15.9" fill="none" 
+                                            stroke={i === 0 ? "#8B0000" : i === 1 ? "#C5A059" : "#1A0A0A"}
+                                            strokeWidth="4"
+                                            strokeDasharray={`${percent} ${100 - percent}`}
+                                            strokeDashoffset={-offset}
+                                        />
+                                    );
+                                })}
                             </svg>
-                            <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                <span className="text-2xl font-black text-encre">72%</span>
-                                <span className="text-[9px] font-bold text-encre3 uppercase">COD</span>
-                            </div>
                         </div>
                         <div className="space-y-4">
-                            <div className="flex items-center space-x-3">
-                                <div className="w-3 h-3 rounded-full bg-rouge-deep" />
-                                <span className="text-xs font-bold text-encre">À la livraison — 72%</span>
-                            </div>
-                            <div className="flex items-center space-x-3">
-                                <div className="w-3 h-3 rounded-full bg-or" />
-                                <span className="text-xs font-bold text-encre">Baridimob — 28%</span>
-                            </div>
+                            {charts.paymentMethodDistribution?.map((m: any, i: number) => (
+                                <div key={i} className="flex items-center space-x-3">
+                                    <div className={cn("w-3 h-3 rounded-full", i === 0 ? "bg-rouge-deep" : i === 1 ? "bg-or" : "bg-encre")} />
+                                    <span className="text-xs font-bold text-encre">{m.name} — {m.percent}%</span>
+                                </div>
+                            ))}
+                            {(!charts.paymentMethodDistribution || charts.paymentMethodDistribution.length === 0) && (
+                                <p className="text-encre3 text-xs italic">Aucune transaction</p>
+                            )}
                         </div>
                     </div>
                 </div>
