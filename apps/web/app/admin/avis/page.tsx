@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, Bell, Download, CheckCircle, XCircle, Star, MessageSquare, Package } from 'lucide-react';
+import { Search, Bell, Download, CheckCircle, XCircle, Star, MessageSquare, Package, Loader, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
@@ -17,25 +17,42 @@ export default function AdminReviewsPage() {
     const [filterStatus, setFilterStatus] = useState('all');
     const [reviews, setReviews] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        let mounted = true;
-        async function load() {
-            setLoading(true);
-            try {
-                const res = await ReviewsAPI.getAll(1);
-                if (res.success) {
-                    if (mounted) setReviews(res.data.items || res.data || []);
-                }
-            } catch (err) {
-                console.error('Reviews load error:', err);
-            } finally {
-                if (mounted) setLoading(false);
-            }
-        }
-        load();
-        return () => { mounted = false; };
+        fetchReviews();
     }, []);
+
+    const fetchReviews = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const res = await ReviewsAPI.getAll(1, 100);
+            if (res.success) {
+                setReviews(res.data.items || res.data || []);
+            } else {
+                setError(res.error || 'Impossible de charger les avis');
+            }
+        } catch (err) {
+            console.error('Reviews load error:', err);
+            setError('Erreur réseau lors du chargement des avis');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleModerate = async (id: string, status: 'approved' | 'rejected') => {
+        try {
+            const res = await ReviewsAPI.moderate(id, status);
+            if (res.success) {
+                setReviews(prev => prev.map(r => r.id === id ? { ...r, status } : r));
+            } else {
+                alert(res.error || 'Erreur lors de la modération');
+            }
+        } catch (err) {
+            alert('Erreur réseau lors de la modération');
+        }
+    };
 
     const filtered = reviews.filter(r => filterStatus === 'all' || r.status === filterStatus);
 
@@ -45,7 +62,9 @@ export default function AdminReviewsPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-serif text-encre">Avis clients</h1>
-                    <p className="text-encre3 text-[10px] uppercase tracking-widest font-bold mt-1">Modération des avis — {new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+                    <p className="text-encre3 text-[10px] uppercase tracking-widest font-bold mt-1">
+                        Modération des avis — {new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                    </p>
                 </div>
                 <div className="flex items-center space-x-3">
                     <div className="relative group">
@@ -77,61 +96,82 @@ export default function AdminReviewsPage() {
 
             {/* Reviews */}
             <div className="space-y-6">
-                {filtered.map((review) => (
-                    <div key={review.id} className="bg-white border border-creme2 rounded-sm shadow-lg p-8 flex flex-col md:flex-row gap-8 hover:border-or transition-all group">
-                        {/* Left Info */}
-                        <div className="md:w-56 shrink-0 space-y-4 border-b md:border-b-0 md:border-r border-creme2 pb-6 md:pb-0 md:pr-8">
-                            <div>
-                                <p className="text-[9px] font-black uppercase tracking-widest text-encre3">{review.date}</p>
-                                <p className="text-base font-bold text-encre mt-1">{review.user}</p>
-                            </div>
-                            <div className="flex text-or">
-                                {[1, 2, 3, 4, 5].map(s => (
-                                    <Star key={s} size={14} className={s <= review.rating ? 'fill-or' : 'text-creme2'} />
-                                ))}
-                            </div>
-                            <div className="flex items-center text-xs text-rouge-mid">
-                                <Package size={14} className="mr-2 shrink-0" />
-                                <span className="font-bold underline truncate">{review.product}</span>
-                            </div>
-                            <span className={cn("text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm inline-block", statusConfig[review.status].color)}>
-                                {statusConfig[review.status].label}
-                            </span>
-                        </div>
-
-                        {/* Content */}
-                        <div className="flex-grow">
-                            <div className="flex items-center space-x-3 mb-4">
-                                <MessageSquare size={16} className="text-or shrink-0" />
-                                <h4 className="font-serif text-xl text-encre">"{review.title}"</h4>
-                            </div>
-                            <p className="text-sm text-encre3 leading-relaxed italic bg-creme2/40 p-4 rounded-sm border-l-4 border-or">
-                                {review.content}
-                            </p>
-                        </div>
-
-                        {/* Actions */}
-                        <div className="md:w-36 shrink-0 flex flex-row md:flex-col gap-3 justify-end md:justify-start border-t md:border-t-0 border-creme2 pt-6 md:pt-0">
-                            {review.status !== 'approved' && (
-                                <button className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-[10px] font-black uppercase tracking-widest rounded-sm transition-all">
-                                    <CheckCircle size={14} />
-                                    <span>Approuver</span>
-                                </button>
-                            )}
-                            {review.status !== 'rejected' && (
-                                <button className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white text-[10px] font-black uppercase tracking-widest rounded-sm transition-all">
-                                    <XCircle size={14} />
-                                    <span>Rejeter</span>
-                                </button>
-                            )}
-                        </div>
+                {loading ? (
+                    <div className="flex items-center justify-center py-16">
+                        <Loader className="w-8 h-8 text-or animate-spin" />
+                        <span className="ml-3 text-encre3 font-bold uppercase tracking-widest text-[10px]">Chargement des avis...</span>
                     </div>
-                ))}
-
-                {filtered.length === 0 && (
+                ) : error ? (
+                    <div className="text-center py-16">
+                        <AlertCircle className="w-12 h-12 text-rouge mx-auto mb-4" />
+                        <p className="text-rouge mb-4">{error}</p>
+                        <button onClick={fetchReviews} className="px-5 py-2.5 bg-encre text-creme text-[10px] font-black uppercase tracking-widest rounded-sm">Réessayer</button>
+                    </div>
+                ) : filtered.length === 0 ? (
                     <div className="bg-white p-16 text-center border border-creme2 rounded-sm text-encre3 shadow-lg">
                         Aucun avis trouvé pour ce statut.
                     </div>
+                ) : (
+                    filtered.map((review) => (
+                        <div key={review.id} className="bg-white border border-creme2 rounded-sm shadow-lg p-8 flex flex-col md:flex-row gap-8 hover:border-or transition-all group">
+                            {/* Left Info */}
+                            <div className="md:w-56 shrink-0 space-y-4 border-b md:border-b-0 md:border-r border-creme2 pb-6 md:pb-0 md:pr-8">
+                                <div>
+                                    <p className="text-[9px] font-black uppercase tracking-widest text-encre3">
+                                        {new Date(review.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                    </p>
+                                    <p className="text-base font-bold text-encre mt-1">
+                                        {review.user ? `${review.user.firstName} ${review.user.lastName}` : 'Anonyme'}
+                                    </p>
+                                </div>
+                                <div className="flex text-or">
+                                    {[1, 2, 3, 4, 5].map(s => (
+                                        <Star key={s} size={14} className={s <= review.rating ? 'fill-or' : 'text-creme2'} />
+                                    ))}
+                                </div>
+                                <div className="flex items-center text-xs text-rouge-mid">
+                                    <Package size={14} className="mr-2 shrink-0" />
+                                    <span className="font-bold underline truncate">{review.product?.name || 'Produit'}</span>
+                                </div>
+                                <span className={cn("text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm inline-block", statusConfig[review.status]?.color)}>
+                                    {statusConfig[review.status]?.label || review.status}
+                                </span>
+                            </div>
+
+                            {/* Content */}
+                            <div className="flex-grow">
+                                <div className="flex items-center space-x-3 mb-4">
+                                    <MessageSquare size={16} className="text-or shrink-0" />
+                                    <h4 className="font-serif text-xl text-encre">"{review.comment?.slice(0, 30)}..."</h4>
+                                </div>
+                                <p className="text-sm text-encre3 leading-relaxed italic bg-creme2/40 p-4 rounded-sm border-l-4 border-or">
+                                    {review.comment}
+                                </p>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="md:w-36 shrink-0 flex flex-row md:flex-col gap-3 justify-end md:justify-start border-t md:border-t-0 border-creme2 pt-6 md:pt-0">
+                                {review.status !== 'approved' && (
+                                    <button 
+                                        onClick={() => handleModerate(review.id, 'approved')}
+                                        className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-[10px] font-black uppercase tracking-widest rounded-sm transition-all"
+                                    >
+                                        <CheckCircle size={14} />
+                                        <span>Approuver</span>
+                                    </button>
+                                )}
+                                {review.status !== 'rejected' && (
+                                    <button 
+                                        onClick={() => handleModerate(review.id, 'rejected')}
+                                        className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white text-[10px] font-black uppercase tracking-widest rounded-sm transition-all"
+                                    >
+                                        <XCircle size={14} />
+                                        <span>Rejeter</span>
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    ))
                 )}
             </div>
         </div>

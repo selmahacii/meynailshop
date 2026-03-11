@@ -1,32 +1,83 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import HeroSection from '@/components/store/home/HeroSection';
+import Link from 'next/link';
+import { StoreAPI } from '@/lib/api/client';
+import ProductCard from '@/components/store/products/ProductCard';
+import { Product } from '@/types/product';
+import { Loader2 } from 'lucide-react';
 
 export default function HomePage() {
+    const [categories, setCategories] = useState<any[]>([]);
+    const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const [catRes, featRes] = await Promise.all([
+                    StoreAPI.getCategories(),
+                    StoreAPI.getFeatured()
+                ]);
+
+                if (catRes.success) setCategories(catRes.data || []);
+                if (featRes.success) setFeaturedProducts(featRes.data || []);
+            } catch (err) {
+                console.error('Home data fetch error:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
+
     return (
         <div className="bg-creme min-h-screen">
             <HeroSection />
 
-            {/* Featured Sections Scaffolding */}
+            {/* Nos Catégories */}
             <section className="py-24 container mx-auto px-4">
                 <div className="flex flex-col items-center mb-16">
                     <h2 className="font-serif text-4xl text-encre mb-4">Nos Catégories</h2>
                     <div className="w-20 h-1 bg-or"></div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-                    {['Vernis Gel', 'Gel UV', 'Finition', 'Matériel', 'Décoration'].map((cat) => (
-                        <div key={cat} className="group cursor-pointer relative aspect-[4/5] overflow-hidden bg-encre2">
-                            <div className="absolute inset-0 bg-gradient-to-t from-encre via-transparent to-transparent z-10 opacity-70"></div>
-                            <div className="absolute inset-0 flex items-end justify-center pb-8 z-20">
-                                <span className="text-creme font-medium text-lg border-b border-transparent group-hover:border-or group-hover:text-or transition-all duration-300">
-                                    {cat}
-                                </span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                {loading && categories.length === 0 ? (
+                    <div className="flex justify-center py-12">
+                        <Loader2 className="animate-spin text-or" size={32} />
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                        {categories.map((cat) => (
+                            <Link 
+                                key={cat.id || cat.name} 
+                                href={`/catalogue?category=${cat.slug || cat.name.toLowerCase()}`}
+                                className="group cursor-pointer relative aspect-[4/5] overflow-hidden bg-encre2"
+                            >
+                                {cat.image ? (
+                                    <img 
+                                        src={cat.image} 
+                                        alt={cat.name} 
+                                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                                    />
+                                ) : (
+                                    <div className="absolute inset-0 bg-gradient-to-br from-rouge-deep/20 to-rouge-mid/20" />
+                                )}
+                                <div className="absolute inset-0 bg-gradient-to-t from-encre via-transparent to-transparent z-10 opacity-70"></div>
+                                <div className="absolute inset-0 flex items-end justify-center pb-8 z-20">
+                                    <span className="text-creme font-medium text-lg border-b border-transparent group-hover:border-or group-hover:text-or transition-all duration-300">
+                                        {cat.name}
+                                    </span>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                )}
             </section>
 
-            {/* Best Sellers Scaffolding */}
+            {/* Meilleures Ventes */}
             <section className="py-24 bg-creme2">
                 <div className="container mx-auto px-4">
                     <div className="flex justify-between items-end mb-12">
@@ -39,25 +90,25 @@ export default function HomePage() {
                         </Link>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {[1, 2, 3, 4].map((i) => (
-                            <div key={i} className="bg-white p-4 shadow-sm group">
-                                <div className="aspect-square bg-creme mb-6 overflow-hidden">
-                                    {/* Placeholder for product image */}
+                    {loading && featuredProducts.length === 0 ? (
+                        <div className="flex justify-center py-12">
+                            <Loader2 className="animate-spin text-or" size={32} />
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                            {featuredProducts.length > 0 ? (
+                                featuredProducts.slice(0, 4).map((product) => (
+                                    <ProductCard key={product.id} product={product} />
+                                ))
+                            ) : (
+                                <div className="col-span-full text-center py-12 text-encre3 italic">
+                                    Aucun produit disponible pour le moment.
                                 </div>
-                                <h3 className="font-serif text-lg mb-1 group-hover:text-or transition-colors">Produit Premium {i}</h3>
-                                <p className="text-encre3 text-sm mb-4">Soin & Beauté</p>
-                                <div className="flex justify-between items-center">
-                                    <span className="font-bold text-encre">1 800 DA</span>
-                                    <button className="text-or hover:text-rouge-mid font-semibold text-sm">Ajouter</button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </section>
         </div>
     );
 }
-
-import Link from 'next/link';

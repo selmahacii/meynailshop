@@ -23,9 +23,7 @@ export default function Navbar() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const accountTarget = isAuthenticated
-        ? (user?.role === 'admin' ? '/admin/dashboard' : '/compte')
-        : `/connexion?redirect=${pathname}`;
+    const accountTarget = isAuthenticated ? '/compte' : '/connexion';
 
     const navLinks = [
         { name: 'Accueil', href: '/' },
@@ -67,14 +65,6 @@ export default function Navbar() {
                             {link.name}
                         </Link>
                     ))}
-                    {user?.role === 'admin' && (
-                        <Link
-                            href="/admin/dashboard"
-                            className="bg-or border border-or text-rouge-deep text-[11px] font-black px-4 py-1.5 rounded-sm uppercase tracking-widest hover:bg-creme hover:text-or transition-all duration-300 shadow-lg animate-pulse hover:animate-none"
-                        >
-                            Tableau de Bord Admin
-                        </Link>
-                    )}
                 </div>
 
                 {/* Actions */}

@@ -8,10 +8,6 @@ import {
     ShoppingCart,
     Download,
     AlertTriangle,
-    Sparkles,
-    Eye,
-    Zap,
-    Calendar,
     Loader,
     RefreshCw,
     Plus,
@@ -19,8 +15,6 @@ import {
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import {
-    LineChart,
-    Line,
     BarChart,
     Bar,
     PieChart,
@@ -30,46 +24,29 @@ import {
     YAxis,
     CartesianGrid,
     Tooltip,
-    Legend,
     ResponsiveContainer,
     AreaChart,
     Area,
 } from 'recharts';
 import { DashboardAPI } from '@/lib/api/client';
+import { useAuthStore } from '@/lib/store/authStore';
+import { formatPrice } from '@/lib/utils/currency';
 
-const COLORS = ['#10B981', '#F59E0B', '#EF4444', '#3B82F6', '#8B5CF6', '#EC4899'];
+function calculateDelta(current: number, previous: number) {
+    if (!previous || previous === 0) return '+0%';
+    const delta = ((current - previous) / previous) * 100;
+    return (delta >= 0 ? '+' : '') + delta.toFixed(1) + '%';
+}
 
 export default function AdminDashboard() {
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [refreshing, setRefreshing] = useState(false);
+    const { user } = useAuthStore();
 
     useEffect(() => {
-        console.log('🔄 Dashboard: Initializing data fetch');
-        const fetchData = async () => {
-            try {
-                console.log('📊 Dashboard: Starting data fetch');
-                setLoading(true);
-                const result = await DashboardAPI.getMetrics();
-                console.log('📊 Dashboard: API result received', result);
-
-                if (result.success && result.data) {
-                    console.log('✅ Dashboard: Data loaded successfully', result.data);
-                    setData(result.data);
-                } else {
-                    console.error('❌ Dashboard: API returned error', result.error);
-                    setError(result.error || 'Erreur lors du chargement');
-                }
-            } catch (err) {
-                console.error('💥 Dashboard: Network error', err);
-                setError('Impossible de charger le dashboard');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
+        fetchMetrics();
     }, []);
 
     const fetchMetrics = async (isRefresh = false) => {
@@ -94,7 +71,7 @@ export default function AdminDashboard() {
         }
     };
 
-    if (loading) {
+    if (loading && !refreshing) {
         return (
             <div className="flex items-center justify-center h-screen bg-gradient-to-br from-[#FAF5EF] to-[#F5EFEA]">
                 <div className="text-center">
@@ -105,52 +82,47 @@ export default function AdminDashboard() {
         );
     }
 
-    if (error) {
-        return (
-            <div className="p-8">
-                <div className="bg-rouge-deep/10 border border-rouge-deep/20 rounded-lg p-6 text-rouge-deep">
-                    <AlertTriangle className="inline mr-2" />
-                    {error}
-                </div>
-            </div>
-        );
-    }
-
     const kpis = data?.kpis || {};
     const charts = data?.charts || {};
     const alerts = data?.alerts || {};
 
-    // Create KPIs array from the kpis object
+    // Calculate dynamic deltas
+    const revTrend = charts.monthlyRevenue || [];
+    const revenueDelta = revTrend.length >= 2 
+        ? calculateDelta(revTrend[revTrend.length - 1].revenue, revTrend[revTrend.length - 2].revenue) 
+        : '+0%';
+
+    const growTrend = charts.customerGrowth || [];
+    const clientDelta = growTrend.length >= 2
+        ? calculateDelta(growTrend[growTrend.length - 1].customers, growTrend[growTrend.length - 2].customers)
+        : '+0%';
+
     const kpisArray = [
         {
             name: 'Revenus Totaux',
-            value: kpis.totalRevenue || 0,
-            currency: 'DA',
-            delta: '+12.5%',
+            formattedValue: formatPrice(kpis.totalRevenue || 0),
+            delta: revenueDelta,
             icon: TrendingUp,
             color: 'text-green-600'
         },
         {
             name: 'Commandes Totales',
-            value: kpis.totalOrders || 0,
-            currency: '',
-            delta: '+8.2%',
+            formattedValue: kpis.totalOrders || 0,
+            delta: '+0%',
             icon: ShoppingCart,
             color: 'text-blue-600'
         },
         {
             name: 'Clients Actifs',
-            value: kpis.activeClients || 0,
-            currency: '',
-            delta: '+15.3%',
+            formattedValue: kpis.activeClients || 0,
+            delta: clientDelta,
             icon: Users,
             color: 'text-purple-600'
         },
         {
             name: 'Panier Moyen',
-            value: kpis.averageCart || 0,
-            currency: 'DA',
-            delta: '+5.7%',
+            formattedValue: formatPrice(kpis.averageCart || 0),
+            delta: '+0%',
             icon: Package,
             color: 'text-orange-600'
         }
@@ -162,12 +134,12 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h1 className="text-3xl font-serif text-encre mb-1">Tableau de Bord</h1>
-                    <p className="text-sm text-encre/60">Bienvenue, Maya</p>
+                    <p className="text-sm text-encre/60">Bienvenue, {user?.firstName || 'Administrateur'}</p>
                 </div>
                 <button
                     onClick={() => fetchMetrics(true)}
                     disabled={refreshing}
-                    className="px-4 py-2 bg-or text-white rounded-lg hover:bg-or-light transition-all flex items-center gap-2 disabled:opacity-50"
+                    className="px-4 py-2 bg-or text-white rounded-lg hover:bg-or-light transition-all flex items-center gap-2 disabled:opacity-50 shadow-md"
                 >
                     <RefreshCw size={18} className={refreshing ? 'animate-spin' : ''} />
                     {refreshing ? 'Actualisation...' : 'Actualiser'}
@@ -175,7 +147,8 @@ export default function AdminDashboard() {
             </div>
 
             {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-3">
+                    <AlertTriangle size={20} />
                     {error}
                 </div>
             )}
@@ -193,8 +166,7 @@ export default function AdminDashboard() {
                                     {kpi.name}
                                 </p>
                                 <p className="text-2xl font-bold text-encre">
-                                    {kpi.value}
-                                    <span className="text-sm font-normal text-encre/60 ml-1">{kpi.currency}</span>
+                                    {kpi.formattedValue}
                                 </p>
                             </div>
                             <div className="p-3 bg-gradient-to-br from-or/10 to-or/5 rounded-lg group-hover:from-or/20 group-hover:to-or/10 transition-all">
@@ -203,7 +175,9 @@ export default function AdminDashboard() {
                         </div>
                         <div className="flex items-center justify-between">
                             <span className="text-xs text-encre/40">vs. mois dernier</span>
-                            <span className="text-xs font-semibold text-green-600">{kpi.delta}</span>
+                            <span className={cn("text-xs font-semibold", kpi.delta.startsWith('-') ? "text-red-500" : "text-green-600")}>
+                                {kpi.delta}
+                            </span>
                         </div>
                     </div>
                 ))}
@@ -216,37 +190,38 @@ export default function AdminDashboard() {
                         <TrendingUp size={20} className="text-or" />
                         Tendance des Revenus
                     </h3>
-                    {charts?.monthlyRevenue ? (
+                    {revTrend.length > 0 ? (
                         <ResponsiveContainer width="100%" height={300}>
-                            <AreaChart data={charts.monthlyRevenue}>
+                            <AreaChart data={revTrend}>
                                 <defs>
                                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
-                                        <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                                        <stop offset="5%" stopColor="#C5A059" stopOpacity={0.4} />
+                                        <stop offset="95%" stopColor="#C5A059" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#E5D4C4" />
-                                <XAxis dataKey="name" stroke="#999" />
-                                <YAxis stroke="#999" />
+                                <XAxis dataKey="name" stroke="#999" fontSize={12} />
+                                <YAxis stroke="#999" fontSize={12} tickFormatter={(val) => `${val/1000}k`} />
                                 <Tooltip
+                                    formatter={(value: any) => formatPrice(value)}
                                     contentStyle={{
                                         backgroundColor: '#FFF',
-                                        border: '1px solid #10B981',
+                                        border: '1px solid #C5A059',
                                         borderRadius: '8px',
                                     }}
                                 />
                                 <Area
                                     type="monotone"
                                     dataKey="revenue"
-                                    stroke="#10B981"
+                                    stroke="#C5A059"
                                     fillOpacity={1}
                                     fill="url(#colorRevenue)"
-                                    strokeWidth={2}
+                                    strokeWidth={3}
                                 />
                             </AreaChart>
                         </ResponsiveContainer>
                     ) : (
-                        <p className="text-center text-encre/40 py-12">Aucune donnée disponible</p>
+                        <p className="text-center text-encre/40 py-12 italic">Aucune donnée de transaction disponible</p>
                     )}
                 </div>
 
@@ -264,7 +239,6 @@ export default function AdminDashboard() {
                                     cx="50%"
                                     cy="50%"
                                     labelLine={false}
-                                    label={({ name, value }) => `${name}: ${value}`}
                                     outerRadius={80}
                                     fill="#8884d8"
                                     dataKey="value"
@@ -272,7 +246,7 @@ export default function AdminDashboard() {
                                     {charts.productSales.map((_: any, index: number) => (
                                         <Cell
                                             key={`cell-${index}`}
-                                            fill={['#10B981', '#F59E0B', '#EF4444', '#3B82F6'][index % 4]}
+                                            fill={['#8B0000', '#C5A059', '#1A0A0A', '#3B82F6'][index % 4]}
                                         />
                                     ))}
                                 </Pie>
@@ -280,7 +254,7 @@ export default function AdminDashboard() {
                             </PieChart>
                         </ResponsiveContainer>
                     ) : (
-                        <p className="text-center text-encre/40 py-12">Aucune donnée disponible</p>
+                        <p className="text-center text-encre/40 py-12 italic">Aucune vente enregistrée</p>
                     )}
                 </div>
             </div>
@@ -300,7 +274,6 @@ export default function AdminDashboard() {
                                     cx="50%"
                                     cy="50%"
                                     labelLine={false}
-                                    label={({ name, value }) => `${name}: ${value}`}
                                     outerRadius={80}
                                     fill="#8884d8"
                                     dataKey="value"
@@ -316,7 +289,7 @@ export default function AdminDashboard() {
                             </PieChart>
                         </ResponsiveContainer>
                     ) : (
-                        <p className="text-center text-encre/40 py-12">Aucune donnée disponible</p>
+                        <p className="text-center text-encre/40 py-12 italic">Aucune commande disponible</p>
                     )}
                 </div>
 
@@ -326,24 +299,24 @@ export default function AdminDashboard() {
                         <Users size={20} className="text-or" />
                         Croissance Client
                     </h3>
-                    {charts?.customerGrowth && charts.customerGrowth.length > 0 ? (
+                    {growTrend.length > 0 ? (
                         <ResponsiveContainer width="100%" height={300}>
-                            <BarChart data={charts.customerGrowth}>
+                            <BarChart data={growTrend}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#E5D4C4" />
-                                <XAxis dataKey="month" stroke="#999" />
-                                <YAxis stroke="#999" />
+                                <XAxis dataKey="month" stroke="#999" fontSize={12} />
+                                <YAxis stroke="#999" fontSize={12} />
                                 <Tooltip
                                     contentStyle={{
                                         backgroundColor: '#FFF',
-                                        border: '1px solid #10B981',
+                                        border: '1px solid #C5A059',
                                         borderRadius: '8px',
                                     }}
                                 />
-                                <Bar dataKey="customers" fill="#10B981" radius={[8, 8, 0, 0]} />
+                                <Bar dataKey="customers" fill="#8B0000" radius={[8, 8, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     ) : (
-                        <p className="text-center text-encre/40 py-12">Aucune donnée disponible</p>
+                        <p className="text-center text-encre/40 py-12 italic">Pas assez de données de croissance</p>
                     )}
                 </div>
             </div>
@@ -351,7 +324,7 @@ export default function AdminDashboard() {
             {/* Stock Alerts */}
             <div className="bg-white rounded-2xl border border-creme border-opacity-50 p-6 hover:shadow-lg transition-all mb-8">
                 <h3 className="text-lg font-semibold text-encre mb-6 flex items-center gap-2">
-                    <AlertTriangle size={20} className="text-yellow-600" />
+                    <AlertTriangle size={20} className="text-rouge-deep" />
                     Produits en Stock Faible
                 </h3>
                 {alerts?.lowStockProducts && alerts.lowStockProducts.length > 0 ? (
@@ -367,14 +340,14 @@ export default function AdminDashboard() {
                             </thead>
                             <tbody>
                                 {alerts.lowStockProducts.map((product: any) => (
-                                    <tr key={product.id} className="border-b border-creme/30 hover:bg-or/2 transition-all">
-                                        <td className="py-3 px-4 text-sm text-encre">{product.name}</td>
-                                        <td className="py-3 px-4 text-sm text-encre/60">{product.sku}</td>
-                                        <td className="py-3 px-4 text-right text-sm font-semibold text-rouge-mid">{product.stock}</td>
+                                    <tr key={product.id} className="border-b border-creme/30 hover:bg-or/2 transition-all group">
+                                        <td className="py-3 px-4 text-sm text-encre font-medium">{product.name}</td>
+                                        <td className="py-3 px-4 text-sm text-encre/60 font-mono">{product.sku}</td>
+                                        <td className="py-3 px-4 text-right text-sm font-bold text-rouge-deep">{product.stock}</td>
                                         <td className="py-3 px-4 text-right">
-                                            <button className="text-or hover:text-or-light transition-colors text-sm font-semibold">
-                                                Réapprovisionner
-                                            </button>
+                                            <Link href={`/admin/produits?edit=${product.id}`} className="text-or hover:text-rouge-deep transition-colors text-xs font-black uppercase tracking-widest">
+                                                Ajuster
+                                            </Link>
                                         </td>
                                     </tr>
                                 ))}
@@ -382,34 +355,38 @@ export default function AdminDashboard() {
                         </table>
                     </div>
                 ) : (
-                    <p className="text-center text-encre/40 py-8">Tous les produits ont un stock suffisant ✓</p>
+                    <p className="text-center text-encre/40 py-8 font-serif italic">Tout est en ordre, le stock est optimal ✓</p>
                 )}
             </div>
 
             {/* Quick Actions */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Link href="/admin/commandes" className="bg-gradient-to-br from-or/10 to-or/5 hover:from-or/20 hover:to-or/10 border border-or/20 rounded-2xl p-6 transition-all hover:shadow-lg group">
+                <Link href="/admin/commandes" className="bg-white border border-creme2 hover:border-or rounded-2xl p-6 transition-all hover:shadow-xl group">
                     <div className="flex items-center justify-between mb-4">
-                        <h4 className="font-semibold text-encre group-hover:text-or transition-colors">Nouvelle Commande</h4>
-                        <Plus size={20} className="text-or" />
+                        <h4 className="font-semibold text-encre group-hover:text-rouge-deep transition-colors uppercase tracking-widest text-xs">Nouvelle Commande</h4>
+                        <div className="p-2 bg-creme rounded-lg group-hover:bg-or/20 transition-colors">
+                            <ShoppingCart size={18} className="text-or" />
+                        </div>
                     </div>
-                    <p className="text-sm text-encre/60">Ajouter une nouvelle commande</p>
+                    <p className="text-xs text-encre/60 font-medium">Gérer les flux de commandes entrants</p>
                 </Link>
 
-                <Link href="/admin/produits" className="bg-gradient-to-br from-or/10 to-or/5 hover:from-or/20 hover:to-or/10 border border-or/20 rounded-2xl p-6 transition-all hover:shadow-lg group">
+                <Link href="/admin/produits" className="bg-white border border-creme2 hover:border-or rounded-2xl p-6 transition-all hover:shadow-xl group">
                     <div className="flex items-center justify-between mb-4">
-                        <h4 className="font-semibold text-encre group-hover:text-or transition-colors">Nouveau Produit</h4>
-                        <Plus size={20} className="text-or" />
+                        <h4 className="font-semibold text-encre group-hover:text-rouge-deep transition-colors uppercase tracking-widest text-xs">Nouveau Produit</h4>
+                        <div className="p-2 bg-creme rounded-lg group-hover:bg-or/20 transition-colors">
+                            <Package size={18} className="text-or" />
+                        </div>
                     </div>
-                    <p className="text-sm text-encre/60">Ajouter un nouveau produit</p>
+                    <p className="text-xs text-encre/60 font-medium">Enrichir le catalogue de la boutique</p>
                 </Link>
 
-                <div className="bg-gradient-to-br from-or/10 to-or/5 border border-or/20 rounded-2xl p-6 group cursor-pointer hover:shadow-lg transition-all hover:from-or/20 hover:to-or/10">
+                <div className="bg-encre border border-encre rounded-2xl p-6 group cursor-pointer hover:shadow-xl hover:bg-rouge-deep transition-all">
                     <div className="flex items-center justify-between mb-4">
-                        <h4 className="font-semibold text-encre group-hover:text-or transition-colors">Exporter Rapport</h4>
+                        <h4 className="font-semibold text-creme uppercase tracking-widest text-xs">Exporter Rapport</h4>
                         <Download size={20} className="text-or" />
                     </div>
-                    <p className="text-sm text-encre/60">Télécharger les données</p>
+                    <p className="text-xs text-creme/60 font-medium">Générer les extractions comptables</p>
                 </div>
             </div>
         </div>

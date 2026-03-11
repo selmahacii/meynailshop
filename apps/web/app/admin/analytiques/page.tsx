@@ -6,7 +6,6 @@ import {
     Download, 
     Plus, 
     TrendingUp, 
-    TrendingDown, 
     Users, 
     ShoppingCart, 
     BarChart3, 
@@ -20,6 +19,12 @@ import Link from 'next/link';
 import { formatPrice } from '@/lib/utils/currency';
 import { DashboardAPI } from '@/lib/api/client';
 import { motion } from 'framer-motion';
+
+function calculateDelta(current: number, previous: number) {
+    if (!previous || previous === 0) return '+0%';
+    const delta = ((current - previous) / previous) * 100;
+    return (delta >= 0 ? '+' : '') + delta.toFixed(1) + '%';
+}
 
 export default function AdminAnalyticsPage() {
     const [data, setData] = useState<any>(null);
@@ -69,14 +74,24 @@ export default function AdminAnalyticsPage() {
 
     const { kpis = {}, charts = {} } = data || {};
     
+    // Calculate deltas from charts trend
+    const revenues = charts.monthlyRevenue || [];
+    const revenueDelta = revenues.length >= 2 
+        ? calculateDelta(revenues[revenues.length - 1].revenue, revenues[revenues.length - 2].revenue) 
+        : '+0%';
+
+    const growths = charts.customerGrowth || [];
+    const clientDelta = growths.length >= 2
+        ? calculateDelta(growths[growths.length - 1].customers, growths[growths.length - 2].customers)
+        : '+0%';
+
     const kpiCards = [
-        { label: 'Chiffre d\'affaires', value: formatPrice(kpis.totalRevenue || 0), delta: '+12%', positive: true, icon: TrendingUp },
-        { label: 'Nouveaux clients', value: kpis.activeClients || 0, delta: '+8%', positive: true, icon: Users },
-        { label: 'Commandes', value: kpis.totalOrders || 0, delta: '+15%', positive: true, icon: ShoppingCart },
-        { label: 'Panier moyen', value: formatPrice(kpis.averageCart || 0), delta: '+5%', positive: true, icon: BarChart3 },
+        { label: 'Chiffre d\'affaires', value: formatPrice(kpis.totalRevenue || 0), delta: revenueDelta, positive: !revenueDelta.startsWith('-'), icon: TrendingUp },
+        { label: 'Nouveaux clients', value: kpis.activeClients || 0, delta: clientDelta, positive: !clientDelta.startsWith('-'), icon: Users },
+        { label: 'Commandes', value: kpis.totalOrders || 0, delta: '+0%', positive: true, icon: ShoppingCart },
+        { label: 'Panier moyen', value: formatPrice(kpis.averageCart || 0), delta: '+0%', positive: true, icon: BarChart3 },
     ];
 
-    const revenues = charts.monthlyRevenue || [];
     const maxRevenue = Math.max(...revenues.map((r: any) => r.revenue), 1000);
 
     return (
@@ -221,38 +236,41 @@ export default function AdminAnalyticsPage() {
                         <h3 className="font-serif text-xl text-encre">Mode de Paiement</h3>
                     </div>
                     <div className="flex items-center justify-around h-48">
-                        <div className="relative w-32 h-32">
-                            <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-                                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#F5F0E8" strokeWidth="4" />
-                                {charts.paymentMethodDistribution?.map((m: any, i: number) => {
-                                    const total = charts.paymentMethodDistribution.reduce((s:number, x:any)=> s + x.value, 0);
-                                    let offset = 0;
-                                    for(let j=0; j<i; j++) offset += (charts.paymentMethodDistribution[j].value / total) * 100;
-                                    const percent = (m.value / total) * 100;
-                                    return (
-                                        <circle 
-                                            key={i}
-                                            cx="18" cy="18" r="15.9" fill="none" 
-                                            stroke={i === 0 ? "#8B0000" : i === 1 ? "#C5A059" : "#1A0A0A"}
-                                            strokeWidth="4"
-                                            strokeDasharray={`${percent} ${100 - percent}`}
-                                            strokeDashoffset={-offset}
-                                        />
-                                    );
-                                })}
-                            </svg>
-                        </div>
-                        <div className="space-y-4">
-                            {charts.paymentMethodDistribution?.map((m: any, i: number) => (
-                                <div key={i} className="flex items-center space-x-3">
-                                    <div className={cn("w-3 h-3 rounded-full", i === 0 ? "bg-rouge-deep" : i === 1 ? "bg-or" : "bg-encre")} />
-                                    <span className="text-xs font-bold text-encre">{m.name} — {m.percent}%</span>
+                        {charts.paymentMethodDistribution && charts.paymentMethodDistribution.length > 0 ? (
+                            <>
+                                <div className="relative w-32 h-32">
+                                    <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
+                                        <circle cx="18" cy="18" r="15.9" fill="none" stroke="#F5F0E8" strokeWidth="4" />
+                                        {charts.paymentMethodDistribution.map((m: any, i: number) => {
+                                            const total = charts.paymentMethodDistribution.reduce((s:number, x:any)=> s + (Number(x.value) || 0), 0);
+                                            let offset = 0;
+                                            for(let j=0; j<i; j++) offset += ((Number(charts.paymentMethodDistribution[j].value) || 0) / total) * 100;
+                                            const percent = ((Number(m.value) || 0) / total) * 100;
+                                            return (
+                                                <circle 
+                                                    key={i}
+                                                    cx="18" cy="18" r="15.9" fill="none" 
+                                                    stroke={i === 0 ? "#8B0000" : i === 1 ? "#C5A059" : "#1A0A0A"}
+                                                    strokeWidth="4"
+                                                    strokeDasharray={`${percent} ${100 - percent}`}
+                                                    strokeDashoffset={-offset}
+                                                />
+                                            );
+                                        })}
+                                    </svg>
                                 </div>
-                            ))}
-                            {(!charts.paymentMethodDistribution || charts.paymentMethodDistribution.length === 0) && (
-                                <p className="text-encre3 text-xs italic">Aucune transaction</p>
-                            )}
-                        </div>
+                                <div className="space-y-4">
+                                    {charts.paymentMethodDistribution.map((m: any, i: number) => (
+                                        <div key={i} className="flex items-center space-x-3">
+                                            <div className={cn("w-3 h-3 rounded-full", i === 0 ? "bg-rouge-deep" : i === 1 ? "bg-or" : "bg-encre")} />
+                                            <span className="text-xs font-bold text-encre">{m.name} — {m.percent}%</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
+                        ) : (
+                            <p className="text-encre3 text-xs italic">Aucune transaction</p>
+                        )}
                     </div>
                 </div>
             </div>

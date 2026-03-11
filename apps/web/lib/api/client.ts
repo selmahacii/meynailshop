@@ -262,6 +262,16 @@ export class ActivityLogAPI {
   }
 }
 
+export class SettingsAPI {
+  static async get() {
+    return apiGet('/api/settings');
+  }
+
+  static async update(data: any) {
+    return apiPatch('/api/settings', data);
+  }
+}
+
 export class ClientsAPI {
   static async getAll(page = 1, limit = 10) {
     const query = new URLSearchParams();

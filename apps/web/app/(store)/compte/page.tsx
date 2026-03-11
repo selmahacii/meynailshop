@@ -1,10 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import { User, Phone, Mail, Edit2 } from 'lucide-react';
+import { User, Phone, Mail, Edit2, Loader2 } from 'lucide-react';
+import { useAuthStore } from '@/lib/store/authStore';
 
 export default function ProfilePage() {
     const [isEditing, setIsEditing] = useState(false);
+    const { user } = useAuthStore();
+
+    if (!user) {
+        return (
+            <div className="bg-white p-12 border border-creme2 shadow-sm flex flex-col items-center justify-center">
+                <Loader2 className="animate-spin text-or mb-4" size={32} />
+                <p className="text-encre3 text-sm">Chargement de votre profil...</p>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-white p-8 border border-creme2 shadow-sm">
@@ -21,7 +32,7 @@ export default function ProfilePage() {
 
             <div className="space-y-6">
                 {/* Profile Info Form */}
-                <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={(e) => e.preventDefault()}>
                     <div>
                         <label className="block text-xs font-bold uppercase tracking-widest text-encre3 mb-2">Prénom</label>
                         <div className="relative">
@@ -29,7 +40,7 @@ export default function ProfilePage() {
                             <input
                                 type="text"
                                 disabled={!isEditing}
-                                defaultValue="Sarah"
+                                defaultValue={user.firstName}
                                 className={`w-full pl-10 pr-4 py-3 border text-sm transition-all focus:outline-none focus:ring-1 focus:ring-or ${isEditing
                                         ? 'border-creme2 bg-white text-encre'
                                         : 'border-transparent bg-creme2/50 text-encre3'
@@ -44,7 +55,7 @@ export default function ProfilePage() {
                             <input
                                 type="text"
                                 disabled={!isEditing}
-                                defaultValue="Naili"
+                                defaultValue={user.lastName}
                                 className={`w-full pl-10 pr-4 py-3 border text-sm transition-all focus:outline-none focus:ring-1 focus:ring-or ${isEditing
                                         ? 'border-creme2 bg-white text-encre'
                                         : 'border-transparent bg-creme2/50 text-encre3'
@@ -59,7 +70,7 @@ export default function ProfilePage() {
                             <input
                                 type="email"
                                 disabled={!isEditing}
-                                defaultValue="sarah@gmail.com"
+                                defaultValue={user.email}
                                 className={`w-full pl-10 pr-4 py-3 border text-sm transition-all focus:outline-none focus:ring-1 focus:ring-or ${isEditing
                                         ? 'border-creme2 bg-white text-encre'
                                         : 'border-transparent bg-creme2/50 text-encre3'
@@ -74,7 +85,8 @@ export default function ProfilePage() {
                             <input
                                 type="tel"
                                 disabled={!isEditing}
-                                defaultValue="05 55 55 55 55"
+                                defaultValue={user.phone || ''}
+                                placeholder="Non renseigné"
                                 className={`w-full pl-10 pr-4 py-3 border text-sm transition-all focus:outline-none focus:ring-1 focus:ring-or ${isEditing
                                         ? 'border-creme2 bg-white text-encre'
                                         : 'border-transparent bg-creme2/50 text-encre3'

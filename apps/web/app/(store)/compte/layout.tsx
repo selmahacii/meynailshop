@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { User, ShoppingBag, MapPin, Heart, LogOut } from 'lucide-react';
+import { User, ShoppingBag, MapPin, Heart, LogOut, LayoutDashboard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/lib/store/authStore';
 
 const menuItems = [
     { name: 'Mon Profil', href: '/compte', icon: User },
@@ -21,8 +22,10 @@ export default function AccountLayout({
 }) {
     const pathname = usePathname();
     const router = useRouter();
+    const { user, logout } = useAuthStore();
 
     const handleLogout = () => {
+        logout();
         toast.success('Déconnexion réussie');
         router.push('/connexion');
     };
@@ -39,16 +42,26 @@ export default function AccountLayout({
                             {/* User Info */}
                             <div className="flex items-center space-x-4 mb-8 pb-8 border-b border-creme2">
                                 <div className="w-14 h-14 bg-encre2 rounded-full flex items-center justify-center text-or font-serif text-xl">
-                                    SN
+                                    {user?.firstName?.charAt(0) || 'U'}{user?.lastName?.charAt(0) || ''}
                                 </div>
                                 <div>
-                                    <p className="font-bold text-encre">Sarah Naili</p>
-                                    <p className="text-xs text-encre3">sarah@gmail.com</p>
+                                    <p className="font-bold text-encre">{user?.firstName} {user?.lastName}</p>
+                                    <p className="text-xs text-encre3">{user?.email}</p>
                                 </div>
                             </div>
 
                             {/* Navigation */}
                             <nav className="space-y-2">
+                                {user?.role === 'admin' && (
+                                    <Link
+                                        href="/admin/dashboard"
+                                        className="flex items-center px-4 py-3 rounded-sm text-sm font-bold text-or hover:bg-or/5 border-l-2 border-or transition-all mb-4"
+                                    >
+                                        <LayoutDashboard size={18} className="mr-3" />
+                                        Admin Dashboard
+                                    </Link>
+                                )}
+
                                 {menuItems.map((item) => {
                                     // Ensure exact match for root '/compte', while allowing nesting for others if needed.
                                     const isActive = item.href === '/compte' ? pathname === '/compte' : pathname.startsWith(item.href);
