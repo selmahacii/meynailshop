@@ -12,7 +12,7 @@ async function seedProducts(connection) {
         { name: 'Top Coat Brillant', sku: 'MEY-005', price: 900, category: 'finition' },
     ];
     for (const p of products) {
-        productRepo.create({
+        const product = productRepo.create({
             name: p.name,
             slug: p.name.toLowerCase().replace(/\s+/g, '-'),
             sku: p.sku,
@@ -21,7 +21,7 @@ async function seedProducts(connection) {
             description: `Description détaillée pour ${p.name}`,
             shortDescription: `${p.name} de qualité premium`,
             stock: 50,
-            stockAlert: 5,
+            stockAlert: 10,
             images: ['https://via.placeholder.com/800x800?text=' + p.name],
             categoryId: p.category,
             isActive: true,
@@ -30,6 +30,7 @@ async function seedProducts(connection) {
             tags: ['premium', 'algerie'],
             badge: Math.random() > 0.7 ? 'top' : null,
         });
+        await productRepo.save(product);
     }
 }
 //# sourceMappingURL=products.seed.js.map

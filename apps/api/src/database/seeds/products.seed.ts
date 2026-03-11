@@ -13,7 +13,7 @@ export async function seedProducts(connection: DataSource) {
   ];
 
   for (const p of products) {
-    productRepo.create({
+    const product = productRepo.create({
       name: p.name,
       slug: p.name.toLowerCase().replace(/\s+/g, '-'),
       sku: p.sku,
@@ -22,14 +22,15 @@ export async function seedProducts(connection: DataSource) {
       description: `Description détaillée pour ${p.name}`,
       shortDescription: `${p.name} de qualité premium`,
       stock: 50,
-      stockAlert: 5,
+      stockAlert: 10,
       images: ['https://via.placeholder.com/800x800?text=' + p.name],
-      categoryId: p.category,
+      categoryId: p.category, // This slug-based ID assumes the entity handles it
       isActive: true,
       isFeatured: Math.random() > 0.5,
       weight: 100,
       tags: ['premium', 'algerie'],
       badge: Math.random() > 0.7 ? 'top' : null,
     });
+    await productRepo.save(product);
   }
 }

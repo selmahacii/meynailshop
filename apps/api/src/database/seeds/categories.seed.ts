@@ -13,11 +13,12 @@ export async function seedCategories(connection: DataSource) {
   ];
 
   for (let i = 0; i < categories.length; i++) {
-    categoryRepo.create({
+    const category = categoryRepo.create({
       ...categories[i],
       displayOrder: i,
       imageUrl: `https://via.placeholder.com/300x300?text=${categories[i].name}`,
       isActive: true,
     });
+    await categoryRepo.save(category);
   }
 }

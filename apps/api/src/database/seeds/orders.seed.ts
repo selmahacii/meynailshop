@@ -133,6 +133,7 @@ export async function seedOrders(connection: DataSource) {
         fullName: orderData.address.fullName,
         phone: orderData.address.phone,
         wilaya: orderData.address.wilaya,
+        wilayaName: 'Alger', // Default for seed
         commune: orderData.address.commune,
         address: orderData.address.address,
         postalCode: orderData.address.postalCode,

@@ -66,17 +66,17 @@ async function seedUsers(connection) {
         clients.push(await userRepo.save(client));
     }
     for (const client of clients) {
-        addressRepo.create({
+        await addressRepo.save(addressRepo.create({
             userId: client.id,
             label: 'Domicile',
             fullName: client.firstName + ' ' + client.lastName,
             phone: client.phone,
-            wilaya: 'Alger',
+            wilaya: '16',
             commune: 'Alger-Centre',
             address: '123 Rue Didouche Mourad',
             postalCode: '16000',
             isDefault: true,
-        });
+        }));
     }
 }
 //# sourceMappingURL=users.seed.js.map

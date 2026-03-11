@@ -36,16 +36,18 @@ export async function seedUsers(connection: DataSource) {
   }
 
   for (const client of clients) {
-    addressRepo.create({
-      userId: client.id,
-      label: 'Domicile',
-      fullName: client.firstName + ' ' + client.lastName,
-      phone: client.phone,
-      wilaya: 'Alger',
-      commune: 'Alger-Centre',
-      address: '123 Rue Didouche Mourad',
-      postalCode: '16000',
-      isDefault: true,
-    });
+    await addressRepo.save(
+      addressRepo.create({
+        userId: client.id,
+        label: 'Domicile',
+        fullName: client.firstName + ' ' + client.lastName,
+        phone: client.phone,
+        wilaya: '16', // Wilaya code for Alger
+        commune: 'Alger-Centre',
+        address: '123 Rue Didouche Mourad',
+        postalCode: '16000',
+        isDefault: true,
+      })
+    );
   }
 }

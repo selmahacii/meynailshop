@@ -28,6 +28,11 @@ async function seed() {
     }
 
     console.log('🚀 Successfully connected to database');
+    console.log('🧹 Cleaning database...');
+    
+    // Disable constraints and truncate tables
+    await connection.query('TRUNCATE TABLE "order_items", "orders", "addresses", "users", "products", "categories" CASCADE');
+    
     console.log('🌱 Seeding database...');
     
     await seedUsers(connection);

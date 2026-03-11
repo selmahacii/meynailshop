@@ -52,6 +52,8 @@ async function seed() {
             await connection.initialize();
         }
         console.log('🚀 Successfully connected to database');
+        console.log('🧹 Cleaning database...');
+        await connection.query('TRUNCATE TABLE "order_items", "orders", "addresses", "users", "products", "categories" CASCADE');
         console.log('🌱 Seeding database...');
         await (0, users_seed_1.seedUsers)(connection);
         console.log('✓ Users seeded');

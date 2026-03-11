@@ -122,6 +122,7 @@ async function seedOrders(connection) {
                 fullName: orderData.address.fullName,
                 phone: orderData.address.phone,
                 wilaya: orderData.address.wilaya,
+                wilayaName: 'Alger',
                 commune: orderData.address.commune,
                 address: orderData.address.address,
                 postalCode: orderData.address.postalCode,
