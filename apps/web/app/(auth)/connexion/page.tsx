@@ -40,28 +40,32 @@ function LoginForm() {
             }
 
             const result = await response.json();
-            console.log('[DEBUG] Login API Result:', result);
-            const authData = result.data || result;
-            console.log('[DEBUG] authData extracted:', authData);
+            console.log('[DEBUG] Login Response:', result);
             
-            // Extract accessToken and user data from the flat object
+            // Handle different nesting levels (proxy + backend)
+            let authData = result.data || result;
+            // If it's still wrapped (backend standard), unwrap again
+            if (authData && authData.data && !authData.id) {
+                authData = authData.data;
+            }
+            
+            console.log('[DEBUG] Simplified authData:', authData);
+            
             const accessToken = authData.accessToken;
-            // The rest of the object is the user data
-            const { accessToken: _, refreshToken: __, ...userData } = authData;
-            console.log('[DEBUG] userData identified:', userData);
+            const userData = authData; // The object itself contains the user fields now
 
             if (accessToken) {
-                console.log('[DEBUG] Setting accessToken in localStorage and cookie');
+                console.log('[DEBUG] Setting token');
                 localStorage.setItem('accessToken', accessToken);
                 document.cookie = `accessToken=${accessToken}; path=/; max-age=86400`;
             }
 
-            if (userData && userData.id) {
-                console.log('[DEBUG] Calling setUser with:', userData);
+            if (userData && (userData.id || userData.email)) {
+                console.log('[DEBUG] Valid User identified:', userData);
                 setUser(userData as any);
-                toast.success(`Bienvenue, ${userData.firstName || 'Administrateur'} !`);
+                toast.success(`Bienvenue, ${userData.firstName || 'Utilisateur'} !`);
                 
-                console.log('[DEBUG] User role:', userData.role);
+                console.log('[DEBUG] User Role:', userData.role);
                 // Explicit redirect based on role
                 if (userData.role === 'admin') {
                     console.log('[DEBUG] Redirecting to /admin/dashboard');

@@ -26,10 +26,8 @@ export async function POST(request: NextRequest) {
 
     // Set httpOnly cookie with access token if provided by backend
     const accessToken = data?.data?.accessToken || data?.accessToken || null;
-    const response = NextResponse.json(
-      { statusCode: 200, message: 'Connexion réussie', data },
-      { status: 200 }
-    );
+    // Return backend response directly to avoid triple nesting
+    const response = NextResponse.json(data, { status: 200 });
 
     if (accessToken) {
       response.cookies.set('accessToken', accessToken, {

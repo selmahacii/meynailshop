@@ -13,6 +13,19 @@ export function middleware(request: NextRequest) {
 
   console.log(`[MIDDLEWARE DEBUG] Requesting: ${pathname}, Authenticated: ${!!token}`);
 
+  // Base64URL decoder for Edge Runtime
+  const decodeJWT = (token: string) => {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const pad = base64.length % 4;
+      const padding = pad ? '='.repeat(4 - pad) : '';
+      return JSON.parse(atob(base64 + padding));
+    } catch (e) {
+      return null;
+    }
+  };
+
   // Protect admin routes
   if (ADMIN_ROUTES.some(route => pathname.startsWith(route))) {
     if (!token) {
@@ -20,23 +33,15 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/connexion?redirect=/admin', request.url));
     }
 
-    try {
-      // Use atob instead of Buffer for Edge Runtime compatibility
-      const base64Payload = token.split('.')[1];
-      const payload = JSON.parse(atob(base64Payload));
-      
-      console.log(`[MIDDLEWARE DEBUG] Decoded payload:`, payload);
+    const payload = decodeJWT(token);
+    console.log(`[MIDDLEWARE DEBUG] Decoded payload:`, payload);
 
-      if (payload.role !== 'admin') {
-        console.warn(`[MIDDLEWARE DEBUG] Admin route blocked: Improper role [${payload.role}]`);
-        return NextResponse.redirect(new URL('/', request.url));
-      }
-      
-      console.log('[MIDDLEWARE DEBUG] Admin route allowed');
-    } catch (e) {
-      console.error('[MIDDLEWARE DEBUG] Token decoding failed:', e);
-      return NextResponse.redirect(new URL('/connexion', request.url));
+    if (!payload || payload.role !== 'admin') {
+      console.warn(`[MIDDLEWARE DEBUG] Admin route blocked: Improper role [${payload?.role || 'none'}]`);
+      return NextResponse.redirect(new URL('/', request.url));
     }
+    
+    console.log('[MIDDLEWARE DEBUG] Admin route allowed');
   }
 
   // Protect user account routes

@@ -73,7 +73,7 @@ export default function AdminSidebar() {
 />
 </div>
                 <div className="flex flex-col">
-                    <span className="font-serif text-lg text-creme leading-none tracking-wide group-hover:text-or transition-colors duration-300">MEEaY</span>
+                    <span className="font-serif text-lg text-creme leading-none tracking-wide group-hover:text-or transition-colors duration-300">MEEY</span>
                     <span className="text-[9px] uppercase tracking-[0.3em] text-or/60 font-bold mt-1.5 group-hover:text-or transition-colors duration-300">Dashboard</span>
                 </div>
             </div>
