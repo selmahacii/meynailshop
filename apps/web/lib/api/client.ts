@@ -60,8 +60,9 @@ export async function apiFetch<T = any>(
 
   console.log(`🔄 API Request: ${fetchOptions.method || 'GET'} ${url}`);
 
+  const isFormData = fetchOptions.body instanceof FormData;
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
     ...fetchOptions.headers as Record<string, string>,
   };
 
@@ -90,11 +91,16 @@ export async function apiFetch<T = any>(
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
       
-      // Auto-clear token on 401 (Unauthorized)
+      // Auto-clear token and redirect on 401 (Unauthorized)
       if (response.status === 401 && typeof window !== 'undefined') {
-        console.warn('🔒 Session expired or invalid. Clearing token.');
+        console.warn('🔒 Session expired or invalid. Clearing token and redirecting to login.');
         localStorage.removeItem('accessToken');
-        // You could also redirect here: window.location.href = '/connexion';
+        document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        
+        // Avoid redirect loop if already on login page
+        if (!window.location.pathname.includes('/connexion')) {
+          window.location.href = `/connexion?redirect=${encodeURIComponent(window.location.pathname)}`;
+        }
       }
 
       console.error(`❌ API Error: ${response.status} ${response.statusText}`, {
@@ -291,6 +297,17 @@ export class ClientsAPI {
 
   static async getById(id: string) {
     return apiGet(`/api/users/${id}`);
+  }
+}
+
+export class UploadAPI {
+  static async uploadProductImage(file: File) {
+    const formData = new FormData();
+    formData.append('image', file);
+    return apiFetch('/api/upload/product-image', {
+      method: 'POST',
+      body: formData,
+    });
   }
 }
 

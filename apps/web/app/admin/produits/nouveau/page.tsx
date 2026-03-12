@@ -14,7 +14,8 @@ import {
     X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { ProductsAPI } from '@/lib/api/client';
+import Link from 'next/link';
+import { ProductsAPI, UploadAPI } from '@/lib/api/client';
 import { toast } from 'sonner';
 
 export default function ProductCreatePage() {
@@ -32,6 +33,33 @@ export default function ProductCreatePage() {
         isActive: true,
         images: [],
     });
+    const [uploading, setUploading] = useState(false);
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            setUploading(true);
+            const result = await UploadAPI.uploadProductImage(file);
+            if (result.success) {
+                const url = result.data.url;
+                setProduct((prev: any) => ({
+                    ...prev,
+                    images: [...prev.images, url]
+                }));
+                toast.success('Image uploadée avec succès');
+            } else {
+                toast.error(result.error || 'Erreur lors de l\'upload');
+            }
+        } catch (err) {
+            toast.error('Erreur technique lors de l\'upload');
+        } finally {
+            setUploading(false);
+            // Reset input
+            e.target.value = '';
+        }
+    };
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -143,44 +171,72 @@ export default function ProductCreatePage() {
                         </div>
                     </div>
 
-                    {/* Image URL input */}
+                    {/* Images Section */}
                     <div className="bg-white border border-creme2 rounded-sm shadow-xl overflow-hidden">
-                        <div className="p-6 border-b border-creme2 bg-creme/5 flex items-center space-x-3">
-                            <ImageIcon size={18} className="text-or" />
-                            <h2 className="text-xs font-black uppercase tracking-widest text-encre">Images (URLs)</h2>
-                        </div>
-                        <div className="p-8 space-y-6">
-                            <div className="flex gap-4">
-                                <input 
-                                    type="text" 
-                                    placeholder="Coller l'URL d'une image ici..."
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            e.preventDefault();
-                                            const val = (e.target as HTMLInputElement).value;
-                                            if (val && val.startsWith('http')) {
-                                                setProduct({...product, images: [...product.images, val]});
-                                                (e.target as HTMLInputElement).value = '';
-                                            }
-                                        }
-                                    }}
-                                    className="flex-grow p-4 bg-creme2/20 border border-creme2 rounded-sm text-sm focus:border-or outline-none"
-                                />
-                                <button 
-                                    type="button" 
-                                    onClick={() => {
-                                        const input = document.querySelector('input[placeholder="Coller l\'URL d\'une image ici..."]') as HTMLInputElement;
-                                        if (input && input.value && input.value.startsWith('http')) {
-                                            setProduct({...product, images: [...product.images, input.value]});
-                                            input.value = '';
-                                        }
-                                    }}
-                                    className="px-6 bg-creme border border-creme2 text-encre3 font-bold text-[10px] uppercase tracking-widest hover:border-or hover:text-or transition-all"
-                                >
-                                    Ajouter
-                                </button>
+                        <div className="p-6 border-b border-creme2 bg-creme/5 flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                                <ImageIcon size={18} className="text-or" />
+                                <h2 className="text-xs font-black uppercase tracking-widest text-encre">Images du produit</h2>
                             </div>
-                            <p className="text-[10px] text-encre3 font-medium italic">* Pour le moment, utilisez des URLs d'images (ex: Imgur, Pinterest, etc.)</p>
+                            {uploading && (
+                                <div className="flex items-center text-[10px] font-bold text-or uppercase animate-pulse">
+                                    <Loader size={12} className="animate-spin mr-2" />
+                                    Upload en cours...
+                                </div>
+                            )}
+                        </div>
+                        <div className="p-8 space-y-8">
+                            {/* Upload Buttons */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-creme2 rounded-sm hover:border-or hover:bg-creme/30 transition-all cursor-pointer group">
+                                    <div className="w-12 h-12 rounded-full bg-creme flex items-center justify-center mb-3 group-hover:bg-or/10">
+                                        <Plus size={24} className="text-encre3 group-hover:text-or" />
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-encre">Appareil Photo / Galerie</span>
+                                    <span className="text-[9px] text-encre3 mt-1">Prendre une photo ou choisir un fichier</span>
+                                    <input 
+                                        type="file" 
+                                        accept="image/*"
+                                        className="hidden" 
+                                        onChange={handleFileUpload}
+                                        disabled={uploading}
+                                    />
+                                </label>
+
+                                <div className="flex flex-col space-y-3">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-encre3 ml-1">Ajouter par URL</label>
+                                    <div className="flex gap-2">
+                                        <input 
+                                            type="text" 
+                                            placeholder="https://..."
+                                            className="flex-grow p-4 bg-creme2/20 border border-creme2 rounded-sm text-sm focus:border-or outline-none"
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault();
+                                                    const val = (e.target as HTMLInputElement).value;
+                                                    if (val && val.startsWith('http')) {
+                                                        setProduct({...product, images: [...product.images, val]});
+                                                        (e.target as HTMLInputElement).value = '';
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                        <button 
+                                            type="button"
+                                            onClick={() => {
+                                                const input = document.querySelector('input[placeholder="https://..."]') as HTMLInputElement;
+                                                if (input && input.value && input.value.startsWith('http')) {
+                                                    setProduct({...product, images: [...product.images, input.value]});
+                                                    input.value = '';
+                                                }
+                                            }}
+                                            className="px-4 bg-encre text-creme text-[10px] font-bold uppercase tracking-widest rounded-sm"
+                                        >
+                                            OK
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                             
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {product.images.map((img: string, i: number) => (
