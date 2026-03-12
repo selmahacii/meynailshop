@@ -89,6 +89,14 @@ export async function apiFetch<T = any>(
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+      
+      // Auto-clear token on 401 (Unauthorized)
+      if (response.status === 401 && typeof window !== 'undefined') {
+        console.warn('🔒 Session expired or invalid. Clearing token.');
+        localStorage.removeItem('accessToken');
+        // You could also redirect here: window.location.href = '/connexion';
+      }
+
       console.error(`❌ API Error: ${response.status} ${response.statusText}`, {
         url,
         status: response.status,
