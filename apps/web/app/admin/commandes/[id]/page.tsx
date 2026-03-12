@@ -193,7 +193,14 @@ export default function OrderDetailsPage() {
                                             <td className="px-6 py-6">
                                                 <div className="flex items-center space-x-4">
                                                     <div className="w-16 h-16 bg-creme rounded-sm overflow-hidden flex-shrink-0 border border-creme2">
-                                                        <img src={item.productImage} alt={item.productName} className="w-full h-full object-cover" />
+                                                        <img 
+                                                            src={item.productImage} 
+                                                            alt={item.productName} 
+                                                            className="w-full h-full object-cover"
+                                                            onError={(e) => {
+                                                                (e.target as HTMLImageElement).src = '/images/placeholder-product.png';
+                                                            }}
+                                                        />
                                                     </div>
                                                     <div>
                                                         <p className="text-sm font-bold text-encre line-clamp-1">{item.productName}</p>

@@ -223,7 +223,16 @@ export default function AdminProductsPage() {
                             <div key={product.id} className="bg-white rounded-sm border border-creme2 shadow-lg overflow-hidden group hover:border-or transition-all duration-500">
                                 {/* Image / Color Preview */}
                                 <div className="relative aspect-[4/3] p-12 bg-creme/20 flex items-center justify-center overflow-hidden">
-                                    <div className="w-full h-full rounded-md shadow-2xl transition-transform duration-700 group-hover:scale-110 bg-gradient-to-br from-rouge-deep/20 to-rouge-mid/20" />
+                                    <div className="w-full h-full relative group-hover:scale-110 transition-transform duration-700">
+                                        <img 
+                                            src={product.images?.[0] || '/images/placeholder-product.png'} 
+                                            alt={product.name} 
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                (e.target as HTMLImageElement).src = '/images/placeholder-product.png';
+                                            }}
+                                        />
+                                    </div>
 
                                     {/* Badges */}
                                     <div className="absolute top-4 right-4 flex flex-col items-end space-y-2">
