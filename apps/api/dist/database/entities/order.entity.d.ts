@@ -1,4 +1,5 @@
 import { User } from './user.entity';
+import { OrderItem } from './order-item.entity';
 export declare class Order {
     id: string;
     orderNumber: string;
@@ -20,4 +21,5 @@ export declare class Order {
     createdAt: Date;
     updatedAt: Date;
     user: User;
+    items: OrderItem[];
 }

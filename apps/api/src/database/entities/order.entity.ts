@@ -10,6 +10,7 @@ import {
   Index,
 } from 'typeorm';
 import { User } from './user.entity';
+import { OrderItem } from './order-item.entity';
 
 @Entity('orders')
 @Index(['userId'])
@@ -90,4 +91,7 @@ export class Order {
   })
   @JoinColumn({ name: 'userId' })
   user: User;
+
+  @OneToMany(() => OrderItem, (item) => item.order)
+  items: OrderItem[];
 }

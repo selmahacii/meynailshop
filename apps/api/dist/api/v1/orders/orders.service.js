@@ -44,7 +44,10 @@ let OrdersService = class OrdersService {
         };
     }
     async findOne(id) {
-        const order = await this.orderRepository.findOne({ where: { id } });
+        const order = await this.orderRepository.findOne({
+            where: { id },
+            relations: ['user', 'items'],
+        });
         if (!order) {
             throw new common_1.NotFoundException('Commande non trouvée');
         }
