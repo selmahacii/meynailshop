@@ -86,16 +86,15 @@ export default function AdminDashboard() {
     const charts = data?.charts || {};
     const alerts = data?.alerts || {};
 
-    // Calculate dynamic deltas
     const revTrend = charts.monthlyRevenue || [];
-    const revenueDelta = revTrend.length >= 2 
-        ? calculateDelta(revTrend[revTrend.length - 1].revenue, revTrend[revTrend.length - 2].revenue) 
-        : '+0%';
-
     const growTrend = charts.customerGrowth || [];
-    const clientDelta = growTrend.length >= 2
-        ? calculateDelta(growTrend[growTrend.length - 1].customers, growTrend[growTrend.length - 2].customers)
-        : '+0%';
+
+    const revenueDelta = calculateDelta(kpis.totalRevenue || 0, kpis.prevRevenue || 0);
+    const clientDelta = calculateDelta(kpis.activeClients || 0, kpis.prevClients || 0);
+    const orderDelta = calculateDelta(kpis.totalOrders || 0, kpis.prevOrders || 0);
+    
+    const prevAvgCart = kpis.prevOrders > 0 ? kpis.prevRevenue / kpis.prevOrders : 0;
+    const avgCartDelta = calculateDelta(kpis.averageCart || 0, prevAvgCart);
 
     const kpisArray = [
         {
@@ -108,7 +107,7 @@ export default function AdminDashboard() {
         {
             name: 'Commandes Totales',
             formattedValue: kpis.totalOrders || 0,
-            delta: '+0%',
+            delta: orderDelta,
             icon: ShoppingCart,
             color: 'text-blue-600'
         },
@@ -122,7 +121,7 @@ export default function AdminDashboard() {
         {
             name: 'Panier Moyen',
             formattedValue: formatPrice(kpis.averageCart || 0),
-            delta: '+0%',
+            delta: avgCartDelta,
             icon: Package,
             color: 'text-orange-600'
         }

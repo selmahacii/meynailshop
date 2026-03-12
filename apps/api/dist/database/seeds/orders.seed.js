@@ -122,8 +122,8 @@ async function seedOrders(connection) {
             shippingAddressSnapshot: {
                 fullName: orderData.address.fullName,
                 phone: orderData.address.phone,
-                wilaya: orderData.address.wilaya,
-                wilayaName: 'Alger',
+                wilaya: i === 0 || i === 4 ? '16' : i === 1 ? '31' : i === 2 ? '09' : '25',
+                wilayaName: i === 0 || i === 4 ? 'Alger' : i === 1 ? 'Oran' : i === 2 ? 'Blida' : 'Constantine',
                 commune: orderData.address.commune,
                 address: orderData.address.address,
                 postalCode: orderData.address.postalCode,
