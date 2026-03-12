@@ -18,14 +18,16 @@ let DashboardController = class DashboardController {
     }
     async getMetrics() {
         try {
+            console.log('📊 [DashboardController] Fetching metrics...');
             const data = await this.dashboardService.getMetrics();
+            console.log('✅ [DashboardController] Metrics fetched successfully');
             return {
                 success: true,
                 data,
             };
         }
         catch (error) {
-            console.error('❌ [DashboardV1] getMetrics Error:', error);
+            console.error('❌ [DashboardController] Error:', error);
             return {
                 success: false,
                 error: error instanceof Error ? error.message : 'Internal server error',

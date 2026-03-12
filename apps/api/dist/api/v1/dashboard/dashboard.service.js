@@ -25,14 +25,19 @@ let DashboardService = class DashboardService {
         this.orderItemRepository = orderItemRepository;
     }
     async getMetrics() {
+        console.log('🚀 [DashboardService] Starting getMetrics');
         try {
             const revenueQuery = await this.orderRepository
-                .createQueryBuilder('order')
-                .select('SUM(order.total)', 'totalRevenue')
-                .addSelect('COUNT(order.id)', 'totalOrders')
-                .addSelect('COUNT(CASE WHEN order.status = \'delivered\' THEN 1 END)', 'completedOrders')
-                .addSelect('AVG(order.total)', 'averageCart')
-                .getRawOne();
+                .createQueryBuilder('o')
+                .select('SUM(o.total)', 'totalRevenue')
+                .addSelect('COUNT(o.id)', 'totalOrders')
+                .addSelect('COUNT(CASE WHEN o.status = \'delivered\' THEN 1 END)', 'completedOrders')
+                .addSelect('AVG(o.total)', 'averageCart')
+                .getRawOne()
+                .catch(err => {
+                console.error('❌ [DashboardService] Revenue query failed:', err);
+                return null;
+            });
             const lastMonthStart = new Date();
             lastMonthStart.setMonth(lastMonthStart.getMonth() - 1);
             lastMonthStart.setDate(1);
@@ -41,12 +46,16 @@ let DashboardService = class DashboardService {
             thisMonthStart.setDate(1);
             thisMonthStart.setHours(0, 0, 0, 0);
             const prevMonthQuery = await this.orderRepository
-                .createQueryBuilder('order')
-                .select('SUM(order.total)', 'totalRevenue')
-                .addSelect('COUNT(order.id)', 'totalOrders')
-                .where('order.createdAt >= :start', { start: lastMonthStart })
-                .andWhere('order.createdAt < :end', { end: thisMonthStart })
-                .getRawOne();
+                .createQueryBuilder('o')
+                .select('SUM(o.total)', 'totalRevenue')
+                .addSelect('COUNT(o.id)', 'totalOrders')
+                .where('o.createdAt >= :start', { start: lastMonthStart })
+                .andWhere('o.createdAt < :end', { end: thisMonthStart })
+                .getRawOne()
+                .catch(err => {
+                console.error('❌ [DashboardService] Prev month query failed:', err);
+                return null;
+            });
             const totalRevenue = parseFloat(revenueQuery?.totalRevenue ?? '0') || 0;
             const totalOrders = parseInt(revenueQuery?.totalOrders ?? '0') || 0;
             const completedOrders = parseInt(revenueQuery?.completedOrders ?? '0') || 0;
@@ -55,6 +64,9 @@ let DashboardService = class DashboardService {
             const prevOrders = parseInt(prevMonthQuery?.totalOrders ?? '0') || 0;
             const activeClients = await this.userRepository.count({
                 where: { role: 'client', isActive: true },
+            }).catch(err => {
+                console.error('❌ [DashboardService] User count failed:', err);
+                return 0;
             });
             const prevClients = await this.userRepository.count({
                 where: {
@@ -62,6 +74,9 @@ let DashboardService = class DashboardService {
                     isActive: true,
                     createdAt: (0, typeorm_2.LessThanOrEqual)(lastMonthStart)
                 },
+            }).catch(err => {
+                console.error('❌ [DashboardService] Prev user count failed:', err);
+                return 0;
             });
             const monthlyRevenue = [];
             const productSales = [];
