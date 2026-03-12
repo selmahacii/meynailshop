@@ -91,8 +91,8 @@ export default function AdminOrdersPage() {
             setUpdatingOrder(orderId);
             const result = await OrdersAPI.updateStatus(orderId, newStatus);
             if (result.success) {
-                // Refresh orders and stats
-                await fetchOrders(activeTab === 'all' ? undefined : activeTab);
+                // Refresh orders on the same page and stats
+                await fetchOrders(activeTab === 'all' ? undefined : activeTab, pagination.page);
                 await fetchStats();
             } else {
                 setError(result.error || 'Erreur lors de la mise à jour');
@@ -180,6 +180,23 @@ export default function AdminOrdersPage() {
                 </div>
             </div>
 
+            {/* Error Message */}
+            {error && (
+                <div className="bg-red-50 border-l-4 border-red-500 p-4 flex justify-between items-center rounded-sm animate-in fade-in slide-in-from-top-4 duration-300">
+                    <div className="flex items-center">
+                        <div className="flex-shrink-0">
+                            <span className="text-red-500 text-lg">⚠️</span>
+                        </div>
+                        <div className="ml-3">
+                            <p className="text-sm text-red-700 font-bold uppercase tracking-wider">{error}</p>
+                        </div>
+                    </div>
+                    <button onClick={() => setError(null)} className="text-red-400 hover:text-red-600 transition-colors">
+                        <Plus className="rotate-45" size={20} />
+                    </button>
+                </div>
+            )}
+
             {/* Content Section */}
             <div className="bg-white rounded-sm border border-creme2 shadow-lg overflow-hidden">
                 {/* Tabs & Toolbar */}
@@ -263,30 +280,48 @@ export default function AdminOrdersPage() {
                                         </span>
                                     </td>
                                     <td className="px-8 py-6 flex items-center justify-end space-x-2">
+                                        {/* Dynamic Status Actions */}
                                         {order.status === 'pending' && (
+                                            <button
+                                                onClick={() => updateOrderStatus(order.id, 'confirmed')}
+                                                disabled={updatingOrder === order.id}
+                                                className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-indigo-700 text-white border-indigo-800 hover:bg-indigo-800 disabled:opacity-50"
+                                            >
+                                                {updatingOrder === order.id ? '...' : 'Confirmer'}
+                                            </button>
+                                        )}
+                                        {(order.status === 'confirmed' || order.status === 'processing') && (
                                             <button
                                                 onClick={() => updateOrderStatus(order.id, 'shipped')}
                                                 disabled={updatingOrder === order.id}
-                                                className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-green-700 text-white border-green-800 hover:bg-green-800 disabled:opacity-50"
+                                                className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-blue-700 text-white border-blue-800 hover:bg-blue-800 disabled:opacity-50"
                                             >
-                                                {updatingOrder === order.id ? '...' : 'Confirmer'}
+                                                {updatingOrder === order.id ? '...' : 'Expédier'}
                                             </button>
                                         )}
                                         {order.status === 'shipped' && (
                                             <button
                                                 onClick={() => updateOrderStatus(order.id, 'delivered')}
                                                 disabled={updatingOrder === order.id}
-                                                className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-blue-700 text-white border-blue-800 hover:bg-blue-800 disabled:opacity-50"
+                                                className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-green-700 text-white border-green-800 hover:bg-green-800 disabled:opacity-50"
                                             >
-                                                Livrer
+                                                {updatingOrder === order.id ? '...' : 'Livrer'}
                                             </button>
                                         )}
-                                        <button className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-white border-creme2 text-encre hover:border-or hover:text-or">
+
+                                        {/* Utility Actions */}
+                                        <button 
+                                            onClick={() => window.print()}
+                                            className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-white border-creme2 text-encre hover:border-or hover:text-or"
+                                        >
                                             Facture
                                         </button>
-                                        <button className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-[#1A0A0A] text-white border-[#2A1A1A] hover:bg-rouge-deep">
-                                            Éditer
-                                        </button>
+                                        <Link 
+                                            href={`/admin/commandes/${order.id}`}
+                                            className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-[#1A0A0A] text-white border-[#2A1A1A] hover:bg-rouge-deep"
+                                        >
+                                            Détail
+                                        </Link>
                                     </td>
                                 </tr>
                             ))}
