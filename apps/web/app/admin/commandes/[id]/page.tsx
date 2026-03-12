@@ -326,7 +326,7 @@ export default function OrderDetailsPage() {
                             <div className="flex items-center justify-between mb-4">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-encre3">Méthode</span>
                                 <span className="text-xs font-black text-encre uppercase tracking-wide">
-                                    {order.paymentMethod === 'cash_on_delivery' ? 'À la livraison' : order.paymentMethod.toUpperCase()}
+                                    {order.paymentMethod === 'cash_on_delivery' ? 'Main à main' : order.paymentMethod.toUpperCase()}
                                 </span>
                             </div>
                             <div className="flex items-center justify-between">

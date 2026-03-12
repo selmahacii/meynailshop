@@ -276,7 +276,7 @@ let DashboardService = class DashboardService {
                 .groupBy('order.paymentMethod')
                 .getRawMany();
             const mapping = {
-                cash_on_delivery: 'À la livraison',
+                cash_on_delivery: 'Main à main',
                 baridimob: 'Baridimob',
                 ccp: 'CCP',
             };

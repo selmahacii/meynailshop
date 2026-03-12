@@ -294,7 +294,7 @@ export class DashboardService {
         .getRawMany();
 
       const mapping: Record<string, string> = {
-        cash_on_delivery: 'À la livraison',
+        cash_on_delivery: 'Main à main',
         baridimob: 'Baridimob',
         ccp: 'CCP',
       };

@@ -213,60 +213,24 @@ export default function CheckoutPage() {
                     <section>
                         <h2 className="text-sm font-bold uppercase tracking-widest text-encre border-b border-creme2 pb-2 mb-6">3. Paiement</h2>
                         <div className="space-y-4">
-                            <label className={`block relative border cursor-pointer transition-all ${paymentMethod === PaymentMethod.CASH_ON_DELIVERY ? 'border-or bg-or/5' : 'border-creme2 bg-creme2/50 hover:bg-creme2'
-                                }`}>
-                                <input
-                                    type="radio"
-                                    name="payment"
-                                    className="peer sr-only"
-                                    checked={paymentMethod === PaymentMethod.CASH_ON_DELIVERY}
-                                    onChange={() => setPaymentMethod(PaymentMethod.CASH_ON_DELIVERY)}
-                                />
+                            <div className="block relative border border-or bg-or/5 rounded-sm">
                                 <div className="p-4 flex items-center justify-between">
                                     <div className="flex items-center">
-                                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center mr-4 ${paymentMethod === PaymentMethod.CASH_ON_DELIVERY ? 'border-or' : 'border-encre3'
-                                            }`}>
-                                            {paymentMethod === PaymentMethod.CASH_ON_DELIVERY && <div className="w-2 h-2 bg-or rounded-full"></div>}
+                                        <div className="w-4 h-4 rounded-full border border-or flex items-center justify-center mr-4">
+                                            <div className="w-2 h-2 bg-or rounded-full"></div>
                                         </div>
                                         <Banknote className="text-encre3 mr-3" size={24} />
                                         <div>
-                                            <span className="block text-sm font-semibold text-encre uppercase tracking-wider mb-1">Paiement à la livraison</span>
-                                            <span className="block text-[10px] text-encre3">Payez en espèces à réception (Yalidine)</span>
+                                            <span className="block text-sm font-semibold text-encre uppercase tracking-wider mb-1">Paiement main à main</span>
+                                            <span className="block text-[10px] text-encre3 uppercase tracking-tighter">Espèces à la livraison / Remise en main propre</span>
                                         </div>
                                     </div>
+                                    <Check className="text-or" size={20} />
                                 </div>
-                            </label>
-
-                            <label className={`block relative border cursor-pointer transition-all ${paymentMethod === PaymentMethod.BARIDIMOB ? 'border-or bg-or/5' : 'border-creme2 bg-creme2/50 hover:bg-creme2'
-                                }`}>
-                                <input
-                                    type="radio"
-                                    name="payment"
-                                    className="peer sr-only"
-                                    checked={paymentMethod === PaymentMethod.BARIDIMOB}
-                                    onChange={() => setPaymentMethod(PaymentMethod.BARIDIMOB)}
-                                />
-                                <div className="p-4 flex items-center justify-between">
-                                    <div className="flex items-center">
-                                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center mr-4 ${paymentMethod === PaymentMethod.BARIDIMOB ? 'border-or' : 'border-encre3'
-                                            }`}>
-                                            {paymentMethod === PaymentMethod.BARIDIMOB && <div className="w-2 h-2 bg-or rounded-full"></div>}
-                                        </div>
-                                        <CreditCard className="text-encre3 mr-3" size={24} />
-                                        <div>
-                                            <span className="block text-sm font-semibold text-encre uppercase tracking-wider mb-1">Baridimob</span>
-                                            <span className="block text-[10px] text-encre3">Virement rapide via l'application</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                {paymentMethod === PaymentMethod.BARIDIMOB && (
-                                    <div className="px-11 pb-4 pt-2">
-                                        <p className="text-xs text-rouge-mid font-medium bg-rouge/5 p-3 border border-rouge/10 rounded-sm">
-                                            Les instructions de paiement (RIP/Numéro) vous seront envoyées après validation.
-                                        </p>
-                                    </div>
-                                )}
-                            </label>
+                            </div>
+                            <p className="text-[10px] text-encre3 italic px-2">
+                                * Pour des raisons de sécurité et de simplicité, nous acceptons uniquement le paiement en espèces lors de la remise de votre commande.
+                            </p>
                         </div>
                     </section>
 

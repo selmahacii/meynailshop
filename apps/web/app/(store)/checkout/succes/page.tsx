@@ -22,15 +22,15 @@ export default function CheckoutSuccessPage() {
                     <ul className="space-y-3 text-sm text-encre3">
                         <li className="flex items-start">
                             <span className="w-5 flex-shrink-0 font-bold text-or">1.</span>
-                            Préparation de votre commande sous 24h.
+                            Préparation de votre commande avec soin.
                         </li>
                         <li className="flex items-start">
                             <span className="w-5 flex-shrink-0 font-bold text-or">2.</span>
-                            Expédition et suivi via Yalidine Express.
+                            Contact téléphonique pour fixer le rendez-vous.
                         </li>
                         <li className="flex items-start">
                             <span className="w-5 flex-shrink-0 font-bold text-or">3.</span>
-                            Livraison et paiement (si applicable).
+                            Livraison et paiement en main propre.
                         </li>
                     </ul>
                 </div>
