@@ -78,13 +78,13 @@ let DashboardService = class DashboardService {
                 console.error('❌ [DashboardService] Prev user count failed:', err);
                 return 0;
             });
-            const monthlyRevenue = [];
-            const productSales = [];
-            const orderStatusBreakdown = [];
-            const customerGrowth = [];
-            const lowStockProducts = [];
-            const wilayaDistribution = [];
-            const paymentMethodDistribution = [];
+            const monthlyRevenue = await this._getMonthlyTrendOptimized();
+            const productSales = await this._getProductSales();
+            const orderStatusBreakdown = await this._getOrderStatusBreakdownOptimized();
+            const customerGrowth = await this._getCustomerGrowth();
+            const lowStockProducts = await this._getLowStockProducts();
+            const wilayaDistribution = await this._getWilayaDistribution();
+            const paymentMethodDistribution = await this._getPaymentMethodDistribution();
             return {
                 kpis: {
                     totalRevenue: totalRevenue || 0,
@@ -93,19 +93,19 @@ let DashboardService = class DashboardService {
                     prevOrders: prevOrders || 0,
                     activeClients: activeClients || 0,
                     prevClients: prevClients || 0,
-                    averageCart: averageCart || 0,
-                    completedOrders: completedOrders || 0,
+                    averageCart: Math.round(averageCart * 100) / 100,
+                    completedOrders: completedOrders,
                 },
                 charts: {
-                    monthlyRevenue: [],
-                    productSales: [],
-                    orderStatusBreakdown: [],
-                    customerGrowth: [],
-                    wilayaDistribution: [],
-                    paymentMethodDistribution: [],
+                    monthlyRevenue,
+                    productSales,
+                    orderStatusBreakdown,
+                    customerGrowth,
+                    wilayaDistribution,
+                    paymentMethodDistribution,
                 },
                 alerts: {
-                    lowStockProducts: [],
+                    lowStockProducts,
                 },
             };
         }

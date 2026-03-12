@@ -8,6 +8,7 @@ const core_1 = require("@nestjs/core");
 const common_1 = require("@nestjs/common");
 const helmet_1 = __importDefault(require("helmet"));
 const app_module_1 = require("./app.module");
+const logging_interceptor_1 = require("./common/interceptors/logging.interceptor");
 const http_exception_filter_1 = require("./common/filters/http-exception.filter");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
@@ -25,6 +26,7 @@ async function bootstrap() {
         forbidNonWhitelisted: true,
         errorHttpStatusCode: 400,
     }));
+    app.useGlobalInterceptors(new logging_interceptor_1.LoggingInterceptor());
     app.useGlobalFilters(new http_exception_filter_1.HttpExceptionFilter());
     const port = process.env.API_PORT || 3001;
     await app.listen(port, '0.0.0.0');
