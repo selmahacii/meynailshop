@@ -30,6 +30,7 @@ export default function AdminOrdersPage() {
     const [activeTab, setActiveTab] = useState('all');
     const [orders, setOrders] = useState<any[]>([]);
     const [stats, setStats] = useState<any>(null);
+    const [pagination, setPagination] = useState<any>({ total: 0, page: 1, limit: 10, pages: 1 });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
@@ -39,16 +40,17 @@ export default function AdminOrdersPage() {
         fetchStats();
     }, []);
 
-    const fetchOrders = async (status?: string) => {
+    const fetchOrders = async (status?: string, page: number = 1) => {
         try {
-            console.log('🔄 Orders: Starting data fetch', status ? `for status: ${status}` : '');
+            console.log('🔄 Orders: Starting data fetch', status ? `for status: ${status}` : '', `page: ${page}`);
             setLoading(true);
-            const result = await OrdersAPI.getAll(1, 50, status);
+            const result = await OrdersAPI.getAll(page, 50, status);
             console.log('📋 Orders: API result received', result);
 
             if (result.success) {
                 console.log('✅ Orders: Data loaded successfully', result.data);
                 setOrders(result.data.data || []);
+                setPagination(result.data.pagination || { total: 0, page: 1, limit: 10, pages: 1 });
             } else {
                 console.error('❌ Orders: API returned error', result.error);
                 setError(result.error || 'Erreur lors du chargement des commandes');
@@ -106,9 +108,12 @@ export default function AdminOrdersPage() {
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'pending': return 'bg-yellow-100 text-yellow-700';
+            case 'confirmed': return 'bg-indigo-100 text-indigo-700';
+            case 'processing': return 'bg-purple-100 text-purple-700';
             case 'shipped': return 'bg-blue-100 text-blue-600';
             case 'delivered': return 'bg-green-100 text-green-700';
             case 'cancelled': return 'bg-red-100 text-red-600';
+            case 'refunded': return 'bg-orange-100 text-orange-700';
             default: return 'bg-gray-100 text-gray-600';
         }
     };
@@ -116,9 +121,12 @@ export default function AdminOrdersPage() {
     const getStatusText = (status: string) => {
         switch (status) {
             case 'pending': return 'En attente';
-            case 'shipped': return 'Expédié';
-            case 'delivered': return 'Livré';
-            case 'cancelled': return 'Annulé';
+            case 'confirmed': return 'Confirmée';
+            case 'processing': return 'Préparation';
+            case 'shipped': return 'Expédiée';
+            case 'delivered': return 'Livrée';
+            case 'cancelled': return 'Annulée';
+            case 'refunded': return 'Remboursée';
             default: return status;
         }
     };
@@ -232,8 +240,12 @@ export default function AdminOrdersPage() {
                                     </td>
                                     <td className="px-8 py-6">
                                         <div className="flex flex-col">
-                                            <span className="text-sm font-bold text-encre">{order.user?.name || 'Client inconnu'}</span>
-                                            <span className="text-[10px] text-encre3 uppercase tracking-wide font-medium">{order.address?.wilaya || 'N/A'}</span>
+                                            <span className="text-sm font-bold text-encre">
+                                                {order.user ? `${order.user.firstName} ${order.user.lastName}` : 'Client anonyme'}
+                                            </span>
+                                            <span className="text-[10px] text-encre3 uppercase tracking-wide font-medium">
+                                                {order.shippingAddressSnapshot?.wilayaName || order.shippingAddressSnapshot?.wilaya || 'Algérie'}
+                                            </span>
                                         </div>
                                     </td>
                                     <td className="px-8 py-6 text-[11px] font-bold text-encre3 uppercase">
@@ -288,12 +300,13 @@ export default function AdminOrdersPage() {
                         Affichage de {filteredOrders.length} sur {orders.length} commandes
                     </p>
                     <div className="flex space-x-2">
-                        {[1, 2, 3, '...', 12].map((p, i) => (
+                        {Array.from({ length: pagination.pages }, (_, i) => i + 1).map((p) => (
                             <button
-                                key={i}
+                                key={p}
+                                onClick={() => fetchOrders(activeTab === 'all' ? undefined : activeTab, p)}
                                 className={cn(
                                     "w-8 h-8 flex items-center justify-center text-[10px] font-bold border transition-all rounded-sm",
-                                    p === 1 ? "bg-encre text-creme border-encre" : "bg-white text-encre3 border-creme2 hover:border-or"
+                                    p === pagination.page ? "bg-encre text-creme border-encre" : "bg-white text-encre3 border-creme2 hover:border-or"
                                 )}
                             >
                                 {p}

@@ -23,8 +23,10 @@ let OrdersService = class OrdersService {
         this.reviewRepository = reviewRepository;
     }
     async findAll(page = 1, limit = 10, status) {
-        const query = this.orderRepository.createQueryBuilder('order');
-        if (status) {
+        const query = this.orderRepository.createQueryBuilder('order')
+            .leftJoinAndSelect('order.user', 'user')
+            .orderBy('order.createdAt', 'DESC');
+        if (status && status !== 'all') {
             query.where('order.status = :status', { status });
         }
         const [data, total] = await query
@@ -61,6 +63,7 @@ let OrdersService = class OrdersService {
             const stats = {
                 total: orders.length,
                 pending: orders.filter((o) => o.status === 'pending').length,
+                shipped: orders.filter((o) => o.status === 'shipped').length,
                 delivered: orders.filter((o) => o.status === 'delivered').length,
                 cancelled: orders.filter((o) => o.status === 'cancelled').length,
                 totalRevenue: orders.reduce((sum, o) => sum + (Number(o.total) || 0), 0),

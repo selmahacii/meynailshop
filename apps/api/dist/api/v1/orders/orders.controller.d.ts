@@ -19,6 +19,14 @@ export declare class OrdersController {
         data: {
             total: number;
             pending: number;
+            shipped: number;
+            delivered: number;
+            cancelled: number;
+            totalRevenue: number;
+            pendingReviews: number;
+        } | {
+            total: number;
+            pending: number;
             delivered: number;
             cancelled: number;
             totalRevenue: number;

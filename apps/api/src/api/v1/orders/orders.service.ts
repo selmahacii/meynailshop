@@ -13,9 +13,11 @@ export class OrdersService {
   ) {}
 
   async findAll(page: number = 1, limit: number = 10, status?: string) {
-    const query = this.orderRepository.createQueryBuilder('order');
+    const query = this.orderRepository.createQueryBuilder('order')
+      .leftJoinAndSelect('order.user', 'user')
+      .orderBy('order.createdAt', 'DESC');
 
-    if (status) {
+    if (status && status !== 'all') {
       query.where('order.status = :status', { status });
     }
 
@@ -58,6 +60,7 @@ export class OrdersService {
       const stats = {
         total: orders.length,
         pending: orders.filter((o: any) => o.status === 'pending').length,
+        shipped: orders.filter((o: any) => o.status === 'shipped').length,
         delivered: orders.filter((o: any) => o.status === 'delivered').length,
         cancelled: orders.filter((o: any) => o.status === 'cancelled').length,
         totalRevenue: orders.reduce((sum: number, o: any) => sum + (Number(o.total) || 0), 0),
