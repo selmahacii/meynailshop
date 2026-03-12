@@ -28,6 +28,12 @@ export declare class DashboardService {
         alerts: {
             lowStockProducts: any[];
         };
+        error?: undefined;
+    } | {
+        error: any;
+        kpis?: undefined;
+        charts?: undefined;
+        alerts?: undefined;
     }>;
     private _getMonthlyTrendOptimized;
     private _getOrderStatusBreakdownOptimized;

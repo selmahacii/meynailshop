@@ -7,9 +7,18 @@ export class DashboardController {
 
   @Get('metrics')
   async getMetrics() {
-    return {
-      success: true,
-      data: await this.dashboardService.getMetrics(),
-    };
+    try {
+      const data = await this.dashboardService.getMetrics();
+      return {
+        success: true,
+        data,
+      };
+    } catch (error) {
+      console.error('❌ [DashboardV1] getMetrics Error:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Internal server error',
+      };
+    }
   }
 }

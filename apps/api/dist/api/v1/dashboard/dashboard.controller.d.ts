@@ -26,6 +26,17 @@ export declare class DashboardController {
             alerts: {
                 lowStockProducts: any[];
             };
+            error?: undefined;
+        } | {
+            error: any;
+            kpis?: undefined;
+            charts?: undefined;
+            alerts?: undefined;
         };
+        error?: undefined;
+    } | {
+        success: boolean;
+        error: string;
+        data?: undefined;
     }>;
 }

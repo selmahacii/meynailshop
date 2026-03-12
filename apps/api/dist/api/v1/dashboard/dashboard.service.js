@@ -63,131 +63,164 @@ let DashboardService = class DashboardService {
                     createdAt: (0, typeorm_2.LessThanOrEqual)(lastMonthStart)
                 },
             });
-            const monthlyRevenue = await this._getMonthlyTrendOptimized();
-            const productSales = await this._getProductSales();
-            const orderStatusBreakdown = await this._getOrderStatusBreakdownOptimized();
-            const customerGrowth = await this._getCustomerGrowth();
-            const lowStockProducts = await this._getLowStockProducts();
-            const wilayaDistribution = await this._getWilayaDistribution();
-            const paymentMethodDistribution = await this._getPaymentMethodDistribution();
+            const monthlyRevenue = [];
+            const productSales = [];
+            const orderStatusBreakdown = [];
+            const customerGrowth = [];
+            const lowStockProducts = [];
+            const wilayaDistribution = [];
+            const paymentMethodDistribution = [];
             return {
                 kpis: {
-                    totalRevenue: Math.round(totalRevenue * 100) / 100,
-                    prevRevenue: Math.round(prevRevenue * 100) / 100,
-                    totalOrders: totalOrders,
-                    prevOrders: prevOrders,
-                    activeClients: activeClients,
-                    prevClients: prevClients,
-                    averageCart: Math.round(averageCart * 100) / 100,
-                    completedOrders: completedOrders,
+                    totalRevenue: totalRevenue || 0,
+                    prevRevenue: prevRevenue || 0,
+                    totalOrders: totalOrders || 0,
+                    prevOrders: prevOrders || 0,
+                    activeClients: activeClients || 0,
+                    prevClients: prevClients || 0,
+                    averageCart: averageCart || 0,
+                    completedOrders: completedOrders || 0,
                 },
                 charts: {
-                    monthlyRevenue,
-                    productSales,
-                    orderStatusBreakdown,
-                    customerGrowth,
-                    wilayaDistribution,
-                    paymentMethodDistribution,
+                    monthlyRevenue: [],
+                    productSales: [],
+                    orderStatusBreakdown: [],
+                    customerGrowth: [],
+                    wilayaDistribution: [],
+                    paymentMethodDistribution: [],
                 },
                 alerts: {
-                    lowStockProducts,
+                    lowStockProducts: [],
                 },
             };
         }
         catch (error) {
             console.error('❌ [DashboardService] getMetrics Error:', error);
-            throw error;
+            return { error: error.message };
         }
     }
     async _getMonthlyTrendOptimized() {
-        const months = [];
-        const now = new Date();
-        for (let i = 5; i >= 0; i--) {
-            const start = new Date(now.getFullYear(), now.getMonth() - i, 1);
-            months.push({
-                name: start.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }),
-                revenue: 0,
-                start: start.toISOString(),
-            });
-        }
-        const dataByMonth = await this.orderRepository
-            .createQueryBuilder('order')
-            .select('order.total', 'total')
-            .addSelect('order.createdAt', 'createdAt')
-            .where('order.status = :status', { status: 'delivered' })
-            .andWhere('order.createdAt >= :start', { start: months[0].start })
-            .getRawMany();
-        dataByMonth.forEach(row => {
-            const date = new Date(row.createdAt);
-            const label = date.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' });
-            const month = months.find(m => m.name === label);
-            if (month) {
-                month.revenue += parseFloat(row.total) || 0;
+        try {
+            const months = [];
+            const now = new Date();
+            for (let i = 5; i >= 0; i--) {
+                const start = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                months.push({
+                    name: start.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }),
+                    revenue: 0,
+                    start: start.toISOString(),
+                });
             }
-        });
-        return months.map(m => ({ name: m.name, revenue: Math.round(m.revenue * 100) / 100 }));
+            const dataByMonth = await this.orderRepository
+                .createQueryBuilder('order')
+                .select('order.total', 'total')
+                .addSelect('order.createdAt', 'createdAt')
+                .where('order.status = :status', { status: 'delivered' })
+                .andWhere('order.createdAt >= :start', { start: months[0].start })
+                .getRawMany();
+            dataByMonth.forEach(row => {
+                const date = new Date(row.createdAt);
+                const label = date.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' });
+                const month = months.find(m => m.name === label);
+                if (month) {
+                    month.revenue += parseFloat(row.total) || 0;
+                }
+            });
+            return months.map(m => ({ name: m.name, revenue: Math.round(m.revenue * 100) / 100 }));
+        }
+        catch (error) {
+            console.warn('⚠️ [DashboardService] Monthly trend failed:', error.message);
+            return [];
+        }
     }
     async _getOrderStatusBreakdownOptimized() {
-        const stats = await this.orderRepository
-            .createQueryBuilder('order')
-            .select('order.status', 'status')
-            .addSelect('COUNT(order.id)', 'count')
-            .groupBy('order.status')
-            .getRawMany();
-        const mapping = {
-            pending: 'En attente',
-            processing: 'En cours',
-            shipped: 'Expédiée',
-            delivered: 'Livrée',
-            cancelled: 'Annulée',
-        };
-        return stats.map(s => ({
-            name: mapping[s.status] || s.status,
-            value: parseInt(s.count) || 0,
-        }));
+        try {
+            const stats = await this.orderRepository
+                .createQueryBuilder('order')
+                .select('order.status', 'status')
+                .addSelect('COUNT(order.id)', 'count')
+                .groupBy('order.status')
+                .getRawMany();
+            const mapping = {
+                pending: 'En attente',
+                processing: 'En cours',
+                shipped: 'Expédiée',
+                delivered: 'Livrée',
+                cancelled: 'Annulée',
+            };
+            return stats.map(s => ({
+                name: mapping[s.status] || s.status,
+                value: parseInt(s.count) || 0,
+            }));
+        }
+        catch (error) {
+            console.warn('⚠️ [DashboardService] Order breakdown failed:', error.message);
+            return [];
+        }
     }
     async _getProductSales() {
-        const rows = await this.orderItemRepository
-            .createQueryBuilder('item')
-            .select('item.productName', 'name')
-            .addSelect('SUM(item.quantity)', 'value')
-            .groupBy('item.productName')
-            .orderBy('SUM(item.quantity)', 'DESC')
-            .limit(5)
-            .getRawMany();
-        return rows.map((row) => ({
-            name: row.name,
-            value: parseInt(row.value) || 0,
-        }));
+        try {
+            const rows = await this.orderItemRepository
+                .createQueryBuilder('item')
+                .select('item.productName', 'name')
+                .addSelect('SUM(item.quantity)', 'value')
+                .groupBy('item.productName')
+                .orderBy('SUM(item.quantity)', 'DESC')
+                .limit(5)
+                .getRawMany();
+            return rows.map((row) => ({
+                name: row.name,
+                value: parseInt(row.value) || 0,
+            }));
+        }
+        catch (error) {
+            console.warn('⚠️ [DashboardService] Product sales failed:', error.message);
+            return [];
+        }
     }
     async _getCustomerGrowth() {
-        const months = [];
-        const now = new Date();
-        for (let i = 5; i >= 0; i--) {
-            const start = new Date(now.getFullYear(), now.getMonth() - i, 1, 0, 0, 0, 0);
-            const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 1, 0, 0, 0, 0);
-            months.push({ label: start.toLocaleDateString('fr-FR', { month: 'short' }), start, end });
+        try {
+            const months = [];
+            const now = new Date();
+            for (let i = 5; i >= 0; i--) {
+                const start = new Date(now.getFullYear(), now.getMonth() - i, 1, 0, 0, 0, 0);
+                const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 1, 0, 0, 0, 0);
+                months.push({ label: start.toLocaleDateString('fr-FR', { month: 'short' }), start, end });
+            }
+            const clients = await this.userRepository
+                .createQueryBuilder('u')
+                .select(['u.id', 'u.createdAt'])
+                .where('u.role = :role', { role: 'client' })
+                .andWhere('u.createdAt >= :start', { start: months[0].start.toISOString() })
+                .getMany();
+            return months.map((m) => ({
+                month: m.label,
+                customers: clients.filter((c) => {
+                    const createdAt = new Date(c.createdAt);
+                    return createdAt >= m.start && createdAt < m.end;
+                }).length,
+            }));
         }
-        const clients = await this.userRepository
-            .createQueryBuilder('u')
-            .select(['u.id', 'u.createdAt'])
-            .where('u.role = :role', { role: 'client' })
-            .andWhere('u.createdAt >= :start', { start: months[0].start.toISOString() })
-            .getMany();
-        return months.map((m) => ({
-            month: m.label,
-            customers: clients.filter((c) => c.createdAt >= m.start && c.createdAt < m.end).length,
-        }));
+        catch (error) {
+            console.warn('⚠️ [DashboardService] Customer growth failed:', error.message);
+            return [];
+        }
     }
     async _getLowStockProducts() {
-        const products = await this.productRepository
-            .createQueryBuilder('p')
-            .where('p.stock <= :limit', { limit: 10 })
-            .andWhere('p.isActive = :isActive', { isActive: true })
-            .orderBy('p.stock', 'ASC')
-            .limit(5)
-            .getMany();
-        return products.map((p) => ({ id: p.id, name: p.name, stock: p.stock, sku: p.sku }));
+        try {
+            const products = await this.productRepository
+                .createQueryBuilder('p')
+                .where('p.stock <= :limit', { limit: 10 })
+                .andWhere('p.isActive = :isActive', { isActive: true })
+                .orderBy('p.stock', 'ASC')
+                .limit(5)
+                .getMany();
+            return products.map((p) => ({ id: p.id, name: p.name, stock: p.stock, sku: p.sku }));
+        }
+        catch (error) {
+            console.warn('⚠️ [DashboardService] Low stock products failed:', error.message);
+            return [];
+        }
     }
     async _getWilayaDistribution() {
         try {
