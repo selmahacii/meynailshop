@@ -3,7 +3,7 @@
 import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/lib/store/authStore';
 
@@ -12,6 +12,7 @@ function LoginForm() {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
     const router = useRouter();
     const searchParams = useSearchParams();
     const redirectUrl = searchParams.get('redirect') || '/';
@@ -20,6 +21,7 @@ function LoginForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
+        setErrorMsg('');
 
         try {
             // Call the real API
@@ -34,7 +36,9 @@ function LoginForm() {
 
             if (!response.ok) {
                 const error = await response.json();
-                toast.error(error.message || 'Connexion échouée');
+                const message = error.message || 'Connexion échouée';
+                toast.error(message);
+                setErrorMsg(message);
                 setLoading(false);
                 return;
             }
@@ -76,11 +80,15 @@ function LoginForm() {
                 }
             } else {
                 console.error('[DEBUG] Invalid userData:', userData);
-                toast.error('Données utilisateur invalides');
+                const message = 'Données utilisateur invalides';
+                toast.error(message);
+                setErrorMsg(message);
             }
         } catch (error) {
             console.error('Login error:', error);
-            toast.error('Erreur de connexion. Essayez à nouveau.');
+            const message = 'Erreur de connexion. Essayez à nouveau.';
+            toast.error(message);
+            setErrorMsg(message);
             setLoading(false);
         }
     };
@@ -88,6 +96,13 @@ function LoginForm() {
     return (
         <div className="bg-white py-10 px-4 shadow-xl border border-creme2 sm:rounded-lg sm:px-10">
             <h2 className="text-center text-2xl font-serif text-encre mb-8">Bonjour, ravie de vous revoir !</h2>
+
+            {errorMsg && (
+                <div className="mb-6 p-4 bg-red-50/50 border-l-4 border-red-500 rounded-r-sm flex items-center space-x-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <AlertCircle size={18} className="text-red-500 shrink-0" />
+                    <p className="text-[11px] font-bold uppercase tracking-tight text-red-900">{errorMsg}</p>
+                </div>
+            )}
 
             <form className="space-y-6" onSubmit={handleSubmit}>
                 <div>

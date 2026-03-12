@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductsController = void 0;
+exports.StoreProductsController = void 0;
 const common_1 = require("@nestjs/common");
 const products_service_1 = require("./products.service");
 const categories_service_1 = require("./categories.service");
@@ -20,7 +20,7 @@ const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_guard_1 = require("../auth/guards/roles.guard");
 const roles_decorator_1 = require("../../common/decorators/roles.decorator");
 const products_query_dto_1 = require("./dto/products-query.dto");
-let ProductsController = class ProductsController {
+let StoreProductsController = class StoreProductsController {
     constructor(productsService, categoriesService) {
         this.productsService = productsService;
         this.categoriesService = categoriesService;
@@ -72,27 +72,27 @@ let ProductsController = class ProductsController {
         };
     }
 };
-exports.ProductsController = ProductsController;
+exports.StoreProductsController = StoreProductsController;
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [products_query_dto_1.ProductsQueryDto]),
     __metadata("design:returntype", Promise)
-], ProductsController.prototype, "findAll", null);
+], StoreProductsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('featured'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], ProductsController.prototype, "featured", null);
+], StoreProductsController.prototype, "featured", null);
 __decorate([
     (0, common_1.Get)(':slug'),
     __param(0, (0, common_1.Param)('slug')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], ProductsController.prototype, "findBySlug", null);
+], StoreProductsController.prototype, "findBySlug", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)('admin'),
@@ -101,7 +101,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], ProductsController.prototype, "create", null);
+], StoreProductsController.prototype, "create", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)('admin'),
@@ -111,7 +111,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
-], ProductsController.prototype, "update", null);
+], StoreProductsController.prototype, "update", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)('admin'),
@@ -120,7 +120,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], ProductsController.prototype, "remove", null);
+], StoreProductsController.prototype, "remove", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)('admin'),
@@ -130,10 +130,10 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
-], ProductsController.prototype, "updateStock", null);
-exports.ProductsController = ProductsController = __decorate([
+], StoreProductsController.prototype, "updateStock", null);
+exports.StoreProductsController = StoreProductsController = __decorate([
     (0, common_1.Controller)('products'),
     __metadata("design:paramtypes", [products_service_1.ProductsService,
         categories_service_1.CategoriesService])
-], ProductsController);
+], StoreProductsController);
 //# sourceMappingURL=products.controller.js.map

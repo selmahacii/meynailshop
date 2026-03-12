@@ -20,13 +20,19 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { DashboardModule as DashboardV1 } from './api/v1/dashboard/dashboard.module';
 import { ProductsModule as ProductsV1 } from './api/v1/products/products.module';
 import { OrdersModule as OrdersV1 } from './api/v1/orders/orders.module';
-import { ProductsModule } from './modules/products/products.module';
+import { StoreProductsModule } from './modules/products/products.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'uploads'),
+      serveRoot: '/uploads',
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
@@ -46,7 +52,7 @@ import { AppService } from './app.service';
     NotificationsModule,
     DashboardV1,
     ProductsV1,
-    ProductsModule,
+    StoreProductsModule,
     OrdersV1,
   ],
   controllers: [AppController],

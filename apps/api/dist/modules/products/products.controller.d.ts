@@ -1,7 +1,7 @@
 import { ProductsService } from './products.service';
 import { CategoriesService } from './categories.service';
 import { ProductsQueryDto } from './dto/products-query.dto';
-export declare class ProductsController {
+export declare class StoreProductsController {
     private productsService;
     private categoriesService;
     constructor(productsService: ProductsService, categoriesService: CategoriesService);

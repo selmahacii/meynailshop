@@ -41,7 +41,8 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error('Login proxy error:', error);
-    return NextResponse.json({ statusCode: 500, message: 'Erreur de connexion' }, { status: 500 });
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error(`[API Proxy] Login error: ${errorMsg}`);
+    return NextResponse.json({ statusCode: 500, message: 'Le serveur est temporairement indisponible. Veuillez réessayer plus tard.' }, { status: 500 });
   }
 }

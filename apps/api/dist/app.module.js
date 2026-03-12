@@ -28,12 +28,18 @@ const orders_module_1 = require("./api/v1/orders/orders.module");
 const products_module_2 = require("./modules/products/products.module");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
+const serve_static_1 = require("@nestjs/serve-static");
+const path_1 = require("path");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            serve_static_1.ServeStaticModule.forRoot({
+                rootPath: (0, path_1.join)(process.cwd(), 'uploads'),
+                serveRoot: '/uploads',
+            }),
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
                 envFilePath: '.env',
@@ -53,7 +59,7 @@ exports.AppModule = AppModule = __decorate([
             notifications_module_1.NotificationsModule,
             dashboard_module_1.DashboardModule,
             products_module_1.ProductsModule,
-            products_module_2.ProductsModule,
+            products_module_2.StoreProductsModule,
             orders_module_1.OrdersModule,
         ],
         controllers: [app_controller_1.AppController],

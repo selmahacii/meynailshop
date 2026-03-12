@@ -17,7 +17,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { ProductsQueryDto } from './dto/products-query.dto';
 
 @Controller('products')
-export class ProductsController {
+export class StoreProductsController {
   constructor(
     private productsService: ProductsService,
     private categoriesService: CategoriesService,
