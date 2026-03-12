@@ -73,23 +73,21 @@ export default function AdminAnalyticsPage() {
     }
 
     const { kpis = {}, charts = {} } = data || {};
+    const revenues = charts.monthlyRevenue || [];
     
     // Calculate deltas from charts trend
-    const revenues = charts.monthlyRevenue || [];
-    const revenueDelta = revenues.length >= 2 
-        ? calculateDelta(revenues[revenues.length - 1].revenue, revenues[revenues.length - 2].revenue) 
-        : '+0%';
-
-    const growths = charts.customerGrowth || [];
-    const clientDelta = growths.length >= 2
-        ? calculateDelta(growths[growths.length - 1].customers, growths[growths.length - 2].customers)
-        : '+0%';
+    const revenueDelta = calculateDelta(kpis.totalRevenue || 0, kpis.prevRevenue || 0);
+    const clientDelta = calculateDelta(kpis.activeClients || 0, kpis.prevClients || 0);
+    const orderDelta = calculateDelta(kpis.totalOrders || 0, kpis.prevOrders || 0);
+    
+    const prevAvgCart = kpis.prevOrders > 0 ? kpis.prevRevenue / kpis.prevOrders : 0;
+    const avgCartDelta = calculateDelta(kpis.averageCart || 0, prevAvgCart);
 
     const kpiCards = [
         { label: 'Chiffre d\'affaires', value: formatPrice(kpis.totalRevenue || 0), delta: revenueDelta, positive: !revenueDelta.startsWith('-'), icon: TrendingUp },
         { label: 'Nouveaux clients', value: kpis.activeClients || 0, delta: clientDelta, positive: !clientDelta.startsWith('-'), icon: Users },
-        { label: 'Commandes', value: kpis.totalOrders || 0, delta: '+0%', positive: true, icon: ShoppingCart },
-        { label: 'Panier moyen', value: formatPrice(kpis.averageCart || 0), delta: '+0%', positive: true, icon: BarChart3 },
+        { label: 'Commandes', value: kpis.totalOrders || 0, delta: orderDelta, positive: !orderDelta.startsWith('-'), icon: ShoppingCart },
+        { label: 'Panier moyen', value: formatPrice(kpis.averageCart || 0), delta: avgCartDelta, positive: !avgCartDelta.startsWith('-'), icon: BarChart3 },
     ];
 
     const maxRevenue = Math.max(...revenues.map((r: any) => r.revenue), 1000);

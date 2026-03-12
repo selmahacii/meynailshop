@@ -33,12 +33,35 @@ let DashboardService = class DashboardService {
                 .addSelect('COUNT(CASE WHEN order.status = \'delivered\' THEN 1 END)', 'completedOrders')
                 .addSelect('AVG(order.total)', 'averageCart')
                 .getRawOne();
+            const lastMonthStart = new Date();
+            lastMonthStart.setMonth(lastMonthStart.getMonth() - 1);
+            lastMonthStart.setDate(1);
+            lastMonthStart.setHours(0, 0, 0, 0);
+            const thisMonthStart = new Date();
+            thisMonthStart.setDate(1);
+            thisMonthStart.setHours(0, 0, 0, 0);
+            const prevMonthQuery = await this.orderRepository
+                .createQueryBuilder('order')
+                .select('SUM(order.total)', 'totalRevenue')
+                .addSelect('COUNT(order.id)', 'totalOrders')
+                .where('order.createdAt >= :start', { start: lastMonthStart })
+                .andWhere('order.createdAt < :end', { end: thisMonthStart })
+                .getRawOne();
             const totalRevenue = parseFloat(revenueQuery?.totalRevenue ?? '0') || 0;
             const totalOrders = parseInt(revenueQuery?.totalOrders ?? '0') || 0;
             const completedOrders = parseInt(revenueQuery?.completedOrders ?? '0') || 0;
             const averageCart = parseFloat(revenueQuery?.averageCart ?? '0') || 0;
+            const prevRevenue = parseFloat(prevMonthQuery?.totalRevenue ?? '0') || 0;
+            const prevOrders = parseInt(prevMonthQuery?.totalOrders ?? '0') || 0;
             const activeClients = await this.userRepository.count({
                 where: { role: 'client', isActive: true },
+            });
+            const prevClients = await this.userRepository.count({
+                where: {
+                    role: 'client',
+                    isActive: true,
+                    createdAt: (0, typeorm_2.LessThanOrEqual)(lastMonthStart)
+                },
             });
             const monthlyRevenue = await this._getMonthlyTrendOptimized();
             const productSales = await this._getProductSales();
@@ -50,8 +73,11 @@ let DashboardService = class DashboardService {
             return {
                 kpis: {
                     totalRevenue: Math.round(totalRevenue * 100) / 100,
+                    prevRevenue: Math.round(prevRevenue * 100) / 100,
                     totalOrders: totalOrders,
+                    prevOrders: prevOrders,
                     activeClients: activeClients,
+                    prevClients: prevClients,
                     averageCart: Math.round(averageCart * 100) / 100,
                     completedOrders: completedOrders,
                 },
