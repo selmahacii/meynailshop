@@ -32,7 +32,7 @@ export async function seedProducts(connection: DataSource) {
       shortDescription: `${p.name} de qualité premium`,
       stock: 50,
       stockAlert: 10,
-      images: ['https://via.placeholder.com/800x800?text=' + p.name],
+      images: ['https://placehold.co/800x800?text=' + encodeURIComponent(p.name)],
       categoryId: catMap[p.category] || dbCategories[0]?.id, 
       isActive: true,
       isFeatured: Math.random() > 0.5,

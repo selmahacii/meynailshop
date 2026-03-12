@@ -141,10 +141,13 @@ export default function AdminProductsPage() {
                     <button className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
                         <Download size={18} />
                     </button>
-                    <button className="flex items-center space-x-2 px-5 py-2.5 bg-rouge-deep text-creme rounded-sm text-sm font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md">
+                    <Link 
+                        href="/admin/produits/nouveau"
+                        className="flex items-center space-x-2 px-5 py-2.5 bg-rouge-deep text-creme rounded-sm text-sm font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md"
+                    >
                         <Plus size={16} />
                         <span>Nouveau</span>
-                    </button>
+                    </Link>
                     <Link href="/" className="px-5 py-2.5 border border-encre text-encre rounded-sm text-sm font-bold hover:bg-encre hover:text-creme transition-all">
                         Voir la boutique
                     </Link>
@@ -264,9 +267,12 @@ export default function AdminProductsPage() {
                                     <div className="flex items-center justify-between mt-6">
                                         <span className="text-lg font-black text-encre">{product.price} DA</span>
                                         <div className="flex space-x-2">
-                                            <button className={cn("px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-sm transition-all", actionButton.style)}>
+                                            <Link 
+                                                href={`/admin/produits/${product.id}`}
+                                                className={cn("px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-sm transition-all", actionButton.style)}
+                                            >
                                                 {actionButton.text}
-                                            </button>
+                                            </Link>
                                         </div>
                                     </div>
                                 </div>

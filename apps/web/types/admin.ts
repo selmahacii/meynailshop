@@ -9,6 +9,7 @@ export interface AdminProduct {
   status: 'in_stock' | 'low_stock' | 'out_of_stock';
   createdAt: string;
   updatedAt: string;
+  images?: string[];
 }
 
 export interface AdminClient {
