@@ -75,7 +75,8 @@ function DialogContent({ children, size = 'md', onClose }: DialogContentProps) {
     <div
       className={cn(
         'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50',
-        'bg-white rounded-lg shadow-2xl',
+        'bg-white rounded-lg shadow-2xl overflow-hidden',
+        'w-[calc(100%-2rem)] mx-4 sm:mx-0', // Account for mobile margins
         sizes[size],
       )}
       onClick={(e) => e.stopPropagation()}

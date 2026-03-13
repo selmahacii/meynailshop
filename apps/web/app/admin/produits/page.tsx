@@ -118,57 +118,59 @@ export default function AdminProductsPage() {
     };
 
     return (
-        <div className="space-y-8 pb-12">
+        <div className="space-y-6 md:space-y-8 p-4 md:p-8 pb-12">
             {/* Header Section */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-serif text-encre">Produits</h1>
-                    <p className="text-encre3 text-[10px] uppercase tracking-widest font-bold mt-1">Catalogue & inventaire — {new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+                    <h1 className="text-2xl md:text-3xl font-serif text-encre">Produits</h1>
+                    <p className="text-encre3 text-[9px] md:text-[10px] uppercase tracking-widest font-bold mt-1">Catalogue & inventaire — {new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
                 </div>
 
-                <div className="flex items-center space-x-3">
-                    <div className="relative group">
+                <div className="flex flex-wrap items-center gap-2 md:gap-3">
+                    <div className="relative group flex-grow sm:flex-grow-0">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-encre3 group-focus-within:text-or transition-colors" size={16} />
                         <input
                             type="text"
                             placeholder="Rechercher..."
-                            className="pl-10 pr-4 py-2.5 bg-white border border-creme2 rounded-sm text-sm focus:outline-none focus:border-or focus:ring-1 focus:ring-or w-64 shadow-sm transition-all"
+                            className="pl-10 pr-4 py-2 bg-white border border-creme2 rounded-sm text-sm focus:outline-none focus:border-or focus:ring-1 focus:ring-or w-full sm:w-48 xl:w-64 shadow-sm transition-all"
                         />
                     </div>
-                    <button className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
-                        <Bell size={18} />
-                    </button>
-                    <button className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
-                        <Download size={18} />
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <button className="p-2 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
+                            <Bell size={18} />
+                        </button>
+                        <button className="p-2 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
+                            <Download size={18} />
+                        </button>
+                    </div>
                     <Link 
                         href="/admin/produits/nouveau"
-                        className="flex items-center space-x-2 px-5 py-2.5 bg-rouge-deep text-creme rounded-sm text-sm font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md"
+                        className="flex items-center justify-center space-x-2 px-4 py-2 bg-rouge-deep text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md flex-grow sm:flex-grow-0"
                     >
                         <Plus size={16} />
                         <span>Nouveau</span>
                     </Link>
-                    <Link href="/" className="px-5 py-2.5 border border-encre text-encre rounded-sm text-sm font-bold hover:bg-encre hover:text-creme transition-all">
-                        Voir la boutique
+                    <Link href="/" className="px-4 py-2 border border-encre text-encre rounded-sm text-xs font-bold hover:bg-encre hover:text-creme transition-all text-center flex-grow sm:flex-grow-0">
+                        Boutique
                     </Link>
                 </div>
             </div>
 
             {/* Summary Stats */}
             {stats && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     {[
                         { label: 'Stock faible', value: stats.lowStockProducts.toString(), icon: AlertCircle, color: 'text-or', bg: 'bg-or/10' },
                         { label: 'Total produits', value: stats.totalProducts.toString(), icon: ShoppingBag, color: 'text-encre3', bg: 'bg-creme' },
                         { label: 'Ruptures totales', value: products.filter((p: AdminProduct) => p.status === 'out_of_stock').length.toString(), icon: AlertCircle, color: 'text-rouge', bg: 'bg-rouge/10' },
                     ].map((stat, i) => (
-                        <div key={i} className="bg-white rounded-sm border border-creme2 p-6 flex items-center space-x-4 shadow-sm hover:border-or transition-all">
-                            <div className={cn("w-12 h-12 rounded-full flex items-center justify-center", stat.bg)}>
-                                <stat.icon size={22} className={stat.color} />
+                        <div key={i} className="bg-white rounded-sm border border-creme2 p-4 md:p-6 flex items-center space-x-4 shadow-sm hover:border-or transition-all">
+                            <div className={cn("w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center shrink-0", stat.bg)}>
+                                <stat.icon size={20} className={stat.color} />
                             </div>
                             <div>
-                                <p className="text-[10px] uppercase font-black tracking-widest text-encre3">{stat.label}</p>
-                                <p className="text-2xl font-bold text-encre mt-1">{stat.value}</p>
+                                <p className="text-[9px] md:text-[10px] uppercase font-black tracking-widest text-encre3">{stat.label}</p>
+                                <p className="text-xl md:text-2xl font-bold text-encre mt-1">{stat.value}</p>
                             </div>
                         </div>
                     ))}
@@ -176,16 +178,16 @@ export default function AdminProductsPage() {
             )}
 
             {/* Content Filters */}
-            <div className="flex flex-wrap items-center justify-between gap-6">
-                <div className="flex items-center bg-white p-1 rounded-sm border border-creme2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+                <div className="flex items-center bg-white p-1 rounded-sm border border-creme2 overflow-x-auto custom-scrollbar">
                     {tabs.map((tab) => (
                         <button
                             key={tab.key}
                             onClick={() => setActiveTab(tab.key)}
                             className={cn(
-                                "px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-sm transition-all",
+                                "px-4 md:px-6 py-2 text-[9px] md:text-[10px] font-black uppercase tracking-widest rounded-sm transition-all whitespace-nowrap",
                                 activeTab === tab.key
-                                    ? "bg-[#1A0A0A] text-creme shadow-lg scale-105"
+                                    ? "bg-[#1A0A0A] text-creme shadow-lg sm:scale-105"
                                     : "text-encre3 hover:bg-creme/50"
                             )}
                         >
@@ -194,13 +196,13 @@ export default function AdminProductsPage() {
                     ))}
                 </div>
 
-                <div className="flex items-center space-x-3">
-                    <button className="flex items-center space-x-2 px-6 py-2 bg-creme border border-creme2 text-encre text-xs font-bold uppercase tracking-widest rounded-sm hover:border-or transition-all">
+                <div className="flex items-center space-x-2">
+                    <button className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-4 py-2 bg-creme border border-creme2 text-encre text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-sm hover:border-or transition-all">
                         <span>Exporter</span>
                     </button>
-                    <button className="flex items-center space-x-2 px-6 py-2 bg-[#1A0A0A] text-creme text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-lg group">
+                    <button className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-4 py-2 bg-[#1A0A0A] text-creme text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-lg group">
                         <Plus size={14} className="text-or" />
-                        <span>Nouveau produit</span>
+                        <span>Créer</span>
                     </button>
                 </div>
             </div>
