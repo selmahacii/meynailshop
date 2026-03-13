@@ -78,6 +78,7 @@ export default function OrderDetailsPage() {
             case 'processing': return { label: 'Préparation', color: 'bg-purple-100 text-purple-700', icon: Package };
             case 'shipped': return { label: 'Expédiée', color: 'bg-blue-100 text-blue-700', icon: Truck };
             case 'delivered': return { label: 'Livrée', color: 'bg-green-100 text-green-700', icon: CheckCircle2 };
+            case 'returned': return { label: 'Retournée', color: 'bg-rouge-deep/10 text-rouge-mid', icon: RotateCcw };
             case 'cancelled': return { label: 'Annulée', color: 'bg-red-100 text-red-700', icon: XCircle };
             case 'refunded': return { label: 'Remboursée', color: 'bg-gray-100 text-gray-700', icon: RotateCcw };
             default: return { label: status, color: 'bg-gray-100 text-gray-700', icon: ChevronRight };
@@ -152,7 +153,7 @@ export default function OrderDetailsPage() {
                             <ChevronRight size={16} className="rotate-90" />
                         </button>
                         <div className="absolute right-0 top-full mt-1 w-56 bg-white border border-creme2 shadow-xl rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                            {['confirmed', 'processing', 'shipped', 'delivered', 'cancelled'].map((s) => (
+                            {['confirmed', 'processing', 'shipped', 'delivered', 'returned', 'cancelled'].map((s) => (
                                 <button
                                     key={s}
                                     onClick={() => updateStatus(s)}

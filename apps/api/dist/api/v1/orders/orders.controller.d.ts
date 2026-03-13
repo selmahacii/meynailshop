@@ -22,6 +22,7 @@ export declare class OrdersController {
             shipped: number;
             delivered: number;
             cancelled: number;
+            returned: number;
             totalRevenue: number;
             pendingReviews: number;
         } | {
@@ -29,6 +30,7 @@ export declare class OrdersController {
             pending: number;
             delivered: number;
             cancelled: number;
+            returned: number;
             totalRevenue: number;
             pendingReviews: number;
         };

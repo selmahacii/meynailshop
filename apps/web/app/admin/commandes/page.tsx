@@ -23,6 +23,7 @@ const tabs = [
     { name: 'En attente', count: 0, key: 'pending' },
     { name: 'Expédiées', count: 0, key: 'shipped' },
     { name: 'Livrées', count: 0, key: 'delivered' },
+    { name: 'Retournées', count: 0, key: 'returned' },
     { name: 'Annulées', count: 0, key: 'cancelled' },
 ];
 
@@ -77,7 +78,8 @@ export default function AdminOrdersPage() {
                 tabs[1].count = result.data.pending || 0;
                 tabs[2].count = result.data.shipped || 0;
                 tabs[3].count = result.data.delivered || 0;
-                tabs[4].count = result.data.cancelled || 0;
+                tabs[4].count = result.data.returned || 0;
+                tabs[5].count = result.data.cancelled || 0;
             } else {
                 console.error('❌ Orders Stats: API returned error', result.error);
             }
@@ -112,6 +114,7 @@ export default function AdminOrdersPage() {
             case 'processing': return 'bg-purple-100 text-purple-700';
             case 'shipped': return 'bg-blue-100 text-blue-600';
             case 'delivered': return 'bg-green-100 text-green-700';
+            case 'returned': return 'bg-rouge-deep/10 text-rouge-mid';
             case 'cancelled': return 'bg-red-100 text-red-600';
             case 'refunded': return 'bg-orange-100 text-orange-700';
             default: return 'bg-gray-100 text-gray-600';
@@ -125,6 +128,7 @@ export default function AdminOrdersPage() {
             case 'processing': return 'Préparation';
             case 'shipped': return 'Expédiée';
             case 'delivered': return 'Livrée';
+            case 'returned': return 'Retournée';
             case 'cancelled': return 'Annulée';
             case 'refunded': return 'Remboursée';
             default: return status;
@@ -306,6 +310,15 @@ export default function AdminOrdersPage() {
                                                 className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-green-700 text-white border-green-800 hover:bg-green-800 disabled:opacity-50"
                                             >
                                                 {updatingOrder === order.id ? '...' : 'Livrer'}
+                                            </button>
+                                        )}
+                                        {order.status === 'delivered' && (
+                                            <button
+                                                onClick={() => updateOrderStatus(order.id, 'returned')}
+                                                disabled={updatingOrder === order.id}
+                                                className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-rouge-deep text-white border-rouge-deep hover:bg-[#1A0A0A] disabled:opacity-50"
+                                            >
+                                                {updatingOrder === order.id ? '...' : 'Retour'}
                                             </button>
                                         )}
 

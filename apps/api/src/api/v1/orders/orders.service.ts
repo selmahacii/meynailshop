@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order, Review } from '../../../database/entities';
+import { StockService } from '../../../modules/stock/stock.service';
 
 @Injectable()
 export class OrdersService {
@@ -10,6 +11,7 @@ export class OrdersService {
     private orderRepository: Repository<Order>,
     @InjectRepository(Review)
     private reviewRepository: Repository<Review>,
+    private stockService: StockService,
   ) {}
 
   async findAll(page: number = 1, limit: number = 10, status?: string) {
@@ -49,6 +51,29 @@ export class OrdersService {
   }
 
   async updateStatus(id: string, status: string) {
+    const order = await this.findOne(id);
+    
+    // Automatically restore stock if order is cancelled or returned
+    if (
+      (status === 'cancelled' || status === 'returned') && 
+      (order.status !== 'cancelled' && order.status !== 'returned')
+    ) {
+      for (const item of order.items) {
+        if (item.productId && item.quantity) {
+          try {
+            await this.stockService.adjustStock(
+              item.productId,
+              item.quantity,
+              `Restitution de stock: Commande ${status === 'returned' ? 'retournée' : 'annulée'}`,
+              order.orderNumber
+            );
+          } catch (error) {
+            console.error(`Failed to restore stock for product ${item.productId} in order ${order.orderNumber}`, error);
+          }
+        }
+      }
+    }
+
     await this.orderRepository.update(id, { status });
     return await this.findOne(id);
   }
@@ -66,6 +91,7 @@ export class OrdersService {
         shipped: orders.filter((o: any) => o.status === 'shipped').length,
         delivered: orders.filter((o: any) => o.status === 'delivered').length,
         cancelled: orders.filter((o: any) => o.status === 'cancelled').length,
+        returned: orders.filter((o: any) => o.status === 'returned').length,
         totalRevenue: orders.reduce((sum: number, o: any) => sum + (Number(o.total) || 0), 0),
         pendingReviews,
       };
@@ -78,6 +104,7 @@ export class OrdersService {
         pending: 0,
         delivered: 0,
         cancelled: 0,
+        returned: 0,
         totalRevenue: 0,
         pendingReviews: 0,
       };
