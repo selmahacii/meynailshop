@@ -16,6 +16,7 @@ import {
     Layers,
     ChevronRight,
     Zap,
+    X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
@@ -33,7 +34,7 @@ const menuItems = [
 
 import { OrdersAPI, ProductsAPI } from '@/lib/api/client';
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
     const pathname = usePathname();
     const [badges, setBadges] = useState<Record<string, number>>({});
     const [isLoading, setIsLoading] = useState(true);
@@ -60,21 +61,31 @@ export default function AdminSidebar() {
     }, []);
 
     return (
-        <aside className="w-64 bg-gradient-to-b from-[#1A0A0A] to-[#0F0505] border-r border-[#2A1A1A] h-screen fixed left-0 top-0 z-50 flex flex-col shadow-2xl">
+        <aside className="w-64 bg-gradient-to-b from-[#1A0A0A] to-[#0F0505] border-r border-[#2A1A1A] h-screen flex flex-col shadow-2xl relative">
             {/* Header */}
-            <div className="p-6 border-b border-[#2A1A1A] flex items-center space-x-3 group hover:border-or/20 transition-all duration-300">
-                <div className="relative w-10 h-10 border border-or/20 rounded-full p-0.5 group-hover:border-or/40 transition-all duration-300 shadow-lg shadow-black/20 overflow-hidden">
-                    <Image
-                        src="/logo.png"
-                        alt="MEEY Logo"
-                        fill
-                        className="object-contain rounded-full"
-                    />
+            <div className="p-6 border-b border-[#2A1A1A] flex items-center justify-between group hover:border-or/20 transition-all duration-300">
+                <div className="flex items-center space-x-3">
+                    <div className="relative w-10 h-10 border border-or/20 rounded-full p-0.5 group-hover:border-or/40 transition-all duration-300 shadow-lg shadow-black/20 overflow-hidden">
+                        <Image
+                            src="/logo.png"
+                            alt="MEEY Logo"
+                            fill
+                            className="object-contain rounded-full"
+                        />
+                    </div>
+                    <div className="flex flex-col">
+                        <span className="font-serif text-lg text-creme leading-none tracking-wide group-hover:text-or transition-colors duration-300 uppercase">MEEY</span>
+                        <span className="text-[9px] uppercase tracking-[0.3em] text-or/60 font-bold mt-1.5 group-hover:text-or transition-colors duration-300">Mission Control</span>
+                    </div>
                 </div>
-                <div className="flex flex-col">
-                    <span className="font-serif text-lg text-creme leading-none tracking-wide group-hover:text-or transition-colors duration-300 uppercase">MEEY</span>
-                    <span className="text-[9px] uppercase tracking-[0.3em] text-or/60 font-bold mt-1.5 group-hover:text-or transition-colors duration-300">Mission Control</span>
-                </div>
+
+                {/* Close button for mobile */}
+                <button 
+                    onClick={onClose}
+                    className="lg:hidden p-2 text-creme/60 hover:text-or transition-colors"
+                >
+                    <X size={20} />
+                </button>
             </div>
 
             {/* Navigation */}
@@ -91,6 +102,7 @@ export default function AdminSidebar() {
                                 <li key={item.name}>
                                     <Link
                                         href={item.href}
+                                        onClick={onClose}
                                         className={cn(
                                             "flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 group relative overflow-hidden",
                                             isActive
@@ -108,7 +120,7 @@ export default function AdminSidebar() {
                                                     "transition-all duration-300",
                                                     isActive 
                                                         ? "text-or drop-shadow-lg" 
-                                                        : "text-creme/40 group-hover:text-or"
+                                                        : "text-creme/40 group-hover:text-or focus:text-or"
                                                 )} 
                                                 strokeWidth={isActive ? 2 : 1.5} 
                                             />
@@ -141,6 +153,7 @@ export default function AdminSidebar() {
                                 <li key={item.name}>
                                     <Link
                                         href={item.href}
+                                        onClick={onClose}
                                         className={cn(
                                             "flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 group relative overflow-hidden",
                                             isActive
@@ -185,6 +198,7 @@ export default function AdminSidebar() {
                                 <li key={item.name}>
                                     <Link
                                         href={item.href}
+                                        onClick={onClose}
                                         className={cn(
                                             "flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 group relative overflow-hidden",
                                             isActive
@@ -215,9 +229,6 @@ export default function AdminSidebar() {
                     </ul>
                 </div>
             </nav>
-
-            {/* Footer Info */}
-            
         </aside>
     );
 }
