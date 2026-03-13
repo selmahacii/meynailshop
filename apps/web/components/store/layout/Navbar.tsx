@@ -38,8 +38,7 @@ export default function Navbar() {
 
     return (
         <nav
-            className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-rouge-deep/95 backdrop-blur-md py-3 shadow-lg' : 'bg-transparent py-5'
-                }`}
+            className={`fixed top-0 w-full z-50 transition-all duration-300 bg-rouge-deep py-3 shadow-lg`}
         >
             <div className="container mx-auto px-4 flex items-center justify-between">
                 {/* Mobile Menu Toggle */}
