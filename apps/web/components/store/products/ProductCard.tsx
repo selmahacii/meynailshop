@@ -22,14 +22,14 @@ export default function ProductCard({ product }: ProductCardProps) {
             productId: product.id,
             name: product.name,
             price: product.price,
-            image: product.images[0] || '',
+            image: product.images?.[0] || '',
             quantity: 1,
             stock: product.stock
         });
         toast.success(`${product.name} ajouté au panier`);
     };
 
-    const mainImage = product.images[0] || '/images/placeholder-product.png';
+    const mainImage = product.images?.[0] || '/images/placeholder-product.png';
 
     return (
         <motion.div
@@ -62,7 +62,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 {/* Image */}
                 <div className="relative w-full h-full group-hover:scale-105 transition-transform duration-700 ease-out">
                     {/* Fallback pattern if no image */}
-                    {!product.images[0] && (
+                    {!product.images?.[0] && (
                         <div className="absolute inset-0 flex items-center justify-center opacity-10">
                             <span className="font-serif text-8xl">M</span>
                         </div>
