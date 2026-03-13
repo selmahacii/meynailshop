@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
     ArrowLeft,
@@ -90,27 +91,27 @@ export default function ProductCreatePage() {
     };
 
     return (
-        <form onSubmit={handleSave} className="space-y-8 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <form onSubmit={handleSave} className="space-y-6 md:space-y-8 p-4 md:p-8 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="flex items-center space-x-4">
-                    <button type="button" onClick={() => router.back()} className="p-3 bg-white border border-creme2 rounded-full hover:border-or transition-all group">
-                        <ArrowLeft size={20} className="text-encre3 group-hover:text-or" />
+                <div className="flex items-center space-x-3 md:space-x-4">
+                    <button type="button" onClick={() => router.back()} className="p-2 md:p-3 bg-white border border-creme2 rounded-full hover:border-or transition-all group shrink-0">
+                        <ArrowLeft size={18} className="text-encre3 group-hover:text-or" />
                     </button>
                     <div>
-                        <h1 className="text-3xl font-serif text-encre">Nouveau Produit</h1>
-                        <p className="text-[10px] uppercase font-bold text-encre3 tracking-widest mt-1">Ajouter une référence au catalogue</p>
+                        <h1 className="text-2xl md:text-3xl font-serif text-encre">Nouveau Produit</h1>
+                        <p className="text-[9px] md:text-[10px] uppercase font-bold text-encre3 tracking-widest mt-1">Ajouter une référence au catalogue</p>
                     </div>
                 </div>
 
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center">
                     <button 
                         type="submit"
                         disabled={saving}
-                        className="px-8 py-3 bg-[#1A0A0A] text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-black transition-all shadow-xl flex items-center"
+                        className="w-full md:w-auto px-6 md:px-8 py-3 bg-[#1A0A0A] text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-black transition-all shadow-xl flex items-center justify-center"
                     >
                         {saving ? <Loader size={16} className="animate-spin mr-2" /> : <Save size={16} className="mr-2 text-or" />}
-                        Créer le produit
+                        <span>Créer</span>
                     </button>
                 </div>
             </div>
@@ -241,7 +242,7 @@ export default function ProductCreatePage() {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {product.images.map((img: string, i: number) => (
                                     <div key={i} className="aspect-square bg-creme rounded-sm relative group overflow-hidden border border-creme2 shadow-sm">
-                                        <img src={img} className="w-full h-full object-cover" alt="" />
+                                        <Image src={img} fill className="object-cover" alt="" />
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                             <button 
                                                 type="button"
@@ -250,7 +251,7 @@ export default function ProductCreatePage() {
                                                     news.splice(i, 1);
                                                     setProduct({...product, images: news});
                                                 }}
-                                                className="p-1.5 bg-rouge text-creme rounded-full"
+                                                className="p-1.5 bg-rouge text-creme rounded-full z-10"
                                             >
                                                 <X size={14} />
                                             </button>

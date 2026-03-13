@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import {
     Plus,
     Search,
@@ -229,13 +230,11 @@ export default function AdminProductsPage() {
                                 {/* Image / Color Preview */}
                                 <div className="relative aspect-[4/3] p-12 bg-creme/20 flex items-center justify-center overflow-hidden">
                                     <div className="w-full h-full relative group-hover:scale-110 transition-transform duration-700">
-                                        <img 
+                                        <Image
                                             src={product.images?.[0] || '/images/placeholder-product.png'} 
                                             alt={product.name} 
-                                            className="w-full h-full object-cover"
-                                            onError={(e) => {
-                                                (e.target as HTMLImageElement).src = '/images/placeholder-product.png';
-                                            }}
+                                            fill
+                                            className="object-cover"
                                         />
                                     </div>
 

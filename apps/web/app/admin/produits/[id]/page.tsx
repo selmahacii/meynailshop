@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import {
     ArrowLeft,
@@ -149,39 +150,39 @@ export default function ProductEditPage() {
     }
 
     return (
-        <form onSubmit={handleSave} className="space-y-8 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <form onSubmit={handleSave} className="space-y-6 md:space-y-8 p-4 md:p-8 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="flex items-center space-x-4">
-                    <button type="button" onClick={() => router.back()} className="p-3 bg-white border border-creme2 rounded-full hover:border-or transition-all group">
-                        <ArrowLeft size={20} className="text-encre3 group-hover:text-or" />
+                <div className="flex items-center space-x-3 md:space-x-4">
+                    <button type="button" onClick={() => router.back()} className="p-2 md:p-3 bg-white border border-creme2 rounded-full hover:border-or transition-all group shrink-0">
+                        <ArrowLeft size={18} className="text-encre3 group-hover:text-or" />
                     </button>
                     <div>
-                        <h1 className="text-3xl font-serif text-encre">{product.name}</h1>
-                        <p className="text-[10px] uppercase font-bold text-encre3 tracking-widest mt-1">SKU: {product.sku} — ID: {product.id.slice(0, 8)}</p>
+                        <h1 className="text-2xl md:text-3xl font-serif text-encre">{product.name}</h1>
+                        <p className="text-[9px] md:text-[10px] uppercase font-bold text-encre3 tracking-widest mt-1">SKU: {product.sku} — ID: {product.id.slice(0, 8)}</p>
                     </div>
                 </div>
 
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center gap-2 md:gap-3">
                     <button 
                         type="button"
                         onClick={handleDelete}
-                        className="px-6 py-3 border border-rouge text-rouge rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-rouge hover:text-creme transition-all"
+                        className="flex-1 md:flex-none px-4 md:px-6 py-3 border border-rouge text-rouge rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-rouge hover:text-creme transition-all"
                     >
-                        <Trash2 size={16} className="inline mr-2" />
-                        Supprimer
+                        <Trash2 size={16} className="inline md:mr-2" />
+                        <span className="hidden md:inline">Supprimer</span>
                     </button>
                     <button 
                         type="submit"
                         disabled={saving}
-                        className="px-8 py-3 bg-[#1A0A0A] text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-black transition-all shadow-xl flex items-center"
+                        className="flex-1 md:flex-none px-6 md:px-8 py-3 bg-[#1A0A0A] text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-black transition-all shadow-xl flex items-center justify-center"
                     >
                         {saving ? (
                             <Loader size={16} className="animate-spin mr-2" />
                         ) : (
                             <Save size={16} className="mr-2 text-or" />
                         )}
-                        Enregistrer
+                        <span>Enregistrer</span>
                     </button>
                 </div>
             </div>
@@ -308,13 +309,11 @@ export default function ProductEditPage() {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {product.images?.map((img: string, i: number) => (
                                     <div key={i} className="relative aspect-square rounded-sm border border-creme2 overflow-hidden group shadow-md">
-                                        <img 
+                                        <Image 
                                             src={img} 
                                             alt="" 
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                            onError={(e) => {
-                                                (e.target as HTMLImageElement).src = '/images/placeholder-product.png';
-                                            }}
+                                            fill
+                                            className="object-cover transition-transform duration-500 group-hover:scale-110"
                                         />
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                             <button 
