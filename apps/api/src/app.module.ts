@@ -21,6 +21,7 @@ import { DashboardModule as DashboardV1 } from './api/v1/dashboard/dashboard.mod
 import { ProductsModule as ProductsV1 } from './api/v1/products/products.module';
 import { OrdersModule as OrdersV1 } from './api/v1/orders/orders.module';
 import { StoreProductsModule } from './modules/products/products.module';
+import { OrdersModule } from './modules/orders/orders.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -54,6 +55,7 @@ import { join } from 'path';
     ProductsV1,
     StoreProductsModule,
     OrdersV1,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

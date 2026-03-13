@@ -42,6 +42,7 @@ export default function ProductCreatePage() {
         images: [],
     });
     const [uploading, setUploading] = useState(false);
+    const [loadingCategories, setLoadingCategories] = useState(true);
 
     useEffect(() => {
         // Fetch real categories with UUIDs from the API
@@ -56,7 +57,8 @@ export default function ProductCreatePage() {
             })
             .catch(() => {
                 toast.error('Impossible de charger les catégories');
-            });
+            })
+            .finally(() => setLoadingCategories(false));
     }, []);
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,11 +139,11 @@ export default function ProductCreatePage() {
                 <div className="flex items-center">
                     <button 
                         type="submit"
-                        disabled={saving}
-                        className="w-full md:w-auto px-6 md:px-8 py-3 bg-[#1A0A0A] text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-black transition-all shadow-xl flex items-center justify-center"
+                        disabled={saving || loadingCategories}
+                        className="w-full md:w-auto px-6 md:px-8 py-3 bg-[#1A0A0A] text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-black transition-all shadow-xl flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {saving ? <Loader size={16} className="animate-spin mr-2" /> : <Save size={16} className="mr-2 text-or" />}
-                        <span>Créer</span>
+                        <span>{saving ? 'Création...' : loadingCategories ? 'Chargement...' : 'Créer'}</span>
                     </button>
                 </div>
             </div>
@@ -340,16 +342,17 @@ export default function ProductCreatePage() {
                                 required
                                 value={product.categoryId}
                                 onChange={(e) => setProduct({...product, categoryId: e.target.value})}
-                                className="w-full p-4 bg-creme2/50 border border-creme2 rounded-sm text-sm font-bold outline-none focus:border-or transition-all"
+                                disabled={loadingCategories}
+                                className="w-full p-4 bg-creme2/50 border border-creme2 rounded-sm text-sm font-bold outline-none focus:border-or transition-all disabled:opacity-60"
                             >
-                                <option value="">Sélectionner une catégorie...</option>
-                                {categories.length > 0 ? (
+                                {loadingCategories ? (
+                                    <option value="">Chargement des catégories...</option>
+                                ) : categories.length > 0 ? (
                                     categories.map(cat => (
                                         <option key={cat.id} value={cat.id}>{cat.name}</option>
                                     ))
                                 ) : (
-                                    // Fallback if API not loaded yet
-                                    <option disabled>Chargement des catégories...</option>
+                                    <option value="">Aucune catégorie disponible</option>
                                 )}
                             </select>
                         </div>

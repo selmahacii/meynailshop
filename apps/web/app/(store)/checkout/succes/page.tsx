@@ -43,13 +43,6 @@ export default function CheckoutSuccessPage() {
                         <ShoppingBag size={16} className="mr-2" />
                         Continuer vos achats
                     </Link>
-                    <Link
-                        href="/compte/commandes"
-                        className="w-full border border-creme2 hover:border-or hover:text-or bg-transparent text-encre3 py-4 text-xs font-bold uppercase tracking-[0.2em] transition-all flex items-center justify-center group"
-                    >
-                        Suivre ma commande
-                        <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
-                    </Link>
                 </div>
             </div>
         </div>

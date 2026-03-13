@@ -26,6 +26,7 @@ const dashboard_module_1 = require("./api/v1/dashboard/dashboard.module");
 const products_module_1 = require("./api/v1/products/products.module");
 const orders_module_1 = require("./api/v1/orders/orders.module");
 const products_module_2 = require("./modules/products/products.module");
+const orders_module_2 = require("./modules/orders/orders.module");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const serve_static_1 = require("@nestjs/serve-static");
@@ -61,6 +62,7 @@ exports.AppModule = AppModule = __decorate([
             products_module_1.ProductsModule,
             products_module_2.StoreProductsModule,
             orders_module_1.OrdersModule,
+            orders_module_2.OrdersModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
