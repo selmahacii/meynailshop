@@ -25,6 +25,7 @@ const menuItems = [
     { name: 'Tableau de bord', href: '/admin/dashboard', icon: LayoutDashboard, badge: null },
     { name: 'Commandes', href: '/admin/commandes', icon: ShoppingCart, badge: 0 },
     { name: 'Produits', href: '/admin/produits', icon: Package, badge: null },
+    { name: 'Collections', href: '/admin/categories', icon: Tag, badge: null },
     { name: 'Stock', href: '/admin/stock', icon: Box, badge: 0 },
     { name: 'Clients', href: '/admin/clients', icon: Users, badge: null },
     { name: 'Avis clients', href: '/admin/avis', icon: MessageSquare, badge: 0 },

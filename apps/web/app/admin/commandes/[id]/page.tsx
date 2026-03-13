@@ -127,68 +127,70 @@ export default function OrderDetailsPage() {
                         <ArrowLeft size={20} className="text-encre3 group-hover:text-or" />
                     </button>
                     <div>
-                        <div className="flex items-center space-x-3 mb-1">
-                            <h1 className="text-3xl font-serif text-encre">#{order.orderNumber}</h1>
-                            <span className={cn("px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-sm flex items-center space-x-2", statusInfo.color)}>
-                                <StatusIcon size={12} />
-                                <span>{statusInfo.label}</span>
-                            </span>
-                            <span className={cn(
-                                "px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-sm flex items-center space-x-2",
-                                order.deliveryType === 'home' ? "bg-blue-50 text-blue-600" : "bg-orange-50 text-orange-600"
-                             )}>
-                                {order.deliveryType === 'office' ? <Briefcase size={12} /> : <Home size={12} />}
-                                <span>{order.deliveryType === 'office' ? 'Bureau' : 'À Domicile'}</span>
-                            </span>
+                        <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-2">
+                            <h1 className="text-2xl md:text-3xl font-serif text-encre">#{order.orderNumber}</h1>
+                            <div className="flex flex-wrap gap-2">
+                                <span className={cn("px-3 py-1 rounded-sm text-[9px] md:text-[10px] font-black uppercase tracking-widest shadow-sm flex items-center space-x-2", statusInfo.color)}>
+                                    <StatusIcon size={12} />
+                                    <span>{statusInfo.label}</span>
+                                </span>
+                                <span className={cn(
+                                    "px-3 py-1 rounded-sm text-[9px] md:text-[10px] font-black uppercase tracking-widest shadow-sm flex items-center space-x-2",
+                                    order.deliveryType === 'home' ? "bg-blue-50 text-blue-600" : "bg-orange-50 text-orange-600"
+                                )}>
+                                    {order.deliveryType === 'office' ? <Briefcase size={12} /> : <Home size={12} />}
+                                    <span>{order.deliveryType === 'office' ? 'Bureau' : 'À Domicile'}</span>
+                                </span>
+                            </div>
                         </div>
-                        <p className="text-encre3 text-[10px] uppercase tracking-widest font-bold">
+                        <p className="text-encre3 text-[9px] md:text-[10px] uppercase tracking-widest font-bold">
                             Passée le {new Date(order.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                         </p>
                     </div>
                 </div>
 
-                <div className="flex items-center space-x-3">
+                <div className="flex flex-wrap items-center gap-2 md:gap-3">
                     <button 
                         onClick={() => window.print()}
-                        className="flex items-center space-x-2 px-5 py-2.5 bg-white border border-creme2 text-encre rounded-sm text-sm font-bold shadow-sm hover:border-or hover:text-or transition-all"
+                        className="flex items-center space-x-2 px-4 md:px-5 py-2.5 bg-white border border-creme2 text-encre rounded-sm text-xs font-bold shadow-sm hover:border-or hover:text-or transition-all"
                     >
                         <Printer size={16} />
-                        <span>Imprimer</span>
+                        <span className="hidden sm:inline">Imprimer</span>
                     </button>
                     
                     {/* Status Actions */}
                     {order.status === 'shipped' && (
-                        <div className="flex space-x-3">
+                        <div className="flex flex-wrap gap-2">
                              <button
                                 onClick={() => updateStatus('delivered')}
                                 disabled={updating}
-                                className="flex items-center space-x-2 px-8 py-3 bg-green-700 text-white rounded-sm text-sm font-black uppercase tracking-widest hover:bg-green-800 transition-all shadow-xl border border-green-900 group/btn"
+                                className="flex items-center space-x-2 px-5 md:px-8 py-2.5 md:py-3 bg-green-700 text-white rounded-sm text-[10px] md:text-sm font-black uppercase tracking-widest hover:bg-green-800 transition-all shadow-xl border border-green-900 group/btn"
                             >
-                                <CheckCircle2 size={18} className="group-hover/btn:scale-110 transition-transform" />
-                                <span>{updating ? '...' : 'Marquer comme Livrée'}</span>
+                                <CheckCircle2 size={16} className="group-hover/btn:scale-110 transition-transform" />
+                                <span>{updating ? '...' : (window.innerWidth < 640 ? 'LIVRÉE' : 'Marquer comme Livrée')}</span>
                             </button>
                              <button
                                 onClick={() => updateStatus('returned')}
                                 disabled={updating}
-                                className="flex items-center space-x-2 px-8 py-3 bg-rouge-deep text-white rounded-sm text-sm font-black uppercase tracking-widest hover:bg-black transition-all shadow-xl border border-rouge-deep group/btn"
+                                className="flex items-center space-x-2 px-5 md:px-8 py-2.5 md:py-3 bg-rouge-deep text-white rounded-sm text-[10px] md:text-sm font-black uppercase tracking-widest hover:bg-black transition-all shadow-xl border border-rouge-deep group/btn"
                             >
-                                <RotateCcw size={18} className="group-hover/btn:rotate-[-45deg] transition-transform" />
-                                <span>{updating ? '...' : 'Signaler Retour'}</span>
+                                <RotateCcw size={16} className="group-hover/btn:rotate-[-45deg] transition-transform" />
+                                <span>{updating ? '...' : (window.innerWidth < 640 ? 'RETOUR' : 'Signaler Retour')}</span>
                             </button>
                         </div>
                     )}
 
                     <div className="relative group">
-                        <button className="flex items-center space-x-2 px-6 py-2.5 bg-encre text-creme rounded-sm text-sm font-bold uppercase tracking-widest hover:bg-black transition-all shadow-md">
+                        <button className="flex items-center space-x-2 px-5 md:px-6 py-2.5 bg-encre text-creme rounded-sm text-[10px] md:text-sm font-bold uppercase tracking-widest hover:bg-black transition-all shadow-md">
                             <span>Changer Statut</span>
-                            <ChevronRight size={16} className="rotate-90" />
+                            <ChevronRight size={14} className="rotate-90" />
                         </button>
                         <div className="absolute right-0 top-full mt-1 w-56 bg-white border border-creme2 shadow-xl rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
                             {['confirmed', 'processing', 'shipped', 'delivered', 'returned', 'cancelled'].map((s) => (
                                 <button
                                     key={s}
                                     onClick={() => updateStatus(s)}
-                                    className="w-full text-left px-4 py-3 text-xs font-bold uppercase tracking-widest text-encre3 hover:text-or hover:bg-creme/50 border-b border-creme2 last:border-0 transition-all"
+                                    className="w-full text-left px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-encre3 hover:text-or hover:bg-creme/50 border-b border-creme2 last:border-0 transition-all"
                                 >
                                     {getStatusInfo(s).label}
                                 </button>
@@ -209,7 +211,7 @@ export default function OrderDetailsPage() {
                                 <span>Articles Commandés</span>
                             </h3>
                         </div>
-                        <div className="overflow-x-auto">
+                        <div className="overflow-x-auto hidden md:block">
                             <table className="w-full">
                                 <thead className="bg-creme/20 text-[10px] uppercase tracking-widest text-encre3 font-black border-b border-creme2">
                                     <tr>
@@ -257,26 +259,57 @@ export default function OrderDetailsPage() {
                             </table>
                         </div>
 
-                        {/* Summary Footer */}
-                        <div className="p-8 bg-creme/5 flex justify-end">
-                            <div className="w-full md:w-64 space-y-3">
-                                <div className="flex justify-between text-xs font-bold text-encre3 uppercase tracking-widest">
-                                    <span>Sous-total</span>
-                                    <span>{Number(order.subtotal).toLocaleString()} DA</span>
+                        {/* Mobile Items List */}
+                        <div className="md:hidden divide-y divide-creme2">
+                            {order.items?.map((item: any) => (
+                                <div key={item.id} className="p-4 flex space-x-4">
+                                    <div className="w-20 h-24 bg-creme rounded-sm overflow-hidden flex-shrink-0 border border-creme2">
+                                        <img 
+                                            src={item.productImage} 
+                                            alt={item.productName} 
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <div className="flex-grow min-w-0">
+                                        <p className="text-sm font-black text-encre uppercase tracking-tighter line-clamp-2 leading-tight">{item.productName}</p>
+                                        <p className="text-[9px] text-encre3 font-bold mt-1 uppercase tracking-widest">SKU: {item.productSku}</p>
+                                        
+                                        <div className="mt-4 flex items-end justify-between">
+                                            <div className="text-[10px] text-encre3 font-bold">
+                                                <p>{Number(item.unitPrice).toLocaleString()} DA x {item.quantity}</p>
+                                            </div>
+                                            <p className="text-sm font-black text-or">
+                                                {Number(item.subtotal).toLocaleString()} DA
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="flex justify-between text-xs font-bold text-encre3 uppercase tracking-widest">
+                            ))}
+                        </div>
+
+                        {/* Summary Footer */}
+                        <div className="p-6 md:p-8 bg-creme/5 flex justify-end">
+                            <div className="w-full md:w-72 space-y-4">
+                                <div className="flex justify-between items-center text-[10px] font-bold text-encre3 uppercase tracking-widest">
+                                    <span>Sous-total</span>
+                                    <span className="text-encre">{Number(order.subtotal).toLocaleString()} DA</span>
+                                </div>
+                                <div className="flex justify-between items-center text-[10px] font-bold text-encre3 uppercase tracking-widest">
                                     <span>Livraison</span>
-                                    <span>{Number(order.shippingCost).toLocaleString()} DA</span>
+                                    <span className="text-encre font-black">{Number(order.shippingCost).toLocaleString()} DA</span>
                                 </div>
                                 {Number(order.discount) > 0 && (
-                                    <div className="flex justify-between text-xs font-bold text-rouge-mid uppercase tracking-widest">
+                                    <div className="flex justify-between items-center text-[10px] font-bold text-rouge-mid uppercase tracking-widest">
                                         <span>Remise</span>
                                         <span>-{Number(order.discount).toLocaleString()} DA</span>
                                     </div>
                                 )}
-                                <div className="pt-4 border-t border-creme2 flex justify-between">
-                                    <span className="text-sm font-black uppercase tracking-widest text-encre">Total</span>
-                                    <span className="text-xl font-black text-or">{Number(order.total).toLocaleString()} DA</span>
+                                <div className="pt-6 border-t-2 border-creme2 flex justify-between items-end">
+                                    <span className="text-xs font-black uppercase tracking-[0.2em] text-encre">Total à payer</span>
+                                    <div className="text-right">
+                                        <span className="block text-[8px] font-black text-encre3 uppercase tracking-widest mb-1">Montant final</span>
+                                        <span className="text-2xl md:text-3xl font-black text-or">{Number(order.total).toLocaleString()} DA</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

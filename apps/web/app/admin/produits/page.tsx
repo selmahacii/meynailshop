@@ -15,7 +15,8 @@ import {
     Edit2,
     ShoppingBag,
     AlertCircle,
-    Loader
+    Loader,
+    Tag
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -137,6 +138,14 @@ export default function AdminProductsPage() {
                         />
                     </div>
                     <div className="flex items-center gap-2">
+                        <Link 
+                            href="/admin/categories"
+                            className="p-2 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm flex items-center space-x-2"
+                            title="Gérer les catégories"
+                        >
+                            <Tag size={18} />
+                            <span className="hidden lg:inline text-[10px] uppercase font-bold tracking-widest">Catégories</span>
+                        </Link>
                         <button className="p-2 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
                             <Bell size={18} />
                         </button>

@@ -176,10 +176,13 @@ export default function AdminOrdersPage() {
                             <Download size={18} />
                         </button>
                     </div>
-                    <button className="flex items-center justify-center space-x-2 px-4 py-2 bg-rouge-deep text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md flex-grow sm:flex-grow-0">
+                    <Link 
+                        href="/admin/produits/nouveau"
+                        className="flex items-center justify-center space-x-2 px-4 py-2 bg-rouge-deep text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md flex-grow sm:flex-grow-0"
+                    >
                         <Plus size={16} />
                         <span>Nouveau</span>
-                    </button>
+                    </Link>
                     <Link href="/" className="px-4 py-2 border border-encre text-encre rounded-sm text-xs font-bold hover:bg-encre hover:text-creme transition-all text-center flex-grow sm:flex-grow-0">
                         Boutique
                     </Link>
@@ -235,10 +238,13 @@ export default function AdminOrdersPage() {
                         <button className="flex-1 md:flex-none flex items-center justify-center space-x-2 px-6 py-2.5 bg-creme border border-creme2 text-encre text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-or transition-all">
                             <span>Rapport</span>
                         </button>
-                        <button className="flex-1 md:flex-none flex items-center justify-center space-x-2 px-6 py-2.5 bg-[#1A0A0A] text-creme text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-lg group">
+                        <Link 
+                            href="/admin/produits/nouveau"
+                            className="flex-1 md:flex-none flex items-center justify-center space-x-2 px-6 py-2.5 bg-[#1A0A0A] text-creme text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-lg group"
+                        >
                             <Plus size={14} className="text-or" />
                             <span>Créer</span>
-                        </button>
+                        </Link>
                     </div>
                 </div>
 
