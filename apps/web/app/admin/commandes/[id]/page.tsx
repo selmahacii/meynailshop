@@ -309,20 +309,22 @@ export default function OrderDetailsPage() {
                         <div className="p-8 space-y-6">
                             <div className="flex items-center space-x-4">
                                 <div className="w-12 h-12 bg-or/10 rounded-full flex items-center justify-center text-or border border-or/20 text-lg font-black">
-                                    {order.user?.firstName?.charAt(0)}{order.user?.lastName?.charAt(0)}
+                                    {(order.user?.firstName || order.shippingAddressSnapshot?.firstName || '?').charAt(0)}
+                                    {(order.user?.lastName || order.shippingAddressSnapshot?.lastName || '').charAt(0)}
                                 </div>
                                 <div>
                                     <p className="text-sm font-black text-encre uppercase tracking-wide">
-                                        {order.user?.firstName} {order.user?.lastName}
+                                        {order.user?.firstName || order.shippingAddressSnapshot?.firstName} {order.user?.lastName || order.shippingAddressSnapshot?.lastName}
+                                        {!order.userId && <span className="ml-2 text-[8px] bg-creme2 text-encre3 px-1.5 py-0.5 rounded tracking-tighter">INVITÉ</span>}
                                     </p>
-                                    <p className="text-[11px] text-encre3">ID: #{order.userId.slice(0, 8)}</p>
+                                    <p className="text-[11px] text-encre3">ID: {order.userId ? `#${order.userId.slice(0, 8)}` : 'Client non inscrit'}</p>
                                 </div>
                             </div>
                             
                             <div className="space-y-4 pt-4 border-t border-creme2">
                                 <div className="flex items-center space-x-3 text-encre3 hover:text-or transition-colors group">
                                     <Mail size={16} className="group-hover:scale-110 transition-transform" />
-                                    <span className="text-xs font-bold">{order.user?.email}</span>
+                                    <span className="text-xs font-bold">{order.user?.email || order.shippingAddressSnapshot?.email}</span>
                                 </div>
                                 <div className="flex items-center space-x-3 text-encre3 hover:text-or transition-colors group">
                                     <Phone size={16} className="group-hover:scale-110 transition-transform" />

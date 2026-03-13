@@ -262,7 +262,12 @@ export default function AdminOrdersPage() {
                                     <td className="px-8 py-6">
                                         <div className="flex flex-col">
                                             <span className="text-sm font-bold text-encre">
-                                                {order.user ? `${order.user.firstName} ${order.user.lastName}` : 'Client anonyme'}
+                                                {order.user 
+                                                    ? `${order.user.firstName} ${order.user.lastName}` 
+                                                    : (order.shippingAddressSnapshot?.firstName 
+                                                        ? `${order.shippingAddressSnapshot.firstName} ${order.shippingAddressSnapshot.lastName}` 
+                                                        : 'Client anonyme')}
+                                                {!order.user && <span className="ml-2 text-[8px] bg-creme2 text-encre3 px-1 rounded tracking-tighter">INVITÉ</span>}
                                             </span>
                                             <div className="flex items-center space-x-2 mt-1">
                                                 <span className="text-[10px] text-encre3 uppercase tracking-wide font-medium">
