@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
@@ -16,12 +16,19 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { ProductsAPI, UploadAPI } from '@/lib/api/client';
+import { ProductsAPI, UploadAPI, apiFetch, API_ENDPOINTS } from '@/lib/api/client';
 import { toast } from 'sonner';
+
+interface Category {
+    id: string;
+    name: string;
+    slug: string;
+}
 
 export default function ProductCreatePage() {
     const router = useRouter();
     const [saving, setSaving] = useState(false);
+    const [categories, setCategories] = useState<Category[]>([]);
     const [product, setProduct] = useState<any>({
         name: '',
         sku: '',
@@ -35,6 +42,22 @@ export default function ProductCreatePage() {
         images: [],
     });
     const [uploading, setUploading] = useState(false);
+
+    useEffect(() => {
+        // Fetch real categories with UUIDs from the API
+        apiFetch(API_ENDPOINTS.STORE_CATEGORIES)
+            .then(res => {
+                const cats = res.data || [];
+                setCategories(cats);
+                // Pre-select first category if none selected
+                if (cats.length > 0) {
+                    setProduct((prev: any) => ({ ...prev, categoryId: prev.categoryId || cats[0].id }));
+                }
+            })
+            .catch(() => {
+                toast.error('Impossible de charger les catégories');
+            });
+    }, []);
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -64,6 +87,10 @@ export default function ProductCreatePage() {
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!product.categoryId) {
+            toast.error('Veuillez sélectionner une catégorie');
+            return;
+        }
         try {
             setSaving(true);
             const createData = {
@@ -71,9 +98,12 @@ export default function ProductCreatePage() {
                 price: Number(product.price),
                 stock: Number(product.stock),
                 stockAlert: Number(product.stockAlert),
-                slug: product.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, ''),
+                slug: product.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '').replace(/^-+|-+$/g, '') || `product-${Date.now()}`,
                 images: product.images.length > 0 ? product.images : ['https://placehold.co/800x800?text=' + encodeURIComponent(product.name)],
-                costPrice: Number(product.price) * 0.4, // Mock cost price
+                costPrice: Number(product.price) * 0.4,
+                // Ensure NOT NULL fields have a value
+                description: product.description || product.shortDescription || product.name,
+                shortDescription: product.shortDescription || product.name,
             };
 
             const result = await ProductsAPI.create(createData);
@@ -313,10 +343,14 @@ export default function ProductCreatePage() {
                                 className="w-full p-4 bg-creme2/50 border border-creme2 rounded-sm text-sm font-bold outline-none focus:border-or transition-all"
                             >
                                 <option value="">Sélectionner une catégorie...</option>
-                                <option value="vernis">Vernis Gel</option>
-                                <option value="uv">Gel UV</option>
-                                <option value="deco">Décoration</option>
-                                <option value="materiel">Matériel</option>
+                                {categories.length > 0 ? (
+                                    categories.map(cat => (
+                                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                    ))
+                                ) : (
+                                    // Fallback if API not loaded yet
+                                    <option disabled>Chargement des catégories...</option>
+                                )}
                             </select>
                         </div>
                     </div>

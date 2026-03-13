@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { ProductsAPI, UploadAPI } from '@/lib/api/client';
+import { ProductsAPI, UploadAPI, apiFetch, API_ENDPOINTS } from '@/lib/api/client';
 import { toast } from 'sonner';
 
 export default function ProductEditPage() {
@@ -27,6 +27,7 @@ export default function ProductEditPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [categories, setCategories] = useState<{id: string; name: string}[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [product, setProduct] = useState<any>(null);
 
@@ -60,6 +61,10 @@ export default function ProductEditPage() {
         if (id) {
             fetchProduct();
         }
+        // Fetch real categories with UUIDs
+        apiFetch(API_ENDPOINTS.STORE_CATEGORIES)
+            .then(res => setCategories(res.data || []))
+            .catch(() => {});
     }, [id]);
 
     const fetchProduct = async () => {
@@ -89,8 +94,8 @@ export default function ProductEditPage() {
                 price: Number(product.price),
                 stock: Number(product.stock),
                 stockAlert: Number(product.stockAlert),
-                description: product.description,
-                shortDescription: product.shortDescription,
+                description: product.description || product.shortDescription || product.name,
+                shortDescription: product.shortDescription || product.name,
                 categoryId: product.categoryId,
                 isActive: product.isActive,
                 images: product.images,
@@ -396,12 +401,13 @@ export default function ProductEditPage() {
                                     onChange={(e) => setProduct({...product, categoryId: e.target.value})}
                                     className="w-full p-4 bg-creme2/50 border border-creme rounded-sm text-sm font-bold outline-none focus:border-or appearance-none transition-all"
                                 >
-                                    <option value={product.categoryId}>Sélectionner...</option>
-                                    {/* These mapping should be dynamic from categories API ideally */}
-                                    <option value="vernis">Vernis Gel</option>
-                                    <option value="uv">Gel UV</option>
-                                    <option value="deco">Décoration</option>
-                                    <option value="materiel">Matériel</option>
+                                    {categories.length > 0 ? (
+                                        categories.map(cat => (
+                                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                        ))
+                                    ) : (
+                                        <option value={product.categoryId}>Catégorie actuelle</option>
+                                    )}
                                 </select>
                             </div>
                             <div className="pt-6 border-t border-creme2">

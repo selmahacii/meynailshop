@@ -67,16 +67,24 @@ let ProductsController = class ProductsController {
         };
     }
     async create(createProductDto) {
-        return {
-            success: true,
-            data: await this.productsService.create(createProductDto),
-        };
+        try {
+            const data = await this.productsService.create(createProductDto);
+            return { success: true, data };
+        }
+        catch (error) {
+            console.error('❌ [ProductsV1] create Error:', error);
+            throw error;
+        }
     }
     async update(id, updateProductDto) {
-        return {
-            success: true,
-            data: await this.productsService.update(id, updateProductDto),
-        };
+        try {
+            const data = await this.productsService.update(id, updateProductDto);
+            return { success: true, data };
+        }
+        catch (error) {
+            console.error('❌ [ProductsV1] update Error:', error);
+            throw error;
+        }
     }
     async remove(id) {
         return {
