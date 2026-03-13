@@ -24,8 +24,15 @@ export class Order {
   @Column({ type: 'varchar', length: 50, unique: true })
   orderNumber: string;
 
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid', nullable: true })
   userId: string;
+
+  @Column({
+    type: 'enum',
+    enum: ['home', 'office'],
+    default: 'home',
+  })
+  deliveryType: string;
 
   @Column({
     type: 'enum',

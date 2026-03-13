@@ -18,7 +18,10 @@ import {
     Printer,
     MoreVertical,
     ChevronRight,
-    Loader
+    Loader,
+    Home,
+    Briefcase,
+    RotateCcw
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -130,6 +133,13 @@ export default function OrderDetailsPage() {
                                 <StatusIcon size={12} />
                                 <span>{statusInfo.label}</span>
                             </span>
+                            <span className={cn(
+                                "px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-sm flex items-center space-x-2",
+                                order.deliveryType === 'home' ? "bg-blue-50 text-blue-600" : "bg-orange-50 text-orange-600"
+                             )}>
+                                {order.deliveryType === 'office' ? <Briefcase size={12} /> : <Home size={12} />}
+                                <span>{order.deliveryType === 'office' ? 'Bureau' : 'À Domicile'}</span>
+                            </span>
                         </div>
                         <p className="text-encre3 text-[10px] uppercase tracking-widest font-bold">
                             Passée le {new Date(order.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
@@ -147,6 +157,27 @@ export default function OrderDetailsPage() {
                     </button>
                     
                     {/* Status Actions */}
+                    {order.status === 'shipped' && (
+                        <div className="flex space-x-3">
+                             <button
+                                onClick={() => updateStatus('delivered')}
+                                disabled={updating}
+                                className="flex items-center space-x-2 px-8 py-3 bg-green-700 text-white rounded-sm text-sm font-black uppercase tracking-widest hover:bg-green-800 transition-all shadow-xl border border-green-900 group/btn"
+                            >
+                                <CheckCircle2 size={18} className="group-hover/btn:scale-110 transition-transform" />
+                                <span>{updating ? '...' : 'Marquer comme Livrée'}</span>
+                            </button>
+                             <button
+                                onClick={() => updateStatus('returned')}
+                                disabled={updating}
+                                className="flex items-center space-x-2 px-8 py-3 bg-rouge-deep text-white rounded-sm text-sm font-black uppercase tracking-widest hover:bg-black transition-all shadow-xl border border-rouge-deep group/btn"
+                            >
+                                <RotateCcw size={18} className="group-hover/btn:rotate-[-45deg] transition-transform" />
+                                <span>{updating ? '...' : 'Signaler Retour'}</span>
+                            </button>
+                        </div>
+                    )}
+
                     <div className="relative group">
                         <button className="flex items-center space-x-2 px-6 py-2.5 bg-encre text-creme rounded-sm text-sm font-bold uppercase tracking-widest hover:bg-black transition-all shadow-md">
                             <span>Changer Statut</span>
@@ -317,6 +348,12 @@ export default function OrderDetailsPage() {
                                 <p>{order.shippingAddressSnapshot?.address}</p>
                                 <p>{order.shippingAddressSnapshot?.commune}</p>
                                 <p className="text-encre font-bold">{order.shippingAddressSnapshot?.wilayaName} ({order.shippingAddressSnapshot?.postalCode})</p>
+                                <div className="mt-4 pt-4 border-t border-creme2">
+                                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#1A0A0A]">
+                                        {order.deliveryType === 'office' ? <Briefcase size={14} className="text-or" /> : <Home size={14} className="text-or" />}
+                                        <span>Livraison {order.deliveryType === 'office' ? 'au Bureau' : 'à Domicile'}</span>
+                                    </div>
+                                </div>
                                 <p className="pt-2 text-[10px] opacity-60">Algérie</p>
                             </div>
                         </div>
@@ -354,22 +391,3 @@ export default function OrderDetailsPage() {
     );
 }
 
-function RotateCcw(props: any) {
-    return (
-        <svg
-            {...props}
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-            <path d="M3 3v5h5" />
-        </svg>
-    )
-}

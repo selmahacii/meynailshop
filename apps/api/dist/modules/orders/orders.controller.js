@@ -31,13 +31,21 @@ let OrdersController = class OrdersController {
         this.cartService = cartService;
     }
     async create(user, createOrderDto) {
-        const cartItems = await this.cartService.getCartItems(user.id);
-        const cartItemsArray = cartItems.map((item) => ({
-            productId: item.productId,
-            quantity: item.quantity,
-        }));
-        const order = await this.ordersService.create(user.id, createOrderDto, cartItemsArray);
-        await this.cartService.clearCart(user.id);
+        let cartItemsArray = [];
+        if (user) {
+            const cartItems = await this.cartService.getCartItems(user.id);
+            cartItemsArray = cartItems.map((item) => ({
+                productId: item.productId,
+                quantity: item.quantity,
+            }));
+        }
+        else {
+            cartItemsArray = createOrderDto.items || [];
+        }
+        const order = await this.ordersService.create(user?.id || null, createOrderDto, cartItemsArray);
+        if (user) {
+            await this.cartService.clearCart(user.id);
+        }
         return {
             statusCode: 201,
             message: 'Order created successfully',
@@ -114,7 +122,6 @@ let OrdersController = class OrdersController {
 };
 exports.OrdersController = OrdersController;
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)(),
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),

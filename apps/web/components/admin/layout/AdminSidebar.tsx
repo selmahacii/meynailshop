@@ -28,7 +28,6 @@ const menuItems = [
     { name: 'Clients', href: '/admin/clients', icon: Users, badge: null },
     { name: 'Avis clients', href: '/admin/avis', icon: MessageSquare, badge: 0 },
     { name: 'Historique', href: '/admin/historique', icon: Layers, badge: null },
-    { name: 'Analytiques', href: '/admin/analytiques', icon: BarChart3, badge: null },
     { name: 'Paramètres', href: '/admin/parametres', icon: Settings, badge: null },
 ];
 

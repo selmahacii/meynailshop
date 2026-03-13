@@ -181,7 +181,6 @@ export default function AdminDashboard() {
                     </div>
                 ))}
             </div>
-
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                 {/* Revenue Trend */}
                 <div className="lg:col-span-2 bg-white rounded-2xl border border-creme border-opacity-50 p-6 hover:shadow-lg transition-all">

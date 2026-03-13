@@ -36,7 +36,7 @@ export class OrdersService {
   ) { }
 
   async create(
-    userId: string,
+    userId: string | null,
     createOrderDto: CreateOrderDto,
     cartItems: Array<{ productId: string; quantity: number }>,
   ): Promise<Order> {
@@ -44,12 +44,30 @@ export class OrdersService {
       throw new BadRequestException('Cart is empty');
     }
 
-    const address = await this.addressRepository.findOne({
-      where: { id: createOrderDto.addressId, userId },
-    });
+    let shippingAddress: any = null;
 
-    if (!address) {
-      throw new NotFoundException('Address not found');
+    if (createOrderDto.addressId) {
+      if (!userId) throw new BadRequestException('UserId required for addressId');
+      const address = await this.addressRepository.findOne({
+        where: { id: createOrderDto.addressId, userId },
+      });
+
+      if (!address) {
+        throw new NotFoundException('Address not found');
+      }
+
+      shippingAddress = {
+        fullName: address.fullName,
+        phone: address.phone,
+        wilaya: address.wilaya,
+        commune: address.commune,
+        address: address.address,
+        postalCode: address.postalCode,
+      };
+    } else if (createOrderDto.shippingAddress) {
+      shippingAddress = createOrderDto.shippingAddress;
+    } else {
+      throw new BadRequestException('Shipping address or addressId is required');
     }
 
     const queryRunner = this.dataSource.createQueryRunner();
@@ -138,19 +156,12 @@ export class OrdersService {
         status: 'pending',
         paymentStatus: 'pending',
         paymentMethod: createOrderDto.paymentMethod,
+        deliveryType: createOrderDto.deliveryType,
         subtotal,
         shippingCost,
         discount,
         total,
-        shippingAddressSnapshot: {
-          label: address.label,
-          fullName: address.fullName,
-          phone: address.phone,
-          wilaya: address.wilaya,
-          commune: address.commune,
-          address: address.address,
-          postalCode: address.postalCode,
-        },
+        shippingAddressSnapshot: shippingAddress,
         notes: createOrderDto.notes,
       });
 

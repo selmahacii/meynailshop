@@ -4,9 +4,10 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ChevronLeft, ShieldCheck, Truck, Check, CreditCard, Banknote } from 'lucide-react';
+import { ChevronLeft, ShieldCheck, Truck, Check, CreditCard, Banknote, Home, Briefcase } from 'lucide-react';
 import { useCartStore } from '@/lib/store/cartStore';
 import { formatPrice } from '@/lib/utils/currency';
+import { cn } from '@/lib/utils';
 // Payment methods defined locally to avoid cross-workspace import issues
 enum PaymentMethod {
     CASH_ON_DELIVERY = 'cash_on_delivery',
@@ -30,6 +31,7 @@ export default function CheckoutPage() {
         address: '',
         wilaya: '',
         commune: '',
+        deliveryType: 'home' as 'home' | 'office',
     });
 
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(PaymentMethod.CASH_ON_DELIVERY);
@@ -49,25 +51,21 @@ export default function CheckoutPage() {
         try {
             const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
 
-            if (token) {
-                // Authenticated: use real API
-                const { ordersApi } = await import('@/lib/api/orders');
-                await ordersApi.createOrder({
-                    shippingAddress: {
-                        firstName: formData.firstName,
-                        lastName: formData.lastName,
-                        phone: formData.phone,
-                        address: formData.address,
-                        wilaya: formData.wilaya,
-                        commune: formData.commune,
-                    },
-                    paymentMethod,
-                    items: items.map(i => ({ productId: i.productId, quantity: i.quantity })),
-                });
-            } else {
-                // Guest: simulate a 1.5s processing time
-                await new Promise(resolve => setTimeout(resolve, 1500));
-            }
+            const { ordersApi } = await import('@/lib/api/orders');
+            await ordersApi.createOrder({
+                shippingAddress: {
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
+                    email: formData.email,
+                    phone: formData.phone,
+                    address: formData.address,
+                    wilaya: formData.wilaya,
+                    commune: formData.commune,
+                },
+                paymentMethod,
+                deliveryType: formData.deliveryType,
+                items: items.map(i => ({ productId: i.productId, quantity: i.quantity })),
+            });
 
             clear();
             toast.success('🎉 Commande confirmée avec succès !');
@@ -134,7 +132,37 @@ export default function CheckoutPage() {
 
                     {/* Shipping */}
                     <section>
-                        <h2 className="text-sm font-bold uppercase tracking-widest text-encre border-b border-creme2 pb-2 mb-6">2. Livraison</h2>
+                        <div className="flex items-center justify-between border-b border-creme2 pb-2 mb-6">
+                            <h2 className="text-sm font-bold uppercase tracking-widest text-encre">2. Livraison</h2>
+                            <div className="flex gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData(prev => ({ ...prev, deliveryType: 'home' }))}
+                                    className={cn(
+                                        "px-3 py-1.5 border rounded-sm flex items-center gap-2 transition-all text-[9px] font-bold uppercase tracking-widest",
+                                        formData.deliveryType === 'home'
+                                            ? "border-or bg-or/5 text-or"
+                                            : "border-creme2 text-encre3 hover:border-creme"
+                                    )}
+                                >
+                                    <Home size={12} />
+                                    Domicile
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData(prev => ({ ...prev, deliveryType: 'office' }))}
+                                    className={cn(
+                                        "px-3 py-1.5 border rounded-sm flex items-center gap-2 transition-all text-[9px] font-bold uppercase tracking-widest",
+                                        formData.deliveryType === 'office'
+                                            ? "border-or bg-or/5 text-or"
+                                            : "border-creme2 text-encre3 hover:border-creme"
+                                    )}
+                                >
+                                    <Briefcase size={12} />
+                                    Bureau
+                                </button>
+                            </div>
+                        </div>
                         <div className="grid grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label htmlFor="firstName" className="sr-only">Prénom</label>

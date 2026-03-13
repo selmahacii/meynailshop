@@ -50,7 +50,9 @@ export default function AdminSettingsPage() {
         setSuccessMessage(null);
         setError(null);
         try {
-            const res = await SettingsAPI.update(settings);
+            // Filtrer pour ne pas envoyer id, updatedAt ou d'autres champs non autorisés (whitelist/forbidNonWhitelisted)
+            const { id, updatedAt, ...payload } = settings;
+            const res = await SettingsAPI.update(payload);
             if (res.success) {
                 setSuccessMessage('Paramètres enregistrés avec succès');
                 setTimeout(() => setSuccessMessage(null), 3000);
@@ -144,10 +146,10 @@ export default function AdminSettingsPage() {
                                 <h2 className="font-serif text-xl text-encre mb-8 pb-4 border-b border-creme2">Informations générales</h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {[
-                                        { label: 'Nom de la boutique', key: 'siteName', type: 'text' },
-                                        { label: 'E-mail de contact', key: 'contactEmail', type: 'email' },
-                                        { label: 'Numéro de téléphone', key: 'contactPhone', type: 'tel' },
-                                        { label: 'Adresse', key: 'contactAddress', type: 'text' },
+                                        { label: 'Nom de la boutique', key: 'shopName', type: 'text' },
+                                        { label: 'E-mail de contact', key: 'shopEmail', type: 'email' },
+                                        { label: 'Numéro de téléphone', key: 'shopPhone', type: 'tel' },
+                                        { label: 'Adresse', key: 'shopAddress', type: 'text' },
                                     ].map((field) => (
                                         <div key={field.key}>
                                             <label className="block text-[10px] font-black uppercase tracking-widest text-encre3 mb-2">{field.label}</label>
@@ -169,8 +171,8 @@ export default function AdminSettingsPage() {
                                         <label className="block text-[10px] font-black uppercase tracking-widest text-encre3 mb-2">Seuil d'alerte par défaut</label>
                                         <input 
                                             type="number" 
-                                            value={settings?.lowStockThreshold || 5} 
-                                            onChange={(e) => handleChange('lowStockThreshold', parseInt(e.target.value))}
+                                            value={settings?.stockAlertDefault || 5} 
+                                            onChange={(e) => handleChange('stockAlertDefault', parseInt(e.target.value))}
                                             className="w-full px-4 py-3 bg-creme border border-creme2 rounded-sm text-sm text-encre focus:outline-none focus:border-or focus:ring-1 focus:ring-or transition-all" 
                                         />
                                     </div>
@@ -178,8 +180,8 @@ export default function AdminSettingsPage() {
                                         <label className="block text-[10px] font-black uppercase tracking-widest text-encre3 mb-2">Frais de livraison par défaut (DA)</label>
                                         <input 
                                             type="number" 
-                                            value={settings?.defaultShippingFee || 600} 
-                                            onChange={(e) => handleChange('defaultShippingFee', parseInt(e.target.value))}
+                                            value={settings?.shippingCostDefault || 600} 
+                                            onChange={(e) => handleChange('shippingCostDefault', parseInt(e.target.value))}
                                             className="w-full px-4 py-3 bg-creme border border-creme2 rounded-sm text-sm text-encre focus:outline-none focus:border-or focus:ring-1 focus:ring-or transition-all" 
                                         />
                                     </div>

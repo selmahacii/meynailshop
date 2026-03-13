@@ -29,24 +29,31 @@ export class OrdersController {
     private cartService: CartService,
   ) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@CurrentUser() user: any, @Body() createOrderDto: CreateOrderDto) {
-    const cartItems = await this.cartService.getCartItems(user.id);
-    const cartItemsArray = cartItems.map((item: any) => ({
-      productId: item.productId,
-      quantity: item.quantity,
-    }));
+    let cartItemsArray: any[] = [];
+    
+    if (user) {
+      const cartItems = await this.cartService.getCartItems(user.id);
+      cartItemsArray = cartItems.map((item: any) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+      }));
+    } else {
+      cartItemsArray = createOrderDto.items || [];
+    }
 
     const order = await this.ordersService.create(
-      user.id,
+      user?.id || null,
       createOrderDto,
       cartItemsArray,
     );
 
-    // Clear the cart after successful order creation
-    await this.cartService.clearCart(user.id);
+    if (user) {
+      // Clear the cart after successful order creation
+      await this.cartService.clearCart(user.id);
+    }
 
     return {
       statusCode: 201,

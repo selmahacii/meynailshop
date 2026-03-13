@@ -25,9 +25,17 @@ __decorate([
     __metadata("design:type", String)
 ], Order.prototype, "orderNumber", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'uuid' }),
+    (0, typeorm_1.Column)({ type: 'uuid', nullable: true }),
     __metadata("design:type", String)
 ], Order.prototype, "userId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        type: 'enum',
+        enum: ['home', 'office'],
+        default: 'home',
+    }),
+    __metadata("design:type", String)
+], Order.prototype, "deliveryType", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         type: 'enum',

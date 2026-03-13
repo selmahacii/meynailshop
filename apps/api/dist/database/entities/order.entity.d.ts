@@ -4,6 +4,7 @@ export declare class Order {
     id: string;
     orderNumber: string;
     userId: string;
+    deliveryType: string;
     status: string;
     paymentStatus: string;
     paymentMethod: string;

@@ -12,7 +12,9 @@ import {
     RotateCcw,
     ChevronDown,
     ExternalLink,
-    Loader
+    Loader,
+    Home,
+    Briefcase
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -260,9 +262,19 @@ export default function AdminOrdersPage() {
                                             <span className="text-sm font-bold text-encre">
                                                 {order.user ? `${order.user.firstName} ${order.user.lastName}` : 'Client anonyme'}
                                             </span>
-                                            <span className="text-[10px] text-encre3 uppercase tracking-wide font-medium">
-                                                {order.shippingAddressSnapshot?.wilayaName || order.shippingAddressSnapshot?.wilaya || 'Algérie'}
-                                            </span>
+                                            <div className="flex items-center space-x-2 mt-1">
+                                                <span className="text-[10px] text-encre3 uppercase tracking-wide font-medium">
+                                                    {order.shippingAddressSnapshot?.wilayaName || order.shippingAddressSnapshot?.wilaya || 'Algérie'}
+                                                </span>
+                                                <span className="text-[10px] text-encre3">•</span>
+                                                <span className={cn(
+                                                    "text-[9px] font-black uppercase tracking-widest flex items-center gap-1",
+                                                    order.deliveryType === 'home' ? "text-blue-600" : "text-orange-600"
+                                                )}>
+                                                    {order.deliveryType === 'office' ? <Briefcase size={10} /> : <Home size={10} />}
+                                                    {order.deliveryType === 'office' ? 'Bureau' : 'Domicile'}
+                                                </span>
+                                            </div>
                                         </div>
                                     </td>
                                     <td className="px-8 py-6 text-[11px] font-bold text-encre3 uppercase">
@@ -300,13 +312,24 @@ export default function AdminOrdersPage() {
                                             </button>
                                         )}
                                         {order.status === 'shipped' && (
-                                            <button
-                                                onClick={() => updateOrderStatus(order.id, 'delivered')}
-                                                disabled={updatingOrder === order.id}
-                                                className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-green-700 text-white border-green-800 hover:bg-green-800 disabled:opacity-50"
-                                            >
-                                                {updatingOrder === order.id ? '...' : 'Livrer'}
-                                            </button>
+                                            <>
+                                                <button
+                                                    onClick={() => updateOrderStatus(order.id, 'delivered')}
+                                                    disabled={updatingOrder === order.id}
+                                                    className="px-3 py-1.5 bg-green-700 text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-green-800 transition-all flex items-center space-x-1 shadow-sm border border-green-800"
+                                                >
+                                                    <CheckCircle2 size={12} />
+                                                    <span>{updatingOrder === order.id ? '...' : 'Livrée'}</span>
+                                                </button>
+                                                <button
+                                                    onClick={() => updateOrderStatus(order.id, 'returned')}
+                                                    disabled={updatingOrder === order.id}
+                                                    className="px-3 py-1.5 bg-rouge-deep text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center space-x-1 shadow-sm border border-rouge-deep"
+                                                >
+                                                    <RotateCcw size={12} />
+                                                    <span>{updatingOrder === order.id ? '...' : 'Retour'}</span>
+                                                </button>
+                                            </>
                                         )}
                                         {order.status === 'delivered' && (
                                             <button

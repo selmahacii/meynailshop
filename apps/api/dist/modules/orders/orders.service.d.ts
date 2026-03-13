@@ -16,7 +16,7 @@ export declare class OrdersService {
     private couponRepository;
     private dataSource;
     constructor(orderRepository: Repository<Order>, orderItemRepository: Repository<OrderItem>, addressRepository: Repository<Address>, productRepository: Repository<Product>, couponRepository: Repository<Coupon>, dataSource: DataSource);
-    create(userId: string, createOrderDto: CreateOrderDto, cartItems: Array<{
+    create(userId: string | null, createOrderDto: CreateOrderDto, cartItems: Array<{
         productId: string;
         quantity: number;
     }>): Promise<Order>;
