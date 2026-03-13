@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { ShoppingBag, User, Search, Menu, X, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -50,9 +51,19 @@ export default function Navbar() {
                 </button>
 
                 {/* Logo */}
-                <Link href="/" className="flex flex-col items-center">
-                    <span className="font-serif text-2xl md:text-3xl text-or leading-none tracking-tighter">MEEY</span>
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-creme/80">Nail Shop</span>
+                <Link href="/" className="flex items-center space-x-3 group">
+                    <div className="relative w-10 h-10 md:w-12 md:h-12 border-2 border-or/20 rounded-full p-0.5 group-hover:border-or/40 transition-all duration-300">
+                        <Image
+                            src="/logo.png"
+                            alt="MEEY Logo"
+                            fill
+                            className="object-contain"
+                        />
+                    </div>
+                    <div className="flex flex-col">
+                        <span className="font-serif text-xl md:text-2xl text-or leading-none tracking-tight group-hover:scale-105 transition-transform duration-300 origin-left">MEEY</span>
+                        <span className="text-[8px] uppercase tracking-[0.2em] text-creme/60 font-bold group-hover:text-creme transition-colors">Nail Shop</span>
+                    </div>
                 </Link>
 
                 {/* Desktop Links */}
@@ -117,7 +128,17 @@ export default function Navbar() {
                             className="fixed top-0 left-0 h-full w-[80%] max-w-sm bg-rouge-deep z-[70] p-8 shadow-2xl"
                         >
                             <div className="flex justify-between items-center mb-12">
-                                <span className="font-serif text-2xl text-or">MEEY</span>
+                                <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center space-x-3">
+                                    <div className="relative w-10 h-10 border border-or/20 rounded-full p-0.5">
+                                        <Image
+                                            src="/logo.png"
+                                            alt="MEEY Logo"
+                                            fill
+                                            className="object-contain"
+                                        />
+                                    </div>
+                                    <span className="font-serif text-2xl text-or uppercase tracking-tighter">MEEY</span>
+                                </Link>
                                 <button onClick={() => setIsMobileMenuOpen(false)} className="text-creme">
                                     <X size={24} />
                                 </button>
