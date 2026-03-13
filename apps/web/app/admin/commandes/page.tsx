@@ -149,35 +149,37 @@ export default function AdminOrdersPage() {
     }
 
     return (
-        <div className="space-y-8 pb-12">
+        <div className="space-y-6 md:space-y-8 p-4 md:p-8 pb-12">
             {/* Header Section */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-serif text-encre">Commandes</h1>
-                    <p className="text-encre3 text-[10px] uppercase tracking-widest font-bold mt-1">Gestion des commandes client — {new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+                    <h1 className="text-2xl md:text-3xl font-serif text-encre">Commandes</h1>
+                    <p className="text-encre3 text-[9px] md:text-[10px] uppercase tracking-widest font-bold mt-1">Gestion des commandes client — {new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
                 </div>
 
-                <div className="flex items-center space-x-3">
-                    <div className="relative group">
+                <div className="flex flex-wrap items-center gap-2 md:gap-3">
+                    <div className="relative group flex-grow sm:flex-grow-0">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-encre3 group-focus-within:text-or transition-colors" size={16} />
                         <input
                             type="text"
                             placeholder="Rechercher..."
-                            className="pl-10 pr-4 py-2.5 bg-white border border-creme2 rounded-sm text-sm focus:outline-none focus:border-or focus:ring-1 focus:ring-or w-64 shadow-sm transition-all"
+                            className="pl-10 pr-4 py-2 bg-white border border-creme2 rounded-sm text-sm focus:outline-none focus:border-or focus:ring-1 focus:ring-or w-full sm:w-48 xl:w-64 shadow-sm transition-all"
                         />
                     </div>
-                    <button className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
-                        <Bell size={18} />
-                    </button>
-                    <button className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
-                        <Download size={18} />
-                    </button>
-                    <button className="flex items-center space-x-2 px-5 py-2.5 bg-rouge-deep text-creme rounded-sm text-sm font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md">
+                    <div className="flex items-center gap-2">
+                        <button className="p-2 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
+                            <Bell size={18} />
+                        </button>
+                        <button className="p-2 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
+                            <Download size={18} />
+                        </button>
+                    </div>
+                    <button className="flex items-center justify-center space-x-2 px-4 py-2 bg-rouge-deep text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md flex-grow sm:flex-grow-0">
                         <Plus size={16} />
                         <span>Nouveau</span>
                     </button>
-                    <Link href="/" className="px-5 py-2.5 border border-encre text-encre rounded-sm text-sm font-bold hover:bg-encre hover:text-creme transition-all">
-                        Voir la boutique
+                    <Link href="/" className="px-4 py-2 border border-encre text-encre rounded-sm text-xs font-bold hover:bg-encre hover:text-creme transition-all text-center flex-grow sm:flex-grow-0">
+                        Boutique
                     </Link>
                 </div>
             </div>
@@ -190,7 +192,7 @@ export default function AdminOrdersPage() {
                             <span className="text-red-500 text-lg">⚠️</span>
                         </div>
                         <div className="ml-3">
-                            <p className="text-sm text-red-700 font-bold uppercase tracking-wider">{error}</p>
+                            <p className="text-xs md:text-sm text-red-700 font-bold uppercase tracking-wider">{error}</p>
                         </div>
                     </div>
                     <button onClick={() => setError(null)} className="text-red-400 hover:text-red-600 transition-colors">
@@ -202,8 +204,8 @@ export default function AdminOrdersPage() {
             {/* Content Section */}
             <div className="bg-white rounded-sm border border-creme2 shadow-lg overflow-hidden">
                 {/* Tabs & Toolbar */}
-                <div className="p-6 border-b border-creme2 bg-creme/10 flex flex-wrap items-center justify-between gap-6">
-                    <div className="flex items-center bg-white p-1 rounded-sm border border-creme2">
+                <div className="p-4 md:p-6 border-b border-creme2 bg-creme/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="flex items-center bg-white p-1 rounded-sm border border-creme2 overflow-x-auto w-full sm:w-auto custom-scrollbar">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.key}
@@ -212,28 +214,28 @@ export default function AdminOrdersPage() {
                                     fetchOrders(tab.key);
                                 }}
                                 className={cn(
-                                    "px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-sm transition-all flex items-center space-x-2",
+                                    "px-3 md:px-4 py-2 text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-sm transition-all flex items-center space-x-2 whitespace-nowrap",
                                     activeTab === tab.key
-                                        ? "bg-encre text-creme shadow-md transition-all scale-105"
+                                        ? "bg-encre text-creme shadow-md transition-all sm:scale-105"
                                         : "text-encre3 hover:bg-creme/50"
                                 )}
                             >
                                 <span>{tab.name}</span>
                                 <span className={cn(
-                                    "text-[10px] opacity-60",
+                                    "text-[9px] md:text-[10px] opacity-60",
                                     activeTab === tab.key ? "text-or" : "text-encre3"
                                 )}>({tab.count})</span>
                             </button>
                         ))}
                     </div>
 
-                    <div className="flex items-center space-x-3">
-                        <button className="flex items-center space-x-2 px-6 py-2 bg-creme border border-creme2 text-encre text-xs font-bold uppercase tracking-widest rounded-sm hover:border-or transition-all">
+                    <div className="flex items-center space-x-2 w-full sm:w-auto">
+                        <button className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-4 py-2 bg-creme border border-creme2 text-encre text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-or transition-all">
                             <span>Rapport</span>
                         </button>
-                        <button className="flex items-center space-x-2 px-6 py-2 bg-[#1A0A0A] text-creme text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-lg group">
+                        <button className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-4 py-2 bg-[#1A0A0A] text-creme text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-lg group">
                             <Plus size={14} className="text-or" />
-                            <span>Créer commande</span>
+                            <span>Créer</span>
                         </button>
                     </div>
                 </div>

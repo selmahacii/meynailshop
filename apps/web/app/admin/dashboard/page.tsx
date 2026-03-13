@@ -128,7 +128,7 @@ export default function AdminDashboard() {
     ];
 
     return (
-        <div className="p-8 bg-gradient-to-br from-[#FAF5EF] via-[#F9F4EE] to-[#F5EFEA] min-h-screen">
+        <div className="p-4 md:p-8 bg-gradient-to-br from-[#FAF5EF] via-[#F9F4EE] to-[#F5EFEA] min-h-screen">
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div>
