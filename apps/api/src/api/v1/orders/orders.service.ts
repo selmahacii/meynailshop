@@ -20,7 +20,13 @@ export class OrdersService {
       .orderBy('order.createdAt', 'DESC');
 
     if (status && status !== 'all') {
-      query.where('order.status = :status', { status });
+      if (status === 'active') {
+        query.where('order.status NOT IN (:...excluded)', { excluded: ['delivered', 'returned', 'cancelled'] });
+      } else if (status === 'history') {
+        query.where('order.status IN (:...included)', { included: ['delivered', 'returned', 'cancelled'] });
+      } else {
+        query.where('order.status = :status', { status });
+      }
     }
 
     const [data, total] = await query
@@ -87,6 +93,8 @@ export class OrdersService {
 
       const stats = {
         total: orders.length,
+        active: orders.filter((o: any) => !['delivered', 'returned', 'cancelled'].includes(o.status)).length,
+        history: orders.filter((o: any) => ['delivered', 'returned', 'cancelled'].includes(o.status)).length,
         pending: orders.filter((o: any) => o.status === 'pending').length,
         shipped: orders.filter((o: any) => o.status === 'shipped').length,
         delivered: orders.filter((o: any) => o.status === 'delivered').length,
@@ -101,6 +109,8 @@ export class OrdersService {
       console.error('❌ [OrdersV1] getStats Error:', error);
       return {
         total: 0,
+        active: 0,
+        history: 0,
         pending: 0,
         delivered: 0,
         cancelled: 0,

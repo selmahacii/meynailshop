@@ -30,6 +30,7 @@ const statusLabels: Record<string, string> = {
     shipped: 'Expédiée',
     delivered: 'Livrée',
     cancelled: 'Annulée',
+    returned: 'Retournée',
 };
 
 export default function AdminHistoryPage() {
@@ -68,6 +69,7 @@ export default function AdminHistoryPage() {
                         user: 'Système',
                         color: order.status === 'delivered' ? 'bg-green-500' :
                             order.status === 'cancelled' ? 'bg-red-500' :
+                            order.status === 'returned' ? 'bg-rouge-deep' :
                                 order.status === 'shipped' ? 'bg-blue-500' : 'bg-yellow-500',
                     });
                 });

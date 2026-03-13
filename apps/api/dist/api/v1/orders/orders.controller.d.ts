@@ -18,6 +18,8 @@ export declare class OrdersController {
         success: boolean;
         data: {
             total: number;
+            active: number;
+            history: number;
             pending: number;
             shipped: number;
             delivered: number;
@@ -27,6 +29,8 @@ export declare class OrdersController {
             pendingReviews: number;
         } | {
             total: number;
+            active: number;
+            history: number;
             pending: number;
             delivered: number;
             cancelled: number;

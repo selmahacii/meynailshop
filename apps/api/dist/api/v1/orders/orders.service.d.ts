@@ -19,6 +19,8 @@ export declare class OrdersService {
     updateStatus(id: string, status: string): Promise<Order>;
     getStats(): Promise<{
         total: number;
+        active: number;
+        history: number;
         pending: number;
         shipped: number;
         delivered: number;
@@ -28,6 +30,8 @@ export declare class OrdersService {
         pendingReviews: number;
     } | {
         total: number;
+        active: number;
+        history: number;
         pending: number;
         delivered: number;
         cancelled: number;

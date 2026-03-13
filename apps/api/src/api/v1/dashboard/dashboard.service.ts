@@ -22,10 +22,10 @@ export class DashboardService {
       // 1. Current KPI calculations
       const revenueQuery = await this.orderRepository
         .createQueryBuilder('o')
-        .select('SUM(o.total)', 'totalRevenue')
+        .select('SUM(CASE WHEN o.status = \'delivered\' THEN o.total ELSE 0 END)', 'totalRevenue')
         .addSelect('COUNT(o.id)', 'totalOrders')
         .addSelect('COUNT(CASE WHEN o.status = \'delivered\' THEN 1 END)', 'completedOrders')
-        .addSelect('AVG(o.total)', 'averageCart')
+        .addSelect('AVG(CASE WHEN o.status = \'delivered\' THEN o.total END)', 'averageCart')
         .getRawOne()
         .catch(err => {
           console.error('❌ [DashboardService] Revenue query failed:', err);
@@ -172,6 +172,7 @@ export class DashboardService {
         shipped: 'Expédiée',
         delivered: 'Livrée',
         cancelled: 'Annulée',
+        returned: 'Retournée',
       };
 
       return stats.map(s => ({

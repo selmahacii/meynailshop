@@ -19,16 +19,14 @@ import Link from 'next/link';
 import { OrdersAPI } from '@/lib/api/client';
 
 const tabs = [
-    { name: 'Toutes', count: 0, key: 'all' },
+    { name: 'Actives', count: 0, key: 'active' },
     { name: 'En attente', count: 0, key: 'pending' },
     { name: 'Expédiées', count: 0, key: 'shipped' },
-    { name: 'Livrées', count: 0, key: 'delivered' },
-    { name: 'Retournées', count: 0, key: 'returned' },
-    { name: 'Annulées', count: 0, key: 'cancelled' },
+    { name: 'Historique', count: 0, key: 'history' },
 ];
 
 export default function AdminOrdersPage() {
-    const [activeTab, setActiveTab] = useState('all');
+    const [activeTab, setActiveTab] = useState('active');
     const [orders, setOrders] = useState<any[]>([]);
     const [stats, setStats] = useState<any>(null);
     const [pagination, setPagination] = useState<any>({ total: 0, page: 1, limit: 10, pages: 1 });
@@ -37,7 +35,7 @@ export default function AdminOrdersPage() {
     const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
 
     useEffect(() => {
-        fetchOrders();
+        fetchOrders('active');
         fetchStats();
     }, []);
 
@@ -74,12 +72,10 @@ export default function AdminOrdersPage() {
                 console.log('✅ Orders Stats: Stats loaded successfully', result.data);
                 setStats(result.data);
                 // Update tab counts
-                tabs[0].count = result.data.total || 0;
+                tabs[0].count = result.data.active || 0;
                 tabs[1].count = result.data.pending || 0;
                 tabs[2].count = result.data.shipped || 0;
-                tabs[3].count = result.data.delivered || 0;
-                tabs[4].count = result.data.returned || 0;
-                tabs[5].count = result.data.cancelled || 0;
+                tabs[3].count = result.data.history || 0;
             } else {
                 console.error('❌ Orders Stats: API returned error', result.error);
             }
@@ -94,7 +90,7 @@ export default function AdminOrdersPage() {
             const result = await OrdersAPI.updateStatus(orderId, newStatus);
             if (result.success) {
                 // Refresh orders on the same page and stats
-                await fetchOrders(activeTab === 'all' ? undefined : activeTab, pagination.page);
+                await fetchOrders(activeTab === 'active' ? 'active' : activeTab, pagination.page);
                 await fetchStats();
             } else {
                 setError(result.error || 'Erreur lors de la mise à jour');
@@ -135,7 +131,7 @@ export default function AdminOrdersPage() {
         }
     };
 
-    const filteredOrders = activeTab === 'all' 
+    const filteredOrders = activeTab === 'all' || activeTab === 'active' || activeTab === 'history'
         ? orders 
         : orders.filter(order => order.status === activeTab);
 
@@ -211,7 +207,7 @@ export default function AdminOrdersPage() {
                                 key={tab.key}
                                 onClick={() => {
                                     setActiveTab(tab.key);
-                                    fetchOrders(tab.key === 'all' ? undefined : tab.key);
+                                    fetchOrders(tab.key);
                                 }}
                                 className={cn(
                                     "px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-sm transition-all flex items-center space-x-2",
@@ -351,7 +347,7 @@ export default function AdminOrdersPage() {
                         {Array.from({ length: pagination.pages }, (_, i) => i + 1).map((p) => (
                             <button
                                 key={p}
-                                onClick={() => fetchOrders(activeTab === 'all' ? undefined : activeTab, p)}
+                                onClick={() => fetchOrders(activeTab, p)}
                                 className={cn(
                                     "w-8 h-8 flex items-center justify-center text-[10px] font-bold border transition-all rounded-sm",
                                     p === pagination.page ? "bg-encre text-creme border-encre" : "bg-white text-encre3 border-creme2 hover:border-or"
