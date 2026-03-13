@@ -63,12 +63,12 @@ export default function AdminSidebar() {
         <aside className="w-64 bg-gradient-to-b from-[#1A0A0A] to-[#0F0505] border-r border-[#2A1A1A] h-screen fixed left-0 top-0 z-50 flex flex-col shadow-2xl">
             {/* Header */}
             <div className="p-6 border-b border-[#2A1A1A] flex items-center space-x-3 group hover:border-or/20 transition-all duration-300">
-                <div className="relative w-10 h-10 border border-or/20 rounded-full p-0.5 group-hover:border-or/40 transition-all duration-300 shadow-lg shadow-or/5">
+                <div className="relative w-10 h-10 border border-or/20 rounded-full p-0.5 group-hover:border-or/40 transition-all duration-300 shadow-lg shadow-black/20 overflow-hidden">
                     <Image
                         src="/logo.png"
                         alt="MEEY Logo"
                         fill
-                        className="object-contain"
+                        className="object-contain rounded-full"
                     />
                 </div>
                 <div className="flex flex-col">

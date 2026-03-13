@@ -52,12 +52,12 @@ export default function Navbar() {
 
                 {/* Logo */}
                 <Link href="/" className="flex items-center space-x-3 group">
-                    <div className="relative w-10 h-10 md:w-12 md:h-12 border-2 border-or/20 rounded-full p-0.5 group-hover:border-or/40 transition-all duration-300">
+                    <div className="relative w-10 h-10 md:w-12 md:h-12 border-2 border-or/20 rounded-full p-0.5 group-hover:border-or/40 transition-all duration-300 overflow-hidden shadow-lg shadow-black/20">
                         <Image
                             src="/logo.png"
                             alt="MEEY Logo"
                             fill
-                            className="object-contain"
+                            className="object-contain rounded-full"
                         />
                     </div>
                     <div className="flex flex-col">
@@ -129,12 +129,12 @@ export default function Navbar() {
                         >
                             <div className="flex justify-between items-center mb-12">
                                 <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center space-x-3">
-                                    <div className="relative w-10 h-10 border border-or/20 rounded-full p-0.5">
+                                    <div className="relative w-10 h-10 border border-or/20 rounded-full p-0.5 overflow-hidden shadow-inner">
                                         <Image
                                             src="/logo.png"
                                             alt="MEEY Logo"
                                             fill
-                                            className="object-contain"
+                                            className="object-contain rounded-full"
                                         />
                                     </div>
                                     <span className="font-serif text-2xl text-or uppercase tracking-tighter">MEEY</span>
