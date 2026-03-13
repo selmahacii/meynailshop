@@ -91,12 +91,24 @@ let ProductsService = class ProductsService {
         return product;
     }
     async findFeatured(limit = 6) {
-        return this.productRepository.find({
-            where: { isFeatured: true, isActive: true },
+        let products = await this.productRepository.find({
+            where: [
+                { isFeatured: true, isActive: true },
+                { badge: 'top', isActive: true }
+            ],
             relations: ['category'],
             take: limit,
             order: { createdAt: 'DESC' },
         });
+        if (products.length === 0) {
+            products = await this.productRepository.find({
+                where: { isActive: true },
+                relations: ['category'],
+                take: limit,
+                order: { createdAt: 'DESC' },
+            });
+        }
+        return products;
     }
     async findOne(id) {
         const product = await this.productRepository.findOne({

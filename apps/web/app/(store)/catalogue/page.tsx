@@ -42,18 +42,13 @@ export default function CataloguePage() {
     return (
         <div className="pt-32 pb-24 bg-creme min-h-screen">
             <div className="container mx-auto px-4">
-                {/* Header */}
-                <div className="mb-12">
-                    <nav className="text-[10px] uppercase tracking-widest text-encre3 mb-4 flex items-center space-x-2">
+                {/* Header / Breadcrumbs */}
+                <div className="mb-8 flex items-center justify-between">
+                    <nav className="text-[10px] uppercase tracking-[0.2em] text-encre3 flex items-center space-x-2 font-black">
                         <Link href="/" className="hover:text-or transition-colors">Accueil</Link>
-                        <span>/</span>
-                        <span className="text-encre font-bold">Catalogue</span>
+                        <span className="opacity-30">/</span>
+                        <span className="text-encre">Catalogue</span>
                     </nav>
-                    <h1 className="font-serif text-4xl md:text-5xl text-encre">Toute la Collection</h1>
-                    <p className="text-encre3 text-sm mt-3 max-w-2xl leading-relaxed">
-                        Explorez notre sélection de produits haut de gamme conçus pour révéler la beauté de chaque ongle.
-                        Des vernis vibrants aux outils haute précision.
-                    </p>
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-12">

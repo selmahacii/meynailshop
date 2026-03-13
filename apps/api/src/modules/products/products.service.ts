@@ -98,12 +98,28 @@ export class ProductsService {
   }
 
   async findFeatured(limit: number = 6) {
-    return this.productRepository.find({
-      where: { isFeatured: true, isActive: true },
+    // Essayer d'abord les produits tagués 'isFeatured' ou ayant le badge 'top' (Bestseller)
+    let products = await this.productRepository.find({
+      where: [
+        { isFeatured: true, isActive: true },
+        { badge: 'top' as any, isActive: true }
+      ],
       relations: ['category'],
       take: limit,
       order: { createdAt: 'DESC' },
     });
+
+    // Si aucun produit n'est trouvé, retourner les derniers produits ajoutés
+    if (products.length === 0) {
+      products = await this.productRepository.find({
+        where: { isActive: true },
+        relations: ['category'],
+        take: limit,
+        order: { createdAt: 'DESC' },
+      });
+    }
+
+    return products;
   }
 
   async findOne(id: string) {
