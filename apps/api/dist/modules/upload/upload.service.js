@@ -100,9 +100,7 @@ let UploadService = UploadService_1 = class UploadService {
         }
     }
     getFileUrl(filename) {
-        const port = this.configService.get('API_PORT', '3001');
-        const baseUrl = `http://localhost:${port}`;
-        return `${baseUrl}/uploads/${filename}`;
+        return `/uploads/${filename}`;
     }
 };
 exports.UploadService = UploadService;

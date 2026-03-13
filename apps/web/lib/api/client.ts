@@ -4,11 +4,9 @@
  * Uses real backend API endpoints only
  */
 
-// Normalise BASE_URL pour éviter les doublons de /api
-const RAW_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001';
-const BASE_URL = RAW_BASE_URL.endsWith('/api')
-  ? RAW_BASE_URL.replace(/\/api\/?$/, '')
-  : RAW_BASE_URL;
+// En utilisant des URLs relatives, on laisse le proxy de Next.js (configuré dans next.config.js)
+// gérer la redirection vers le backend. Cela règle les problèmes de CORS et de connexion sur Windows.
+const BASE_URL = ''; 
 const API_VERSION = 'v1';
 
 export const API_ENDPOINTS = {

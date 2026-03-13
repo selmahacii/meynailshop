@@ -48,7 +48,7 @@ export default function AdminCategoriesPage() {
     const fetchCategories = async () => {
         try {
             setLoading(true);
-            const res = await fetch('http://127.0.0.1:3001/api/categories');
+            const res = await fetch('/api/categories');
             const data = await res.json();
             if (data.data) {
                 setCategories(data.data);
@@ -87,8 +87,8 @@ export default function AdminCategoriesPage() {
         try {
             const token = localStorage.getItem('token');
             const url = editingCategory 
-                ? `http://127.0.0.1:3001/api/categories/${editingCategory.id}` 
-                : 'http://127.0.0.1:3001/api/categories';
+                ? `/api/categories/${editingCategory.id}` 
+                : '/api/categories';
             
             const method = editingCategory ? 'PATCH' : 'POST';
 
@@ -123,7 +123,7 @@ export default function AdminCategoriesPage() {
         
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://127.0.0.1:3001/api/categories/${id}`, {
+            const res = await fetch(`/api/categories/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -147,7 +147,7 @@ export default function AdminCategoriesPage() {
 
         try {
             setSubmitting(true);
-            const res = await fetch('http://127.0.0.1:3001/api/upload/product-image', {
+            const res = await fetch('/api/upload/product-image', {
                 method: 'POST',
                 body: formData
             });
