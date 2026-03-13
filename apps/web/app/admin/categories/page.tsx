@@ -48,7 +48,7 @@ export default function AdminCategoriesPage() {
     const fetchCategories = async () => {
         try {
             setLoading(true);
-            const res = await fetch('http://localhost:3001/api/categories');
+            const res = await fetch('http://127.0.0.1:3001/api/categories');
             const data = await res.json();
             if (data.data) {
                 setCategories(data.data);
@@ -87,8 +87,8 @@ export default function AdminCategoriesPage() {
         try {
             const token = localStorage.getItem('token');
             const url = editingCategory 
-                ? `http://localhost:3001/api/categories/${editingCategory.id}` 
-                : 'http://localhost:3001/api/categories';
+                ? `http://127.0.0.1:3001/api/categories/${editingCategory.id}` 
+                : 'http://127.0.0.1:3001/api/categories';
             
             const method = editingCategory ? 'PATCH' : 'POST';
 
@@ -123,7 +123,7 @@ export default function AdminCategoriesPage() {
         
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:3001/api/categories/${id}`, {
+            const res = await fetch(`http://127.0.0.1:3001/api/categories/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -147,7 +147,7 @@ export default function AdminCategoriesPage() {
 
         try {
             setSubmitting(true);
-            const res = await fetch('http://localhost:3001/api/upload/product-image', {
+            const res = await fetch('http://127.0.0.1:3001/api/upload/product-image', {
                 method: 'POST',
                 body: formData
             });
@@ -201,23 +201,29 @@ export default function AdminCategoriesPage() {
                     {categories.map((category) => (
                         <div key={category.id} className="bg-white border border-creme2 rounded-sm overflow-hidden group hover:border-or transition-all duration-500 shadow-sm hover:shadow-xl relative">
                             <div className="aspect-[16/10] relative overflow-hidden bg-creme/20">
-                                {category.imageUrl ? (
+                                {(() => {
+                                    const displayImg = category.imageUrl?.includes('via.placeholder.com') 
+                                        ? `https://images.unsplash.com/photo-1600050218444-14309070557e?q=80&w=800&auto=format&fit=crop`
+                                        : category.imageUrl;
+
+                                    return category.imageUrl ? (
                                         <Image 
-                                            src={category.imageUrl} 
+                                            src={displayImg} 
                                             alt={category.name} 
                                             fill 
                                             className="object-cover group-hover:scale-110 transition-transform duration-700" 
                                             onError={(e) => {
                                                 const target = e.target as HTMLImageElement;
-                                                target.src = `https://images.unsplash.com/photo-1600050218444-14309070557e?q=80&w=800&auto=format&fit=crop`;
+                                                target.src = `https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=800&auto=format&fit=crop`;
                                             }}
                                         />
-                                ) : (
-                                    <div className="w-full h-full flex flex-col items-center justify-center text-encre3">
-                                        <ImageIcon size={40} strokeWidth={1} />
-                                        <p className="text-[10px] uppercase tracking-widest mt-2">Aucune image</p>
-                                    </div>
-                                )}
+                                    ) : (
+                                        <div className="w-full h-full flex flex-col items-center justify-center text-encre3">
+                                            <ImageIcon size={40} strokeWidth={1} />
+                                            <p className="text-[10px] uppercase tracking-widest mt-2">Aucune image</p>
+                                        </div>
+                                    );
+                                })()}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80" />
                                 <div className="absolute bottom-4 left-4 right-4">
                                     <h3 className="text-xl font-serif text-creme">{category.name}</h3>

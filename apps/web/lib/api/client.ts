@@ -5,7 +5,7 @@
  */
 
 // Normalise BASE_URL pour éviter les doublons de /api
-const RAW_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const RAW_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001';
 const BASE_URL = RAW_BASE_URL.endsWith('/api')
   ? RAW_BASE_URL.replace(/\/api\/?$/, '')
   : RAW_BASE_URL;
