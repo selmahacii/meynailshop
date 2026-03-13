@@ -14,7 +14,9 @@ import {
     ExternalLink,
     Loader,
     Home,
-    Briefcase
+    Briefcase,
+    Package,
+    Printer
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -204,8 +206,8 @@ export default function AdminOrdersPage() {
             {/* Content Section */}
             <div className="bg-white rounded-sm border border-creme2 shadow-lg overflow-hidden">
                 {/* Tabs & Toolbar */}
-                <div className="p-4 md:p-6 border-b border-creme2 bg-creme/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="flex items-center bg-white p-1 rounded-sm border border-creme2 overflow-x-auto w-full sm:w-auto custom-scrollbar">
+                <div className="p-4 md:p-6 border-b border-creme2 bg-creme/10 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center bg-white p-1 rounded-sm border border-creme2 overflow-x-auto w-full md:w-auto custom-scrollbar no-scrollbar">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.key}
@@ -214,34 +216,34 @@ export default function AdminOrdersPage() {
                                     fetchOrders(tab.key);
                                 }}
                                 className={cn(
-                                    "px-3 md:px-4 py-2 text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-sm transition-all flex items-center space-x-2 whitespace-nowrap",
+                                    "px-4 md:px-5 py-2.5 text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-sm transition-all flex items-center space-x-2 whitespace-nowrap",
                                     activeTab === tab.key
-                                        ? "bg-encre text-creme shadow-md transition-all sm:scale-105"
-                                        : "text-encre3 hover:bg-creme/50"
+                                        ? "bg-encre text-creme shadow-md transition-all scale-[1.02]"
+                                        : "text-encre3 hover:bg-creme/5 group"
                                 )}
                             >
                                 <span>{tab.name}</span>
                                 <span className={cn(
                                     "text-[9px] md:text-[10px] opacity-60",
-                                    activeTab === tab.key ? "text-or" : "text-encre3"
+                                    activeTab === tab.key ? "text-or" : "text-encre3 group-hover:text-or"
                                 )}>({tab.count})</span>
                             </button>
                         ))}
                     </div>
 
-                    <div className="flex items-center space-x-2 w-full sm:w-auto">
-                        <button className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-4 py-2 bg-creme border border-creme2 text-encre text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-or transition-all">
+                    <div className="flex items-center space-x-2 w-full md:w-auto">
+                        <button className="flex-1 md:flex-none flex items-center justify-center space-x-2 px-6 py-2.5 bg-creme border border-creme2 text-encre text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-or transition-all">
                             <span>Rapport</span>
                         </button>
-                        <button className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-4 py-2 bg-[#1A0A0A] text-creme text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-lg group">
+                        <button className="flex-1 md:flex-none flex items-center justify-center space-x-2 px-6 py-2.5 bg-[#1A0A0A] text-creme text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-lg group">
                             <Plus size={14} className="text-or" />
                             <span>Créer</span>
                         </button>
                     </div>
                 </div>
 
-                {/* Table */}
-                <div className="overflow-x-auto">
+                {/* Desktop Table */}
+                <div className="hidden md:block overflow-x-auto">
                     <table className="w-full">
                         <thead className="bg-creme/30 text-[10px] uppercase tracking-widest text-encre3 font-black border-b border-creme2">
                             <tr>
@@ -366,6 +368,106 @@ export default function AdminOrdersPage() {
                             ))}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Mobile Card View */}
+                <div className="md:hidden divide-y divide-creme2">
+                    {filteredOrders.length === 0 ? (
+                        <div className="p-12 text-center">
+                            <Package size={48} className="mx-auto text-creme2 mb-4" />
+                            <p className="text-encre3 text-xs font-bold uppercase tracking-widest">Aucune commande trouvée</p>
+                        </div>
+                    ) : (
+                        filteredOrders.map((order) => (
+                            <div key={order.id} className="p-5 flex flex-col space-y-4 hover:bg-creme/5 transition-colors">
+                                <div className="flex justify-between items-start">
+                                    <div className="flex flex-col">
+                                        <span className="text-sm font-black text-rouge-mid font-mono tracking-tighter mb-1">#{order.orderNumber || order.id.slice(-6)}</span>
+                                        <span className="text-xs font-bold tracking-widest text-encre3 uppercase">
+                                            {new Date(order.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                        </span>
+                                    </div>
+                                    <span className={cn(
+                                        "text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-sm shadow-sm",
+                                        getStatusColor(order.status)
+                                    )}>
+                                        {getStatusText(order.status)}
+                                    </span>
+                                </div>
+
+                                <div className="flex items-center justify-between">
+                                    <div className="flex flex-col">
+                                        <span className="text-sm font-black text-encre flex items-center">
+                                            {order.user 
+                                                ? `${order.user.firstName} ${order.user.lastName}` 
+                                                : (order.shippingAddressSnapshot?.firstName 
+                                                    ? `${order.shippingAddressSnapshot.firstName} ${order.shippingAddressSnapshot.lastName}` 
+                                                    : 'Client anonyme')}
+                                            {!order.user && <span className="ml-2 text-[7px] bg-creme2 text-encre3 px-1 rounded tracking-tighter">INVITÉ</span>}
+                                        </span>
+                                        <div className="flex items-center space-x-2 mt-0.5">
+                                            <span className="text-[10px] text-encre3 uppercase tracking-wide font-medium">
+                                                {order.shippingAddressSnapshot?.wilayaName || order.shippingAddressSnapshot?.wilaya || 'Algérie'}
+                                            </span>
+                                            <span className="text-[10px] text-encre3">•</span>
+                                            <span className={cn(
+                                                "text-[9px] font-black uppercase tracking-widest flex items-center gap-1",
+                                                order.deliveryType === 'home' ? "text-blue-600" : "text-orange-600"
+                                            )}>
+                                                {order.deliveryType === 'office' ? <Briefcase size={10} /> : <Home size={10} />}
+                                                {order.deliveryType === 'office' ? 'Bureau' : 'Domicile'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <span className="text-sm font-black text-or">{Number(order.total).toLocaleString('fr-FR')} DA</span>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-creme2/50">
+                                    {order.status === 'pending' && (
+                                        <button
+                                            onClick={() => updateOrderStatus(order.id, 'confirmed')}
+                                            disabled={updatingOrder === order.id}
+                                            className="flex-1 px-3 py-2 bg-indigo-700 text-white rounded-sm text-[9px] font-black uppercase tracking-widest disabled:opacity-50"
+                                        >
+                                            Confirmer
+                                        </button>
+                                    )}
+                                    {(order.status === 'confirmed' || order.status === 'processing') && (
+                                        <button
+                                            onClick={() => updateOrderStatus(order.id, 'shipped')}
+                                            disabled={updatingOrder === order.id}
+                                            className="flex-1 px-3 py-2 bg-blue-700 text-white rounded-sm text-[9px] font-black uppercase tracking-widest disabled:opacity-50"
+                                        >
+                                            Expédier
+                                        </button>
+                                    )}
+                                    {order.status === 'shipped' && (
+                                        <button
+                                            onClick={() => updateOrderStatus(order.id, 'delivered')}
+                                            disabled={updatingOrder === order.id}
+                                            className="flex-1 px-3 py-2 bg-green-700 text-white rounded-sm text-[9px] font-black uppercase tracking-widest disabled:opacity-50"
+                                        >
+                                            Livrée
+                                        </button>
+                                    )}
+                                    <Link 
+                                        href={`/admin/commandes/${order.id}`}
+                                        className="flex-1 px-3 py-2 bg-[#1A0A0A] text-white rounded-sm text-[9px] font-black uppercase tracking-widest text-center"
+                                    >
+                                        Détail
+                                    </Link>
+                                    <button 
+                                        onClick={() => window.print()}
+                                        className="p-2 bg-white border border-creme2 text-encre rounded-sm shadow-sm"
+                                    >
+                                        <Printer size={14} />
+                                    </button>
+                                </div>
+                            </div>
+                        ))
+                    )}
                 </div>
 
                 {/* Pagination */}
