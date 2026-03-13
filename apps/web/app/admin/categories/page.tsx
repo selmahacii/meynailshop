@@ -202,12 +202,16 @@ export default function AdminCategoriesPage() {
                         <div key={category.id} className="bg-white border border-creme2 rounded-sm overflow-hidden group hover:border-or transition-all duration-500 shadow-sm hover:shadow-xl relative">
                             <div className="aspect-[16/10] relative overflow-hidden bg-creme/20">
                                 {category.imageUrl ? (
-                                    <Image 
-                                        src={category.imageUrl} 
-                                        alt={category.name} 
-                                        fill 
-                                        className="object-cover group-hover:scale-110 transition-transform duration-700" 
-                                    />
+                                        <Image 
+                                            src={category.imageUrl} 
+                                            alt={category.name} 
+                                            fill 
+                                            className="object-cover group-hover:scale-110 transition-transform duration-700" 
+                                            onError={(e) => {
+                                                const target = e.target as HTMLImageElement;
+                                                target.src = `https://images.unsplash.com/photo-1600050218444-14309070557e?q=80&w=800&auto=format&fit=crop`;
+                                            }}
+                                        />
                                 ) : (
                                     <div className="w-full h-full flex flex-col items-center justify-center text-encre3">
                                         <ImageIcon size={40} strokeWidth={1} />

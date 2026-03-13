@@ -54,20 +54,24 @@ export default function HomePage() {
                             <Link 
                                 key={cat.id || cat.name} 
                                 href={`/catalogue?category=${cat.slug || cat.name.toLowerCase()}`}
-                                className="group cursor-pointer relative aspect-[4/5] overflow-hidden bg-encre2"
+                                className="group cursor-pointer relative aspect-[4/5] overflow-hidden bg-encre2 rounded-sm shadow-sm"
                             >
-                                {cat.image ? (
+                                {(cat.imageUrl || cat.image) ? (
                                     <img 
-                                        src={cat.image} 
+                                        src={cat.imageUrl || cat.image} 
                                         alt={cat.name} 
+                                        onError={(e) => {
+                                            const target = e.target as HTMLImageElement;
+                                            target.src = `https://images.unsplash.com/photo-1600050218444-14309070557e?q=80&w=800&auto=format&fit=crop`; // Belle image de salon de manucure
+                                        }}
                                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                                     />
                                 ) : (
                                     <div className="absolute inset-0 bg-gradient-to-br from-rouge-deep/20 to-rouge-mid/20" />
                                 )}
-                                <div className="absolute inset-0 bg-gradient-to-t from-encre via-transparent to-transparent z-10 opacity-70"></div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-encre/90 via-encre/20 to-transparent z-10"></div>
                                 <div className="absolute inset-0 flex items-end justify-center pb-8 z-20">
-                                    <span className="text-creme font-medium text-lg border-b border-transparent group-hover:border-or group-hover:text-or transition-all duration-300">
+                                    <span className="text-creme font-serif text-lg md:text-xl border-b border-transparent group-hover:border-or group-hover:text-or transition-all duration-300">
                                         {cat.name}
                                     </span>
                                 </div>

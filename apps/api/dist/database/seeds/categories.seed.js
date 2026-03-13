@@ -15,7 +15,7 @@ async function seedCategories(connection) {
         const category = categoryRepo.create({
             ...categories[i],
             displayOrder: i,
-            imageUrl: `https://via.placeholder.com/300x300?text=${categories[i].name}`,
+            imageUrl: `https://placehold.co/300x300?text=${encodeURIComponent(categories[i].name)}`,
             isActive: true,
         });
         await categoryRepo.save(category);
