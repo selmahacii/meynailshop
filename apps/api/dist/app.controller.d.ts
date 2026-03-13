@@ -10,4 +10,11 @@ export declare class AppController {
             timestamp: string;
         };
     };
+    getHello(): {
+        message: string;
+        version: string;
+        status: string;
+        storefront: string;
+        documentation: string;
+    };
 }

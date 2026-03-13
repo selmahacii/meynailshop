@@ -16,10 +16,18 @@ async function bootstrap() {
     const isProd = process.env.NODE_ENV === 'production';
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     app.enableCors({
-        origin: isProd ? [frontendUrl] : [frontendUrl, 'http://127.0.0.1:3000', 'http://localhost:3001'],
+        origin: isProd ? [frontendUrl] : [
+            frontendUrl,
+            'http://127.0.0.1:3000',
+            'http://localhost:3001',
+            'http://localhost:3005',
+            'http://127.0.0.1:3005'
+        ],
         credentials: true,
     });
-    app.setGlobalPrefix('api');
+    app.setGlobalPrefix('api', {
+        exclude: ['/'],
+    });
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,
         transform: true,

@@ -16,4 +16,15 @@ export class AppController {
       },
     };
   }
+
+  @Get()
+  getHello() {
+    return {
+      message: `Bienvenue sur l'API Meynailshop`,
+      version: '1.0.0',
+      status: 'online',
+      storefront: 'http://localhost:3000',
+      documentation: '/api/health'
+    };
+  }
 }
