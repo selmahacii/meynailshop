@@ -6,7 +6,7 @@ import { ArrowRight } from 'lucide-react';
 
 export default function HeroSection() {
     return (
-        <section className="relative h-screen flex items-center overflow-hidden bg-rouge-deep">
+        <section className="relative min-h-[90vh] md:h-screen flex items-center overflow-hidden bg-rouge-deep py-20">
             {/* Background Texture/Overlay */}
             <div className="absolute inset-0 z-0">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/asfalt-dark.png')] opacity-20"></div>
@@ -20,8 +20,8 @@ export default function HeroSection() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
                     >
-                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-creme mb-6 leading-[1.1]">
-                            L'excellence de l'onglerie <br />
+                        <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-serif text-creme mb-6 leading-[1.1]">
+                            L'excellence de l'onglerie <br className="hidden sm:block" />
                             à portée <span className="italic text-or">de main.</span>
                         </h1>
                     </motion.div>
@@ -30,7 +30,7 @@ export default function HeroSection() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-lg md:text-xl text-creme2/80 mb-10 max-w-xl font-light leading-relaxed"
+                        className="text-base md:text-xl text-creme2/80 mb-10 max-w-xl font-light leading-relaxed"
                     >
                         Découvrez notre collection de produits professionnels pour sublimer vos créations.
                     </motion.p>

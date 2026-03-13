@@ -81,7 +81,7 @@ export default function Navbar() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center space-x-4 md:space-x-6">
+                <div className="flex items-center space-x-2 sm:space-x-4 md:space-x-6">
                     <button className="text-creme hover:text-or transition-colors hidden md:block">
                         <Search size={20} strokeWidth={1.5} />
                     </button>

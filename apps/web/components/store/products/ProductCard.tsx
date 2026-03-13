@@ -43,18 +43,20 @@ export default function ProductCard({ product }: ProductCardProps) {
                 {/* Badge */}
                 {product.badge && (
                     <div className="absolute top-4 left-4 z-10">
-                        <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-sm shadow-sm ${product.badge === 'promo' ? 'bg-rouge text-creme' :
-                                product.badge === 'new' ? 'bg-or text-rouge-deep' :
-                                    'bg-encre text-creme'
-                            }`}>
-                            {product.badge}
+                        <span className={`text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-sm shadow-md ${
+                            product.badge === 'promo' ? 'bg-rouge-mid text-creme' :
+                            product.badge === 'new' ? 'bg-[#3D1414] text-creme' : // NOUVEAU style
+                            'bg-[#3D1414] text-creme' // BESTSELLER style
+                        }`}>
+                            {product.badge === 'new' ? 'Nouveau' : 
+                             product.badge === 'top' ? 'Bestseller' : product.badge}
                         </span>
                     </div>
                 )}
 
                 {/* Wishlist Button */}
-                <button className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/80 backdrop-blur-sm text-encre hover:text-rouge-mid transition-colors shadow-sm">
-                    <Heart size={16} strokeWidth={1.5} />
+                <button className="absolute top-4 right-4 z-10 p-2.5 rounded-full bg-white text-encre hover:text-rouge-mid transition-all shadow-md hover:scale-110">
+                    <Heart size={16} strokeWidth={2} />
                 </button>
 
                 {/* Image */}
@@ -86,28 +88,30 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </div>
             </Link>
 
-            <div className="p-5">
-                <div className="flex justify-between items-start mb-2">
-                    <Link href={`/categories/${product.category?.slug || '#'}`} className="text-[10px] font-bold text-or uppercase tracking-widest hover:underline">
+            <div className="p-6">
+                <div className="mb-2">
+                    <Link href={`/categories/${product.category?.slug || '#'}`} className="text-[9px] font-black text-or uppercase tracking-[0.2em] hover:text-rouge-deep transition-colors">
                         {product.category?.name || 'Onglerie'}
                     </Link>
-                    <div className="flex items-center text-encre3">
-                        <Star size={10} className="fill-or text-or mr-1" />
-                        <span className="text-[10px] font-bold">{product.averageRating?.toFixed(1) || '5.0'}</span>
-                    </div>
                 </div>
 
                 <Link href={`/catalogue/${product.slug}`} className="block mb-3">
-                    <h3 className="font-serif text-lg text-encre group-hover:text-rouge-mid transition-colors line-clamp-1">
+                    <h3 className="font-serif text-xl text-encre hover:text-rouge-mid transition-colors line-clamp-1 leading-tight">
                         {product.name}
                     </h3>
                 </Link>
 
-                <div className="flex items-center space-x-3">
-                    <span className="text-lg font-bold text-encre">{formatPrice(product.price)}</span>
-                    {product.comparePrice && (
-                        <span className="text-xs text-encre3 line-through">{formatPrice(product.comparePrice)}</span>
-                    )}
+                <div className="flex items-center justify-between mt-4">
+                    <div className="flex items-baseline space-x-3">
+                        <span className="text-xl font-bold text-encre">{formatPrice(product.price)}</span>
+                        {product.comparePrice && (
+                            <span className="text-sm text-encre3 line-through">{formatPrice(product.comparePrice)}</span>
+                        )}
+                    </div>
+                    <div className="flex items-center text-encre3">
+                        <Star size={12} className="fill-or text-or mr-1.5" />
+                        <span className="text-[11px] font-bold">{product.averageRating?.toFixed(1) || '5.0'}</span>
+                    </div>
                 </div>
             </div>
         </motion.div>

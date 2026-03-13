@@ -43,80 +43,83 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
     }, []);
 
     return (
-        <div className="space-y-10">
+        <div className="space-y-12">
             {/* Categories */}
-            <div>
-                <h4 className="font-serif text-lg text-encre mb-6 flex items-center justify-between">
+            <div className="bg-white p-6 md:p-8 rounded-sm border border-creme2 shadow-sm">
+                <h4 className="font-serif text-lg text-encre mb-8 flex items-center justify-between border-b border-creme2 pb-4">
                     Catégories
-                    <ChevronDown size={16} className="text-encre3" />
+                    <ChevronDown size={14} className="text-encre3" />
                 </h4>
                 {loading ? (
-                    <div className="flex justify-center py-4">
-                        <Loader2 size={20} className="animate-spin text-or" />
+                    <div className="flex justify-center py-6">
+                        <Loader2 size={24} className="animate-spin text-or" />
                     </div>
                 ) : (
-                    <ul className="space-y-3">
-                        {categories.map((cat) => (
-                            <li key={cat.slug}>
-                                <button
-                                    onClick={() => setActiveCategory(cat.slug)}
-                                    className={cn(
-                                        "text-sm transition-colors flex items-center w-full",
-                                        activeCategory === cat.slug ? "text-rouge-mid font-semibold" : "text-encre3 hover:text-encre"
-                                    )}
-                                >
-                                <span className={cn(
-                                    "w-1.5 h-1.5 rounded-full mr-3 transition-all",
-                                    activeCategory === cat.slug ? "bg-rouge-mid scale-100" : "bg-transparent scale-0"
-                                )} />
-                                {cat.name}
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </div>
-
-            <div className="h-[1px] bg-creme2 w-full"></div>
+                    <div className="space-y-4">
+                        <button
+                            onClick={() => setActiveCategory(null)}
+                            className={cn(
+                                "text-[11px] font-black uppercase tracking-[0.2em] w-full text-left px-5 py-3 transition-all rounded-sm",
+                                activeCategory === null ? "bg-creme text-rouge-mid shadow-sm" : "text-encre3 hover:bg-creme/30"
+                            )}
+                        >
+                            • Tous les produits
+                        </button>
+                        <ul className="space-y-1 pl-4">
+                            {categories.map((cat) => (
+                                <li key={cat.slug}>
+                                    <button
+                                        onClick={() => setActiveCategory(cat.slug)}
+                                        className={cn(
+                                            "text-xs md:text-[13px] transition-all py-2.5 px-4 w-full text-left rounded-sm font-medium",
+                                            activeCategory === cat.slug ? "text-rouge-mid font-bold" : "text-encre3 hover:text-encre hover:bg-creme/20"
+                                        )}
+                                    >
+                                        {cat.name}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+            </div>
 
             {/* Price */}
-            <div>
-                <h4 className="font-serif text-lg text-encre mb-6 flex items-center justify-between">
+            <div className="bg-white p-6 md:p-8 rounded-sm border border-creme2 shadow-sm">
+                <h4 className="font-serif text-lg text-encre mb-8 flex items-center justify-between border-b border-creme2 pb-4">
                     Tranche de Prix
-                    <ChevronDown size={16} className="text-encre3" />
+                    <ChevronDown size={14} className="text-encre3" />
                 </h4>
-                <div className="space-y-4">
+                <div className="space-y-6">
                     {priceRanges.map((range) => (
                         <label key={range.value} className="flex items-center group cursor-pointer">
                             <div className="relative flex items-center justify-center">
-                                <input type="checkbox" className="peer appearance-none w-5 h-5 border border-creme2 rounded-sm checked:bg-or checked:border-or transition-all" />
-                                <Check size={12} className="absolute text-rouge-deep opacity-0 peer-checked:opacity-100 transition-opacity" />
+                                <input type="checkbox" className="peer appearance-none w-6 h-6 border border-creme2 rounded-sm checked:bg-[#3D1414] checked:border-[#3D1414] transition-all bg-white" />
+                                <Check size={14} className="absolute text-creme opacity-0 peer-checked:opacity-100 transition-opacity" />
                             </div>
-                            <span className="ml-3 text-sm text-encre3 group-hover:text-encre transition-colors">{range.label}</span>
+                            <span className="ml-4 text-xs md:text-sm text-encre3 group-hover:text-encre transition-colors font-medium">{range.label}</span>
                         </label>
                     ))}
                 </div>
             </div>
 
-            <div className="h-[1px] bg-creme2 w-full"></div>
-
             {/* Availability */}
-            <div>
-                <h4 className="font-serif text-lg text-encre mb-6 flex items-center justify-between">
+            <div className="bg-white p-6 md:p-8 rounded-sm border border-creme2 shadow-sm">
+                <h4 className="font-serif text-lg text-encre mb-8 flex items-center justify-between border-b border-creme2 pb-4">
                     Disponibilité
                 </h4>
-                <label className="flex items-center group cursor-pointer">
+                <label className="flex items-center justify-between group cursor-pointer">
+                    <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-encre3 group-hover:text-encre transition-colors">En Stock Uniquement</span>
                     <div className="relative">
                         <input type="checkbox" className="peer sr-only" />
-                        <div className="w-10 h-5 bg-creme2 rounded-full transition-colors peer-checked:bg-or"></div>
-                        <div className="absolute top-1 left-1 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+                        <div className="w-12 h-6 bg-creme2 rounded-full transition-colors peer-checked:bg-[#3D1414]"></div>
+                        <div className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-6 shadow-sm"></div>
                     </div>
-                    <span className="ml-3 text-sm text-encre3 uppercase tracking-widest text-[10px] font-bold">En Stock Uniquement</span>
                 </label>
             </div>
 
-            <button className="w-full bg-encre text-creme py-4 text-xs font-bold uppercase tracking-[0.2em] rounded-sm hover:bg-rouge-deep transition-colors shadow-sm">
-                Réinitialiser les filtres
+            <button className="w-full bg-[#3D1414] text-creme py-5 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm hover:bg-black transition-all shadow-xl border border-or/20 active:scale-95 leading-none">
+                Réinitialiser
             </button>
         </div>
     );

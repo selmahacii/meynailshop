@@ -38,10 +38,10 @@ export default function HomePage() {
             <HeroSection />
 
             {/* Nos Catégories */}
-            <section className="py-24 container mx-auto px-4">
-                <div className="flex flex-col items-center mb-16">
-                    <h2 className="font-serif text-4xl text-encre mb-4">Nos Catégories</h2>
-                    <div className="w-20 h-1 bg-or"></div>
+            <section className="py-12 md:py-24 container mx-auto px-4">
+                <div className="flex flex-col items-center mb-10 md:mb-16">
+                    <h2 className="font-serif text-3xl md:text-4xl text-encre mb-4">Nos Catégories</h2>
+                    <div className="w-16 md:w-20 h-1 bg-or"></div>
                 </div>
 
                 {loading && categories.length === 0 ? (
@@ -49,7 +49,7 @@ export default function HomePage() {
                         <Loader2 className="animate-spin text-or" size={32} />
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                    <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
                         {categories.map((cat) => (
                             <Link 
                                 key={cat.id || cat.name} 
@@ -78,14 +78,14 @@ export default function HomePage() {
             </section>
 
             {/* Meilleures Ventes */}
-            <section className="py-24 bg-creme2">
+            <section className="py-12 md:py-24 bg-creme2">
                 <div className="container mx-auto px-4">
-                    <div className="flex justify-between items-end mb-12">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 md:mb-12 gap-4">
                         <div>
-                            <h2 className="font-serif text-4xl text-encre mb-2">Meilleures Ventes</h2>
-                            <p className="text-encre3 text-sm">Les indispensables plébiscités par nos clientes</p>
+                            <h2 className="font-serif text-3xl md:text-4xl text-encre mb-2">Meilleures Ventes</h2>
+                            <p className="text-encre3 text-xs">Les indispensables plébiscités par nos clientes</p>
                         </div>
-                        <Link href="/catalogue" className="text-rouge-mid font-medium hover:text-rouge hover:underline">
+                        <Link href="/catalogue" className="text-rouge-mid font-medium hover:text-rouge hover:underline text-sm md:text-base">
                             Tout voir →
                         </Link>
                     </div>
