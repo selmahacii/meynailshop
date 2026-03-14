@@ -7,30 +7,36 @@ import { ArrowRight } from 'lucide-react';
 export default function HeroSection() {
     return (
         <section className="relative min-h-[90vh] md:h-screen flex items-center overflow-hidden bg-rouge-deep py-20">
-            {/* Background Texture/Overlay */}
-            <div className="absolute inset-0 z-0">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/asfalt-dark.png')] opacity-20"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-rouge-deep via-rouge-deep/80 to-transparent"></div>
+            {/* Background Video */}
+            <div className="absolute inset-0 z-0 overflow-hidden">
+                <motion.div
+                    initial={{ scale: 1.1, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 1.5 }}
+                    className="w-full h-full"
+                >
+                    <video
+                        src="/video.mp4"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-full h-full object-cover"
+                    />
+                </motion.div>
+                {/* Overlays for depth and readability */}
+                <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-rouge-deep via-rouge-deep/40 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-rouge-deep via-transparent to-transparent"></div>
             </div>
 
             <div className="container mx-auto px-4 z-10">
                 <div className="max-w-3xl">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                    >
-                        <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-serif text-creme mb-6 leading-[1.1]">
-                            L'excellence de l'onglerie <br className="hidden sm:block" />
-                            à portée <span className="italic text-or">de main.</span>
-                        </h1>
-                    </motion.div>
-
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-base md:text-xl text-creme2/80 mb-10 max-w-xl font-light leading-relaxed"
+                        className="text-lg md:text-2xl text-creme mb-10 max-w-xl font-medium leading-relaxed drop-shadow-lg"
                     >
                         Découvrez notre collection de produits professionnels pour sublimer vos créations.
                     </motion.p>
@@ -43,7 +49,7 @@ export default function HeroSection() {
                     >
                         <Link
                             href="/catalogue"
-                            className="bg-or hover:bg-or-light text-rouge-deep px-8 py-4 rounded-sm font-medium transition-all duration-300 flex items-center justify-center group"
+                            className="bg-or hover:bg-or-light text-rouge-deep px-10 py-5 rounded-sm font-bold uppercase tracking-widest text-xs transition-all duration-300 flex items-center justify-center group shadow-2xl"
                         >
                             Découvrir la collection
                             <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
@@ -51,7 +57,7 @@ export default function HeroSection() {
 
                         <Link
                             href="/catalogue?badge=top"
-                            className="border border-creme/30 hover:border-or hover:text-or text-creme px-8 py-4 rounded-sm font-medium transition-all duration-300 flex items-center justify-center"
+                            className="border-2 border-creme/50 hover:border-or hover:text-or text-creme px-10 py-5 rounded-sm font-bold uppercase tracking-widest text-xs transition-all duration-300 flex items-center justify-center backdrop-blur-md"
                         >
                             Meilleures ventes
                         </Link>

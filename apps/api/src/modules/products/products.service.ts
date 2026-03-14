@@ -98,28 +98,43 @@ export class ProductsService {
   }
 
   async findFeatured(limit: number = 6) {
-    // Essayer d'abord les produits tagués 'isFeatured' ou ayant le badge 'top' (Bestseller)
-    let products = await this.productRepository.find({
-      where: [
-        { isFeatured: true, isActive: true },
-        { badge: 'top' as any, isActive: true }
-      ],
-      relations: ['category'],
-      take: limit,
-      order: { createdAt: 'DESC' },
-    });
-
-    // Si aucun produit n'est trouvé, retourner les derniers produits ajoutés
-    if (products.length === 0) {
-      products = await this.productRepository.find({
-        where: { isActive: true },
+    try {
+      // Essayer d'abord les produits tagués 'isFeatured' ou ayant le badge 'top' (Bestseller)
+      let products = await this.productRepository.find({
+        where: [
+          { isFeatured: true, isActive: true },
+          { badge: 'top' as any, isActive: true }
+        ],
         relations: ['category'],
         take: limit,
         order: { createdAt: 'DESC' },
       });
-    }
 
-    return products;
+      // Si aucun produit n'est trouvé, retourner les derniers produits ajoutés
+      if (products.length === 0) {
+        products = await this.productRepository.find({
+          where: { isActive: true },
+          relations: ['category'],
+          take: limit,
+          order: { createdAt: 'DESC' },
+        });
+      }
+
+      return products;
+    } catch (error) {
+      console.error('❌ [ProductsService] findFeatured Error:', error);
+      // Fallback simple sans relations si ça plante (cas de DB corrompue ou relations manquantes)
+      try {
+        return await this.productRepository.find({
+          where: { isActive: true },
+          take: limit,
+          order: { createdAt: 'DESC' },
+        });
+      } catch (innerError) {
+        console.error('❌ [ProductsService] Critical Fallback Error:', innerError);
+        return [];
+      }
+    }
   }
 
   async findOne(id: string) {
