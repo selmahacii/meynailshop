@@ -85,7 +85,11 @@ export default function ProductPage() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-24">
                     {/* Left: Gallery */}
-                    {product && <ProductGallery images={product.images || []} />}
+                    {loadingProduct ? (
+                        <div className="aspect-square bg-creme2 animate-pulse rounded-sm" />
+                    ) : product ? (
+                        <ProductGallery images={product.images || []} productName={product.name} />
+                    ) : null}
 
                     {/* Right: Info */}
                     <div className="flex flex-col">
@@ -107,7 +111,7 @@ export default function ProductPage() {
                         </div>
 
                         {loadingProduct ? (
-                            <h1 className="font-serif text-4xl md:text-5xl text-encre mb-4">Chargement...</h1>
+                            <div className="h-12 w-3/4 bg-creme2 animate-pulse rounded mb-4" />
                         ) : product ? (
                             <h1 className="font-serif text-4xl md:text-5xl text-encre mb-4">{product.name}</h1>
                         ) : (
@@ -134,9 +138,23 @@ export default function ProductPage() {
                             {product ? product.description : 'Description indisponible.'}
                         </p>
 
+                        {/* Photo count indicator */}
+                        {product && product.images && product.images.length > 1 && (
+                            <div className="flex items-center gap-2 mb-6">
+                                <div className="flex gap-1">
+                                    {product.images.slice(0, 5).map((_: string, i: number) => (
+                                        <div key={i} className="w-1.5 h-1.5 rounded-full bg-or/60" />
+                                    ))}
+                                </div>
+                                <span className="text-[10px] uppercase font-bold text-encre3 tracking-widest">
+                                    {product.images.length} photos disponibles
+                                </span>
+                            </div>
+                        )}
+
                         {/* Inventory Status */}
                         <div className="flex items-center space-x-2 mb-8">
-                            <div className={`w-2 h-2 rounded-full ${product && product.stock > 0 ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                            <div className={`w-2 h-2 rounded-full ${product && product.stock > 0 ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
                             <span className="text-xs font-bold uppercase tracking-widest text-encre">
                                 {product ? (product.stock > 0 ? `En Stock (${product.stock} unités)` : 'Rupture de stock') : ''}
                             </span>

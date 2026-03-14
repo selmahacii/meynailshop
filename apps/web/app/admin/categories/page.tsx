@@ -15,7 +15,8 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { ProductsAPI } from '@/lib/api/client';
+import { ProductsAPI, UploadAPI } from '@/lib/api/client';
+import { toast } from 'sonner';
 
 interface Category {
     id: string;
@@ -142,23 +143,20 @@ export default function AdminCategoriesPage() {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        const formData = new FormData();
-        formData.append('image', file);
-
         try {
             setSubmitting(true);
-            const res = await fetch('/api/upload/product-image', {
-                method: 'POST',
-                body: formData
-            });
-            const data = await res.json();
-            if (data.url) {
-                setFormData(prev => ({ ...prev, imageUrl: data.url }));
+            const result = await UploadAPI.uploadProductImage(file);
+            if (result.success && result.data?.url) {
+                setFormData(prev => ({ ...prev, imageUrl: result.data.url }));
+                toast.success('Image uploadée avec succès');
+            } else {
+                toast.error(result.error || 'Erreur lors de l\'upload');
             }
         } catch (err) {
-            alert('Erreur lors de l\'upload');
+            toast.error('Erreur lors de l\'upload de l\'image');
         } finally {
             setSubmitting(false);
+            e.target.value = '';
         }
     };
 
@@ -267,83 +265,142 @@ export default function AdminCategoriesPage() {
             {isModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !submitting && setIsModalOpen(false)} />
-                    <div className="bg-white rounded-sm w-full max-w-xl relative z-10 shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden border border-or/20">
-                        <div className="p-6 border-b border-creme2 bg-creme/10 flex justify-between items-center">
-                            <h2 className="text-2xl font-serif text-encre">
+                    <div className="bg-white rounded-sm w-full max-w-xl relative z-10 shadow-2xl animate-in zoom-in-95 duration-200 border border-or/20 max-h-[90vh] flex flex-col">
+                        {/* Modal Header */}
+                        <div className="p-4 md:p-6 border-b border-creme2 bg-creme/10 flex justify-between items-center shrink-0">
+                            <h2 className="text-xl md:text-2xl font-serif text-encre">
                                 {editingCategory ? 'Éditer la catégorie' : 'Nouvelle catégorie'}
                             </h2>
-                            <button onClick={() => setIsModalOpen(false)} className="text-encre3 hover:text-encre">×</button>
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="w-8 h-8 flex items-center justify-center text-encre3 hover:text-rouge hover:bg-rouge/5 rounded-full transition-all text-xl font-bold"
+                                disabled={submitting}
+                            >
+                                ×
+                            </button>
                         </div>
-                        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-                            <div className="space-y-2">
-                                <label className="text-[10px] uppercase font-black tracking-widest text-encre3">Nom de la catégorie</label>
-                                <input 
-                                    type="text" 
-                                    value={formData.name}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                                    className="w-full p-3 bg-creme/20 border border-creme2 rounded-sm focus:outline-none focus:border-or transition-all"
-                                    placeholder="Ex: Vernis Gel Premium"
-                                    required
-                                />
-                            </div>
 
-                            <div className="space-y-2">
-                                <label className="text-[10px] uppercase font-black tracking-widest text-encre3">Description</label>
-                                <textarea 
-                                    value={formData.description}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                                    className="w-full p-3 bg-creme/20 border border-creme2 rounded-sm focus:outline-none focus:border-or transition-all h-24"
-                                    placeholder="Description pour le SEO et l'affichage..."
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
+                        {/* Modal Body — scrollable */}
+                        <form onSubmit={handleSubmit} className="overflow-y-auto flex-1">
+                            <div className="p-4 md:p-6 space-y-5">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] uppercase font-black tracking-widest text-encre3">Ordre d'affichage</label>
-                                    <input 
-                                        type="number" 
-                                        value={formData.displayOrder}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, displayOrder: parseInt(e.target.value) }))}
-                                        className="w-full p-3 bg-creme/20 border border-creme2 rounded-sm focus:outline-none focus:border-or transition-all"
+                                    <label className="text-[10px] uppercase font-black tracking-widest text-encre3">Nom de la catégorie *</label>
+                                    <input
+                                        type="text"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                                        className="w-full p-3 bg-creme/20 border border-creme2 rounded-sm focus:outline-none focus:border-or transition-all text-sm"
+                                        placeholder="Ex: Vernis Gel Premium"
+                                        required
                                     />
                                 </div>
+
                                 <div className="space-y-2">
+                                    <label className="text-[10px] uppercase font-black tracking-widest text-encre3">Description</label>
+                                    <textarea
+                                        value={formData.description}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                                        className="w-full p-3 bg-creme/20 border border-creme2 rounded-sm focus:outline-none focus:border-or transition-all h-20 text-sm resize-none"
+                                        placeholder="Description pour le SEO et l'affichage..."
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-[10px] uppercase font-black tracking-widest text-encre3">Ordre d'affichage</label>
+                                    <input
+                                        type="number"
+                                        value={formData.displayOrder}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, displayOrder: parseInt(e.target.value) }))}
+                                        className="w-full p-3 bg-creme/20 border border-creme2 rounded-sm focus:outline-none focus:border-or transition-all text-sm"
+                                        min={0}
+                                    />
+                                </div>
+
+                                {/* Image upload section */}
+                                <div className="space-y-3">
                                     <label className="text-[10px] uppercase font-black tracking-widest text-encre3">Image de couverture</label>
-                                    <div className="flex space-x-2">
-                                        <input 
-                                            type="text" 
+
+                                    {/* Upload button */}
+                                    <label className={cn(
+                                        "flex items-center justify-center gap-3 p-4 border-2 border-dashed rounded-sm cursor-pointer transition-all group",
+                                        submitting
+                                            ? "border-or/40 bg-or/5 cursor-wait"
+                                            : "border-creme2 hover:border-or hover:bg-or/5"
+                                    )}>
+                                        {submitting ? (
+                                            <>
+                                                <Loader size={18} className="text-or animate-spin" />
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-or">Upload en cours...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <ImageIcon size={18} className="text-encre3 group-hover:text-or transition-colors" />
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-encre3 group-hover:text-or transition-colors">
+                                                    {formData.imageUrl ? 'Changer l\'image' : 'Choisir une image'}
+                                                </span>
+                                            </>
+                                        )}
+                                        <input
+                                            type="file"
+                                            className="hidden"
+                                            onChange={handleImageUpload}
+                                            accept="image/*"
+                                            disabled={submitting}
+                                        />
+                                    </label>
+
+                                    {/* Or type URL */}
+                                    <div className="relative">
+                                        <span className="absolute -top-2.5 left-3 bg-white px-1 text-[9px] text-encre3 font-bold uppercase tracking-widest">ou URL</span>
+                                        <input
+                                            type="text"
                                             value={formData.imageUrl}
                                             onChange={(e) => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
-                                            className="flex-grow p-3 bg-creme/20 border border-creme2 rounded-sm focus:outline-none focus:border-or transition-all text-xs"
-                                            placeholder="URL ou upload..."
+                                            className="w-full p-3 bg-creme/20 border border-creme2 rounded-sm focus:outline-none focus:border-or transition-all text-xs"
+                                            placeholder="https://..."
                                         />
-                                        <label className="cursor-pointer p-3 bg-white border border-creme2 hover:border-or transition-all rounded-sm">
-                                            <ImageIcon size={18} className="text-encre3" />
-                                            <input type="file" className="hidden" onChange={handleImageUpload} accept="image/*" />
-                                        </label>
                                     </div>
+
+                                    {/* Preview */}
+                                    {formData.imageUrl && (
+                                        <div className="relative aspect-video rounded-sm overflow-hidden border border-creme2 shadow-sm">
+                                            <Image
+                                                src={formData.imageUrl}
+                                                alt="Aperçu"
+                                                fill
+                                                className="object-cover"
+                                                onError={(e) => {
+                                                    (e.target as HTMLImageElement).style.display = 'none';
+                                                }}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setFormData(prev => ({ ...prev, imageUrl: '' }))}
+                                                className="absolute top-2 right-2 w-6 h-6 bg-rouge text-white rounded-full flex items-center justify-center text-xs font-bold hover:bg-rouge-deep transition-colors"
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
-                            {formData.imageUrl && (
-                                <div className="relative aspect-video rounded-sm overflow-hidden border border-creme2">
-                                    <Image src={formData.imageUrl} alt="Preview" fill className="object-cover" />
-                                </div>
-                            )}
-
-                            <div className="pt-4 flex space-x-3">
+                            {/* Modal Footer */}
+                            <div className="p-4 md:p-6 border-t border-creme2 bg-creme/5 flex gap-3 shrink-0">
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="flex-1 py-4 text-[10px] font-black uppercase tracking-widest border border-creme2 hover:bg-creme/20 transition-all rounded-sm"
+                                    disabled={submitting}
+                                    className="flex-1 py-3 text-[10px] font-black uppercase tracking-widest border border-creme2 hover:bg-creme/20 transition-all rounded-sm disabled:opacity-50"
                                 >
                                     Annuler
                                 </button>
                                 <button
                                     type="submit"
-                                    disabled={submitting}
-                                    className="flex-[2] py-4 bg-[#1A0A0A] text-creme text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-xl disabled:opacity-50 border border-or/20"
+                                    disabled={submitting || !formData.name}
+                                    className="flex-[2] py-3 bg-[#1A0A0A] text-creme text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-xl disabled:opacity-50 border border-or/20 flex items-center justify-center gap-2"
                                 >
+                                    {submitting && <Loader size={14} className="animate-spin" />}
                                     {submitting ? 'Traitement...' : (editingCategory ? 'Mettre à jour' : 'Créer la catégorie')}
                                 </button>
                             </div>
