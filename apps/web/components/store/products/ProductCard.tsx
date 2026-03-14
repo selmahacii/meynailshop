@@ -7,6 +7,7 @@ import { Heart, ShoppingBag, Star } from 'lucide-react';
 import { Product } from '@/types/product';
 import { formatPrice } from '@/lib/utils/currency';
 import { useCartStore } from '@/lib/store/cartStore';
+import { useWishlistStore } from '@/lib/store/wishlistStore';
 import { toast } from 'sonner';
 
 interface ProductCardProps {
@@ -15,6 +16,8 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
     const addItem = useCartStore((state) => state.addItem);
+    const { toggleItem, isInWishlist } = useWishlistStore();
+    const inWishlist = isInWishlist(product.id);
 
     const handleAddToCart = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -27,6 +30,25 @@ export default function ProductCard({ product }: ProductCardProps) {
             stock: product.stock
         });
         toast.success(`${product.name} ajouté au panier`);
+    };
+
+    const handleWishlist = (e: React.MouseEvent) => {
+        e.preventDefault();
+        toggleItem({
+            productId: product.id,
+            name: product.name,
+            price: product.price,
+            comparePrice: product.comparePrice,
+            image: product.images?.[0] || '',
+            slug: product.slug,
+            stock: product.stock,
+            category: product.category?.name,
+        });
+        if (inWishlist) {
+            toast.success('Retiré des favoris');
+        } else {
+            toast.success('Ajouté aux favoris ❤️');
+        }
     };
 
     const mainImage = product.images?.[0] || '/images/placeholder-product.png';
@@ -55,8 +77,13 @@ export default function ProductCard({ product }: ProductCardProps) {
                 )}
 
                 {/* Wishlist Button */}
-                <button className="absolute top-4 right-4 z-10 p-2.5 rounded-full bg-white text-encre hover:text-rouge-mid transition-all shadow-md hover:scale-110">
-                    <Heart size={16} strokeWidth={2} />
+                <button
+                    onClick={handleWishlist}
+                    className={`absolute top-4 right-4 z-10 p-2.5 rounded-full bg-white text-encre hover:scale-110 transition-all shadow-md ${
+                        inWishlist ? 'text-rouge-deep' : 'hover:text-rouge-mid'
+                    }`}
+                >
+                    <Heart size={16} strokeWidth={2} className={inWishlist ? 'fill-rouge-deep' : ''} />
                 </button>
 
                 {/* Image */}
