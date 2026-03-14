@@ -4,9 +4,10 @@
  * Uses real backend API endpoints only
  */
 
-// En utilisant des URLs relatives, on laisse le proxy de Next.js (configuré dans next.config.js)
-// gérer la redirection vers le backend. Cela règle les problèmes de CORS et de connexion sur Windows.
-const BASE_URL = ''; 
+// Logic for BASE_URL: Use relative path on client (for Next.js proxy)
+// and absolute path on server (SSR needs full URL).
+const isServer = typeof window === 'undefined';
+const BASE_URL = isServer ? (process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, '') || 'http://127.0.0.1:3001') : '';
 const API_VERSION = 'v1';
 
 export const API_ENDPOINTS = {
@@ -52,7 +53,7 @@ export async function apiFetch<T = any>(
   endpoint: string,
   options: RequestOptions = {},
 ): Promise<{ data: T; success: boolean; error?: string }> {
-  const { timeout = 10000, ...fetchOptions } = options;
+  const { timeout = 60000, ...fetchOptions } = options;
 
   const url = `${BASE_URL}${endpoint}`;
 

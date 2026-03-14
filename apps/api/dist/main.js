@@ -40,7 +40,7 @@ async function bootstrap() {
     app.useGlobalInterceptors(new logging_interceptor_1.LoggingInterceptor());
     app.useGlobalFilters(new http_exception_filter_1.HttpExceptionFilter());
     const port = process.env.API_PORT || 3001;
-    await app.listen(port, '127.0.0.1');
+    await app.listen(port, '0.0.0.0');
     console.log(`✅ API running on http://localhost:${port}`);
     console.log(`📚 Health check: http://localhost:${port}/api/health`);
 }

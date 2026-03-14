@@ -16,16 +16,22 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.userRepository.findOne({ where: { email } });
+    const normalizedEmail = email.toLowerCase().trim();
+    console.log(`[AUTH] Login attempt for: ${normalizedEmail}`);
+
+    const user = await this.userRepository.findOne({ where: { email: normalizedEmail } });
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      console.warn(`[AUTH] User not found: ${normalizedEmail}`);
+      throw new UnauthorizedException('Identifiants invalides');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      console.warn(`[AUTH] Invalid password for: ${normalizedEmail}`);
+      throw new UnauthorizedException('Identifiants invalides');
     }
 
+    console.log(`[AUTH] Login successful for: ${normalizedEmail}`);
     return {
       id: user.id,
       email: user.email,

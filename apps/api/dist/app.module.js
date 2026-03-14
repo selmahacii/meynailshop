@@ -43,7 +43,7 @@ exports.AppModule = AppModule = __decorate([
             }),
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
-                envFilePath: '.env',
+                envFilePath: (0, path_1.join)(process.cwd(), '../../.env'),
             }),
             cache_manager_1.CacheModule.register({ isGlobal: true }),
             database_module_1.DatabaseModule,

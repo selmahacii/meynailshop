@@ -36,7 +36,7 @@ import { join } from 'path';
     }),
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: join(process.cwd(), '../../.env'),
     }),
     CacheModule.register({ isGlobal: true }),
     DatabaseModule,

@@ -22,10 +22,10 @@ exports.DatabaseModule = DatabaseModule = __decorate([
                 inject: [config_1.ConfigService],
                 useFactory: (configService) => ({
                     type: 'postgres',
-                    host: configService.get('DB_HOST', 'localhost'),
-                    port: configService.get('DB_PORT', 5432),
+                    host: configService.get('DB_HOST', '127.0.0.1'),
+                    port: configService.get('DB_PORT', 5433),
                     username: configService.get('DB_USER', 'meey'),
-                    password: configService.get('DB_PASSWORD', 'meey_password_2026'),
+                    password: configService.get('DB_PASSWORD', 'meey'),
                     database: configService.get('DB_NAME', 'meey_nail_shop'),
                     entities: [
                         entities_1.User,
