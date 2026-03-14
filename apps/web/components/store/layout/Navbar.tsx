@@ -8,6 +8,7 @@ import { ShoppingBag, User, Search, Menu, X, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '@/lib/store/cartStore';
 import { useAuthStore } from '@/lib/store/authStore';
+import { useWishlistStore } from '@/lib/store/wishlistStore';
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -15,6 +16,7 @@ export default function Navbar() {
     const pathname = usePathname();
     const [mounted, setMounted] = useState(false);
     const cartItemsCount = useCartStore((state) => state.items.length);
+    const wishlistItemsCount = useWishlistStore((state) => state.items.length);
     const { user, isAuthenticated } = useAuthStore();
 
     useEffect(() => {
@@ -85,8 +87,13 @@ export default function Navbar() {
                         <Search size={20} strokeWidth={1.5} />
                     </button>
 
-                    <Link href="/compte/favoris" className="text-creme hover:text-or transition-colors hidden md:block">
+                    <Link href="/favoris" className="relative text-creme hover:text-or transition-colors hidden md:block">
                         <Heart size={20} strokeWidth={1.5} />
+                        {wishlistItemsCount > 0 && (
+                            <span className="absolute -top-2 -right-2 bg-or text-rouge-deep text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                                {wishlistItemsCount}
+                            </span>
+                        )}
                     </Link>
 
                     <Link
@@ -154,6 +161,18 @@ export default function Navbar() {
                                         {link.name}
                                     </Link>
                                 ))}
+                                <Link
+                                    href="/favoris"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="text-lg font-medium text-creme hover:text-or transition-colors border-b border-white/10 pb-2 flex items-center justify-between"
+                                >
+                                    Favoris
+                                    {wishlistItemsCount > 0 && (
+                                        <span className="bg-or text-rouge-deep text-xs font-bold px-2 py-0.5 rounded-full">
+                                            {wishlistItemsCount}
+                                        </span>
+                                    )}
+                                </Link>
                             </div>
                         </motion.div>
                     </>

@@ -22,6 +22,8 @@ import { useCartStore } from '@/lib/store/cartStore';
 import { toast } from 'sonner';
 import { StoreAPI } from '@/lib/api/client';
 import { useEffect } from 'react';
+import { useWishlistStore } from '@/lib/store/wishlistStore';
+import { cn } from '@/lib/utils';
 
  
 
@@ -29,6 +31,7 @@ export default function ProductPage() {
     const { slug } = useParams();
     const [quantity, setQuantity] = useState(1);
     const addItem = useCartStore((state) => state.addItem);
+    const { toggleItem, isInWishlist } = useWishlistStore();
 
     const [product, setProduct] = useState<any | null>(null);
     const [loadingProduct, setLoadingProduct] = useState(true);
@@ -67,6 +70,25 @@ export default function ProductPage() {
             stock: product.stock
         });
         toast.success(`${quantity} ${product.name} ajoutés au panier`);
+    };
+
+    const handleWishlist = () => {
+        if (!product) return;
+        toggleItem({
+            productId: product.id,
+            name: product.name,
+            price: product.price,
+            comparePrice: product.comparePrice,
+            image: product.images?.[0] || '',
+            slug: product.slug,
+            stock: product.stock,
+            category: product.category?.name,
+        });
+        if (isInWishlist(product.id)) {
+            toast.success('Retiré des favoris');
+        } else {
+            toast.success('Ajouté aux favoris ❤️');
+        }
     };
 
     return (
@@ -187,8 +209,16 @@ export default function ProductPage() {
                                 Ajouter au panier
                             </button>
 
-                            <button className="w-14 h-14 border border-creme2 flex items-center justify-center text-encre hover:text-rouge-mid hover:border-rouge-mid transition-all rounded-sm">
-                                <Heart size={20} />
+                            <button
+                                onClick={handleWishlist}
+                                className={cn(
+                                    "w-14 h-14 border flex items-center justify-center transition-all rounded-sm",
+                                    product && isInWishlist(product.id)
+                                        ? "border-rouge-deep text-rouge-deep bg-rouge-deep/5"
+                                        : "border-creme2 text-encre hover:text-rouge-mid hover:border-rouge-mid"
+                                )}
+                            >
+                                <Heart size={20} className={product && isInWishlist(product.id) ? 'fill-rouge-deep' : ''} />
                             </button>
                         </div>
 
