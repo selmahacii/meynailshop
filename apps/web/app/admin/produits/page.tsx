@@ -149,9 +149,6 @@ export default function AdminProductsPage() {
                         <button className="p-2 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
                             <Bell size={18} />
                         </button>
-                        <button className="p-2 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
-                            <Download size={18} />
-                        </button>
                     </div>
                     <Link 
                         href="/admin/produits/nouveau"
@@ -207,9 +204,7 @@ export default function AdminProductsPage() {
                 </div>
 
                 <div className="flex items-center space-x-2">
-                    <button className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-4 py-2 bg-creme border border-creme2 text-encre text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-sm hover:border-or transition-all">
-                        <span>Exporter</span>
-                    </button>
+
                     <button className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-4 py-2 bg-[#1A0A0A] text-creme text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-lg group">
                         <Plus size={14} className="text-or" />
                         <span>Créer</span>

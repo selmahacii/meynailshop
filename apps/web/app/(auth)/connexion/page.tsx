@@ -45,16 +45,16 @@ function LoginForm() {
 
             const result = await response.json();
             console.log('[DEBUG] Login Response:', result);
-            
+
             // Handle different nesting levels (proxy + backend)
             let authData = result.data || result;
             // If it's still wrapped (backend standard), unwrap again
             if (authData && authData.data && !authData.id) {
                 authData = authData.data;
             }
-            
+
             console.log('[DEBUG] Simplified authData:', authData);
-            
+
             const accessToken = authData.accessToken;
             const userData = authData; // The object itself contains the user fields now
 
@@ -68,7 +68,7 @@ function LoginForm() {
                 console.log('[DEBUG] Valid User identified:', userData);
                 setUser(userData as any);
                 toast.success(`Bienvenue, ${userData.firstName || 'Utilisateur'} !`);
-                
+
                 console.log('[DEBUG] User Role:', userData.role);
                 // Explicit redirect based on role
                 if (userData.role === 'admin') {
@@ -95,7 +95,7 @@ function LoginForm() {
 
     return (
         <div className="bg-white py-10 px-4 shadow-xl border border-creme2 sm:rounded-lg sm:px-10">
-            <h2 className="text-center text-2xl font-serif text-encre mb-8">Bonjour, ravie de vous revoir !</h2>
+            <h2 className="text-center text-2xl font-serif text-encre mb-8">Bonjour, ravie de vous revoir</h2>
 
             {errorMsg && (
                 <div className="mb-6 p-4 bg-red-50/50 border-l-4 border-red-500 rounded-r-sm flex items-center space-x-3 animate-in fade-in slide-in-from-top-2 duration-300">

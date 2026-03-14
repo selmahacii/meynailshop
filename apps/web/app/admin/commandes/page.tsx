@@ -172,9 +172,6 @@ export default function AdminOrdersPage() {
                         <button className="p-2 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
                             <Bell size={18} />
                         </button>
-                        <button className="p-2 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
-                            <Download size={18} />
-                        </button>
                     </div>
                     <Link 
                         href="/admin/produits/nouveau"
@@ -235,9 +232,7 @@ export default function AdminOrdersPage() {
                     </div>
 
                     <div className="flex items-center space-x-2 w-full md:w-auto">
-                        <button className="flex-1 md:flex-none flex items-center justify-center space-x-2 px-6 py-2.5 bg-creme border border-creme2 text-encre text-[10px] font-bold uppercase tracking-widest rounded-sm hover:border-or transition-all">
-                            <span>Rapport</span>
-                        </button>
+
                         <Link 
                             href="/admin/produits/nouveau"
                             className="flex-1 md:flex-none flex items-center justify-center space-x-2 px-6 py-2.5 bg-[#1A0A0A] text-creme text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-lg group"

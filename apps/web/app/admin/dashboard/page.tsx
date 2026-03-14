@@ -379,13 +379,7 @@ export default function AdminDashboard() {
                     <p className="text-xs text-encre/60 font-medium">Enrichir le catalogue de la boutique</p>
                 </Link>
 
-                <div className="bg-encre border border-encre rounded-2xl p-6 group cursor-pointer hover:shadow-xl hover:bg-rouge-deep transition-all">
-                    <div className="flex items-center justify-between mb-4">
-                        <h4 className="font-semibold text-creme uppercase tracking-widest text-xs">Exporter Rapport</h4>
-                        <Download size={20} className="text-or" />
-                    </div>
-                    <p className="text-xs text-creme/60 font-medium">Générer les extractions comptables</p>
-                </div>
+
             </div>
         </div>
     );

@@ -15,7 +15,7 @@ export default function AdminLayout({
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
     return (
-        <div className="bg-[#F9FAFB] min-h-screen flex overflow-hidden">
+        <div className="bg-[#F9FAFB] h-screen flex overflow-hidden">
             {/* Sidebar Overlay for mobile */}
             {sidebarOpen && (
                 <div 
@@ -24,17 +24,21 @@ export default function AdminLayout({
                 />
             )}
 
+            {/* Sidebar Container */}
             <div className={cn(
-                "fixed inset-y-0 left-0 z-50 transform lg:relative lg:translate-x-0 transition duration-300 ease-in-out",
-                sidebarOpen ? "translate-x-0" : "-translate-x-full"
+                "fixed inset-y-0 left-0 z-50 transform transition duration-300 ease-in-out w-64",
+                sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
             )}>
                 <AdminSidebar onClose={() => setSidebarOpen(false)} />
             </div>
 
-            <div className="flex flex-col flex-1 w-0 min-h-screen overflow-hidden">
+            {/* Content Wrapper */}
+            <div className="flex flex-col flex-1 w-0 h-screen lg:ml-64 overflow-hidden">
                 <AdminTopbar onMenuClick={toggleSidebar} />
-                <main className="flex-1 relative overflow-y-auto focus:outline-none p-4 md:p-8">
-                    {children}
+                <main className="flex-1 relative overflow-y-auto focus:outline-none p-4 md:p-8 bg-[#F9FAFB] scroll-smooth">
+                    <div className="max-w-7xl mx-auto">
+                        {children}
+                    </div>
                 </main>
             </div>
         </div>
