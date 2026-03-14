@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { ProductsAPI, UploadAPI } from '@/lib/api/client';
+import { apiFetch, UploadAPI } from '@/lib/api/client';
 import { toast } from 'sonner';
 
 interface Category {
@@ -49,10 +49,9 @@ export default function AdminCategoriesPage() {
     const fetchCategories = async () => {
         try {
             setLoading(true);
-            const res = await fetch('/api/categories');
-            const data = await res.json();
-            if (data.data) {
-                setCategories(data.data);
+            const res = await apiFetch('/api/categories');
+            if (res.data) {
+                setCategories(Array.isArray(res.data) ? res.data : (res.data.data || []));
             }
         } catch (err) {
             setError('Erreur lors du chargement des catégories');
@@ -86,34 +85,29 @@ export default function AdminCategoriesPage() {
         e.preventDefault();
         setSubmitting(true);
         try {
-            const token = localStorage.getItem('token');
-            const url = editingCategory 
-                ? `/api/categories/${editingCategory.id}` 
+            const url = editingCategory
+                ? `/api/categories/${editingCategory.id}`
                 : '/api/categories';
-            
+
             const method = editingCategory ? 'PATCH' : 'POST';
 
-            const res = await fetch(url, {
+            const res = await apiFetch(url, {
                 method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
                 body: JSON.stringify({
                     ...formData,
-                    slug: formData.name.toLowerCase().replace(/ /g, '-')
-                })
+                    slug: formData.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')
+                }),
             });
 
-            if (res.ok) {
+            if (res.success) {
+                toast.success(editingCategory ? 'Catégorie mise à jour !' : 'Catégorie créée !');
                 setIsModalOpen(false);
                 fetchCategories();
             } else {
-                const errData = await res.json();
-                alert(errData.message || 'Une erreur est survenue');
+                toast.error(res.error || 'Une erreur est survenue');
             }
         } catch (err) {
-            alert('Erreur de connexion');
+            toast.error('Erreur de connexion');
         } finally {
             setSubmitting(false);
         }
@@ -121,21 +115,17 @@ export default function AdminCategoriesPage() {
 
     const handleDelete = async (id: string) => {
         if (!confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')) return;
-        
-        try {
-            const token = localStorage.getItem('token');
-            const res = await fetch(`/api/categories/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
 
-            if (res.ok) {
+        try {
+            const res = await apiFetch(`/api/categories/${id}`, { method: 'DELETE' });
+            if (res.success || res.data !== undefined) {
+                toast.success('Catégorie supprimée');
                 fetchCategories();
+            } else {
+                toast.error('Erreur lors de la suppression');
             }
         } catch (err) {
-            alert('Erreur lors de la suppression');
+            toast.error('Erreur lors de la suppression');
         }
     };
 
