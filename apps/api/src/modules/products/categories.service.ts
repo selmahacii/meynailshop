@@ -31,10 +31,15 @@ export class CategoriesService {
   }
 
   async findAll() {
-    return this.categoryRepository.find({
-      where: { isActive: true },
-      order: { displayOrder: 'ASC' },
-    });
+    try {
+      return await this.categoryRepository.find({
+        where: { isActive: true },
+        order: { displayOrder: 'ASC' },
+      });
+    } catch (error) {
+      console.error('❌ [CategoriesService] findAll Error:', error);
+      return [];
+    }
   }
 
   async findBySlug(slug: string) {
