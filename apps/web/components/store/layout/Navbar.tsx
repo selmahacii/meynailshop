@@ -9,8 +9,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '@/lib/store/cartStore';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useWishlistStore } from '@/lib/store/wishlistStore';
+import { useSettings } from '@/lib/hooks/useSettings';
 
 export default function Navbar() {
+    const { settings } = useSettings();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const pathname = usePathname();
@@ -178,7 +180,7 @@ export default function Navbar() {
                                     <p className="text-[9px] uppercase tracking-[0.2em] text-gold-brand/60 font-bold">Contactez-nous</p>
                                     <div className="flex-1 h-[1px] bg-gold-brand/10"></div>
                                 </div>
-                                <a href="mailto:meeybouabdellah@gmail.com" className="block text-sm text-gold-brand hover:opacity-80 transition-opacity font-medium mb-2">meeybouabdellah@gmail.com</a>
+                                <a href={`mailto:${settings.shopEmail || 'contact@meey.dz'}`} className="block text-sm text-gold-brand hover:opacity-80 transition-opacity font-medium mb-2">{settings.shopEmail || 'contact@meey.dz'}</a>
                                 <p className="text-xs text-gold-brand/40">Suivez notre excellence au quotidien</p>
                             </div>
                         </motion.div>

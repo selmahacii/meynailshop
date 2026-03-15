@@ -15,7 +15,7 @@ enum PaymentMethod {
     CIB = 'cib',
 }
 import { toast } from 'sonner';
-import { WILAYAS } from '@/lib/constants/wilayas';
+import { SHIPPING_RATES } from '@/lib/constants/shipping';
 
 export default function CheckoutPage() {
     const { items, getSubtotal, getTotal, clear } = useCartStore();
@@ -36,10 +36,13 @@ export default function CheckoutPage() {
 
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(PaymentMethod.CASH_ON_DELIVERY);
 
-    const wilayas = WILAYAS.map((name, idx) => ({ code: String(idx + 1).padStart(2, '0'), name }));
+    const wilayas = SHIPPING_RATES;
 
-    // Simulated shipping
-    const shippingCost = formData.wilaya ? (formData.wilaya === '16' ? 400 : 800) : 0;
+    // Real shipping calculation
+    const selectedWilayaRate = SHIPPING_RATES.find(w => w.id === formData.wilaya);
+    const shippingCost = selectedWilayaRate 
+        ? (formData.deliveryType === 'home' ? selectedWilayaRate.homeRate : selectedWilayaRate.deskRate)
+        : 0;
     const finalTotal = getTotal() + shippingCost;
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -221,7 +224,7 @@ export default function CheckoutPage() {
                                 >
                                     <option value="" disabled>Sélectionner Wilaya</option>
                                     {wilayas.map(w => (
-                                        <option key={w.code} value={w.code}>{w.code} - {w.name}</option>
+                                        <option key={w.id} value={w.id}>{w.id} - {w.name}</option>
                                     ))}
                                 </select>
                                 <input
@@ -313,9 +316,16 @@ export default function CheckoutPage() {
                         <span className="font-medium text-encre">{formatPrice(getSubtotal())}</span>
                     </div>
                     <div className="flex justify-between items-center text-encre3">
-                        <span>Livraison {formData.wilaya && `(Wilaya: ${formData.wilaya})`}</span>
+                        <div className="flex flex-col">
+                            <span>Livraison</span>
+                            {selectedWilayaRate && (
+                                <span className="text-[10px] uppercase font-bold text-gold-brand">
+                                    {selectedWilayaRate.name} - {formData.deliveryType === 'home' ? 'Domicile' : 'Bureau/Relais'}
+                                </span>
+                            )}
+                        </div>
                         <span className="font-medium text-encre">
-                            {shippingCost > 0 ? formatPrice(shippingCost) : '---'}
+                            {shippingCost > 0 ? formatPrice(shippingCost) : (formData.wilaya ? 'Gratuit' : '---')}
                         </span>
                     </div>
                 </div>

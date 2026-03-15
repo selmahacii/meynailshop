@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
 import { toast } from 'sonner';
+import { useSettings } from '@/lib/hooks/useSettings';
 
 export default function ContactPage() {
+    const { settings } = useSettings();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -60,7 +62,7 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-encre mb-1">Adresse</h3>
-                                        <p className="text-encre3">123 Avenue des Beaux-Arts<br />Alger, Algérie</p>
+                                        <p className="text-encre3">{settings.shopAddress || "Alger, Algérie"}</p>
                                     </div>
                                 </div>
 
@@ -70,7 +72,7 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-encre mb-1">Téléphone</h3>
-                                        <p className="text-encre3">+213 555 123 456</p>
+                                        <p className="text-encre3">{settings.shopPhone || "+213 555 123 456"}</p>
                                     </div>
                                 </div>
 
@@ -80,7 +82,7 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-encre mb-1">Email</h3>
-                                        <p className="text-encre3">meeybouabdellah@gmail.com </p>
+                                        <p className="text-encre3">{settings.shopEmail || "contact@meey.dz"}</p>
                                     </div>
                                 </div>
 

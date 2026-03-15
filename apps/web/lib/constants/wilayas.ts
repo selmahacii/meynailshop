@@ -1,11 +1,5 @@
-export const WILAYAS = [
-  'Adrar', 'Aïn Defla', 'Aïn Témouchent', 'Alger', 'Annaba', 'Batna', 'Béchar', 'Béjaïa',
-  'Biskra', 'Blida', 'Bordj Bou Arréridj', 'Bouïra', 'Boumerdès', 'Chlef', 'Constantine',
-  'Djelfa', 'El Bayadh', 'El Oued', 'El Taref', 'Ghardaïa', 'Guelma', 'Illizi', 'Jijel',
-  'Khenchela', 'Laghouat', 'Mascara', 'Médéa', 'Mila', 'Mostaganem', 'M\'Sila', 'Naâma',
-  'Oran', 'Ouargla', 'Oum El Bouaghi', 'Ouargla', 'Saïda', 'Sainte-Anne', 'Sétif', 'Sidi Bel Abbès',
-  'Skikda', 'Souk Ahras', 'Tamanrasset', 'Tébessa', 'Tiaret', 'Tindouf',
-  'Tipaza', 'Tissemsilt', 'Tizou Ouzou', 'Tlencen', 'Touggourt', 'Tréms', 'Tuni', 'Yabrud',
-] as const;
+import { SHIPPING_RATES } from './shipping';
+
+export const WILAYAS = SHIPPING_RATES.map(w => w.name);
 
 export type Wilaya = typeof WILAYAS[number];

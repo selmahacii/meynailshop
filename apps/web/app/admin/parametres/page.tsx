@@ -14,7 +14,10 @@ const tabs = [
     { key: 'seo', label: 'SEO & URL', icon: Globe },
 ];
 
+import { useSettings } from '@/lib/hooks/useSettings';
+
 export default function AdminSettingsPage() {
+    const { refreshSettings } = useSettings();
     const [activeTab, setActiveTab] = useState('boutique');
     const [settings, setSettings] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -55,6 +58,8 @@ export default function AdminSettingsPage() {
             const res = await SettingsAPI.update(payload);
             if (res.success) {
                 setSuccessMessage('Paramètres enregistrés avec succès');
+                // Refresh global cache
+                await refreshSettings();
                 setTimeout(() => setSuccessMessage(null), 3000);
             } else {
                 setError(res.error || 'Erreur lors de l\'enregistrement');
