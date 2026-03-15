@@ -49,13 +49,21 @@ export default function HeroSection() {
 
             <div className="container mx-auto px-6 sm:px-12 md:px-16 z-10">
                 <div className="max-w-4xl text-center md:text-left flex flex-col items-center md:items-start mx-auto md:mx-0">
+                    <motion.h1
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.1 }}
+                        className="font-serif text-3xl md:text-5xl lg:text-7xl text-gold-brand mb-6 leading-tight tracking-tight drop-shadow-lg"
+                    >
+                        L'Art de <br className="hidden md:block" /> l'Excellence
+                    </motion.h1>
                     <motion.p
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-base sm:text-lg md:text-2xl text-creme mb-12 max-w-xl font-medium leading-relaxed drop-shadow-2xl px-6 py-4 bg-black/20 backdrop-blur-[4px] rounded-sm border-l-2 border-or/40"
+                        className="text-base sm:text-lg md:text-xl text-creme/90 mb-12 max-w-xl font-light leading-relaxed drop-shadow-2xl px-6 py-4 bg-black/30 backdrop-blur-[10px] rounded-sm border-l-4 border-gold-brand"
                     >
-                        Découvrez notre collection de produits professionnels pour sublimer vos créations.
+                        Sublimez votre talent avec notre collection exclusive de produits premium, pensée pour les artistes de l'onglerie.
                     </motion.p>
 
                     <motion.div
@@ -74,7 +82,7 @@ export default function HeroSection() {
 
                         <Link
                             href="/catalogue?badge=top"
-                            className="border-2 border-creme hover:border-or hover:text-or text-creme px-10 py-5 rounded-sm font-bold uppercase tracking-widest text-xs transition-all duration-300 flex items-center justify-center backdrop-blur-sm bg-white/5 w-full sm:w-auto"
+                            className="border-2 border-gold-brand/60 hover:border-gold-brand hover:text-rouge-brand hover:bg-gold-brand text-gold-brand px-10 py-5 rounded-sm font-bold uppercase tracking-widest text-xs transition-all duration-300 flex items-center justify-center backdrop-blur-sm bg-white/5 w-full sm:w-auto"
                         >
                             Meilleures ventes
                         </Link>
