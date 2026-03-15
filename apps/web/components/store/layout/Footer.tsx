@@ -72,11 +72,15 @@ export default function Footer() {
                             </li>
                             <li className="flex items-center space-x-3">
                                 <Phone size={18} className="text-gold-brand shrink-0" />
-                                <span>{settings.shopPhone || "+213 555 123 456"}</span>
+                                <a href={`tel:${settings.shopPhone || "0775436562"}`} className="hover:text-gold-brand transition-colors">
+                                    {settings.shopPhone || "0775436562"}
+                                </a>
                             </li>
                             <li className="flex items-center space-x-3">
                                 <Mail size={18} className="text-gold-brand shrink-0" />
-                                <span>{settings.shopEmail || "contact@meey.dz"}</span>
+                                <a href={`mailto:${settings.shopEmail || "meeybouabdellah@gmail.com"}`} className="hover:text-gold-brand transition-colors">
+                                    {settings.shopEmail || "meeybouabdellah@gmail.com"}
+                                </a>
                             </li>
                         </ul>
                     </div>

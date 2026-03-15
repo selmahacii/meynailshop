@@ -72,7 +72,9 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-encre mb-1">Téléphone</h3>
-                                        <p className="text-encre3">{settings.shopPhone || "+213 555 123 456"}</p>
+                                        <a href={`tel:${settings.shopPhone || "0775436562"}`} className="text-encre3 hover:text-or transition-colors">
+                                            {settings.shopPhone || "0775436562"}
+                                        </a>
                                     </div>
                                 </div>
 
@@ -82,7 +84,9 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-encre mb-1">Email</h3>
-                                        <p className="text-encre3">{settings.shopEmail || "contact@meey.dz"}</p>
+                                        <a href={`mailto:${settings.shopEmail || "meeybouabdellah@gmail.com"}`} className="text-encre3 hover:text-or transition-colors">
+                                            {settings.shopEmail || "meeybouabdellah@gmail.com"}
+                                        </a>
                                     </div>
                                 </div>
 

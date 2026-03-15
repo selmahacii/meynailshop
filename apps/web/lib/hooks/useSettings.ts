@@ -16,7 +16,7 @@ export interface Settings {
 const defaultSettings: Settings = {
     shopName: 'MEEY Nail Shop',
     shopEmail: 'meeybouabdellah@gmail.com',
-    shopPhone: '+213775436562',
+    shopPhone: '0775436562',
     shopAddress: 'Alger, Algérie',
     stockAlertDefault: 5,
     shippingCostDefault: 600,
