@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Instagram, Facebook, Mail, Phone, MapPin } from 'lucide-react';
+import { Instagram, Facebook, Mail, Phone, MapPin } from 'lucide-center';
+import { useSettings } from '@/lib/hooks/useSettings';
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
+    const { settings } = useSettings();
 
     return (
         <footer className="bg-rouge-brand text-gold-brand pt-16 pb-8">
@@ -15,7 +17,7 @@ export default function Footer() {
                             <div className="relative w-24 h-24 rounded-full overflow-hidden mb-2">
                                 <Image
                                     src="/logo.png"
-                                    alt="MEEY Nail Shop"
+                                    alt={settings.shopName}
                                     fill
                                     className="object-cover scale-[1.18]"
                                 />
@@ -64,22 +66,22 @@ export default function Footer() {
                         <ul className="space-y-4 text-sm text-gold-brand/70">
                             <li className="flex items-start space-x-3">
                                 <MapPin size={18} className="text-gold-brand shrink-0" />
-                                <span>Alger, Algérie</span>
+                                <span>{settings.shopAddress}</span>
                             </li>
                             <li className="flex items-center space-x-3">
                                 <Phone size={18} className="text-gold-brand shrink-0" />
-                                <span>+213775436562</span>
+                                <span>{settings.shopPhone}</span>
                             </li>
                             <li className="flex items-center space-x-3">
                                 <Mail size={18} className="text-gold-brand shrink-0" />
-                                <span>meeybouabdellah@gmail.com </span>
+                                <span>{settings.shopEmail}</span>
                             </li>
                         </ul>
                     </div>
                 </div>
 
                 <div className="pt-8 border-t border-gold-brand/5 flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-widest text-gold-brand/40">
-                    <p>© {currentYear} MEEY Nail Shop. Tous droits réservés.</p>
+                    <p>© {currentYear} {settings.shopName}. Tous droits réservés.</p>�servés.</p>
                     <div className="flex space-x-6 mt-4 md:mt-0">
                         <span>Paiement à la livraison</span>
                         <span>Virement CCP</span>
