@@ -66,7 +66,7 @@ export default function HeroSection() {
                     >
                         <Link
                             href="/catalogue"
-                            className="bg-or hover:bg-or-light text-rouge-deep px-10 py-5 rounded-sm font-bold uppercase tracking-widest text-xs transition-all duration-300 flex items-center justify-center group shadow-2xl w-full sm:w-auto"
+                            className="bg-gold-brand hover:bg-[#D4C3AC] text-rouge-brand px-10 py-5 rounded-sm font-bold uppercase tracking-widest text-xs transition-all duration-300 flex items-center justify-center group shadow-2xl w-full sm:w-auto"
                         >
                             Découvrir la collection
                             <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />

@@ -8,6 +8,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        'rouge-brand': '#390102',
+        'gold-brand': '#BFAB92',
         rouge: '#6B0F1A',
         'rouge-mid': '#8C1424',
         'rouge-deep': '#3D0608',
