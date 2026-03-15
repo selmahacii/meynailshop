@@ -51,19 +51,15 @@ export default function Navbar() {
                     <Menu size={24} />
                 </button>
 
-                {/* Logo */}
-                <Link href="/" className="flex items-center space-x-2 md:space-x-3 group mr-auto lg:mr-0 pl-2 lg:pl-0">
-                    <div className="relative w-10 h-10 md:w-14 md:h-14 border-2 border-gold-brand/30 rounded-full p-1 group-hover:border-gold-brand group-hover:shadow-[0_0_15px_rgba(191,171,146,0.3)] transition-all duration-500 overflow-hidden bg-rouge-brand/40 backdrop-blur-sm">
+                <Link href="/" className="flex items-center group mr-auto lg:mr-0 pl-2 lg:pl-0">
+                    <div className="relative w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(191,171,146,0.3)]">
                         <Image
                             src="/logo.png"
-                            alt="MEEY Logo"
+                            alt="MEEY Nail Shop"
                             fill
-                            className="object-contain p-0.5"
+                            className="object-cover scale-[1.18]"
+                            priority
                         />
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="font-serif text-lg md:text-2xl text-gold-brand leading-none tracking-tight group-hover:scale-105 transition-transform duration-300 origin-left">MEEY</span>
-                        <span className="text-[7px] md:text-[8px] uppercase tracking-[0.2em] text-gold-brand/60 font-bold group-hover:text-gold-brand transition-colors">Nail Shop</span>
                     </div>
                 </Link>
 
@@ -135,17 +131,13 @@ export default function Navbar() {
                         >
                             <div className="p-8 border-b border-gold-brand/10 flex justify-between items-center bg-rouge-brand/50 backdrop-blur-md">
                                 <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center space-x-3">
-                                    <div className="relative w-10 h-10 border border-gold-brand/30 rounded-full p-1 overflow-hidden bg-rouge-brand">
+                                    <div className="relative w-14 h-14 rounded-full overflow-hidden">
                                         <Image
                                             src="/logo.png"
-                                            alt="MEEY Logo"
+                                            alt="MEEY Nail Shop"
                                             fill
-                                            className="object-contain"
+                                            className="object-cover scale-[1.18]"
                                         />
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <span className="font-serif text-xl text-gold-brand tracking-tight">MEEY</span>
-                                        <span className="text-[7px] uppercase tracking-widest text-gold-brand/60">Nail Shop</span>
                                     </div>
                                 </Link>
                                 <button onClick={() => setIsMobileMenuOpen(false)} className="text-gold-brand/60 hover:text-gold-brand p-2 bg-white/5 rounded-full transition-colors">

@@ -53,7 +53,7 @@ export default function HeroSection() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.1 }}
-                        className="font-serif text-3xl md:text-5xl lg:text-7xl text-gold-brand mb-6 leading-tight tracking-tight drop-shadow-lg"
+                        className="font-montserrat font-light text-4xl md:text-6xl lg:text-8xl text-gold-brand mb-8 leading-tight tracking-[0.15em] uppercase drop-shadow-md"
                     >
                         L'Art de <br className="hidden md:block" /> l'Excellence
                     </motion.h1>
@@ -61,7 +61,7 @@ export default function HeroSection() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-base sm:text-lg md:text-xl text-creme/90 mb-12 max-w-xl font-light leading-relaxed drop-shadow-2xl px-6 py-4 bg-black/30 backdrop-blur-[10px] rounded-sm border-l-4 border-gold-brand"
+                        className="text-sm sm:text-base md:text-lg text-creme/80 mb-12 max-w-lg font-montserrat font-light tracking-[0.05em] leading-relaxed border-l-2 border-gold-brand/50 pl-8"
                     >
                         Sublimez votre talent avec notre collection exclusive de produits premium, pensée pour les artistes de l'onglerie.
                     </motion.p>

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Outfit, Libre_Baskerville } from 'next/font/google'
+import { Outfit, Libre_Baskerville, Montserrat } from 'next/font/google'
 import './globals.css'
 import Providers from '@/components/providers/Providers'
 
@@ -7,6 +7,12 @@ const outfit = Outfit({
   subsets: ['latin'],
   variable: '--font-outfit',
   weight: ['400','500','600','700'],
+})
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  variable: '--font-montserrat',
+  weight: ['300','400','700','900'],
 })
 
 const libreBaskerville = Libre_Baskerville({
@@ -40,7 +46,7 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${outfit.variable} ${libreBaskerville.variable}`}
+      className={`${outfit.variable} ${libreBaskerville.variable} ${montserrat.variable}`}
       data-scroll-behavior="smooth"
     >
       <body className="bg-creme text-encre font-sans">

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Instagram, Facebook, Mail, Phone, MapPin } from 'lucide-react';
 
 export default function Footer() {
@@ -10,9 +11,15 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                     {/* Brand Info */}
                     <div className="space-y-6">
-                        <Link href="/" className="flex flex-col">
-                            <span className="font-serif text-3xl text-gold-brand leading-none">MEEY</span>
-                            <span className="text-xs uppercase tracking-[0.3em] text-gold-brand/60">Nail Shop</span>
+                        <Link href="/" className="flex flex-col items-start px-2">
+                            <div className="relative w-24 h-24 rounded-full overflow-hidden mb-2">
+                                <Image
+                                    src="/logo.png"
+                                    alt="MEEY Nail Shop"
+                                    fill
+                                    className="object-cover scale-[1.18]"
+                                />
+                            </div>
                         </Link>
                         <p className="text-gold-brand/70 text-sm leading-relaxed max-w-xs">
                             L'excellence au service de vos ongles. Produits premium sélectionnés pour les professionnels et passionnés d'onglerie en Algérie.
@@ -61,7 +68,7 @@ export default function Footer() {
                             </li>
                             <li className="flex items-center space-x-3">
                                 <Phone size={18} className="text-gold-brand shrink-0" />
-                                <span>+213 (0) 555 55 55 55</span>
+                                <span>+213775436562</span>
                             </li>
                             <li className="flex items-center space-x-3">
                                 <Mail size={18} className="text-gold-brand shrink-0" />

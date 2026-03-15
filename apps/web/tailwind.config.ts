@@ -22,8 +22,9 @@ const config: Config = {
         creme2: '#F3EAE0',
       },
       fontFamily: {
-        serif: ['Libre Baskerville', 'serif'],
-        sans: ['Outfit', 'sans-serif'],
+        serif: ['var(--font-libre-baskerville)', 'serif'],
+        sans: ['var(--font-outfit)', 'sans-serif'],
+        montserrat: ['var(--font-montserrat)', 'sans-serif'],
       },
     },
   },
