@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 export default function AdminTopbar({ onMenuClick }: { onMenuClick?: () => void }) {
     const [showDropdown, setShowDropdown] = useState(false);
     const router = useRouter();
-    const { logout, user } = useAuthStore();
+    const { logout, user: currentUser } = useAuthStore();
 
     const handleLogout = async () => {
         try {
@@ -71,14 +71,14 @@ export default function AdminTopbar({ onMenuClick }: { onMenuClick?: () => void 
                     >
                         <div className="text-right hidden sm:block">
                             <p className="text-sm font-semibold text-encre leading-none mb-1">
-                                {user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : 'Administrateur'}
+                                {currentUser?.firstName && currentUser?.lastName ? `${currentUser.firstName} ${currentUser.lastName}` : 'Administrateur'}
                             </p>
                             <p className="text-[10px] uppercase font-bold text-[#BFA893]">MEEY Control</p>
                         </div>
                         <div className="h-9 w-9 md:h-10 md:w-10 rounded-full bg-creme border border-[#BFA893]/20 flex items-center justify-center text-[#BFA893] group-hover:bg-[#BFA893] group-hover:text-[#390102] transition-all">
-                            {user?.firstName ? (
+                            {currentUser?.firstName ? (
                                 <span className="font-bold text-xs">
-                                    {user.firstName.charAt(0)}{user.lastName?.charAt(0) || ''}
+                                    {currentUser.firstName.charAt(0)}{currentUser.lastName?.charAt(0) || ''}
                                 </span>
                             ) : (
                                 <User size={18} />
@@ -90,7 +90,7 @@ export default function AdminTopbar({ onMenuClick }: { onMenuClick?: () => void 
                         <div className="absolute right-0 mt-2 w-56 bg-white border border-creme2 rounded-lg shadow-xl z-50 overflow-hidden divide-y divide-creme2 animate-in slide-in-from-top-2 duration-200">
                             <div className="px-4 py-3 bg-creme/20">
                                 <p className="text-xs font-bold text-encre3 uppercase tracking-widest">Compte</p>
-                                <p className="text-sm font-medium text-encre truncate">{user?.email}</p>
+                                <p className="text-sm font-medium text-encre truncate">{currentUser?.email}</p>
                             </div>
                             <div className="py-1">
                                 <Link

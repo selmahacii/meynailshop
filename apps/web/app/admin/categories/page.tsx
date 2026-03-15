@@ -67,7 +67,7 @@ export default function AdminCategoriesPage() {
                 name: category.name,
                 description: category.description,
                 imageUrl: category.imageUrl,
-                displayOrder: category.displayOrder
+                displayOrder: category.displayOrder || 0
             });
         } else {
             setEditingCategory(null);
@@ -299,7 +299,7 @@ export default function AdminCategoriesPage() {
                                     <label className="text-[10px] uppercase font-black tracking-widest text-encre3">Ordre d'affichage</label>
                                     <input
                                         type="number"
-                                        value={formData.displayOrder}
+                                        value={formData.displayOrder ?? 0}
                                         onChange={(e) => {
                                             const val = parseInt(e.target.value);
                                             setFormData(prev => ({ ...prev, displayOrder: isNaN(val) ? 0 : val }));
