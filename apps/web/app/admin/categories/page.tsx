@@ -166,9 +166,9 @@ export default function AdminCategoriesPage() {
 
                 <button 
                     onClick={() => handleOpenModal()}
-                    className="flex items-center justify-center space-x-2 px-6 py-3 bg-[#1A0A0A] text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-rouge-deep transition-all shadow-xl group border border-or/20"
+                    className="flex items-center justify-center space-x-2 px-6 py-3 bg-[#390102] text-[#BFA893] rounded-sm text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all shadow-xl group border border-[#BFA893]/20"
                 >
-                    <Plus size={16} className="text-or group-hover:rotate-90 transition-transform duration-300" />
+                    <Plus size={16} className="text-[#BFA893] group-hover:rotate-90 transition-transform duration-300" />
                     <span>Nouvelle Catégorie</span>
                 </button>
             </div>
@@ -388,7 +388,7 @@ export default function AdminCategoriesPage() {
                                 <button
                                     type="submit"
                                     disabled={submitting || !formData.name}
-                                    className="flex-[2] py-3 bg-[#1A0A0A] text-creme text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-xl disabled:opacity-50 border border-or/20 flex items-center justify-center gap-2"
+                                    className="flex-[2] py-3 bg-[#390102] text-[#BFA893] text-[10px] font-black uppercase tracking-widest rounded-sm hover:opacity-90 transition-all shadow-xl disabled:opacity-50 border border-[#BFA893]/20 flex items-center justify-center gap-2"
                                 >
                                     {submitting && <Loader size={14} className="animate-spin" />}
                                     {submitting ? 'Traitement...' : (editingCategory ? 'Mettre à jour' : 'Créer la catégorie')}

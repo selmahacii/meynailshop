@@ -138,7 +138,7 @@ export default function AdminDashboard() {
                 <button
                     onClick={() => fetchMetrics(true)}
                     disabled={refreshing}
-                    className="px-4 py-2 bg-or text-white rounded-lg hover:bg-or-light transition-all flex items-center gap-2 disabled:opacity-50 shadow-md"
+                    className="px-4 py-2 bg-[#390102] text-[#BFA893] rounded-lg hover:opacity-90 transition-all flex items-center gap-2 disabled:opacity-50 shadow-md border border-[#BFA893]/20"
                 >
                     <RefreshCw size={18} className={refreshing ? 'animate-spin' : ''} />
                     {refreshing ? 'Actualisation...' : 'Actualiser'}

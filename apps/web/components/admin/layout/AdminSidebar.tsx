@@ -107,7 +107,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                                         className={cn(
                                             "flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 group relative overflow-hidden",
                                             isActive
-                                                ? "bg-[#BFA893]/10 text-[#BFA893] border border-[#BFA893]/30 shadow-lg shadow-[#BFA893]/5"
+                                                ? "bg-[#BFA893] text-[#390102] shadow-lg shadow-black/20"
                                                 : "text-[#BFA893] hover:bg-white/5 border border-transparent hover:border-[#BFA893]/20"
                                         )}
                                     >
@@ -120,8 +120,8 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                                                 className={cn(
                                                     "transition-all duration-300",
                                                     isActive
-                                                        ? "text-[#BFA893] drop-shadow-lg"
-                                                        : "text-[#BFA893] group-hover:text-[#BFA893] focus:text-[#BFA893]"
+                                                        ? "text-[#390102]"
+                                                        : "text-[#BFA893] focus:text-[#BFA893]"
                                                 )}
                                                 strokeWidth={isActive ? 2 : 1.5}
                                             />
@@ -130,11 +130,16 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                                             </span>
                                         </div>
                                         {badge !== null && badge > 0 ? (
-                                            <span className="bg-[#BFA893] text-rouge-brand text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg border border-[#BFA893]/20 relative z-10 animate-pulse">
+                                            <span className={cn(
+                                                "text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg border relative z-10 animate-pulse",
+                                                isActive
+                                                    ? "bg-[#390102] text-[#BFA893] border-[#390102]/20"
+                                                    : "bg-[#BFA893] text-[#390102] border-[#BFA893]/20"
+                                            )}>
                                                 {badge}
                                             </span>
                                         ) : (
-                                            isActive && <ChevronRight size={16} className="text-[#BFA893] relative z-10" />
+                                            isActive && <ChevronRight size={16} className="text-[#390102] relative z-10" />
                                         )}
                                     </Link>
                                 </li>
@@ -158,7 +163,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                                         className={cn(
                                             "flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 group relative overflow-hidden",
                                             isActive
-                                                ? "bg-[#BFA893]/10 text-[#BFA893] border border-[#BFA893]/30 shadow-lg shadow-[#BFA893]/5"
+                                                ? "bg-[#BFA893] text-[#390102] shadow-lg shadow-black/20"
                                                 : "text-[#BFA893] hover:bg-white/5 border border-transparent hover:border-[#BFA893]/20"
                                         )}
                                     >
@@ -171,15 +176,20 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                                                 className={cn(
                                                     "transition-all duration-300",
                                                     isActive
-                                                        ? "text-[#BFA893] drop-shadow-lg"
-                                                        : "text-[#BFA893] group-hover:text-[#BFA893]"
+                                                        ? "text-[#390102]"
+                                                        : "text-[#BFA893]"
                                                 )}
                                                 strokeWidth={isActive ? 2 : 1.5}
                                             />
                                             <span>{item.name}</span>
                                         </div>
                                         {badge !== null && badge > 0 && (
-                                            <span className="bg-[#BFA893] text-rouge-brand text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg border border-[#BFA893]/20 relative z-10">
+                                            <span className={cn(
+                                                "text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg border relative z-10",
+                                                isActive
+                                                    ? "bg-[#390102] text-[#BFA893] border-[#390102]/20"
+                                                    : "bg-[#BFA893] text-[#390102] border-[#BFA893]/20"
+                                            )}>
                                                 {badge}
                                             </span>
                                         )}
@@ -203,7 +213,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                                         className={cn(
                                             "flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 group relative overflow-hidden",
                                             isActive
-                                                ? "bg-[#BFA893]/15 text-[#BFA893] border border-[#BFA893]/40 shadow-lg shadow-[#BFA893]/5"
+                                                ? "bg-[#BFA893] text-[#390102] shadow-lg shadow-black/20"
                                                 : "text-[#BFA893] hover:bg-white/5 border border-transparent hover:border-[#BFA893]/20"
                                         )}
                                     >
@@ -216,8 +226,8 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                                                 className={cn(
                                                     "transition-all duration-300",
                                                     isActive
-                                                        ? "text-[#BFA893] drop-shadow-lg"
-                                                        : "text-[#BFA893] group-hover:text-[#BFA893]"
+                                                        ? "text-[#390102]"
+                                                        : "text-[#BFA893]"
                                                 )}
                                                 strokeWidth={isActive ? 2 : 1.5}
                                             />
