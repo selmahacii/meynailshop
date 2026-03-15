@@ -300,7 +300,10 @@ export default function AdminCategoriesPage() {
                                     <input
                                         type="number"
                                         value={formData.displayOrder}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, displayOrder: parseInt(e.target.value) }))}
+                                        onChange={(e) => {
+                                            const val = parseInt(e.target.value);
+                                            setFormData(prev => ({ ...prev, displayOrder: isNaN(val) ? 0 : val }));
+                                        }}
                                         className="w-full p-3 bg-creme/20 border border-creme2 rounded-sm focus:outline-none focus:border-or transition-all text-sm"
                                         min={0}
                                     />

@@ -5,6 +5,7 @@ import { Search, Bell, Download, Plus, User, TrendingUp, ShoppingBag, Star, Load
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { ClientsAPI } from '@/lib/api/client';
+import { toast } from 'sonner';
 
 const statusConfig: Record<string, { label: string, color: string }> = {
     vip: { label: 'VIP', color: 'bg-or/20 text-or border border-or/40' },
@@ -78,8 +79,18 @@ export default function AdminClientsPage() {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-encre3 group-focus-within:text-or transition-colors" size={16} />
                         <input type="text" placeholder="Rechercher un client..." className="pl-10 pr-4 py-2.5 bg-white border border-creme2 rounded-sm text-sm focus:outline-none focus:border-or focus:ring-1 focus:ring-or w-64 shadow-sm" />
                     </div>
-                    <button className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm"><Bell size={18} /></button>
-                    <button className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm"><Download size={18} /></button>
+                    <button 
+                        onClick={() => toast.info('Aucune notification pour les clients')}
+                        className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-[#BFA893] hover:border-[#BFA893] transition-all shadow-sm"
+                    >
+                        <Bell size={18} />
+                    </button>
+                    <button 
+                        onClick={() => toast.success('Extraction des données client lancée')}
+                        className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-[#BFA893] hover:border-[#BFA893] transition-all shadow-sm"
+                    >
+                        <Download size={18} />
+                    </button>
                     <Link href="/" className="px-5 py-2.5 border border-encre text-encre rounded-sm text-sm font-bold hover:bg-encre hover:text-creme transition-all">Voir la boutique</Link>
                 </div>
             </div>
@@ -168,8 +179,11 @@ export default function AdminClientsPage() {
                                             </span>
                                         </td>
                                         <td className="px-8 py-5 text-right">
-                                            <button className="px-4 py-1.5 bg-white border border-creme2 text-encre text-[10px] font-black uppercase tracking-widest rounded-sm hover:border-or hover:text-or transition-all">
-                                                Profil
+                                            <button 
+                                                onClick={() => toast.info(`Détails de ${client.firstName} bientôt disponibles`)}
+                                                className="px-4 py-1.5 bg-[#390102] text-[#BFA893] text-[10px] font-black uppercase tracking-widest rounded-sm hover:opacity-90 transition-all border border-[#BFA893]/20 shadow-md"
+                                            >
+                                                Voir Profil
                                             </button>
                                         </td>
                                     </tr>
