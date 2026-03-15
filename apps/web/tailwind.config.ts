@@ -9,7 +9,7 @@ const config: Config = {
     extend: {
       colors: {
         'rouge-brand': '#390102',
-        'gold-brand': '#BFAB92',
+        'gold-brand': '#BFA893',
         rouge: '#6B0F1A',
         'rouge-mid': '#8C1424',
         'rouge-deep': '#3D0608',

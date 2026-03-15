@@ -40,9 +40,9 @@ export default function Navbar() {
 
     return (
         <nav
-            className={`fixed top-0 w-full z-[1000] transition-all duration-300 ${isScrolled ? 'bg-rouge-brand py-2 shadow-xl' : 'bg-transparent py-4'}`}
+            className={`fixed top-0 w-full z-[1000] transition-all duration-300 ${isScrolled ? 'bg-rouge-brand py-2 shadow-xl' : 'bg-gradient-to-b from-black/40 via-black/10 to-transparent py-4'}`}
         >
-            <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
+            <div className="w-full px-6 sm:px-10 md:px-12 lg:px-16 flex items-center justify-between">
                 {/* Mobile Menu Toggle */}
                 <button
                     className="lg:hidden text-gold-brand p-2 -ml-2 hover:opacity-80 transition-opacity"
@@ -51,25 +51,25 @@ export default function Navbar() {
                     <Menu size={24} />
                 </button>
 
-                <Link href="/" className="flex items-center group mr-auto lg:mr-0 pl-2 lg:pl-0">
-                    <div className="relative w-[56px] h-[56px] transition-all duration-500">
+                <Link href="/" className="flex items-center group lg:mr-0 pl-2 lg:pl-0">
+                    <div className="relative w-[60px] h-[60px] md:w-[80px] md:h-[80px] transition-all duration-500 hover:scale-105">
                         <Image
                             src="/logo2.png"
                             alt="MEEY"
                             fill
-                            className="object-contain"
+                            className="object-contain drop-shadow-[0_0_15px_rgba(0,0,0,0.3)]"
                             priority
                         />
                     </div>
                 </Link>
 
                 {/* Desktop Links */}
-                <div className="hidden lg:flex items-center space-x-8">
+                <div className="hidden lg:flex items-center space-x-10">
                     {navLinks.map((link) => (
                         <Link
                             key={link.name}
                             href={link.href}
-                            className={`text-sm font-medium transition-all hover:opacity-80 hover:scale-105 ${pathname === link.href ? 'text-gold-brand border-b-2 border-gold-brand' : 'text-gold-brand/90'
+                            className={`text-xs md:text-sm font-bold uppercase tracking-[0.2em] transition-all hover:text-white hover:scale-105 drop-shadow-lg ${pathname === link.href ? 'text-gold-brand border-b-2 border-gold-brand' : 'text-gold-brand'
                                 }`}
                         >
                             {link.name}
@@ -131,7 +131,7 @@ export default function Navbar() {
                         >
                             <div className="p-8 border-b border-gold-brand/10 flex justify-between items-center bg-rouge-brand/50 backdrop-blur-md">
                                 <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center space-x-3">
-                                    <div className="relative w-[42px] h-[42px] rounded-full overflow-hidden">
+                                    <div className="relative w-[80px] h-[80px] rounded-full overflow-hidden">
                                         <Image
                                             src="/logo2.png"
                                             alt="MEEY"

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function AuthLayout({
     children,
@@ -12,9 +13,15 @@ export default function AuthLayout({
             <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-or/5 rounded-full blur-3xl"></div>
 
             <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 text-center">
-                <Link href="/" className="inline-flex flex-col items-center mb-8">
-                    <span className="font-serif text-4xl text-or leading-none">MEEY</span>
-                    <span className="text-xs uppercase tracking-[0.4em] text-encre3">Nail Shop</span>
+                <Link href="/" className="inline-flex flex-col items-center mb-8 group">
+                    <div className="relative w-[72px] h-[72px]mb-4 transform transition-all duration-500 group-hover:scale-110">
+                        <Image
+                            src="/logo2.png"
+                            alt="MEEY"
+                            fill
+                            className="object-contain"
+                        />
+                    </div>
                 </Link>
                 {children}
             </div>

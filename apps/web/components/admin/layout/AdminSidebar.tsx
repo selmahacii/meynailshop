@@ -62,11 +62,11 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
     }, []);
 
     return (
-        <aside className="w-64 bg-gradient-to-b from-[#1A0A0A] to-[#0F0505] border-r border-[#2A1A1A] h-screen flex flex-col shadow-2xl relative">
+        <aside className="w-64 bg-rouge-brand border-r border-gold-brand/10 h-screen flex flex-col shadow-2xl relative">
             {/* Header */}
-            <div className="p-6 border-b border-[#2A1A1A] flex items-center justify-between group hover:border-or/20 transition-all duration-300">
+            <div className="p-6 border-b border-gold-brand/10 flex items-center justify-between group">
                 <div className="flex items-center space-x-3">
-                    <div className="relative w-10 h-10 border border-or/20 rounded-full p-0.5 group-hover:border-or/40 transition-all duration-300 shadow-lg shadow-black/20 overflow-hidden">
+                    <div className="relative w-10 h-10 border border-gold-brand/20 rounded-full p-0.5 group-hover:border-gold-brand/40 transition-all duration-300 shadow-lg shadow-black/20 overflow-hidden">
                         <Image
                             src="/logo2.png"
                             alt="MEEY Logo"
@@ -75,24 +75,24 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                         />
                     </div>
                     <div className="flex flex-col">
-                        <span className="font-serif text-lg text-creme leading-none tracking-wide group-hover:text-or transition-colors duration-300 uppercase">MEEY</span>
-                        <span className="text-[9px] uppercase tracking-[0.3em] text-or/60 font-bold mt-1.5 group-hover:text-or transition-colors duration-300">Mission Control</span>
+                        <span className="font-serif text-lg text-[#BFA893] leading-none tracking-wide uppercase transition-all duration-300">MEEY</span>
+                        <span className="text-[9px] uppercase tracking-[0.3em] text-[#BFA893] font-bold mt-1.5">Mission Control</span>
                     </div>
                 </div>
 
                 {/* Close button for mobile */}
                 <button
                     onClick={onClose}
-                    className="lg:hidden p-2 text-creme/60 hover:text-or transition-colors"
+                    className="lg:hidden p-2 text-[#BFA893] hover:opacity-80 transition-opacity"
                 >
                     <X size={20} />
                 </button>
             </div>
 
             {/* Navigation */}
-            <nav className="flex-grow overflow-y-auto px-3 py-6 scrollbar-thin scrollbar-thumb-or/30 scrollbar-track-transparent hover:scrollbar-thumb-or/50 transition-colors duration-300">
+            <nav className="flex-grow overflow-y-auto px-3 py-6 scrollbar-thin scrollbar-thumb-gold-brand/30 scrollbar-track-transparent hover:scrollbar-thumb-gold-brand/50 transition-colors duration-300">
                 <div className="mb-6 px-4">
-                    <h3 className="text-[10px] uppercase tracking-[0.2em] text-creme/30 font-bold mb-4">Principal</h3>
+                    <h3 className="text-[10px] uppercase tracking-[0.2em] text-[#BFA893] font-bold mb-4">Principal</h3>
                     <ul className="space-y-1">
                         {menuItems.slice(0, 4).map((item) => {
                             const isActive = pathname.startsWith(item.href);
@@ -107,12 +107,12 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                                         className={cn(
                                             "flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 group relative overflow-hidden",
                                             isActive
-                                                ? "bg-gradient-to-r from-or/20 to-transparent text-or border border-or/30 shadow-lg shadow-or/10"
-                                                : "text-creme/60 hover:text-creme hover:bg-white/5 border border-transparent hover:border-or/20"
+                                                ? "bg-[#BFA893]/10 text-[#BFA893] border border-[#BFA893]/30 shadow-lg shadow-[#BFA893]/5"
+                                                : "text-[#BFA893] hover:bg-white/5 border border-transparent hover:border-[#BFA893]/20"
                                         )}
                                     >
                                         {isActive && (
-                                            <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-or to-or/50 rounded-r-full shadow-lg shadow-or/50" />
+                                            <div className="absolute left-0 top-0 w-1 h-full bg-[#BFA893] rounded-r-full shadow-lg shadow-[#BFA893]/50" />
                                         )}
                                         <div className="flex items-center gap-3 relative z-10">
                                             <item.icon
@@ -120,8 +120,8 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                                                 className={cn(
                                                     "transition-all duration-300",
                                                     isActive
-                                                        ? "text-or drop-shadow-lg"
-                                                        : "text-creme/40 group-hover:text-or focus:text-or"
+                                                        ? "text-[#BFA893] drop-shadow-lg"
+                                                        : "text-[#BFA893] group-hover:text-[#BFA893] focus:text-[#BFA893]"
                                                 )}
                                                 strokeWidth={isActive ? 2 : 1.5}
                                             />
@@ -130,11 +130,11 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                                             </span>
                                         </div>
                                         {badge !== null && badge > 0 ? (
-                                            <span className="bg-gradient-to-r from-rouge-mid to-rouge-deep text-creme text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg border border-rouge-deep/50 relative z-10 animate-pulse">
+                                            <span className="bg-[#BFA893] text-rouge-brand text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg border border-[#BFA893]/20 relative z-10 animate-pulse">
                                                 {badge}
                                             </span>
                                         ) : (
-                                            isActive && <ChevronRight size={16} className="text-or/70 relative z-10" />
+                                            isActive && <ChevronRight size={16} className="text-[#BFA893] relative z-10" />
                                         )}
                                     </Link>
                                 </li>
@@ -144,7 +144,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                 </div>
 
                 <div className="mb-6 px-4">
-                    <h3 className="text-[10px] uppercase tracking-[0.2em] text-creme/30 font-bold mb-4">Clients</h3>
+                    <h3 className="text-[10px] uppercase tracking-[0.2em] text-[#BFA893] font-bold mb-4">Clients</h3>
                     <ul className="space-y-1">
                         {menuItems.slice(4, 7).map((item) => {
                             const isActive = pathname.startsWith(item.href);
@@ -158,12 +158,12 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                                         className={cn(
                                             "flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 group relative overflow-hidden",
                                             isActive
-                                                ? "bg-gradient-to-r from-or/20 to-transparent text-or border border-or/30 shadow-lg shadow-or/10"
-                                                : "text-creme/60 hover:text-creme hover:bg-white/5 border border-transparent hover:border-or/20"
+                                                ? "bg-[#BFA893]/10 text-[#BFA893] border border-[#BFA893]/30 shadow-lg shadow-[#BFA893]/5"
+                                                : "text-[#BFA893] hover:bg-white/5 border border-transparent hover:border-[#BFA893]/20"
                                         )}
                                     >
                                         {isActive && (
-                                            <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-or to-or/50 rounded-r-full shadow-lg shadow-or/50" />
+                                            <div className="absolute left-0 top-0 w-1 h-full bg-[#BFA893] rounded-r-full shadow-lg shadow-[#BFA893]/50" />
                                         )}
                                         <div className="flex items-center gap-3 relative z-10">
                                             <item.icon
@@ -171,15 +171,15 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                                                 className={cn(
                                                     "transition-all duration-300",
                                                     isActive
-                                                        ? "text-or drop-shadow-lg"
-                                                        : "text-creme/40 group-hover:text-or"
+                                                        ? "text-[#BFA893] drop-shadow-lg"
+                                                        : "text-[#BFA893] group-hover:text-[#BFA893]"
                                                 )}
                                                 strokeWidth={isActive ? 2 : 1.5}
                                             />
                                             <span>{item.name}</span>
                                         </div>
                                         {badge !== null && badge > 0 && (
-                                            <span className="bg-gradient-to-r from-rouge-mid to-rouge-deep text-creme text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg border border-rouge-deep/50 relative z-10">
+                                            <span className="bg-[#BFA893] text-rouge-brand text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg border border-[#BFA893]/20 relative z-10">
                                                 {badge}
                                             </span>
                                         )}
@@ -191,7 +191,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                 </div>
 
                 <div className="px-4">
-                    <h3 className="text-[10px] uppercase tracking-[0.2em] text-creme/30 font-bold mb-4">Système</h3>
+                    <h3 className="text-[10px] uppercase tracking-[0.2em] text-[#BFA893] font-bold mb-4">Système</h3>
                     <ul className="space-y-1">
                         {menuItems.slice(7).map((item) => {
                             const isActive = pathname.startsWith(item.href);
@@ -203,12 +203,12 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                                         className={cn(
                                             "flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 group relative overflow-hidden",
                                             isActive
-                                                ? "bg-gradient-to-r from-or/20 to-transparent text-or border border-or/30 shadow-lg shadow-or/10"
-                                                : "text-creme/60 hover:text-creme hover:bg-white/5 border border-transparent hover:border-or/20"
+                                                ? "bg-[#BFA893]/15 text-[#BFA893] border border-[#BFA893]/40 shadow-lg shadow-[#BFA893]/5"
+                                                : "text-[#BFA893] hover:bg-white/5 border border-transparent hover:border-[#BFA893]/20"
                                         )}
                                     >
                                         {isActive && (
-                                            <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-or to-or/50 rounded-r-full shadow-lg shadow-or/50" />
+                                            <div className="absolute left-0 top-0 w-1 h-full bg-[#BFA893] rounded-r-full shadow-lg shadow-[#BFA893]/50" />
                                         )}
                                         <div className="flex items-center gap-3 relative z-10">
                                             <item.icon
@@ -216,8 +216,8 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                                                 className={cn(
                                                     "transition-all duration-300",
                                                     isActive
-                                                        ? "text-or drop-shadow-lg"
-                                                        : "text-creme/40 group-hover:text-or"
+                                                        ? "text-[#BFA893] drop-shadow-lg"
+                                                        : "text-[#BFA893] group-hover:text-[#BFA893]"
                                                 )}
                                                 strokeWidth={isActive ? 2 : 1.5}
                                             />

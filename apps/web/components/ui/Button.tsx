@@ -20,10 +20,10 @@ export function Button({
   const baseStyles = 'font-outfit font-medium rounded transition duration-200 inline-flex items-center justify-center gap-2';
 
   const variants = {
-    primary: 'bg-rouge hover:bg-rouge-mid text-white disabled:opacity-50',
-    secondary: 'bg-or hover:bg-or-light text-encre disabled:opacity-50',
-    outline: 'border-2 border-rouge text-rouge hover:bg-rouge hover:text-white disabled:opacity-50',
-    ghost: 'text-rouge hover:bg-rouge/10 disabled:opacity-50',
+    primary: 'bg-[#390102] hover:opacity-90 text-[#BFA893] disabled:opacity-50 shadow-lg',
+    secondary: 'bg-[#BFA893] hover:opacity-90 text-[#390102] disabled:opacity-50 shadow-lg',
+    outline: 'border-2 border-[#390102] text-[#390102] hover:bg-[#390102] hover:text-[#BFA893] disabled:opacity-50',
+    ghost: 'text-[#390102] hover:bg-[#390102]/5 disabled:opacity-50',
     danger: 'bg-red-600 hover:bg-red-700 text-white disabled:opacity-50',
   };
 
