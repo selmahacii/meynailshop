@@ -41,16 +41,23 @@ export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const status = HttpStatus.INTERNAL_SERVER_ERROR;
-
     let message = 'Internal server error';
-    if (exception instanceof Error) {
+    let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+
+    if (exception instanceof HttpException) {
+      statusCode = exception.getStatus();
+      const res = exception.getResponse();
+      message = typeof res === 'string' ? res : (res as any).message || 'Http Error';
+    } else if (exception instanceof Error) {
       message = exception.message;
     }
 
-    response.status(status).json({
-      statusCode: status,
-      message,
+    console.error('🔥 [AllExceptionsFilter] Exception caught:', exception);
+
+    response.status(statusCode).json({
+      statusCode: statusCode,
+      message: message,
+      error: process.env.NODE_ENV === 'development' ? (exception instanceof Error ? exception.name : 'Error') : undefined,
     });
   }
 }

@@ -40,7 +40,7 @@ exports.DatabaseModule = DatabaseModule = __decorate([
                         entities_1.StockMovement,
                         entities_1.SiteSettings,
                     ],
-                    synchronize: configService.get('NODE_ENV') === 'development',
+                    synchronize: false,
                     logging: configService.get('NODE_ENV') === 'development',
                     migrationsRun: false,
                     migrationsTableName: 'migrations',

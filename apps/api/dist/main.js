@@ -38,7 +38,7 @@ async function bootstrap() {
         errorHttpStatusCode: 400,
     }));
     app.useGlobalInterceptors(new logging_interceptor_1.LoggingInterceptor());
-    app.useGlobalFilters(new http_exception_filter_1.HttpExceptionFilter());
+    app.useGlobalFilters(new http_exception_filter_1.HttpExceptionFilter(), new http_exception_filter_1.AllExceptionsFilter());
     const port = process.env.API_PORT || 3001;
     await app.listen(port);
     console.log(`✅ API running on http://localhost:${port}`);

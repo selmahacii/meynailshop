@@ -7,7 +7,7 @@ import { ArrowRight } from 'lucide-react';
 
 export default function HeroSection() {
     return (
-        <section className="relative min-h-[90vh] md:h-screen flex items-center overflow-hidden bg-rouge-deep py-20">
+        <section className="relative h-screen sm:h-[100dvh] flex items-center overflow-hidden bg-rouge-deep">
             {/* Background Image */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 <motion.div
@@ -21,7 +21,7 @@ export default function HeroSection() {
                         alt="MEEY Nail Shop Hero"
                         fill
                         priority
-                        className="object-cover"
+                        className="object-cover object-bottom md:object-center"
                     />
                 </motion.div>
                 {/* Minimal overlay for better contrast if needed, but much lighter */}

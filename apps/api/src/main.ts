@@ -52,8 +52,8 @@ async function bootstrap() {
 
   // Global filters
   app.useGlobalFilters(
-    new AllExceptionsFilter(),
-    new HttpExceptionFilter()
+    new HttpExceptionFilter(),
+    new AllExceptionsFilter()
   );
 
   const port = process.env.API_PORT || 3001;

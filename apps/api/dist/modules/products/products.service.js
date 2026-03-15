@@ -91,24 +91,40 @@ let ProductsService = class ProductsService {
         return product;
     }
     async findFeatured(limit = 6) {
-        let products = await this.productRepository.find({
-            where: [
-                { isFeatured: true, isActive: true },
-                { badge: 'top', isActive: true }
-            ],
-            relations: ['category'],
-            take: limit,
-            order: { createdAt: 'DESC' },
-        });
-        if (products.length === 0) {
-            products = await this.productRepository.find({
-                where: { isActive: true },
+        try {
+            let products = await this.productRepository.find({
+                where: [
+                    { isFeatured: true, isActive: true },
+                    { badge: 'top', isActive: true }
+                ],
                 relations: ['category'],
                 take: limit,
                 order: { createdAt: 'DESC' },
             });
+            if (products.length === 0) {
+                products = await this.productRepository.find({
+                    where: { isActive: true },
+                    relations: ['category'],
+                    take: limit,
+                    order: { createdAt: 'DESC' },
+                });
+            }
+            return products;
         }
-        return products;
+        catch (error) {
+            console.error('❌ [ProductsService] findFeatured Error:', error);
+            try {
+                return await this.productRepository.find({
+                    where: { isActive: true },
+                    take: limit,
+                    order: { createdAt: 'DESC' },
+                });
+            }
+            catch (innerError) {
+                console.error('❌ [ProductsService] Critical Fallback Error:', innerError);
+                return [];
+            }
+        }
     }
     async findOne(id) {
         const product = await this.productRepository.findOne({

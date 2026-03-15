@@ -32,12 +32,13 @@ export class CategoriesService {
 
   async findAll() {
     try {
-      return await this.categoryRepository.find({
-        where: { isActive: true },
-        order: { displayOrder: 'ASC' },
-      });
+      console.log('🔍 [CategoriesService] Fetching all categories...');
+      const categories = await this.categoryRepository.find();
+      console.log(`✅ [CategoriesService] Found ${categories.length} categories`);
+      return categories;
     } catch (error) {
       console.error('❌ [CategoriesService] findAll Error:', error);
+      // Retourner un tableau vide au lieu de crash, pour que l'API reste à 200
       return [];
     }
   }

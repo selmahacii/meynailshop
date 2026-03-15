@@ -37,10 +37,16 @@ let CategoriesService = class CategoriesService {
         return await this.categoryRepository.save(category);
     }
     async findAll() {
-        return this.categoryRepository.find({
-            where: { isActive: true },
-            order: { displayOrder: 'ASC' },
-        });
+        try {
+            console.log('🔍 [CategoriesService] Fetching all categories...');
+            const categories = await this.categoryRepository.find();
+            console.log(`✅ [CategoriesService] Found ${categories.length} categories`);
+            return categories;
+        }
+        catch (error) {
+            console.error('❌ [CategoriesService] findAll Error:', error);
+            return [];
+        }
     }
     async findBySlug(slug) {
         const category = await this.categoryRepository.findOne({

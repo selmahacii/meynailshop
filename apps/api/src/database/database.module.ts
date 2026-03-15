@@ -40,7 +40,7 @@ import {
           StockMovement,
           SiteSettings,
         ],
-        synchronize: configService.get('NODE_ENV') === 'development',
+        synchronize: false, // On désactive pour éviter les verrous (deadlocks) en dev
         logging: configService.get('NODE_ENV') === 'development',
         migrationsRun: false,
         migrationsTableName: 'migrations',

@@ -40,14 +40,21 @@ let AllExceptionsFilter = class AllExceptionsFilter {
     catch(exception, host) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
-        const status = common_1.HttpStatus.INTERNAL_SERVER_ERROR;
         let message = 'Internal server error';
-        if (exception instanceof Error) {
+        let statusCode = common_1.HttpStatus.INTERNAL_SERVER_ERROR;
+        if (exception instanceof common_1.HttpException) {
+            statusCode = exception.getStatus();
+            const res = exception.getResponse();
+            message = typeof res === 'string' ? res : res.message || 'Http Error';
+        }
+        else if (exception instanceof Error) {
             message = exception.message;
         }
-        response.status(status).json({
-            statusCode: status,
-            message,
+        console.error('🔥 [AllExceptionsFilter] Exception caught:', exception);
+        response.status(statusCode).json({
+            statusCode: statusCode,
+            message: message,
+            error: process.env.NODE_ENV === 'development' ? (exception instanceof Error ? exception.name : 'Error') : undefined,
         });
     }
 };

@@ -10,32 +10,7 @@ exports.LoggingInterceptor = void 0;
 const common_1 = require("@nestjs/common");
 let LoggingInterceptor = class LoggingInterceptor {
     intercept(context, next) {
-        const req = context.switchToHttp().getRequest();
-        const method = req?.method;
-        const url = req?.url;
-        const startedAt = Date.now();
-        const stream$ = next.handle();
-        stream$.subscribe({
-            next: () => {
-                const duration = Date.now() - startedAt;
-                console.log(JSON.stringify({
-                    type: 'http_request',
-                    method,
-                    url,
-                    durationMs: duration,
-                }));
-            },
-            error: () => {
-                const duration = Date.now() - startedAt;
-                console.log(JSON.stringify({
-                    type: 'http_request_error',
-                    method,
-                    url,
-                    durationMs: duration,
-                }));
-            },
-        });
-        return stream$;
+        return next.handle();
     }
 };
 exports.LoggingInterceptor = LoggingInterceptor;
