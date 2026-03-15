@@ -51,11 +51,13 @@ const jwt_1 = require("@nestjs/jwt");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const bcrypt = __importStar(require("bcrypt"));
+const config_1 = require("@nestjs/config");
 const user_entity_1 = require("../../database/entities/user.entity");
 let AuthService = class AuthService {
-    constructor(userRepository, jwtService) {
+    constructor(userRepository, jwtService, configService) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
+        this.configService = configService;
     }
     async validateUser(email, password) {
         const normalizedEmail = email.toLowerCase().trim();
@@ -85,8 +87,9 @@ let AuthService = class AuthService {
             sub: user.id,
             role: user.role,
         };
-        const accessToken = await this.jwtService.signAsync(payload, { expiresIn: '15m' });
-        const refreshToken = await this.jwtService.signAsync({ ...payload, tokenType: 'refresh' }, { expiresIn: '7d' });
+        const expiresIn = this.configService.get('JWT_EXPIRES_IN') || '24h';
+        const accessToken = await this.jwtService.signAsync(payload, { expiresIn });
+        const refreshToken = await this.jwtService.signAsync({ ...payload, tokenType: 'refresh' }, { expiresIn: this.configService.get('JWT_REFRESH_EXPIRES_IN') || '7d' });
         return {
             accessToken,
             refreshToken,
@@ -131,8 +134,9 @@ let AuthService = class AuthService {
                 sub: user.id,
                 role: user.role,
             };
-            const accessToken = await this.jwtService.signAsync(newPayload, { expiresIn: '15m' });
-            const newRefreshToken = await this.jwtService.signAsync({ ...newPayload, tokenType: 'refresh' }, { expiresIn: '7d' });
+            const expiresIn = this.configService.get('JWT_EXPIRES_IN') || '24h';
+            const accessToken = await this.jwtService.signAsync(newPayload, { expiresIn });
+            const newRefreshToken = await this.jwtService.signAsync({ ...newPayload, tokenType: 'refresh' }, { expiresIn: this.configService.get('JWT_REFRESH_EXPIRES_IN') || '7d' });
             return {
                 accessToken,
                 refreshToken: newRefreshToken,
@@ -148,6 +152,7 @@ exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        jwt_1.JwtService])
+        jwt_1.JwtService,
+        config_1.ConfigService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

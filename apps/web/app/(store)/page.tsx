@@ -22,8 +22,14 @@ export default function HomePage() {
                     StoreAPI.getFeatured()
                 ]);
 
-                if (catRes.success) setCategories(catRes.data || []);
-                if (featRes.success) setFeaturedProducts(featRes.data || []);
+                if (catRes.success) {
+                    console.log('📦 Categories Data:', catRes.data);
+                    setCategories(catRes.data || []);
+                }
+                if (featRes.success) {
+                    console.log('📦 Featured Products Data:', featRes.data);
+                    setFeaturedProducts(featRes.data || []);
+                }
             } catch (err) {
                 console.error('Home data fetch error:', err);
             } finally {
@@ -45,57 +51,55 @@ export default function HomePage() {
                 </div>
 
                 {loading && categories.length === 0 ? (
-                    <div className="flex justify-center py-12">
-                        <Loader2 className="animate-spin text-or" size={32} />
+                    <div className="flex flex-col items-center justify-center py-20">
+                        <Loader2 className="animate-spin text-or mb-4" size={32} />
+                        <p className="text-encre/40 text-sm">Chargement de votre collection...</p>
                     </div>
-                ) : (
+                ) : categories.length > 0 ? (
                     <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
                         {categories.map((cat) => {
-                            // Nettoyage proactif des URLs cassées pour éviter les erreurs console
-                            const rawImage = cat.imageUrl || cat.image || '';
-                            const isPlaceholder = rawImage.includes('placeholder') || rawImage.includes('placehold.co');
-                            
-                            // Mapping professionnel pour les catégories
                             const categoryImages: Record<string, string> = {
-                                'vernis-gel': 'https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=800&auto=format&fit=crop',
-                                'gel-uv': 'https://images.unsplash.com/photo-1600050218444-14309070557e?q=80&w=800&auto=format&fit=crop',
-                                'decoration': 'https://images.unsplash.com/photo-1607920502013-177991b9201a?q=80&w=800&auto=format&fit=crop',
-                                'materiel': 'https://images.unsplash.com/photo-1599426184804-5ec8f540bd0a?q=80&w=800&auto=format&fit=crop',
-                                'finition': 'https://images.unsplash.com/photo-1604014237800-1c9102c219da?q=80&w=800&auto=format&fit=crop'
+                                'vernis-gel': 'https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=600&auto=format&fit=crop',
+                                'gel-uv': 'https://images.unsplash.com/photo-1629193510214-cae650d37e6d?q=80&w=600&auto=format&fit=crop',
+                                'decoration': 'https://images.unsplash.com/photo-1607920502013-177991b9201a?q=80&w=600&auto=format&fit=crop',
+                                'materiel': 'https://images.unsplash.com/photo-1599426184804-5ec8f540bd0a?q=80&w=600&auto=format&fit=crop',
+                                'finition': 'https://images.unsplash.com/photo-1604014237800-1c9102c219da?q=80&w=600&auto=format&fit=crop'
                             };
 
+                            const rawImage = cat.imageUrl || cat.image || '';
+                            const isPlaceholder = !rawImage || rawImage.includes('placeholder') || rawImage.includes('placehold.co');
+                            
+                            const slug = cat.slug || cat.name?.toLowerCase().replace(/\s+/g, '-');
                             const displayImage = isPlaceholder 
-                                ? (categoryImages[cat.slug] || `https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=800&auto=format&fit=crop`)
+                                ? (categoryImages[slug] || categoryImages['vernis-gel'])
                                 : rawImage;
 
                             return (
                                 <Link 
                                     key={cat.id || cat.name} 
-                                    href={`/catalogue?category=${cat.slug || cat.name.toLowerCase()}`}
-                                    className="group cursor-pointer relative aspect-[4/5] overflow-hidden bg-encre2 rounded-sm shadow-sm"
+                                    href={`/catalogue?category=${slug}`}
+                                    className="group cursor-pointer relative aspect-[4/5] overflow-hidden bg-encre/10 rounded-sm shadow-sm border border-or/5"
                                 >
-                                    {displayImage ? (
-                                        <img 
-                                            src={displayImage} 
-                                            alt={cat.name} 
-                                            onError={(e) => {
-                                                const target = e.target as HTMLImageElement;
-                                                target.src = `https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=800&auto=format&fit=crop`; // Autre image de secours
-                                            }}
-                                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                                        />
-                                    ) : (
-                                        <div className="absolute inset-0 bg-gradient-to-br from-rouge-deep/20 to-rouge-mid/20" />
-                                    )}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-encre/90 via-encre/20 to-transparent z-10"></div>
+                                    <img 
+                                        src={displayImage} 
+                                        alt={cat.name} 
+                                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        loading="eager"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-encre/95 via-encre/20 to-transparent z-10 transition-opacity duration-300 group-hover:opacity-80"></div>
                                     <div className="absolute inset-0 flex items-end justify-center pb-8 z-20">
-                                        <span className="text-creme font-serif text-lg md:text-xl border-b border-transparent group-hover:border-or group-hover:text-or transition-all duration-300">
+                                        <span className="text-creme font-serif text-lg md:text-xl border-b-2 border-transparent group-hover:border-or group-hover:text-or transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                                             {cat.name}
                                         </span>
                                     </div>
                                 </Link>
                             );
                         })}
+                    </div>
+                ) : (
+                    <div className="text-center py-20 bg-creme2/50 rounded-lg border border-dashed border-or/20">
+                        <p className="text-encre/50 italic mb-4">Aucune catégorie n'est disponible pour le moment.</p>
+                        <button onClick={() => window.location.reload()} className="text-or text-sm font-bold underline">Actualiser la page</button>
                     </div>
                 )}
             </section>

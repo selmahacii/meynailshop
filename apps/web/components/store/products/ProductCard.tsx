@@ -88,16 +88,15 @@ export default function ProductCard({ product }: ProductCardProps) {
 
                 {/* Image */}
                 <div className="relative w-full h-full group-hover:scale-105 transition-transform duration-700 ease-out">
-                    {/* Placeholder logic pour un rendu premium */}
-                    <Image
+                    {/* Utilisation de img standard pour garantir la visibilité en dev */}
+                    <img
                         src={mainImage && !mainImage.includes('placeholder') && !mainImage.includes('placehold.co')
                             ? mainImage 
                             : 'https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=800&auto=format&fit=crop'
                         }
                         alt={product.name}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="absolute inset-0 w-full h-full object-cover"
+                        loading="lazy"
                     />
                 </div>
 

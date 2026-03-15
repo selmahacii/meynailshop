@@ -40,7 +40,7 @@ export default function Navbar() {
 
     return (
         <nav
-            className={`fixed top-0 w-full z-[100] transition-all duration-300 ${isScrolled ? 'bg-rouge-deep/90 backdrop-blur-md py-2 shadow-xl' : 'bg-transparent py-4'}`}
+            className={`fixed top-0 w-full z-[1000] transition-all duration-300 ${isScrolled ? 'bg-rouge-deep/90 backdrop-blur-md py-2 shadow-xl' : 'bg-transparent py-4'}`}
         >
             <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
                 {/* Mobile Menu Toggle */}
@@ -124,14 +124,14 @@ export default function Navbar() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className="fixed inset-0 bg-encre/80 backdrop-blur-md z-[110]"
+                            className="fixed inset-0 bg-encre/80 backdrop-blur-md z-[1001]"
                         />
                         <motion.div
                             initial={{ x: '-100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '-100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed top-0 left-0 h-full w-[80%] max-w-sm bg-rouge-deep z-[120] flex flex-col shadow-[10px_0_30px_rgba(0,0,0,0.5)] overflow-hidden"
+                            className="fixed top-0 left-0 h-full w-[80%] max-w-sm bg-rouge-deep z-[1002] flex flex-col shadow-[10px_0_30px_rgba(0,0,0,0.5)] overflow-hidden"
                         >
                             <div className="p-8 border-b border-white/10 flex justify-between items-center bg-rouge-deep/50 backdrop-blur-md">
                                 <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center space-x-3">

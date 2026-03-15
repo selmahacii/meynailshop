@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { ConfigService } from '@nestjs/config';
 import { User } from '../../database/entities/user.entity';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -13,6 +14,7 @@ export class AuthService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -47,10 +49,11 @@ export class AuthService {
       sub: user.id,
       role: user.role,
     };
-    const accessToken = await this.jwtService.signAsync(payload, { expiresIn: '15m' });
+    const expiresIn = this.configService.get('JWT_EXPIRES_IN') || '24h';
+    const accessToken = await this.jwtService.signAsync(payload, { expiresIn });
     const refreshToken = await this.jwtService.signAsync(
       { ...payload, tokenType: 'refresh' },
-      { expiresIn: '7d' },
+      { expiresIn: this.configService.get('JWT_REFRESH_EXPIRES_IN') || '7d' },
     );
 
     return {
@@ -106,10 +109,11 @@ export class AuthService {
         role: user.role,
       };
 
-      const accessToken = await this.jwtService.signAsync(newPayload, { expiresIn: '15m' });
+      const expiresIn = this.configService.get('JWT_EXPIRES_IN') || '24h';
+      const accessToken = await this.jwtService.signAsync(newPayload, { expiresIn });
       const newRefreshToken = await this.jwtService.signAsync(
         { ...newPayload, tokenType: 'refresh' },
-        { expiresIn: '7d' },
+        { expiresIn: this.configService.get('JWT_REFRESH_EXPIRES_IN') || '7d' },
       );
 
       return {
