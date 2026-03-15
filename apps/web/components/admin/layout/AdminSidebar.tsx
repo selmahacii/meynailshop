@@ -68,7 +68,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                 <div className="flex items-center space-x-3">
                     <div className="relative w-10 h-10 border border-or/20 rounded-full p-0.5 group-hover:border-or/40 transition-all duration-300 shadow-lg shadow-black/20 overflow-hidden">
                         <Image
-                            src="/logo.png"
+                            src="/logo2.png"
                             alt="MEEY Logo"
                             fill
                             className="object-contain rounded-full"
@@ -81,7 +81,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                 </div>
 
                 {/* Close button for mobile */}
-                <button 
+                <button
                     onClick={onClose}
                     className="lg:hidden p-2 text-creme/60 hover:text-or transition-colors"
                 >
@@ -96,9 +96,9 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                     <ul className="space-y-1">
                         {menuItems.slice(0, 4).map((item) => {
                             const isActive = pathname.startsWith(item.href);
-                            const badge = item.name === 'Commandes' ? badges.orders : 
-                                         item.name === 'Stock' ? badges.stock : item.badge;
-                            
+                            const badge = item.name === 'Commandes' ? badges.orders :
+                                item.name === 'Stock' ? badges.stock : item.badge;
+
                             return (
                                 <li key={item.name}>
                                     <Link
@@ -115,15 +115,15 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                                             <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-or to-or/50 rounded-r-full shadow-lg shadow-or/50" />
                                         )}
                                         <div className="flex items-center gap-3 relative z-10">
-                                            <item.icon 
-                                                size={18} 
+                                            <item.icon
+                                                size={18}
                                                 className={cn(
                                                     "transition-all duration-300",
-                                                    isActive 
-                                                        ? "text-or drop-shadow-lg" 
+                                                    isActive
+                                                        ? "text-or drop-shadow-lg"
                                                         : "text-creme/40 group-hover:text-or focus:text-or"
-                                                )} 
-                                                strokeWidth={isActive ? 2 : 1.5} 
+                                                )}
+                                                strokeWidth={isActive ? 2 : 1.5}
                                             />
                                             <span className={cn(isActive ? "font-semibold" : "font-normal")}>
                                                 {item.name}
@@ -149,7 +149,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                         {menuItems.slice(4, 7).map((item) => {
                             const isActive = pathname.startsWith(item.href);
                             const badge = item.name === 'Avis clients' ? badges.reviews : item.badge;
-                            
+
                             return (
                                 <li key={item.name}>
                                     <Link
@@ -166,15 +166,15 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                                             <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-or to-or/50 rounded-r-full shadow-lg shadow-or/50" />
                                         )}
                                         <div className="flex items-center gap-3 relative z-10">
-                                            <item.icon 
-                                                size={18} 
+                                            <item.icon
+                                                size={18}
                                                 className={cn(
                                                     "transition-all duration-300",
-                                                    isActive 
-                                                        ? "text-or drop-shadow-lg" 
+                                                    isActive
+                                                        ? "text-or drop-shadow-lg"
                                                         : "text-creme/40 group-hover:text-or"
-                                                )} 
-                                                strokeWidth={isActive ? 2 : 1.5} 
+                                                )}
+                                                strokeWidth={isActive ? 2 : 1.5}
                                             />
                                             <span>{item.name}</span>
                                         </div>
@@ -211,15 +211,15 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                                             <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-or to-or/50 rounded-r-full shadow-lg shadow-or/50" />
                                         )}
                                         <div className="flex items-center gap-3 relative z-10">
-                                            <item.icon 
-                                                size={18} 
+                                            <item.icon
+                                                size={18}
                                                 className={cn(
                                                     "transition-all duration-300",
-                                                    isActive 
-                                                        ? "text-or drop-shadow-lg" 
+                                                    isActive
+                                                        ? "text-or drop-shadow-lg"
                                                         : "text-creme/40 group-hover:text-or"
-                                                )} 
-                                                strokeWidth={isActive ? 2 : 1.5} 
+                                                )}
+                                                strokeWidth={isActive ? 2 : 1.5}
                                             />
                                             <span>{item.name}</span>
                                         </div>

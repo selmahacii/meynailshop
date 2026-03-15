@@ -80,7 +80,7 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-encre mb-1">Email</h3>
-                                        <p className="text-encre3">contact@meynailshop.dz</p>
+                                        <p className="text-encre3">meeybouabdellah@gmail.com </p>
                                     </div>
                                 </div>
 

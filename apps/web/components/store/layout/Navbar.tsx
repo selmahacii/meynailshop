@@ -52,12 +52,12 @@ export default function Navbar() {
                 </button>
 
                 <Link href="/" className="flex items-center group mr-auto lg:mr-0 pl-2 lg:pl-0">
-                    <div className="relative w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(191,171,146,0.3)]">
+                    <div className="relative w-[56px] h-[56px] transition-all duration-500">
                         <Image
-                            src="/logo.png"
-                            alt="MEEY Nail Shop"
+                            src="/logo2.png"
+                            alt="MEEY"
                             fill
-                            className="object-cover scale-[1.18]"
+                            className="object-contain"
                             priority
                         />
                     </div>
@@ -131,12 +131,12 @@ export default function Navbar() {
                         >
                             <div className="p-8 border-b border-gold-brand/10 flex justify-between items-center bg-rouge-brand/50 backdrop-blur-md">
                                 <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center space-x-3">
-                                    <div className="relative w-14 h-14 rounded-full overflow-hidden">
+                                    <div className="relative w-[42px] h-[42px] rounded-full overflow-hidden">
                                         <Image
-                                            src="/logo.png"
-                                            alt="MEEY Nail Shop"
+                                            src="/logo2.png"
+                                            alt="MEEY"
                                             fill
-                                            className="object-cover scale-[1.18]"
+                                            className="object-contain"
                                         />
                                     </div>
                                 </Link>
@@ -152,9 +152,8 @@ export default function Navbar() {
                                         key={link.name}
                                         href={link.href}
                                         onClick={() => setIsMobileMenuOpen(false)}
-                                        className={`flex items-center py-4 text-lg font-serif transition-all duration-300 border-b border-gold-brand/5 ${
-                                            pathname === link.href ? 'text-gold-brand font-bold' : 'text-gold-brand/80 hover:text-gold-brand'
-                                        }`}
+                                        className={`flex items-center py-4 text-lg font-serif transition-all duration-300 border-b border-gold-brand/5 ${pathname === link.href ? 'text-gold-brand font-bold' : 'text-gold-brand/80 hover:text-gold-brand'
+                                            }`}
                                     >
                                         {link.name}
                                     </Link>
