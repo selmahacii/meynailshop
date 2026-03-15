@@ -53,9 +53,19 @@ export default function HomePage() {
                         {categories.map((cat) => {
                             // Nettoyage proactif des URLs cassées pour éviter les erreurs console
                             const rawImage = cat.imageUrl || cat.image || '';
-                            const isPlaceholder = rawImage.includes('via.placeholder.com');
+                            const isPlaceholder = rawImage.includes('placeholder') || rawImage.includes('placehold.co');
+                            
+                            // Mapping professionnel pour les catégories
+                            const categoryImages: Record<string, string> = {
+                                'vernis-gel': 'https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=800&auto=format&fit=crop',
+                                'gel-uv': 'https://images.unsplash.com/photo-1600050218444-14309070557e?q=80&w=800&auto=format&fit=crop',
+                                'decoration': 'https://images.unsplash.com/photo-1607920502013-177991b9201a?q=80&w=800&auto=format&fit=crop',
+                                'materiel': 'https://images.unsplash.com/photo-1599426184804-5ec8f540bd0a?q=80&w=800&auto=format&fit=crop',
+                                'finition': 'https://images.unsplash.com/photo-1604014237800-1c9102c219da?q=80&w=800&auto=format&fit=crop'
+                            };
+
                             const displayImage = isPlaceholder 
-                                ? `https://images.unsplash.com/photo-1600050218444-14309070557e?q=80&w=800&auto=format&fit=crop`
+                                ? (categoryImages[cat.slug] || `https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=800&auto=format&fit=crop`)
                                 : rawImage;
 
                             return (

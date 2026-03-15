@@ -40,7 +40,7 @@ export default function Navbar() {
 
     return (
         <nav
-            className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-rouge-deep/90 backdrop-blur-md py-2 shadow-xl' : 'bg-transparent py-4'}`}
+            className={`fixed top-0 w-full z-[100] transition-all duration-300 ${isScrolled ? 'bg-rouge-deep/90 backdrop-blur-md py-2 shadow-xl' : 'bg-transparent py-4'}`}
         >
             <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
                 {/* Mobile Menu Toggle */}
@@ -53,12 +53,12 @@ export default function Navbar() {
 
                 {/* Logo */}
                 <Link href="/" className="flex items-center space-x-2 md:space-x-3 group mr-auto lg:mr-0 pl-2 lg:pl-0">
-                    <div className="relative w-9 h-9 md:w-11 md:h-11 border-2 border-or/20 rounded-full p-0.5 group-hover:border-or/40 transition-all duration-300 overflow-hidden shadow-lg shadow-black/20 bg-rouge-deep">
+                    <div className="relative w-10 h-10 md:w-14 md:h-14 border-2 border-or/30 rounded-full p-1 group-hover:border-or group-hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all duration-500 overflow-hidden bg-rouge-deep/40 backdrop-blur-sm">
                         <Image
                             src="/logo.png"
                             alt="MEEY Logo"
                             fill
-                            className="object-contain rounded-full"
+                            className="object-contain p-0.5"
                         />
                     </div>
                     <div className="flex flex-col">
@@ -124,39 +124,45 @@ export default function Navbar() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className="fixed inset-0 bg-encre/80 backdrop-blur-md z-[60]"
+                            className="fixed inset-0 bg-encre/80 backdrop-blur-md z-[110]"
                         />
                         <motion.div
                             initial={{ x: '-100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '-100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed top-0 left-0 h-full w-[85%] max-w-xs bg-rouge-deep z-[70] flex flex-col shadow-2xl overflow-hidden"
+                            className="fixed top-0 left-0 h-full w-[80%] max-w-sm bg-rouge-deep z-[120] flex flex-col shadow-[10px_0_30px_rgba(0,0,0,0.5)] overflow-hidden"
                         >
-                            <div className="p-6 border-b border-white/10 flex justify-between items-center bg-rouge-deep/50 backdrop-blur-md">
-                                <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center space-x-2">
-                                    <div className="relative w-8 h-8 border border-or/20 rounded-full p-0.5 overflow-hidden">
+                            <div className="p-8 border-b border-white/10 flex justify-between items-center bg-rouge-deep/50 backdrop-blur-md">
+                                <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center space-x-3">
+                                    <div className="relative w-10 h-10 border border-or/30 rounded-full p-1 overflow-hidden bg-rouge-deep">
                                         <Image
                                             src="/logo.png"
                                             alt="MEEY Logo"
                                             fill
-                                            className="object-contain rounded-full"
+                                            className="object-contain"
                                         />
                                     </div>
-                                    <span className="font-serif text-xl text-or uppercase tracking-tighter">MEEY</span>
+                                    <div className="flex flex-col">
+                                        <span className="font-serif text-xl text-or tracking-tight">MEEY</span>
+                                        <span className="text-[7px] uppercase tracking-widest text-creme/60">Nail Shop</span>
+                                    </div>
                                 </Link>
-                                <button onClick={() => setIsMobileMenuOpen(false)} className="text-creme/60 hover:text-creme transition-colors">
-                                    <X size={24} />
+                                <button onClick={() => setIsMobileMenuOpen(false)} className="text-creme/60 hover:text-creme p-2 bg-white/5 rounded-full transition-colors">
+                                    <X size={20} />
                                 </button>
                             </div>
 
-                            <div className="flex-1 overflow-y-auto p-6 space-y-1">
+                            <div className="flex-1 overflow-y-auto px-8 py-10 space-y-2">
+                                <p className="text-[10px] uppercase tracking-[0.3em] text-or/60 font-black mb-6">Menu de Navigation</p>
                                 {navLinks.map((link) => (
                                     <Link
                                         key={link.name}
                                         href={link.href}
                                         onClick={() => setIsMobileMenuOpen(false)}
-                                        className="flex items-center py-4 text-base font-medium text-creme hover:text-or hover:pl-2 transition-all duration-300 border-b border-white/5"
+                                        className={`flex items-center py-4 text-lg font-serif transition-all duration-300 border-b border-white/5 ${
+                                            pathname === link.href ? 'text-or' : 'text-creme hover:text-or'
+                                        }`}
                                     >
                                         {link.name}
                                     </Link>
@@ -164,9 +170,9 @@ export default function Navbar() {
                                 <Link
                                     href="/favoris"
                                     onClick={() => setIsMobileMenuOpen(false)}
-                                    className="flex items-center justify-between py-4 text-base font-medium text-creme hover:text-or hover:pl-2 transition-all duration-300 border-b border-white/5"
+                                    className="flex items-center justify-between py-4 text-lg font-serif text-creme hover:text-or transition-all duration-300 border-b border-white/5"
                                 >
-                                    <span>Favoris</span>
+                                    <span>Mes Favoris</span>
                                     {wishlistItemsCount > 0 && (
                                         <span className="bg-or text-rouge-deep text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm">
                                             {wishlistItemsCount}
@@ -175,9 +181,14 @@ export default function Navbar() {
                                 </Link>
                             </div>
 
-                            <div className="p-8 border-t border-white/10 bg-black/10">
-                                <p className="text-[10px] uppercase tracking-widest text-creme/40 font-bold mb-4">Besoin d'aide ?</p>
-                                <Link href="/contact" className="text-xs text-creme/80 hover:text-or transition-colors">Contactez le support</Link>
+                            <div className="p-8 border-t border-white/10 bg-black/20">
+                                <div className="flex items-center space-x-4 mb-6">
+                                    <div className="flex-1 h-[1px] bg-white/10"></div>
+                                    <p className="text-[9px] uppercase tracking-[0.2em] text-creme/30 font-bold">Contactez-nous</p>
+                                    <div className="flex-1 h-[1px] bg-white/10"></div>
+                                </div>
+                                <a href="mailto:meeybouabdellah@gmail.com" className="block text-sm text-creme/80 hover:text-or transition-colors font-medium mb-2">meeybouabdellah@gmail.com</a>
+                                <p className="text-xs text-creme/40">Suivez notre excellence au quotidien</p>
                             </div>
                         </motion.div>
                     </>

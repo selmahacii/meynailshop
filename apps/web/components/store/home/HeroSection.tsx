@@ -11,9 +11,9 @@ export default function HeroSection() {
             {/* Background Image */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 <motion.div
-                    initial={{ scale: 0.9, opacity: 0 }}
+                    initial={{ scale: 1.1, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 1.5 }}
+                    transition={{ duration: 12, ease: "easeOut" }}
                     className="w-full h-full"
                 >
                     <Image
