@@ -88,7 +88,7 @@ export default function Footer() {
 
                 <div className="pt-8 border-t border-gold-brand/5 flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-widest text-gold-brand/40 gap-6">
                     <p>(c) 2026 {settings.shopName || "MEEY Nail Shop"}. Tous droits reserves.</p>
-                    <p className="font-bold text-gold-brand/60 tracking-[0.3em]">Site developpe par selmahaci</p>
+                    <p className="font-bold text-gold-brand/60 tracking-[0.3em] italic">Conçu & Réalisé par Selma Haci</p>
                     <div className="flex space-x-6 mt-4 md:mt-0">
                         <span className="flex items-center gap-2">
                             <div className="w-1 h-1 bg-gold-brand/40 rounded-full"></div>

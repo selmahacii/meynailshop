@@ -216,7 +216,31 @@ export default function AdminSettingsPage() {
                         </>
                     )}
 
-                    {activeTab !== 'boutique' && (
+                    {activeTab === 'seo' && (
+                        <div className="bg-white rounded-sm border border-creme2 shadow-lg p-20 flex flex-col items-center justify-center text-center relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-or/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
+                            <div className="absolute bottom-0 left-0 w-64 h-64 bg-rouge-brand/5 rounded-full blur-3xl -ml-32 -mb-32"></div>
+                            
+                            <div className="relative">
+                                <div className="w-24 h-24 bg-creme rounded-full flex items-center justify-center mb-8 border border-creme2 relative z-10 shadow-inner">
+                                    <Globe size={40} className="text-or animate-pulse" strokeWidth={1} />
+                                </div>
+                                <div className="absolute inset-0 bg-or/20 rounded-full blur-xl animate-pulse"></div>
+                            </div>
+                            
+                            <div className="relative z-10">
+                                <span className="inline-block px-4 py-1.5 bg-or/10 text-or text-[10px] font-black uppercase tracking-[0.2em] rounded-full mb-6 border border-or/20">
+                                    Coming Soon
+                                </span>
+                                <h3 className="font-serif text-3xl text-encre mb-4">Section en cours de développement</h3>
+                                <p className="text-encre3 text-sm max-w-md mx-auto leading-relaxed">
+                                    Les paramètres de <span className="font-bold text-or underline decoration-or/30 underline-offset-4 uppercase tracking-widest">SEO & URL</span> seront disponibles prochainement pour optimiser votre visibilité sur les moteurs de recherche.
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    {!['boutique', 'seo'].includes(activeTab) && (
                         <div className="bg-white rounded-sm border border-creme2 shadow-lg p-16 flex flex-col items-center justify-center text-center">
                             <div className="w-16 h-16 bg-creme rounded-full flex items-center justify-center mb-6 border border-creme2">
                                 {(() => {
