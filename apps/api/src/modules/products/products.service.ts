@@ -36,42 +36,48 @@ export class ProductsService {
 
   async findAll(query: ProductsQueryDto): Promise<PaginatedResult<Product>> {
     const skip = (query.page - 1) * query.limit;
-    const where: Record<string, any> = { isActive: true };
+    
+    const queryBuilder = this.productRepository.createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category')
+      .where('product.isActive = :isActive', { isActive: true });
 
     if (query.search) {
-      where.name = Like(`%${query.search}%`);
+      queryBuilder.andWhere('product.name ILIKE :search', { search: `%${query.search}%` });
     }
 
     if (query.category) {
-      where.category = { slug: query.category } as any;
+      queryBuilder.andWhere('category.slug = :category', { category: query.category });
     }
 
-    if (query.minPrice || query.maxPrice) {
-      where.price = Between(query.minPrice || 0, query.maxPrice || 999999);
+    if (query.minPrice !== undefined && query.minPrice !== null) {
+      queryBuilder.andWhere('product.price >= :minPrice', { minPrice: query.minPrice });
+    }
+
+    if (query.maxPrice !== undefined && query.maxPrice !== null) {
+      queryBuilder.andWhere('product.price <= :maxPrice', { maxPrice: query.maxPrice });
     }
 
     if (query.badge) {
-      where.badge = query.badge as any;
+      queryBuilder.andWhere('product.badge = :badge', { badge: query.badge });
     }
 
     if (query.inStock === 'true') {
-      where.stock = Between(1, 999999);
+      queryBuilder.andWhere('product.stock > 0');
     }
 
-    const order: any = {};
+    // Sort
     if (query.sortBy) {
-      order[query.sortBy] = query.order === 'asc' ? 'ASC' : 'DESC';
+      // Séparer createdAt pour éviter l'ambiguïté si nécessaire
+      const sortField = query.sortBy === 'createdAt' ? 'product.createdAt' : `product.${query.sortBy}`;
+      queryBuilder.orderBy(sortField, query.order === 'asc' ? 'ASC' : 'DESC');
     } else {
-      order.createdAt = 'DESC';
+      queryBuilder.orderBy('product.createdAt', 'DESC');
     }
 
-    const [products, total] = await this.productRepository.findAndCount({
-      where,
-      relations: ['category'],
-      skip,
-      take: query.limit,
-      order,
-    });
+    const [products, total] = await queryBuilder
+      .skip(skip)
+      .take(query.limit)
+      .getManyAndCount();
 
     return {
       items: products,
