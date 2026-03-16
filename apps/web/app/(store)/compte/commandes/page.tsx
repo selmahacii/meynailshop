@@ -16,7 +16,7 @@ export default function ClientOrdersPage() {
             setLoading(true);
             try {
                 const res = await ordersApi.getMyOrders({ page: 1, limit: 20 });
-                if (mounted) setOrders(res.data?.data?.items || []);
+                if (mounted) setOrders(res.data?.items || []);
             } catch (err) {
                 console.error('Load orders error:', err);
             } finally {

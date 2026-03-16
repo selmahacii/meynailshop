@@ -235,7 +235,11 @@ export class StoreAPI {
   }
   
   static async getMyOrders(page = 1, limit = 10) {
-    return apiGet(`/api/orders/my?page=${page}&limit=${limit}`);
+    return apiGet(`/api/orders?page=${page}&limit=${limit}`);
+  }
+
+  static async getOrder(id: string) {
+    return apiGet(`/api/orders/${id}`);
   }
 }
 

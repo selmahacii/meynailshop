@@ -101,10 +101,17 @@ export default function Navbar() {
                             if (!mounted) return;
 
                             // Security Check: Is the cookie still there?
-                            const hasToken = document.cookie.includes('accessToken=');
+                            const hasCookieToken = document.cookie.includes('accessToken=');
+                            const localToken = localStorage.getItem('accessToken');
                             
-                            if (isAuthenticated && !hasToken) {
-                                console.warn('[NAVBAR DEBUG] Session mismatch detected (Store says Auth, Cookie says No). Cleaning up...');
+                            // Self-healing: If cookie is gone but local exists, re-sync!
+                            if (isAuthenticated && !hasCookieToken && localToken) {
+                                console.log('[NAVBAR DEBUG] Re-syncing cookie from localStorage...');
+                                document.cookie = `accessToken=${localToken}; path=/; max-age=86400; SameSite=Lax`;
+                            } 
+                            // Only clean up if BOTH are gone while we think we're auth
+                            else if (isAuthenticated && !hasCookieToken && !localToken) {
+                                console.warn('[NAVBAR DEBUG] Total session loss. Cleaning up...');
                                 useAuthStore.getState().logout();
                                 router.push('/connexion');
                                 return;
@@ -115,12 +122,8 @@ export default function Navbar() {
                                     console.log('[NAVBAR DEBUG] Redirecting Admin to dashboard');
                                     router.push('/admin/dashboard');
                                 } else {
-                                    // Logic for normal clients:
-                                    // If already in the account section, go to the profile page (/compte)
-                                    // If elsewhere, go to the orders page first (/compte/commandes)
                                     const isAlreadyInAccount = pathname.startsWith('/compte');
                                     const target = isAlreadyInAccount && pathname !== '/compte' ? '/compte' : '/compte/commandes';
-                                    
                                     console.log('[NAVBAR DEBUG] Client redirection to:', target);
                                     router.push(target);
                                 }
