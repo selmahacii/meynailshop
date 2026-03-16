@@ -98,16 +98,32 @@ export default function Navbar() {
                     <button
                         onClick={() => {
                             console.log('[NAVBAR DEBUG] Account icon clicked');
-                            console.log('[NAVBAR DEBUG] mounted:', mounted);
-                            console.log('[NAVBAR DEBUG] isAuthenticated:', isAuthenticated);
-                            console.log('[NAVBAR DEBUG] user:', user);
-                            
                             if (!mounted) return;
+
+                            // Security Check: Is the cookie still there?
+                            const hasToken = document.cookie.includes('accessToken=');
                             
+                            if (isAuthenticated && !hasToken) {
+                                console.warn('[NAVBAR DEBUG] Session mismatch detected (Store says Auth, Cookie says No). Cleaning up...');
+                                useAuthStore.getState().logout();
+                                router.push('/connexion');
+                                return;
+                            }
+
                             if (isAuthenticated) {
-                                const target = user?.role === 'admin' ? '/admin' : '/compte';
-                                console.log('[NAVBAR DEBUG] Redirecting to:', target);
-                                router.push(target);
+                                if (user?.role === 'admin') {
+                                    console.log('[NAVBAR DEBUG] Redirecting Admin to dashboard');
+                                    router.push('/admin/dashboard');
+                                } else {
+                                    // Logic for normal clients:
+                                    // If already in the account section, go to the profile page (/compte)
+                                    // If elsewhere, go to the orders page first (/compte/commandes)
+                                    const isAlreadyInAccount = pathname.startsWith('/compte');
+                                    const target = isAlreadyInAccount && pathname !== '/compte' ? '/compte' : '/compte/commandes';
+                                    
+                                    console.log('[NAVBAR DEBUG] Client redirection to:', target);
+                                    router.push(target);
+                                }
                             } else {
                                 console.log('[NAVBAR DEBUG] Redirecting to login');
                                 router.push('/connexion');
