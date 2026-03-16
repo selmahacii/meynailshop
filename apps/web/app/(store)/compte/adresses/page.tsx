@@ -53,7 +53,7 @@ export default function AddressBookPage() {
         if (!user) return;
         setLoading(true);
         try {
-            const res = await apiGet<Address[]>(`/users/${user.id}/addresses`);
+            const res = await apiGet<Address[]>(`/api/users/${user.id}/addresses`);
             if (res.success) {
                 setAddresses(res.data || []);
             }
@@ -71,7 +71,7 @@ export default function AddressBookPage() {
 
         setLoading(true);
         try {
-            const res = await apiPost<Address>(`/users/${user.id}/addresses`, formData);
+            const res = await apiPost<Address>(`/api/users/${user.id}/addresses`, formData);
 
             if (res.success) {
                 toast.success('Adresse ajoutée avec succès');
@@ -102,7 +102,7 @@ export default function AddressBookPage() {
         if (!user) return;
         setRemovingId(id);
         try {
-            const res = await apiDelete(`/users/${user.id}/addresses/${id}`);
+            const res = await apiDelete(`/api/users/${user.id}/addresses/${id}`);
             if (res.success) {
                 toast.success('Adresse supprimée');
                 setAddresses(prev => prev.filter(a => a.id !== id));
@@ -123,7 +123,14 @@ export default function AddressBookPage() {
         }
     };
 
-    if (!user) return null;
+    if (!user) {
+        return (
+            <div className="flex flex-col items-center justify-center py-20 bg-white border border-creme2">
+                <AlertCircle size={40} className="text-encre3/30 mb-4" />
+                <p className="text-encre3">Veuillez vous connecter pour voir vos adresses.</p>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-white p-8 border border-creme2 shadow-sm min-h-[500px]">
@@ -144,6 +151,7 @@ export default function AddressBookPage() {
                 <AnimatePresence mode='popLayout'>
                     {isAdding && (
                         <motion.div
+                            key="add-form"
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95 }}
@@ -265,6 +273,7 @@ export default function AddressBookPage() {
 
                     {!loading && addresses.length === 0 && !isAdding && (
                         <motion.div
+                            key="empty-state"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             className="md:col-span-2 text-center py-20 border-2 border-dashed border-creme2 rounded-sm"
