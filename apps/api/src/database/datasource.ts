@@ -16,13 +16,16 @@ import { SiteSettings } from './entities/site-settings.entity';
 // Load .env from root
 dotenv.config({ path: path.join(process.cwd(), '../../.env') });
 
+const url = process.env.DATABASE_URL;
+
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: process.env.DB_HOST || '127.0.0.1',
-  port: parseInt(process.env.DB_PORT || '5433'),
-  username: process.env.DB_USER || 'meey',
-  password: process.env.DB_PASSWORD || 'meey',
-  database: process.env.DB_NAME || 'meey_nail_shop',
+  url: url,
+  host: !url ? process.env.DB_HOST || '127.0.0.1' : undefined,
+  port: !url ? parseInt(process.env.DB_PORT || '5433') : undefined,
+  username: !url ? process.env.DB_USER || 'meey' : undefined,
+  password: !url ? process.env.DB_PASSWORD || 'meey' : undefined,
+  database: !url ? process.env.DB_NAME || 'meey_nail_shop' : undefined,
   entities: [
     User,
     Address,
@@ -39,4 +42,5 @@ export const AppDataSource = new DataSource({
   migrations: ['src/database/migrations/*.ts'],
   synchronize: false,
   logging: true,
+  ssl: url ? { rejectUnauthorized: false } : false,
 });
