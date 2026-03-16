@@ -5,9 +5,11 @@ import { ListFilter, ChevronDown } from 'lucide-react';
 interface ProductSortProps {
     total: number;
     onOpenFilters: () => void;
+    currentSort: string;
+    onSortChange: (sort: string) => void;
 }
 
-export default function ProductSort({ total, onOpenFilters }: ProductSortProps) {
+export default function ProductSort({ total, onOpenFilters, currentSort, onSortChange }: ProductSortProps) {
     return (
         <div className="flex flex-col md:flex-row justify-between items-center py-8 mb-12 space-y-4 md:space-y-0">
             <div className="text-[11px] md:text-xs text-encre3 font-medium">
@@ -28,6 +30,8 @@ export default function ProductSort({ total, onOpenFilters }: ProductSortProps) 
                     <div className="relative">
                         <select
                             id="sort"
+                            value={currentSort}
+                            onChange={(e) => onSortChange(e.target.value)}
                             className="text-xs md:text-sm border-none bg-transparent focus:ring-0 font-bold text-encre cursor-pointer pr-8 py-1 appearance-none"
                         >
                             <option value="newest">Nouveautés</option>

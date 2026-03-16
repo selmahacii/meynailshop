@@ -10,6 +10,12 @@ interface Category {
     slug: string;
 }
 
+export type FilterState = {
+    category: string | null;
+    priceRanges: string[];
+    inStock: boolean;
+};
+
 const priceRanges = [
     { label: 'Moins de 1000 DA', value: '0-1000' },
     { label: '1000 DA - 2500 DA', value: '1000-2500' },
@@ -19,10 +25,11 @@ const priceRanges = [
 
 interface ProductFiltersProps {
     onClose?: () => void;
+    currentFilters: FilterState;
+    onFilterChange: (filters: FilterState) => void;
 }
 
-export default function ProductFilters({ onClose }: ProductFiltersProps) {
-    const [activeCategory, setActiveCategory] = useState<string | null>(null);
+export default function ProductFilters({ onClose, currentFilters, onFilterChange }: ProductFiltersProps) {
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -42,6 +49,29 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
         fetchCategories();
     }, []);
 
+    const togglePriceRange = (range: string) => {
+        const newRanges = currentFilters.priceRanges.includes(range)
+            ? currentFilters.priceRanges.filter(r => r !== range)
+            : [...currentFilters.priceRanges, range];
+        onFilterChange({ ...currentFilters, priceRanges: newRanges });
+    };
+
+    const setCategory = (slug: string | null) => {
+        onFilterChange({ ...currentFilters, category: slug });
+    };
+
+    const toggleStock = () => {
+        onFilterChange({ ...currentFilters, inStock: !currentFilters.inStock });
+    };
+
+    const resetFilters = () => {
+        onFilterChange({
+            category: null,
+            priceRanges: [],
+            inStock: false
+        });
+    };
+
     return (
         <div className="space-y-12">
             {/* Categories */}
@@ -57,10 +87,10 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
                 ) : (
                     <div className="space-y-4">
                         <button
-                            onClick={() => setActiveCategory(null)}
+                            onClick={() => setCategory(null)}
                             className={cn(
                                 "text-[11px] font-black uppercase tracking-[0.2em] w-full text-left px-5 py-3 transition-all rounded-sm",
-                                activeCategory === null ? "bg-creme text-rouge-mid shadow-sm" : "text-encre3 hover:bg-creme/30"
+                                currentFilters.category === null ? "bg-creme text-rouge-mid shadow-sm" : "text-encre3 hover:bg-creme/30"
                             )}
                         >
                             • Tous les produits
@@ -69,10 +99,10 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
                             {categories.map((cat) => (
                                 <li key={cat.slug}>
                                     <button
-                                        onClick={() => setActiveCategory(cat.slug)}
+                                        onClick={() => setCategory(cat.slug)}
                                         className={cn(
                                             "text-xs md:text-[13px] transition-all py-2.5 px-4 w-full text-left rounded-sm font-medium",
-                                            activeCategory === cat.slug ? "text-rouge-mid font-bold" : "text-encre3 hover:text-encre hover:bg-creme/20"
+                                            currentFilters.category === cat.slug ? "text-rouge-mid font-bold" : "text-encre3 hover:text-encre hover:bg-creme/20"
                                         )}
                                     >
                                         {cat.name}
@@ -94,7 +124,12 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
                     {priceRanges.map((range) => (
                         <label key={range.value} className="flex items-center group cursor-pointer">
                             <div className="relative flex items-center justify-center">
-                                <input type="checkbox" className="peer appearance-none w-6 h-6 border border-creme2 rounded-sm checked:bg-[#3D1414] checked:border-[#3D1414] transition-all bg-white" />
+                                <input 
+                                    type="checkbox" 
+                                    checked={currentFilters.priceRanges.includes(range.value)}
+                                    onChange={() => togglePriceRange(range.value)}
+                                    className="peer appearance-none w-6 h-6 border border-creme2 rounded-sm checked:bg-[#3D1414] checked:border-[#3D1414] transition-all bg-white" 
+                                />
                                 <Check size={14} className="absolute text-creme opacity-0 peer-checked:opacity-100 transition-opacity" />
                             </div>
                             <span className="ml-4 text-xs md:text-sm text-encre3 group-hover:text-encre transition-colors font-medium">{range.label}</span>
@@ -111,14 +146,22 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
                 <label className="flex items-center justify-between group cursor-pointer">
                     <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-encre3 group-hover:text-encre transition-colors">En Stock Uniquement</span>
                     <div className="relative">
-                        <input type="checkbox" className="peer sr-only" />
+                        <input 
+                            type="checkbox" 
+                            checked={currentFilters.inStock}
+                            onChange={toggleStock}
+                            className="peer sr-only" 
+                        />
                         <div className="w-12 h-6 bg-creme2 rounded-full transition-colors peer-checked:bg-[#3D1414]"></div>
                         <div className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-6 shadow-sm"></div>
                     </div>
                 </label>
             </div>
 
-            <button className="w-full bg-[#3D1414] text-creme py-5 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm hover:bg-black transition-all shadow-xl border border-or/20 active:scale-95 leading-none">
+            <button 
+                onClick={resetFilters}
+                className="w-full bg-[#3D1414] text-creme py-5 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm hover:bg-black transition-all shadow-xl border border-or/20 active:scale-95 leading-none"
+            >
                 Réinitialiser
             </button>
         </div>
