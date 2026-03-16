@@ -42,7 +42,7 @@ services:
     container_name: meey_api
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgresql://meey:meey_password_2026@postgres:5432/meey_nail_shop
+      DATABASE_URL: postgresql://meey:meey@postgres:5432/meey_nail_shop
       REDIS_URL: redis://redis:6379
       JWT_SECRET: dev_jwt_secret_change_in_production_2026
       JWT_REFRESH_SECRET: dev_refresh_secret_change_in_production_2026

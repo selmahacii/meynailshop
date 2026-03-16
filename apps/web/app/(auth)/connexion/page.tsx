@@ -44,45 +44,58 @@ function LoginForm() {
             }
 
             const result = await response.json();
-            console.log('[DEBUG] Login Response:', result);
+            console.log('[DEBUG] Raw Login Response:', result);
 
-            // Handle different nesting levels (proxy + backend)
+            // Handle nesting: NestJS often wraps in a 'data' property
             let authData = result.data || result;
-            // If it's still wrapped (backend standard), unwrap again
-            if (authData && authData.data && !authData.id) {
-                authData = authData.data;
-            }
+            
+            // Sometimes it's double wrapped or uses a different structure
+            if (authData && authData.user) {
+                // Scenario: { accessToken: '...', user: { ... } }
+                const userToStore = authData.user;
+                const token = authData.accessToken;
+                
+                console.log('[DEBUG] Scenario A - Nesting found {accessToken, user}');
+                console.log('[DEBUG] Token:', token ? 'Exists' : 'Missing');
+                console.log('[DEBUG] User to store:', userToStore);
 
-            console.log('[DEBUG] Simplified authData:', authData);
-
-            const accessToken = authData.accessToken;
-            const userData = authData; // The object itself contains the user fields now
-
-            if (accessToken) {
-                console.log('[DEBUG] Setting token');
-                localStorage.setItem('accessToken', accessToken);
-                document.cookie = `accessToken=${accessToken}; path=/; max-age=86400`;
-            }
-
-            if (userData && (userData.id || userData.email)) {
-                console.log('[DEBUG] Valid User identified:', userData);
-                setUser(userData as any);
-                toast.success(`Bienvenue, ${userData.firstName || 'Utilisateur'} !`);
-
-                console.log('[DEBUG] User Role:', userData.role);
-                // Explicit redirect based on role
-                if (userData.role === 'admin') {
-                    console.log('[DEBUG] Redirecting to /admin/dashboard');
-                    router.push('/admin/dashboard');
+                if (token) {
+                    localStorage.setItem('accessToken', token);
+                    document.cookie = `accessToken=${token}; path=/; max-age=86400`;
+                }
+                
+                setUser(userToStore);
+                toast.success(`Bienvenue, ${userToStore.firstName || 'Utilisateur'} !`);
+                
+                if (userToStore.role === 'admin') {
+                    router.push('/admin');
                 } else {
-                    console.log('[DEBUG] Redirecting to:', redirectUrl);
                     router.push(redirectUrl);
                 }
             } else {
-                console.error('[DEBUG] Invalid userData:', userData);
-                const message = 'Données utilisateur invalides';
-                toast.error(message);
-                setErrorMsg(message);
+                // Scenario: Flat object or other structure
+                console.log('[DEBUG] Scenario B - Fallback extraction');
+                const accessToken = authData.accessToken;
+                
+                if (accessToken) {
+                    localStorage.setItem('accessToken', accessToken);
+                    document.cookie = `accessToken=${accessToken}; path=/; max-age=86400`;
+                }
+
+                // If authData itself looks like a user (has id/email/role)
+                if (authData.id || authData.email || authData.role) {
+                    setUser(authData);
+                    toast.success(`Bienvenue !`);
+                    
+                    if (authData.role === 'admin') {
+                        router.push('/admin');
+                    } else {
+                        router.push(redirectUrl);
+                    }
+                } else {
+                    console.error('[DEBUG] Could not identify user data in response:', authData);
+                    toast.error('Erreur: Données utilisateur introuvables');
+                }
             }
         } catch (error) {
             console.error('Login error:', error);

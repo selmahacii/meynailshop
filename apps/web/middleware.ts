@@ -37,7 +37,7 @@ export function middleware(request: NextRequest) {
     console.log(`[MIDDLEWARE DEBUG] Decoded payload:`, payload);
 
     if (!payload || payload.role !== 'admin') {
-      console.warn(`[MIDDLEWARE DEBUG] Admin route blocked: Improper role [${payload?.role || 'none'}]`);
+      console.warn(`[MIDDLEWARE DEBUG] Admin route blocked: Improper role [${payload?.role || 'none'}]. REDIRECTING TO HOME.`);
       return NextResponse.redirect(new URL('/', request.url));
     }
     

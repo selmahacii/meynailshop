@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { ShoppingBag, User, Search, Menu, X, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '@/lib/store/cartStore';
@@ -16,6 +16,7 @@ export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const pathname = usePathname();
+    const router = useRouter();
     const [mounted, setMounted] = useState(false);
     const cartItemsCount = useCartStore((state) => state.items.length);
     const wishlistItemsCount = useWishlistStore((state) => state.items.length);
@@ -30,7 +31,7 @@ export default function Navbar() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const accountTarget = mounted && isAuthenticated ? '/compte' : '/login';
+
 
     const navLinks = [
         { name: 'Accueil', href: '/' },
@@ -94,13 +95,29 @@ export default function Navbar() {
                         )}
                     </Link>
 
-                    <Link
-                        href={accountTarget}
+                    <button
+                        onClick={() => {
+                            console.log('[NAVBAR DEBUG] Account icon clicked');
+                            console.log('[NAVBAR DEBUG] mounted:', mounted);
+                            console.log('[NAVBAR DEBUG] isAuthenticated:', isAuthenticated);
+                            console.log('[NAVBAR DEBUG] user:', user);
+                            
+                            if (!mounted) return;
+                            
+                            if (isAuthenticated) {
+                                const target = user?.role === 'admin' ? '/admin' : '/compte';
+                                console.log('[NAVBAR DEBUG] Redirecting to:', target);
+                                router.push(target);
+                            } else {
+                                console.log('[NAVBAR DEBUG] Redirecting to login');
+                                router.push('/connexion');
+                            }
+                        }}
                         className="text-gold-brand hover:opacity-80 transition-all hover:scale-110"
                         aria-label="Compte / Connexion"
                     >
                         <User size={21} strokeWidth={1.5} />
-                    </Link>
+                    </button>
 
                     <Link href="/panier" className="relative text-gold-brand hover:opacity-80 transition-all hover:scale-110">
                         <ShoppingBag size={21} strokeWidth={1.5} />
