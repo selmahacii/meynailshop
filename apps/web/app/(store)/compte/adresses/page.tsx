@@ -5,6 +5,7 @@ import { MapPin, Plus, Trash2, Home, Briefcase, User as UserIcon, Phone, Map, Na
 import { useAuthStore } from '@/lib/store/authStore';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
+import { apiGet, apiPost, apiDelete } from '@/lib/api/client';
 
 interface Address {
     id: string;
@@ -39,7 +40,11 @@ export default function AddressBookPage() {
 
     useEffect(() => {
         if (user) {
-            setFormData(prev => ({ ...prev, fullName: `${user.firstName} ${user.lastName}`, phone: user.phone || '' }));
+            setFormData(prev => ({ 
+                ...prev, 
+                fullName: `${user.firstName} ${user.lastName}`, 
+                phone: user.phone || '' 
+            }));
             fetchAddresses();
         }
     }, [user]);
@@ -48,10 +53,9 @@ export default function AddressBookPage() {
         if (!user) return;
         setLoading(true);
         try {
-            const res = await fetch(`/api/users/${user.id}/addresses`);
-            if (res.ok) {
-                const result = await res.json();
-                setAddresses(result.data || []);
+            const res = await apiGet<Address[]>(`/users/${user.id}/addresses`);
+            if (res.success) {
+                setAddresses(res.data || []);
             }
         } catch (error) {
             console.error('Fetch addresses error:', error);
@@ -67,17 +71,13 @@ export default function AddressBookPage() {
 
         setLoading(true);
         try {
-            const res = await fetch(`/api/users/${user.id}/addresses`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
+            const res = await apiPost<Address>(`/users/${user.id}/addresses`, formData);
 
-            if (res.ok) {
+            if (res.success) {
                 toast.success('Adresse ajoutée avec succès');
                 setIsAdding(false);
                 fetchAddresses();
-                // Reset minimal form
+                // Reset form
                 setFormData({
                     label: 'Maison',
                     fullName: `${user.firstName} ${user.lastName}`,
@@ -89,7 +89,7 @@ export default function AddressBookPage() {
                     isDefault: false
                 });
             } else {
-                toast.error('Erreur lors de l\'ajout');
+                toast.error(res.error || 'Erreur lors de l\'ajout');
             }
         } catch (error) {
             toast.error('Erreur réseau');
@@ -102,10 +102,8 @@ export default function AddressBookPage() {
         if (!user) return;
         setRemovingId(id);
         try {
-            const res = await fetch(`/api/users/${user.id}/addresses/${id}`, {
-                method: 'DELETE'
-            });
-            if (res.ok) {
+            const res = await apiDelete(`/users/${user.id}/addresses/${id}`);
+            if (res.success) {
                 toast.success('Adresse supprimée');
                 setAddresses(prev => prev.filter(a => a.id !== id));
             }
