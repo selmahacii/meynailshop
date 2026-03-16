@@ -16,6 +16,13 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '@meey/shared';
 
+interface MulterFile {
+  buffer: Buffer;
+  originalname: string;
+  mimetype: string;
+  size: number;
+}
+
 @Controller('upload')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRole.ADMIN)
@@ -24,7 +31,7 @@ export class UploadController {
 
   @Post('product-image')
   @UseInterceptors(FileInterceptor('image'))
-  async uploadProductImage(@UploadedFile() file: Express.Multer.File) {
+  async uploadProductImage(@UploadedFile() file: MulterFile) {
     const filename = await this.uploadService.uploadProductImage(file);
     return {
       statusCode: 201,
@@ -38,7 +45,7 @@ export class UploadController {
 
   @Post('product-images')
   @UseInterceptors(FilesInterceptor('images', 10))
-  async uploadProductImages(@UploadedFiles() files: Express.Multer.File[]) {
+  async uploadProductImages(@UploadedFiles() files: MulterFile[]) {
     if (!files || files.length === 0) {
       throw new BadRequestException('Aucun fichier fourni');
     }
