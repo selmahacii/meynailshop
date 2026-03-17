@@ -7,8 +7,8 @@ import * as bcrypt from 'bcrypt';
 const envPath = path.resolve(__dirname, '../../../.env');
 dotenv.config({ path: envPath });
 
-const { AppDataSource } = require('../datasource');
-const { User } = require('../entities/user.entity');
+const { AppDataSource } = require('./datasource');
+const { User } = require('./entities/user.entity');
 
 async function createAdmin() {
   try {
