@@ -56,6 +56,25 @@ async function bootstrap() {
   );
 
   const port = process.env.PORT || process.env.API_PORT || 3001;
+  
+  console.log('--- 🛡️ DIAGNOSTIC DÉMARRAGE ---');
+  console.log(`🌍 NODE_ENV: ${process.env.NODE_ENV}`);
+  console.log(`🔗 API_URL: ${process.env.API_URL}`);
+  console.log(`🚀 RENDER_URL: ${process.env.RENDER_EXTERNAL_URL}`);
+  console.log(`📂 CWD: ${process.cwd()}`);
+  
+  const fs = require('fs');
+  const path = require('path');
+  const uploadPath = path.join(process.cwd(), 'uploads');
+  if (!fs.existsSync(uploadPath)) {
+    console.log('📂 Création forcée du dossier uploads...');
+    fs.mkdirSync(uploadPath, { recursive: true });
+  } else {
+    const files = fs.readdirSync(uploadPath);
+    console.log(`📂 Dossier uploads OK. (${files.length} fichiers presents)`);
+  }
+  console.log('-------------------------------');
+
   await app.listen(port, '0.0.0.0');
   
   // Auto-creation de l'admin s'il n'existe pas

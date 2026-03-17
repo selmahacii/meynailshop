@@ -37,6 +37,8 @@ export class UploadService {
     const filename = `${uuidv4()}.webp`;
     const filePath = path.join(this.uploadDir, filename);
 
+    this.logger.log(`📥 Début upload image. Destination: ${filePath}`);
+
     try {
       await sharp(file.buffer)
         .resize(800, 800, {
@@ -46,19 +48,22 @@ export class UploadService {
         .webp({ quality: 80 })
         .toFile(filePath);
 
+      this.logger.log(`✅ Fichier écrit avec succès sur le disque : ${filename}`);
       return filename;
     } catch (error) {
       const errMsg = error instanceof Error ? error.message : 'Unknown error';
-      this.logger.error(`Error processing image: ${errMsg}`);
+      this.logger.error(`❌ Erreur fatale Sharp lors de l'ecriture : ${errMsg}`);
       throw new BadRequestException("Erreur lors du traitement de l'image");
     }
   }
 
   async deleteFile(filename: string): Promise<void> {
     const filePath = path.join(this.uploadDir, filename);
+    this.logger.log(`🗑️ Demande de suppression : ${filePath}`);
     if (fs.existsSync(filePath)) {
       try {
         fs.unlinkSync(filePath);
+        this.logger.log(`✅ Fichier supprimé : ${filename}`);
       } catch (error) {
         const errMsg = error instanceof Error ? error.message : 'Unknown error';
         this.logger.error(`Error deleting file ${filename}: ${errMsg}`);
