@@ -30,11 +30,14 @@ export default function Footer() {
                             L'excellence au service de vos ongles. Produits premium sélectionnés pour les professionnels et passionnés d'onglerie en Algérie.
                         </p>
                         <div className="flex justify-center md:justify-start space-x-4">
-                            <a href="#" className="p-3 bg-white/5 rounded-full hover:bg-gold-brand hover:text-rouge-brand transition-all text-gold-brand border border-gold-brand/10">
+                            <a 
+                                href="https://www.instagram.com/meey_nailshop?igsh=MW9hd3FiendjajY5bw==" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="p-3 bg-white/5 rounded-full hover:bg-gold-brand hover:text-rouge-brand transition-all text-gold-brand border border-gold-brand/10"
+                                aria-label="Suivez-nous sur Instagram"
+                            >
                                 <Instagram size={20} />
-                            </a>
-                            <a href="#" className="p-3 bg-white/5 rounded-full hover:bg-gold-brand hover:text-rouge-brand transition-all text-gold-brand border border-gold-brand/10">
-                                <Facebook size={20} />
                             </a>
                         </div>
                     </div>
