@@ -57,6 +57,34 @@ async function bootstrap() {
 
   const port = process.env.PORT || process.env.API_PORT || 3001;
   await app.listen(port, '0.0.0.0');
+  
+  // Auto-creation de l'admin s'il n'existe pas
+  try {
+    const { User } = require('./database/entities/user.entity');
+    const { getRepositoryToken } = require('@nestjs/typeorm');
+    const bcrypt = require('bcrypt');
+    const userRepo = app.get(getRepositoryToken(User));
+    const adminEmail = 'meeybouabdellah@gmail.com';
+    
+    const adminExists = await userRepo.findOne({ where: { email: adminEmail } });
+    if (!adminExists) {
+      const hashedPassword = await bcrypt.hash('meey2026', 12);
+      const admin = userRepo.create({
+        email: adminEmail,
+        password: hashedPassword,
+        firstName: 'Mey',
+        lastName: 'Bouabdellah',
+        phone: '0775436562',
+        role: 'admin',
+        isActive: true,
+      });
+      await userRepo.save(admin);
+      console.log('✅ Compte Admin par défaut créé (meeybouabdellah@gmail.com)');
+    }
+  } catch (e) {
+    console.log('ℹ️ Verif admin ignoree ou deja existante');
+  }
+
   console.log(`✅ API running on port ${port}`);
   console.log(`📚 Health check: http://localhost:${port}/api/health`);
 }
