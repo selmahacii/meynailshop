@@ -14,72 +14,73 @@ export default function Footer() {
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                     {/* Brand Info */}
-                    <div className="space-y-6">
-                        <Link href="/" className="flex flex-col items-start px-2">
-                            <div className="relative w-24 h-24 rounded-full overflow-hidden mb-2">
+                    <div className="space-y-6 flex flex-col items-center md:items-start text-center md:text-left">
+                        <Link href="/" className="group transition-transform hover:scale-105">
+                            <div className="relative w-28 h-28 bg-white/5 rounded-full p-4 border border-gold-brand/10 backdrop-blur-sm shadow-2xl">
                                 <Image
-                                    src="/logo.png"
+                                    src="/logo2.png"
                                     alt={settings.shopName || "MEEY Nail Shop"}
                                     fill
-                                    className="object-cover scale-[1.18]"
+                                    className="object-contain p-2 drop-shadow-[0_0_10px_rgba(180,150,80,0.3)]"
+                                    priority
                                 />
                             </div>
                         </Link>
-                        <p className="text-gold-brand/70 text-sm leading-relaxed max-w-xs">
-                            L'excellence au service de vos ongles. Produits premium selectionnes pour les professionnels et passionnes d'onglerie en Algerie.
+                        <p className="text-gold-brand/70 text-sm leading-relaxed max-w-xs mx-auto md:mx-0">
+                            L'excellence au service de vos ongles. Produits premium sélectionnés pour les professionnels et passionnés d'onglerie en Algérie.
                         </p>
-                        <div className="flex space-x-4">
-                            <a href="#" className="p-2 bg-black/10 rounded-full hover:bg-gold-brand hover:text-rouge-brand transition-all text-gold-brand">
-                                <Instagram size={18} />
+                        <div className="flex justify-center md:justify-start space-x-4">
+                            <a href="#" className="p-3 bg-white/5 rounded-full hover:bg-gold-brand hover:text-rouge-brand transition-all text-gold-brand border border-gold-brand/10">
+                                <Instagram size={20} />
                             </a>
-                            <a href="#" className="p-2 bg-black/10 rounded-full hover:bg-gold-brand hover:text-rouge-brand transition-all text-gold-brand">
-                                <Facebook size={18} />
+                            <a href="#" className="p-3 bg-white/5 rounded-full hover:bg-gold-brand hover:text-rouge-brand transition-all text-gold-brand border border-gold-brand/10">
+                                <Facebook size={20} />
                             </a>
                         </div>
                     </div>
 
                     {/* Quick Links */}
-                    <div>
-                        <h4 className="font-serif text-lg text-gold-brand mb-6">Navigation</h4>
+                    <div className="text-center md:text-left">
+                        <h4 className="font-serif text-xl text-gold-brand mb-6 font-bold tracking-wide">Navigation</h4>
                         <ul className="space-y-4 text-sm text-gold-brand/70">
-                            <li><Link href="/catalogue" className="hover:text-gold-brand transition-colors">Toute la collection</Link></li>
-                            <li><Link href="/categories/vernis-gel" className="hover:text-gold-brand transition-colors">Vernis Gel</Link></li>
-                            <li><Link href="/categories/gel-uv" className="hover:text-gold-brand transition-colors">Gel UV & Resine</Link></li>
-                            <li><Link href="/categories/materiel" className="hover:text-gold-brand transition-colors">Materiel & Lampes</Link></li>
-                            <li><Link href="/nouveautes" className="hover:text-gold-brand transition-colors">Nouveautes</Link></li>
+                            <li><Link href="/catalogue" className="hover:text-gold-brand transition-all hover:pl-2">Toute la collection</Link></li>
+                            <li><Link href="/categories/vernis-gel" className="hover:text-gold-brand transition-all hover:pl-2">Vernis Gel</Link></li>
+                            <li><Link href="/categories/gel-uv" className="hover:text-gold-brand transition-all hover:pl-2">Gel UV & Résine</Link></li>
+                            <li><Link href="/categories/materiel" className="hover:text-gold-brand transition-all hover:pl-2">Matériel & Lampes</Link></li>
+                            <li><Link href="/nouveautes" className="hover:text-gold-brand transition-all hover:pl-2">Nouveautés</Link></li>
                         </ul>
                     </div>
 
                     {/* Customer Service */}
-                    <div>
-                        <h4 className="font-serif text-lg text-gold-brand mb-6">Aide & Support</h4>
+                    <div className="text-center md:text-left">
+                        <h4 className="font-serif text-xl text-gold-brand mb-6 font-bold tracking-wide">Aide & Support</h4>
                         <ul className="space-y-4 text-sm text-gold-brand/70">
-                            <li><Link href="/compte" className="hover:text-gold-brand transition-colors">Mon Compte</Link></li>
-                            <li><Link href="/panier" className="hover:text-gold-brand transition-colors">Suivi de commande</Link></li>
-                            <li><Link href="/livraison" className="hover:text-gold-brand transition-colors">Livraison & Tarifs</Link></li>
-                            <li><Link href="/cgv" className="hover:text-gold-brand transition-colors">Conditions Generales</Link></li>
-                            <li><Link href="/contact" className="hover:text-gold-brand transition-colors">Nous contacter</Link></li>
+                            <li><Link href="/compte" className="hover:text-gold-brand transition-all hover:pl-2">Mon Compte</Link></li>
+                            <li><Link href="/panier" className="hover:text-gold-brand transition-all hover:pl-2">Suivi de commande</Link></li>
+                            <li><Link href="/livraison" className="hover:text-gold-brand transition-all hover:pl-2">Livraison & Tarifs</Link></li>
+                            <li><Link href="/cgv" className="hover:text-gold-brand transition-all hover:pl-2">Conditions Générales</Link></li>
+                            <li><Link href="/contact" className="hover:text-gold-brand transition-all hover:pl-2">Nous contacter</Link></li>
                         </ul>
                     </div>
 
                     {/* Contact Info */}
-                    <div>
-                        <h4 className="font-serif text-lg text-gold-brand mb-6">Contact</h4>
-                        <ul className="space-y-4 text-sm text-gold-brand/70">
-                            <li className="flex items-start space-x-3">
-                                <MapPin size={18} className="text-gold-brand shrink-0" />
-                                <span>{settings.shopAddress || "Alger, Algerie"}</span>
+                    <div className="text-center md:text-left">
+                        <h4 className="font-serif text-xl text-gold-brand mb-6 font-bold tracking-wide">Contact</h4>
+                        <ul className="space-y-5 text-sm text-gold-brand/70">
+                            <li className="flex flex-col md:flex-row items-center md:items-start md:space-x-3 gap-2">
+                                <MapPin size={20} className="text-gold-brand shrink-0" />
+                                <span>{settings.shopAddress || "Alger, Algérie"}</span>
                             </li>
-                            <li className="flex items-center space-x-3">
-                                <Phone size={18} className="text-gold-brand shrink-0" />
-                                <a href={`tel:${settings.shopPhone || "0775436562"}`} className="hover:text-gold-brand transition-colors">
-                                    {settings.shopPhone || "0775436562"}
+                            <li className="flex flex-col md:flex-row items-center md:items-start md:space-x-3 gap-2">
+                                <Phone size={20} className="text-gold-brand shrink-0" />
+                                <a href="tel:0775436562" className="hover:text-gold-brand transition-colors font-medium">
+                                    0775436562
                                 </a>
                             </li>
-                            <li className="flex items-center space-x-3">
-                                <Mail size={18} className="text-gold-brand shrink-0" />
-                                <a href={`mailto:${settings.shopEmail || "meeybouabdellah@gmail.com"}`} className="hover:text-gold-brand transition-colors">
-                                    {settings.shopEmail || "meeybouabdellah@gmail.com"}
+                            <li className="flex flex-col md:flex-row items-center md:items-start md:space-x-3 gap-2">
+                                <Mail size={20} className="text-gold-brand shrink-0" />
+                                <a href="mailto:meeybouabdellah@gmail.com" className="hover:text-gold-brand transition-colors font-medium break-all">
+                                    meeybouabdellah@gmail.com
                                 </a>
                             </li>
                         </ul>

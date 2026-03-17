@@ -212,13 +212,13 @@ export default function Navbar() {
 
                             <div className="p-8 border-t border-gold-brand/10 bg-black/20">
                                 <div className="flex items-center space-x-4 mb-6">
-                                    <div className="flex-1 h-[1px] bg-gold-brand/10"></div>
-                                    <p className="text-[9px] uppercase tracking-[0.2em] text-gold-brand/60 font-bold">Contactez-nous</p>
-                                    <div className="flex-1 h-[1px] bg-gold-brand/10"></div>
-                                </div>
-                                <a href={`mailto:${settings.shopEmail || 'contact@meey.dz'}`} className="block text-sm text-gold-brand hover:opacity-80 transition-opacity font-medium mb-2">{settings.shopEmail || 'contact@meey.dz'}</a>
-                                <p className="text-xs text-gold-brand/40">Suivez notre excellence au quotidien</p>
-                            </div>
+                                     <div className="flex-1 h-[1px] bg-gold-brand/10"></div>
+                                     <p className="text-[9px] uppercase tracking-[0.2em] text-gold-brand/60 font-bold">Contactez-nous</p>
+                                     <div className="flex-1 h-[1px] bg-gold-brand/10"></div>
+                                 </div>
+                                 <a href="mailto:meeybouabdellah@gmail.com" className="block text-sm text-gold-brand hover:opacity-80 transition-opacity font-medium mb-2 break-all">meeybouabdellah@gmail.com</a>
+                                 <p className="text-xs text-gold-brand/40">Suivez notre excellence au quotidien</p>
+                             </div>
                         </motion.div>
                     </>
                 )}
