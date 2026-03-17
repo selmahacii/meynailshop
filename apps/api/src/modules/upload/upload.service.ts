@@ -67,6 +67,15 @@ export class UploadService {
   }
 
   getFileUrl(filename: string): string {
+    const baseUrl = this.configService.get<string>('API_URL') || 
+                    this.configService.get<string>('BASE_URL') || 
+                    '';
+    
+    // Ensure we don't have double slashes and return absolute URL if baseUrl exists
+    if (baseUrl) {
+      return `${baseUrl.replace(/\/$/, '')}/uploads/${filename}`;
+    }
+    
     return `/uploads/${filename}`;
   }
 }
