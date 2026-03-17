@@ -28,7 +28,6 @@ import { AppService } from './app.service';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 
-console.log('📦 Loading AppModule components...');
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -66,8 +65,5 @@ console.log('📦 Loading AppModule components...');
   providers: [AppService],
 })
 export class AppModule {
-  constructor() {
-    console.log('✅ AppModule initialized');
-  }
 }
 

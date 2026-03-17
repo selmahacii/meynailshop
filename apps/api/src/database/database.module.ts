@@ -43,9 +43,9 @@ import {
             StockMovement,
             SiteSettings,
           ],
-          synchronize: true, // Activé temporairement pour créer les tables automatiquement
+          synchronize: configService.get('NODE_ENV') !== 'production',
           logging: configService.get('NODE_ENV') === 'development',
-          migrationsRun: false,
+          migrationsRun: configService.get('NODE_ENV') === 'production',
           migrationsTableName: 'migrations',
           ssl: url ? { rejectUnauthorized: false } : false,
           extra: url ? {

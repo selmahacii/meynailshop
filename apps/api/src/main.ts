@@ -1,8 +1,5 @@
-console.log('🚀 API Process Starting...');
 import 'reflect-metadata';
-console.log('✅ reflect-metadata loaded');
 import { NestFactory } from '@nestjs/core';
-console.log('✅ NestFactory loaded');
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
@@ -10,10 +7,7 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { HttpExceptionFilter, AllExceptionsFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
-  console.log('🏁 Bootstrap function called');
   const app = await NestFactory.create(AppModule);
-  console.log('🏗️ Nest app created');
-
   // Security
   app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" },
@@ -26,8 +20,8 @@ async function bootstrap() {
 
   app.enableCors({
     origin: isProd ? [frontendUrl] : [
-      frontendUrl, 
-      'http://127.0.0.1:3000', 
+      frontendUrl,
+      'http://127.0.0.1:3000',
       'http://localhost:3001',
       'http://localhost:3005',
       'http://127.0.0.1:3005'
