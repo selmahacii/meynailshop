@@ -13,8 +13,11 @@ import { WishlistItem } from './entities/wishlist-item.entity';
 import { StockMovement } from './entities/stock-movement.entity';
 import { SiteSettings } from './entities/site-settings.entity';
 
-// Load .env from root
-dotenv.config({ path: path.join(process.cwd(), '../../.env') });
+// Load .env only if not in production
+if (process.env.NODE_ENV !== 'production') {
+  const envPath = path.join(process.cwd(), '../../.env');
+  dotenv.config({ path: envPath });
+}
 
 const url = process.env.DATABASE_URL;
 
