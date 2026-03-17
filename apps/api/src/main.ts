@@ -14,6 +14,14 @@ async function bootstrap() {
     crossOriginEmbedderPolicy: false,
   }));
 
+  // Fix CORS pour les images statiques
+  app.use('/uploads', (req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+  });
+
   // CORS
   const isProd = process.env.NODE_ENV === 'production';
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
