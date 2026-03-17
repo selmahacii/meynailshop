@@ -56,9 +56,9 @@ async function bootstrap() {
     new AllExceptionsFilter()
   );
 
-  const port = process.env.API_PORT || 3001;
-  await app.listen(port);
-  console.log(`✅ API running on http://localhost:${port}`);
+  const port = process.env.PORT || process.env.API_PORT || 3001;
+  await app.listen(port, '0.0.0.0');
+  console.log(`✅ API running on port ${port}`);
   console.log(`📚 Health check: http://localhost:${port}/api/health`);
 }
 
