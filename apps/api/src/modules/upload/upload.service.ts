@@ -67,17 +67,22 @@ export class UploadService {
   }
 
   getFileUrl(filename: string): string {
-    // Priority: API_URL > RENDER_EXTERNAL_URL > BASE_URL
-    const baseUrl = this.configService.get<string>('API_URL') || 
-                    this.configService.get<string>('RENDER_EXTERNAL_URL') ||
-                    this.configService.get<string>('BASE_URL') || 
-                    '';
+    // On essaie de recuperer l'adresse de Render
+    let baseUrl = this.configService.get<string>('API_URL') || 
+                  this.configService.get<string>('RENDER_EXTERNAL_URL') || 
+                  '';
     
     if (baseUrl) {
-      const cleanBaseUrl = baseUrl.replace(/\/$/, '');
-      return `${cleanBaseUrl}/uploads/${filename}`;
+      // S'assurer que l'adresse commence par https://
+      if (!baseUrl.startsWith('http')) {
+        baseUrl = `https://${baseUrl}`;
+      }
+      const cleanUrl = `${baseUrl.replace(/\/$/, '')}/uploads/${filename}`;
+      this.logger.log(`🖼️ Image URL générée : ${cleanUrl}`);
+      return cleanUrl;
     }
     
+    this.logger.warn('⚠️ Aucune URL de base trouvée pour les uploads, retour au chemin relatif');
     return `/uploads/${filename}`;
   }
 }
