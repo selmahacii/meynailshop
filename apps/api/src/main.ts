@@ -59,20 +59,31 @@ async function bootstrap() {
   
   console.log('--- 🛡️ DIAGNOSTIC DÉMARRAGE ---');
   console.log(`🌍 NODE_ENV: ${process.env.NODE_ENV}`);
-  console.log(`🔗 API_URL: ${process.env.API_URL}`);
+  console.log(`🔗 API_URL (Config): ${process.env.API_URL}`);
   console.log(`🚀 RENDER_URL: ${process.env.RENDER_EXTERNAL_URL}`);
-  console.log(`📂 CWD: ${process.cwd()}`);
+  console.log(`📂 CWD (Home): ${process.cwd()}`);
+  console.log(`🏠 __dirname: ${__dirname}`);
   
   const fs = require('fs');
   const path = require('path');
   const uploadPath = path.join(process.cwd(), 'uploads');
+  
   if (!fs.existsSync(uploadPath)) {
-    console.log('📂 Création forcée du dossier uploads...');
+    console.log('📂 Dossier uploads absent, création...');
     fs.mkdirSync(uploadPath, { recursive: true });
-  } else {
-    const files = fs.readdirSync(uploadPath);
-    console.log(`📂 Dossier uploads OK. (${files.length} fichiers presents)`);
   }
+  
+  try {
+    const testFile = path.join(uploadPath, '.write-test');
+    fs.writeFileSync(testFile, 'test');
+    console.log('✅ Permissions écriture : OK');
+    fs.unlinkSync(testFile);
+  } catch (e) {
+    console.log('❌ Problème de permissions écriture !');
+  }
+
+  const files = fs.readdirSync(uploadPath);
+  console.log(`📂 Fichiers présents dans uploads : ${files.length}`);
   console.log('-------------------------------');
 
   await app.listen(port, '0.0.0.0');
