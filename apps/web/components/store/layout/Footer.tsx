@@ -16,12 +16,12 @@ export default function Footer() {
                     {/* Brand Info */}
                     <div className="space-y-6 flex flex-col items-center md:items-start text-center md:text-left">
                         <Link href="/" className="group transition-transform hover:scale-105">
-                            <div className="relative w-28 h-28 bg-white/5 rounded-full p-4 border border-gold-brand/10 backdrop-blur-sm shadow-2xl">
+                            <div className="relative w-32 h-32 bg-white rounded-full p-6 shadow-[0_10px_30px_rgba(0,0,0,0.3)] border-2 border-gold-brand/20">
                                 <Image
                                     src="/logo2.png"
                                     alt={settings.shopName || "MEEY Nail Shop"}
                                     fill
-                                    className="object-contain p-2 drop-shadow-[0_0_10px_rgba(180,150,80,0.3)]"
+                                    className="object-contain p-2"
                                     priority
                                 />
                             </div>
