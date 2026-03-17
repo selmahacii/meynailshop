@@ -14,13 +14,22 @@ async function bootstrap() {
     crossOriginEmbedderPolicy: false,
   }));
 
-  // Fix CORS pour les images statiques
+  // Fix CORS et service statique pour les images
+  // On utilise express.static directement pour un controle total sur les headers
+  const express = require('express');
+  const path = require('path');
+  const fs = require('fs');
+  const uploadDir = path.join(process.cwd(), 'uploads');
+  
   app.use('/uploads', (req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    if (req.method === 'OPTIONS') {
+      return res.sendStatus(200);
+    }
     next();
-  });
+  }, express.static(uploadDir));
 
   // CORS
   const isProd = process.env.NODE_ENV === 'production';
@@ -72,8 +81,6 @@ async function bootstrap() {
   console.log(`📂 CWD (Home): ${process.cwd()}`);
   console.log(`🏠 __dirname: ${__dirname}`);
   
-  const fs = require('fs');
-  const path = require('path');
   const uploadPath = path.join(process.cwd(), 'uploads');
   
   if (!fs.existsSync(uploadPath)) {

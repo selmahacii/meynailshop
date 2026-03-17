@@ -30,11 +30,6 @@ import { join } from 'path';
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: join(process.cwd(), 'uploads'),
-      serveRoot: '/uploads',
-      renderPath: '/uploads/*',
-    }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [
