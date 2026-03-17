@@ -28,6 +28,7 @@ import { AppService } from './app.service';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 
+console.log('📦 Loading AppModule components...');
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -39,7 +40,7 @@ import { join } from 'path';
       envFilePath: [
         join(process.cwd(), '.env'),
         join(process.cwd(), 'apps/api/.env'),
-        join(process.cwd(), '../../.env'), // Pour quand on run depuis apps/api
+        join(process.cwd(), '../../.env'),
       ],
     }),
     CacheModule.register({ isGlobal: true }),
@@ -64,5 +65,9 @@ import { join } from 'path';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {
+  constructor() {
+    console.log('✅ AppModule initialized');
+  }
+}
 
