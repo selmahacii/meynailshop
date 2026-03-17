@@ -63,6 +63,7 @@ async function bootstrap() {
 }
 
 bootstrap().catch((err) => {
-  console.error('❌ API startup failed:', err);
+  console.error('❌ API startup failed critically:');
+  console.error(err);
   process.exit(1);
 });
