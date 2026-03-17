@@ -26,7 +26,7 @@
     "seed": "ts-node src/database/seeds/seed.ts",
     "db:migrate": "npm run migration:run",
     "db:seed": "npm run seed",
-    "create-admin": "npm run build && node dist/database/create-admin.js"
+    "create-admin-run": "node dist/database/create-admin.js"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^2.0.0",
