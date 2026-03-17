@@ -19,13 +19,13 @@ async function bootstrap() {
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 
   app.enableCors({
-    origin: isProd ? [frontendUrl] : [
-      frontendUrl,
-      'http://127.0.0.1:3000',
-      'http://localhost:3001',
-      'http://localhost:3005',
-      'http://127.0.0.1:3005'
-    ],
+    origin: (origin, callback) => {
+      if (!isProd || !origin || origin === frontendUrl || origin.endsWith('.vercel.app')) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   });
 
