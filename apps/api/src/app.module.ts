@@ -33,6 +33,7 @@ import { join } from 'path';
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'uploads'),
       serveRoot: '/uploads',
+      renderPath: '/uploads/*',
     }),
     ConfigModule.forRoot({
       isGlobal: true,
