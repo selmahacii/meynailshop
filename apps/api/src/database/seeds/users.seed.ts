@@ -7,14 +7,14 @@ export async function seedUsers(connection: DataSource) {
   const userRepo = connection.getRepository(User);
   const addressRepo = connection.getRepository(Address);
 
-  const hashedPassword = await bcrypt.hash('Admin@2026', 12);
+  const hashedPassword = await bcrypt.hash('meey2026', 12);
 
   const admin = userRepo.create({
-    email: 'admin@meey.dz',
+    email: 'meeybouabdellah@gmail.com',
     password: hashedPassword,
-    firstName: 'Admin',
-    lastName: 'MEEY',
-    phone: '+213501234567',
+    firstName: 'Mey',
+    lastName: 'Bouabdellah',
+    phone: '0775436562',
     role: 'admin',
     isActive: true,
   });
