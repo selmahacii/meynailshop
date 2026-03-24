@@ -365,7 +365,14 @@ export default function ProductEditPage() {
                                 </div>
                             </div>
                             <div className="space-y-3">
-                                <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix d'origine (Discount info)</label>
+                                <div className="flex justify-between items-end">
+                                    <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix d'origine (Discount info)</label>
+                                    {product.comparePrice && product.price && Number(product.comparePrice) > Number(product.price) && (
+                                        <span className="text-[10px] font-black text-rouge-mid bg-rouge/20 px-2 py-0.5 rounded-sm animate-pulse">
+                                            -{Math.round(((Number(product.comparePrice) - Number(product.price)) / Number(product.comparePrice)) * 100)}%
+                                        </span>
+                                    )}
+                                </div>
                                 <div className="relative">
                                     <input 
                                         type="number" 

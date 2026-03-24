@@ -9,6 +9,7 @@ import { formatPrice } from '@/lib/utils/currency';
 import { useCartStore } from '@/lib/store/cartStore';
 import { useWishlistStore } from '@/lib/store/wishlistStore';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 interface ProductCardProps {
     product: Product;
@@ -62,19 +63,23 @@ export default function ProductCard({ product }: ProductCardProps) {
             className="group bg-white border border-creme2 shadow-sm hover:shadow-md transition-all duration-300"
         >
             <Link href={`/catalogue/${product.slug}`} className="block relative aspect-[4/5] overflow-hidden bg-creme2">
-                {/* Badge */}
-                {product.badge && (
-                    <div className="absolute top-4 left-4 z-10">
-                        <span className={`text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-sm shadow-md ${
-                            product.badge === 'promo' ? 'bg-rouge-mid text-creme' :
-                            product.badge === 'new' ? 'bg-[#3D1414] text-creme' : // NOUVEAU style
-                            'bg-[#3D1414] text-creme' // BESTSELLER style
-                        }`}>
+                {/* Badges */}
+                <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
+                    {product.comparePrice && product.comparePrice > product.price && (
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-sm shadow-md bg-rouge text-creme">
+                            -{Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)}%
+                        </span>
+                    )}
+                    {product.badge && (
+                        <span className={cn(
+                            "text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-sm shadow-md",
+                            product.badge === 'promo' ? 'bg-rouge-mid text-creme' : 'bg-[#3D1414] text-creme'
+                        )}>
                             {product.badge === 'new' ? 'Nouveau' : 
                              product.badge === 'top' ? 'Bestseller' : product.badge}
                         </span>
-                    </div>
-                )}
+                    )}
+                </div>
 
                 {/* Wishlist Button */}
                 <button
