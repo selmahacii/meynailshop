@@ -1,13 +1,30 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Instagram, Facebook, Mail, Phone, MapPin } from 'lucide-react';
 import { useSettings } from '@/lib/hooks/useSettings';
+import { StoreAPI } from '@/lib/api/client';
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
     const { settings } = useSettings();
+    const [categories, setCategories] = useState<any[]>([]);
+
+    useEffect(() => {
+        async function fetchCategories() {
+            try {
+                const res = await StoreAPI.getCategories();
+                if (res.success) {
+                    setCategories(res.data);
+                }
+            } catch (err) {
+                console.error('Error fetching footer categories:', err);
+            }
+        }
+        fetchCategories();
+    }, []);
 
     return (
         <footer className="bg-rouge-brand text-gold-brand pt-16 pb-8">
@@ -15,18 +32,7 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                     {/* Brand Info */}
                     <div className="space-y-6 flex flex-col items-center md:items-start text-center md:text-left">
-                        <Link href="/" className="group transition-transform hover:scale-105">
-                            <div className="relative w-32 h-32 bg-white rounded-full p-6 shadow-[0_10px_30px_rgba(0,0,0,0.3)] border-2 border-gold-brand/20">
-                                <Image
-                                    src="/logo2.png"
-                                    alt={settings.shopName || "MEEY Nail Shop"}
-                                    fill
-                                    className="object-contain p-2"
-                                    priority
-                                />
-                            </div>
-                        </Link>
-                        <p className="text-gold-brand/70 text-sm leading-relaxed max-w-xs mx-auto md:mx-0">
+                        <p className="text-gold-brand/70 text-sm leading-relaxed max-w-xs mx-auto md:mx-0 pt-4">
                             L'excellence au service de vos ongles. Produits premium sélectionnés pour les professionnels et passionnés d'onglerie en Algérie.
                         </p>
                         <div className="flex justify-center md:justify-start space-x-4">
@@ -47,9 +53,13 @@ export default function Footer() {
                         <h4 className="font-serif text-xl text-gold-brand mb-6 font-bold tracking-wide">Navigation</h4>
                         <ul className="space-y-4 text-sm text-gold-brand/70">
                             <li><Link href="/catalogue" className="hover:text-gold-brand transition-all hover:pl-2">Toute la collection</Link></li>
-                            <li><Link href="/categories/vernis-gel" className="hover:text-gold-brand transition-all hover:pl-2">Vernis Gel</Link></li>
-                            <li><Link href="/categories/gel-uv" className="hover:text-gold-brand transition-all hover:pl-2">Gel UV & Résine</Link></li>
-                            <li><Link href="/categories/materiel" className="hover:text-gold-brand transition-all hover:pl-2">Matériel & Lampes</Link></li>
+                            {categories.map((cat) => (
+                                <li key={cat.id}>
+                                    <Link href={`/categories/${cat.slug}`} className="hover:text-gold-brand transition-all hover:pl-2">
+                                        {cat.name}
+                                    </Link>
+                                </li>
+                            ))}
                             <li><Link href="/nouveautes" className="hover:text-gold-brand transition-all hover:pl-2">Nouveautés</Link></li>
                         </ul>
                     </div>
