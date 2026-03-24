@@ -133,7 +133,7 @@ export default function Navbar() {
                 <div className="flex items-center space-x-3 sm:space-x-5 md:space-x-6">
                     <button 
                         onClick={() => setIsSearchOpen(true)}
-                        className="text-gold-brand hover:opacity-80 transition-all hover:scale-110 hidden sm:block"
+                        className="text-gold-brand hover:opacity-80 transition-all hover:scale-110"
                     >
                         <Search size={21} strokeWidth={1.5} />
                     </button>

@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Bell, Search, User, Globe, LogOut, Menu } from 'lucide-react';
+import { Search, User, Globe, LogOut, Menu } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/store/authStore';
 import { toast } from 'sonner';
+import AdminNotifications from '@/components/admin/layout/AdminNotifications';
 
 export default function AdminTopbar({ onMenuClick }: { onMenuClick?: () => void }) {
     const [showDropdown, setShowDropdown] = useState(false);
@@ -44,23 +45,20 @@ export default function AdminTopbar({ onMenuClick }: { onMenuClick?: () => void 
                 </div>
             </div>
 
-            <div className="flex items-center space-x-3 md:space-x-6">
+            <div className="flex items-center space-x-3 md:space-x-4">
                 <Link
                     href="/"
                     target="_blank"
                     className="hidden md:flex items-center text-xs font-semibold uppercase tracking-widest text-encre2 hover:text-rouge-mid transition-colors"
                 >
                     <Globe size={16} className="mr-2" />
-                    Voir
+                    Boutique
                 </Link>
 
-                <button 
-                    onClick={() => toast.info('Aucune nouvelle notification')}
-                    className="relative text-encre2 hover:text-[#BFA893] transition-colors"
-                >
-                    <Bell size={20} strokeWidth={1.5} />
-                    <span className="absolute top-0 right-0 w-2 h-2 bg-[#390102] rounded-full border-2 border-white"></span>
-                </button>
+                <div className="h-8 w-[1px] bg-creme2 hidden md:block"></div>
+
+                {/* Notifications Center */}
+                <AdminNotifications />
 
                 <div className="h-8 w-[1px] bg-creme2 hidden sm:block"></div>
 
@@ -77,7 +75,7 @@ export default function AdminTopbar({ onMenuClick }: { onMenuClick?: () => void 
                         </div>
                         <div className="h-9 w-9 md:h-10 md:w-10 rounded-full bg-creme border border-[#BFA893]/20 flex items-center justify-center text-[#BFA893] group-hover:bg-[#BFA893] group-hover:text-[#390102] transition-all">
                             {currentUser?.firstName ? (
-                                <span className="font-bold text-xs">
+                                <span className="font-bold text-xs uppercase">
                                     {currentUser.firstName.charAt(0)}{currentUser.lastName?.charAt(0) || ''}
                                 </span>
                             ) : (

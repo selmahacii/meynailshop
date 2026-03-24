@@ -257,6 +257,10 @@ export class AuthAPI {
   static async me() {
     return apiGet(API_ENDPOINTS.AUTH_ME);
   }
+
+  static async updateProfile(data: any) {
+    return apiPatch(API_ENDPOINTS.AUTH_ME, data);
+  }
 }
 
 export class ReviewsAPI {
