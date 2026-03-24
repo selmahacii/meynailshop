@@ -12,6 +12,7 @@ import {
   Coupon,
   WishlistItem,
   StockMovement,
+  SubCategory,
   SiteSettings,
 } from './entities';
 
@@ -41,6 +42,7 @@ import {
             Coupon,
             WishlistItem,
             StockMovement,
+            SubCategory,
             SiteSettings,
           ],
           synchronize: configService.get('NODE_ENV') !== 'production',

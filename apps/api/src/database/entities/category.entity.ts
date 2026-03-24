@@ -7,6 +7,7 @@ import {
   Unique,
 } from 'typeorm';
 import { Product } from './product.entity';
+import { SubCategory } from './sub-category.entity';
 
 @Entity('categories')
 @Unique(['slug'])
@@ -40,4 +41,7 @@ export class Category {
     eager: false,
   })
   products: Product[];
+
+  @OneToMany(() => SubCategory, (subCategory) => subCategory.category)
+  subCategories: SubCategory[];
 }

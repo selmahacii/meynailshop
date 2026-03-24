@@ -1,5 +1,15 @@
 import { BadgeType } from './api';
 
+export interface SubCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  displayOrder: number;
+  isActive: boolean;
+  categoryId: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -14,6 +24,7 @@ export interface Product {
   stockAlert: number;
   images: string[];
   categoryId: string;
+  subCategoryId: string | null;
   badge: BadgeType | null;
   isActive: boolean;
   isFeatured: boolean;
@@ -31,10 +42,12 @@ export interface Category {
   imageUrl: string;
   displayOrder: number;
   isActive: boolean;
+  subCategories?: SubCategory[];
 }
 
 export interface ProductResponse extends Omit<Product, 'costPrice'> {
   category?: Category;
+  subCategory?: SubCategory;
   reviewCount?: number;
   averageRating?: number;
 }
@@ -52,6 +65,7 @@ export interface CreateProductDto {
   stockAlert: number;
   images: string[];
   categoryId: string;
+  subCategoryId?: string | null;
   badge?: BadgeType;
   isActive: boolean;
   isFeatured: boolean;

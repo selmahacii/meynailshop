@@ -11,6 +11,7 @@ import {
   Unique,
 } from 'typeorm';
 import { Category } from './category.entity';
+import { SubCategory } from './sub-category.entity';
 
 @Entity('products')
 @Index(['slug'])
@@ -62,6 +63,9 @@ export class Product {
   @Column({ type: 'uuid' })
   categoryId: string;
 
+  @Column({ type: 'uuid', nullable: true })
+  subCategoryId: string;
+
   @Column({
     type: 'enum',
     enum: ['top', 'new', 'promo'],
@@ -93,4 +97,10 @@ export class Product {
   })
   @JoinColumn({ name: 'categoryId' })
   category: Category;
+
+  @ManyToOne(() => SubCategory, (subCategory) => subCategory.products, {
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'subCategoryId' })
+  subCategory: SubCategory;
 }
