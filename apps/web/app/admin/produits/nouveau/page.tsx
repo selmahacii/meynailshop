@@ -23,6 +23,11 @@ interface Category {
     id: string;
     name: string;
     slug: string;
+    subCategories?: {
+        id: string;
+        name: string;
+        slug: string;
+    }[];
 }
 
 export default function ProductCreatePage() {
@@ -38,6 +43,7 @@ export default function ProductCreatePage() {
         description: '',
         shortDescription: '',
         categoryId: '',
+        subCategoryId: '',
         isActive: true,
         images: [],
         comparePrice: '',
@@ -101,6 +107,8 @@ export default function ProductCreatePage() {
                 ...product,
                 price: Number(product.price),
                 comparePrice: product.comparePrice ? Number(product.comparePrice) : null,
+                categoryId: product.categoryId,
+                subCategoryId: product.subCategoryId || null,
                 badge: product.badge,
                 stock: Number(product.stock),
                 stockAlert: Number(product.stockAlert),
@@ -362,24 +370,42 @@ export default function ProductCreatePage() {
                             <Tag size={18} className="text-or" />
                             <h2 className="text-xs font-black uppercase tracking-widest text-encre">Catégorie</h2>
                         </div>
-                        <div className="p-8">
-                            <select 
-                                required
-                                value={product.categoryId}
-                                onChange={(e) => setProduct({...product, categoryId: e.target.value})}
-                                disabled={loadingCategories}
-                                className="w-full p-4 bg-creme2/50 border border-creme2 rounded-sm text-sm font-bold outline-none focus:border-or transition-all disabled:opacity-60"
-                            >
-                                {loadingCategories ? (
-                                    <option value="">Chargement des catégories...</option>
-                                ) : categories.length > 0 ? (
-                                    categories.map(cat => (
-                                        <option key={cat.id} value={cat.id}>{cat.name}</option>
-                                    ))
-                                ) : (
-                                    <option value="">Aucune catégorie disponible</option>
-                                )}
-                            </select>
+                        <div className="p-8 space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-[10px] uppercase font-black tracking-widest text-encre3">Catégorie Principale</label>
+                                <select 
+                                    required
+                                    value={product.categoryId}
+                                    onChange={(e) => setProduct({...product, categoryId: e.target.value, subCategoryId: ''})}
+                                    disabled={loadingCategories}
+                                    className="w-full p-4 bg-creme2/20 border border-creme2 rounded-sm text-sm font-bold outline-none focus:border-or transition-all disabled:opacity-60"
+                                >
+                                    {loadingCategories ? (
+                                        <option value="">Chargement...</option>
+                                    ) : categories.length > 0 ? (
+                                        categories.map(cat => (
+                                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                        ))
+                                    ) : (
+                                        <option value="">Aucune catégorie</option>
+                                    )}
+                                </select>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-[10px] uppercase font-black tracking-widest text-encre3">Sous-catégorie (Optionnel)</label>
+                                <select 
+                                    value={product.subCategoryId}
+                                    onChange={(e) => setProduct({...product, subCategoryId: e.target.value})}
+                                    disabled={loadingCategories || !product.categoryId}
+                                    className="w-full p-4 bg-creme2/20 border border-creme2 rounded-sm text-sm font-bold outline-none focus:border-or transition-all disabled:opacity-60"
+                                >
+                                    <option value="">Aucune sous-catégorie</option>
+                                    {categories.find(c => c.id === product.categoryId)?.subCategories?.map(sub => (
+                                        <option key={sub.id} value={sub.id}>{sub.name}</option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
                     </div>
 

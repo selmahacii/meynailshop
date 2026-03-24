@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Category } from '../../database/entities/category.entity';
+import { Category, SubCategory } from '../../database/entities';
 import { generateSlug } from '../../common/utils/slug.util';
 
 @Injectable()
@@ -9,6 +9,8 @@ export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
+    @InjectRepository(SubCategory)
+    private subCategoryRepository: Repository<SubCategory>,
   ) {}
 
   async create(createCategoryDto: any) {
@@ -32,15 +34,41 @@ export class CategoriesService {
 
   async findAll() {
     try {
-      console.log('🔍 [CategoriesService] Fetching all categories...');
-      const categories = await this.categoryRepository.find();
-      console.log(`✅ [CategoriesService] Found ${categories.length} categories`);
-      return categories;
+      return await this.categoryRepository.find({
+        where: { isActive: true },
+        relations: ['subCategories'],
+        order: { displayOrder: 'ASC' }
+      });
     } catch (error) {
       console.error('❌ [CategoriesService] findAll Error:', error);
-      // Retourner un tableau vide au lieu de crash, pour que l'API reste à 200
       return [];
     }
+  }
+
+  async createSubCategory(categoryId: string, data: any) {
+    const category = await this.categoryRepository.findOne({ where: { id: categoryId } });
+    if (!category) throw new NotFoundException('Category not found');
+
+    const slug = data.slug || generateSlug(data.name);
+    const existing = await this.subCategoryRepository.findOne({ where: { slug } });
+    if (existing) throw new BadRequestException('SubCategory with this slug already exists');
+
+    const subCategory = this.subCategoryRepository.create({
+      ...data,
+      slug,
+      categoryId
+    });
+
+    return await this.subCategoryRepository.save(subCategory);
+  }
+
+  async findSubBySlug(slug: string) {
+    const sub = await this.subCategoryRepository.findOne({
+      where: { slug, isActive: true },
+      relations: ['products', 'category']
+    });
+    if (!sub) throw new NotFoundException('SubCategory not found');
+    return sub;
   }
 
   async findBySlug(slug: string) {

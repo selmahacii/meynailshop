@@ -99,6 +99,7 @@ export default function ProductEditPage() {
                 description: product.description || product.shortDescription || product.name,
                 shortDescription: product.shortDescription || product.name,
                 categoryId: product.categoryId,
+                subCategoryId: product.subCategoryId || null,
                 isActive: product.isActive,
                 images: product.images,
             };
@@ -418,19 +419,32 @@ export default function ProductEditPage() {
                         </div>
                         <div className="p-8 space-y-6">
                             <div className="space-y-2">
-                                <label className="text-[10px] uppercase font-black tracking-widest text-encre3">Catégorie</label>
+                                <label className="text-[10px] uppercase font-black tracking-widest text-encre3">Catégorie Principale</label>
                                 <select 
                                     value={product.categoryId}
-                                    onChange={(e) => setProduct({...product, categoryId: e.target.value})}
+                                    onChange={(e) => setProduct({...product, categoryId: e.target.value, subCategoryId: ''})}
                                     className="w-full p-4 bg-creme2/50 border border-creme rounded-sm text-sm font-bold outline-none focus:border-or appearance-none transition-all"
                                 >
                                     {categories.length > 0 ? (
-                                        categories.map(cat => (
+                                        (categories as any[]).map(cat => (
                                             <option key={cat.id} value={cat.id}>{cat.name}</option>
                                         ))
                                     ) : (
                                         <option value={product.categoryId}>Catégorie actuelle</option>
                                     )}
+                                </select>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] uppercase font-black tracking-widest text-encre3">Sous-catégorie (Optionnel)</label>
+                                <select 
+                                    value={product.subCategoryId || ''}
+                                    onChange={(e) => setProduct({...product, subCategoryId: e.target.value})}
+                                    className="w-full p-4 bg-creme2/50 border border-creme rounded-sm text-sm font-bold outline-none focus:border-or appearance-none transition-all"
+                                >
+                                    <option value="">Aucune sous-catégorie</option>
+                                    {(categories as any[]).find(c => c.id === product.categoryId)?.subCategories?.map((sub: any) => (
+                                        <option key={sub.id} value={sub.id}>{sub.name}</option>
+                                    ))}
                                 </select>
                             </div>
                             <div className="pt-6 border-t border-creme2">

@@ -39,6 +39,7 @@ export class ProductsService {
     
     const queryBuilder = this.productRepository.createQueryBuilder('product')
       .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.subCategory', 'subCategory')
       .where('product.isActive = :isActive', { isActive: true });
 
     if (query.search) {
@@ -47,6 +48,10 @@ export class ProductsService {
 
     if (query.category) {
       queryBuilder.andWhere('category.slug = :category', { category: query.category });
+    }
+
+    if ((query as any).subCategory) {
+      queryBuilder.andWhere('subCategory.slug = :subCategory', { subCategory: (query as any).subCategory });
     }
 
     if (query.minPrice !== undefined && query.minPrice !== null) {
@@ -93,7 +98,7 @@ export class ProductsService {
   async findBySlug(slug: string) {
     const product = await this.productRepository.findOne({
       where: { slug, isActive: true },
-      relations: ['category'],
+      relations: ['category', 'subCategory'],
     });
 
     if (!product) {
@@ -146,7 +151,7 @@ export class ProductsService {
   async findOne(id: string) {
     const product = await this.productRepository.findOne({
       where: { id },
-      relations: ['category'],
+      relations: ['category', 'subCategory'],
     });
 
     if (!product) {
