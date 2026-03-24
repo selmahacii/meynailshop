@@ -11,12 +11,15 @@ import { useAuthStore } from '@/lib/store/authStore';
 import { useWishlistStore } from '@/lib/store/wishlistStore';
 import { useSettings } from '@/lib/hooks/useSettings';
 import SearchOverlay from '@/components/store/layout/SearchOverlay';
+import { apiFetch } from '@/lib/api/client';
 
 export default function Navbar() {
     const { settings } = useSettings();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [categories, setCategories] = useState<any[]>([]);
+    const [activeCategory, setActiveCategory] = useState<string | null>(null);
     const pathname = usePathname();
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
@@ -30,17 +33,23 @@ export default function Navbar() {
         };
         window.addEventListener('scroll', handleScroll);
         setMounted(true);
+
+        // Fetch categories for navbar
+        apiFetch('/api/categories').then(res => {
+            if (res.data) setCategories(res.data);
+        });
+
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
-
-
 
     const navLinks = [
         { name: 'Accueil', href: '/' },
         { name: 'Catalogue', href: '/catalogue' },
-        { name: 'Vernis Gel', href: '/categories/vernis-gel' },
-        { name: 'Gel UV', href: '/categories/gel-uv' },
-        { name: 'Matériel', href: '/categories/materiel' },
+        ...categories.slice(0, 4).map(cat => ({
+            name: cat.name,
+            href: `/categories/${cat.slug}`,
+            subCategories: cat.subCategories || []
+        }))
     ];
 
     return (
@@ -70,15 +79,53 @@ export default function Navbar() {
 
                 {/* Desktop Links */}
                 <div className="hidden lg:flex items-center space-x-10">
-                    {navLinks.map((link) => (
-                        <Link
-                            key={link.name}
-                            href={link.href}
-                            className={`text-xs md:text-sm font-bold uppercase tracking-[0.2em] transition-all hover:text-white hover:scale-105 drop-shadow-lg ${pathname === link.href ? 'text-gold-brand border-b-2 border-gold-brand' : 'text-gold-brand'
-                                }`}
+                    {navLinks.map((link: any) => (
+                        <div 
+                            key={link.name} 
+                            className="relative group"
+                            onMouseEnter={() => setActiveCategory(link.name)}
+                            onMouseLeave={() => setActiveCategory(null)}
                         >
-                            {link.name}
-                        </Link>
+                            <Link
+                                href={link.href}
+                                className={`text-xs md:text-sm font-bold uppercase tracking-[0.2em] transition-all hover:text-white hover:scale-105 drop-shadow-lg flex items-center gap-1 ${pathname === link.href ? 'text-gold-brand border-b-2 border-gold-brand pb-1' : 'text-gold-brand'
+                                    }`}
+                            >
+                                {link.name}
+                                {link.subCategories?.length > 0 && (
+                                    <motion.span 
+                                        animate={{ rotate: activeCategory === link.name ? 180 : 0 }}
+                                        className="text-[8px]"
+                                    >
+                                        ▼
+                                    </motion.span>
+                                )}
+                            </Link>
+
+                            {/* Dropdown for Subcategories */}
+                            {link.subCategories?.length > 0 && (
+                                <AnimatePresence>
+                                    {activeCategory === link.name && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: 10 }}
+                                            className="absolute top-full left-0 mt-4 w-48 bg-rouge-brand border border-gold-brand/20 shadow-2xl py-2 z-[1001] backdrop-blur-md"
+                                        >
+                                            {link.subCategories.map((sub: any) => (
+                                                <Link
+                                                    key={sub.id}
+                                                    href={`/categories/${link.href.split('/').pop()}/${sub.slug}`}
+                                                    className="block px-6 py-3 text-[10px] uppercase tracking-widest text-gold-brand hover:bg-gold-brand/10 hover:text-white transition-all font-bold"
+                                                >
+                                                    {sub.name}
+                                                </Link>
+                                            ))}
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            )}
+                        </div>
                     ))}
                 </div>
 
@@ -187,19 +234,34 @@ export default function Navbar() {
                                     <X size={20} />
                                 </button>
                             </div>
-
                             <div className="flex-1 overflow-y-auto px-8 py-10 space-y-2">
                                 <p className="text-[10px] uppercase tracking-[0.3em] text-gold-brand font-black mb-6">Menu de Navigation</p>
-                                {navLinks.map((link) => (
-                                    <Link
-                                        key={link.name}
-                                        href={link.href}
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                        className={`flex items-center py-4 text-lg font-serif transition-all duration-300 border-b border-gold-brand/5 ${pathname === link.href ? 'text-gold-brand font-bold' : 'text-gold-brand/80 hover:text-gold-brand'
-                                            }`}
-                                    >
-                                        {link.name}
-                                    </Link>
+                                {navLinks.map((link: any) => (
+                                    <div key={link.name}>
+                                        <Link
+                                            href={link.href}
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className={`flex items-center justify-between py-4 text-lg font-serif transition-colors border-b border-gold-brand/5 ${pathname === link.href ? 'text-gold-brand font-bold' : 'text-gold-brand/80 hover:text-gold-brand'
+                                                }`}
+                                        >
+                                            {link.name}
+                                        </Link>
+                                        
+                                        {link.subCategories?.length > 0 && (
+                                            <div className="pl-4 py-2 flex flex-col space-y-2">
+                                                {link.subCategories.map((sub: any) => (
+                                                    <Link
+                                                        key={sub.id}
+                                                        href={`/categories/${link.href.split('/').pop()}/${sub.slug}`}
+                                                        onClick={() => setIsMobileMenuOpen(false)}
+                                                        className="py-2 text-sm text-gold-brand/60 hover:text-gold-brand transition-colors font-serif"
+                                                    >
+                                                        — {sub.name}
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
                                 ))}
                                 <Link
                                     href="/favoris"
