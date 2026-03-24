@@ -204,11 +204,6 @@ export default function AdminProductsPage() {
                 </div>
 
                 <div className="flex items-center space-x-2">
-
-                    <button className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-4 py-2 bg-[#1A0A0A] text-creme text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-lg group">
-                        <Plus size={14} className="text-or" />
-                        <span>Créer</span>
-                    </button>
                 </div>
             </div>
 
