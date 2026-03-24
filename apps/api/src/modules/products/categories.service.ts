@@ -119,4 +119,10 @@ export class CategoriesService {
     await this.categoryRepository.save(category);
     return { message: 'Category deactivated' };
   }
+
+  async removeSubCategory(id: string) {
+    const sub = await this.subCategoryRepository.findOne({ where: { id } });
+    if (!sub) throw new NotFoundException('SubCategory not found');
+    return await this.subCategoryRepository.remove(sub);
+  }
 }

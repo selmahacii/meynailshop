@@ -64,4 +64,24 @@ export class CategoriesController {
       data: await this.categoriesService.remove(id),
     };
   }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @Post(':id/sub-categories')
+  async createSub(@Param('id') id: string, @Body() data: any) {
+    return {
+      statusCode: 201,
+      data: await this.categoriesService.createSubCategory(id, data),
+    };
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @Delete('sub-categories/:id')
+  async removeSub(@Param('id') id: string) {
+    return {
+      statusCode: 200,
+      data: await this.categoriesService.removeSubCategory(id),
+    };
+  }
 }

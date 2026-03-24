@@ -26,6 +26,11 @@ interface Category {
     imageUrl: string;
     displayOrder: number;
     isActive: boolean;
+    subCategories?: {
+        id: string;
+        name: string;
+        slug: string;
+    }[];
 }
 
 export default function AdminCategoriesPage() {
@@ -41,6 +46,54 @@ export default function AdminCategoriesPage() {
         displayOrder: 0
     });
     const [submitting, setSubmitting] = useState(false);
+    const [newSubCategoryName, setNewSubCategoryName] = useState('');
+
+    const handleAddSubCategory = async () => {
+        if (!newSubCategoryName || !editingCategory) return;
+        try {
+            setSubmitting(true);
+            const res = await apiFetch(`/api/categories/${editingCategory.id}/sub-categories`, {
+                method: 'POST',
+                body: JSON.stringify({ name: newSubCategoryName }),
+            });
+            if (res.success) {
+                toast.success('Sous-catégorie ajoutée !');
+                setNewSubCategoryName('');
+                fetchCategories().then(() => {
+                    // Update editing category manually to refresh the list in the modal
+                    setEditingCategory(prev => {
+                        if (!prev) return null;
+                        const updatedSub = [...(prev.subCategories || []), res.data];
+                        return { ...prev, subCategories: updatedSub };
+                    });
+                });
+            }
+        } catch (err) {
+            toast.error('Erreur lors de l\'ajout');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const handleDeleteSub = async (subId: string) => {
+        if (!confirm('Supprimer cette sous-catégorie ?')) return;
+        try {
+            setSubmitting(true);
+            const res = await apiFetch(`/api/categories/sub-categories/${subId}`, { method: 'DELETE' });
+            if (res.success) {
+                toast.success('Supprimée !');
+                setEditingCategory(prev => {
+                    if (!prev) return null;
+                    return { ...prev, subCategories: prev.subCategories?.filter(s => s.id !== subId) };
+                });
+                fetchCategories();
+            }
+        } catch (err) {
+            toast.error('Erreur');
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     useEffect(() => {
         fetchCategories();
@@ -215,7 +268,12 @@ export default function AdminCategoriesPage() {
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80" />
                                 <div className="absolute bottom-4 left-4 right-4">
                                     <h3 className="text-xl font-serif text-creme">{category.name}</h3>
-                                    <p className="text-creme/60 text-[10px] uppercase tracking-widest font-bold truncate">{category.description}</p>
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <p className="text-creme/60 text-[10px] uppercase tracking-widest font-bold truncate max-w-[150px]">{category.description}</p>
+                                        <span className="text-[10px] font-black text-or uppercase tracking-widest bg-or/10 px-1.5 py-0.5 rounded-sm">
+                                            {category.subCategories?.length || 0} Sous-cat.
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -308,6 +366,54 @@ export default function AdminCategoriesPage() {
                                         min={0}
                                     />
                                 </div>
+
+                                {/* Subcategories section */}
+                                {editingCategory && (
+                                    <div className="pt-6 border-t border-creme2 space-y-4">
+                                        <label className="text-[10px] uppercase font-black tracking-widest text-or">Gestion des Sous-catégories</label>
+                                        
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="text"
+                                                value={newSubCategoryName}
+                                                onChange={(e) => setNewSubCategoryName(e.target.value)}
+                                                className="flex-grow p-3 bg-creme/20 border border-creme2 rounded-sm text-sm focus:border-or focus:outline-none"
+                                                placeholder="Nom de la sous-catégorie..."
+                                                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSubCategory())}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={handleAddSubCategory}
+                                                disabled={submitting || !newSubCategoryName}
+                                                className="px-4 bg-encre text-creme text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-black disabled:opacity-50"
+                                            >
+                                                Ajouter
+                                            </button>
+                                        </div>
+
+                                        <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
+                                            {editingCategory.subCategories && editingCategory.subCategories.length > 0 ? (
+                                                editingCategory.subCategories.map((sub) => (
+                                                    <div key={sub.id} className="flex items-center justify-between p-3 bg-creme/20 border border-creme2 rounded-sm group">
+                                                        <div className="flex flex-col">
+                                                            <span className="text-sm font-medium text-encre">{sub.name}</span>
+                                                            <span className="text-[9px] text-encre3 font-mono">{sub.slug}</span>
+                                                        </div>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleDeleteSub(sub.id)}
+                                                            className="p-1.5 text-encre3 hover:text-rouge hover:bg-rouge/5 rounded-full transition-all opacity-0 group-hover:opacity-100"
+                                                        >
+                                                            <Trash2 size={14} />
+                                                        </button>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <p className="text-[10px] text-encre3 italic text-center py-4 bg-creme/10 rounded-sm">Aucune sous-catégorie définie.</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Image upload section */}
                                 <div className="space-y-3">
