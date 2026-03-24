@@ -39,6 +39,7 @@
     "@nestjs/serve-static": "^5.0.4",
     "@nestjs/swagger": "^7.2.0",
     "@nestjs/typeorm": "^10.0.0",
+    "@supabase/supabase-js": "^2.100.0",
     "@types/passport-local": "^1.0.38",
     "bcrypt": "^5.1.1",
     "cache-manager": "^5.3.2",

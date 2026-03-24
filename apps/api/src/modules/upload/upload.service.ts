@@ -1,7 +1,6 @@
 import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as fs from 'fs';
-import * as path from 'path';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -16,17 +15,20 @@ interface MulterFile {
 @Injectable()
 export class UploadService {
   private readonly logger = new Logger(UploadService.name);
-  private readonly uploadDir: string;
+  private readonly supabase: SupabaseClient;
+  private readonly bucket: string;
 
   constructor(private configService: ConfigService) {
-    this.uploadDir = this.configService.get<string>('UPLOAD_DIR', './uploads');
-    this.ensureDirExists();
-  }
+    const supabaseUrl = this.configService.get<string>('SUPABASE_URL');
+    const supabaseKey = this.configService.get<string>('SUPABASE_KEY');
+    this.bucket = this.configService.get<string>('SUPABASE_BUCKET', 'products');
 
-  private ensureDirExists() {
-    if (!fs.existsSync(this.uploadDir)) {
-      fs.mkdirSync(this.uploadDir, { recursive: true });
+    if (!supabaseUrl || !supabaseKey) {
+      this.logger.error('❌ Supabase configuration missing (URL or KEY)');
+      throw new Error('Supabase configuration missing');
     }
+
+    this.supabase = createClient(supabaseUrl, supabaseKey);
   }
 
   async uploadProductImage(file: MulterFile): Promise<string> {
@@ -35,59 +37,70 @@ export class UploadService {
     }
 
     const filename = `${uuidv4()}.webp`;
-    const filePath = path.join(this.uploadDir, filename);
 
-    this.logger.log(`📥 Début upload image. Destination: ${filePath}`);
+    this.logger.log(`📥 Début upload image vers Supabase Storage: ${filename}`);
 
     try {
-      await sharp(file.buffer)
+      // 1. On traite l'image avec Sharp en mémoire (buffer) pour optimisation
+      const processedImageBuffer = await sharp(file.buffer)
         .resize(800, 800, {
           fit: 'cover',
           withoutEnlargement: true,
         })
         .webp({ quality: 80 })
-        .toFile(filePath);
+        .toBuffer();
 
-      this.logger.log(`✅ Fichier écrit avec succès sur le disque : ${filename}`);
+      // 2. On l'envoie sur Supabase Storage
+      const { data, error } = await this.supabase.storage
+        .from(this.bucket)
+        .upload(filename, processedImageBuffer, {
+          contentType: 'image/webp',
+          upsert: true,
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      this.logger.log(`✅ Image uploadée avec succès sur Supabase : ${filename}`);
       return filename;
     } catch (error) {
       const errMsg = error instanceof Error ? error.message : 'Unknown error';
-      this.logger.error(`❌ Erreur fatale Sharp lors de l'ecriture : ${errMsg}`);
-      throw new BadRequestException("Erreur lors du traitement de l'image");
+      this.logger.error(`❌ Erreur fatale lors de l'upload Supabase : ${errMsg}`);
+      throw new BadRequestException("Erreur lors de l'upload vers Supabase Storage");
     }
   }
 
   async deleteFile(filename: string): Promise<void> {
-    const filePath = path.join(this.uploadDir, filename);
-    this.logger.log(`🗑️ Demande de suppression : ${filePath}`);
-    if (fs.existsSync(filePath)) {
-      try {
-        fs.unlinkSync(filePath);
-        this.logger.log(`✅ Fichier supprimé : ${filename}`);
-      } catch (error) {
-        const errMsg = error instanceof Error ? error.message : 'Unknown error';
-        this.logger.error(`Error deleting file ${filename}: ${errMsg}`);
+    this.logger.log(`🗑️ Demande de suppression sur Supabase : ${filename}`);
+    
+    try {
+      const { error } = await this.supabase.storage
+        .from(this.bucket)
+        .remove([filename]);
+
+      if (error) {
+        throw error;
       }
+      
+      this.logger.log(`✅ Fichier supprimé de Supabase : ${filename}`);
+    } catch (error) {
+      const errMsg = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error deleting file ${filename} from Supabase: ${errMsg}`);
     }
   }
 
   getFileUrl(filename: string): string {
-    // On essaie de recuperer l'adresse de Render
-    let baseUrl = this.configService.get<string>('API_URL') || 
-                  this.configService.get<string>('RENDER_EXTERNAL_URL') || 
-                  '';
-    
-    if (baseUrl) {
-      // S'assurer que l'adresse commence par https://
-      if (!baseUrl.startsWith('http')) {
-        baseUrl = `https://${baseUrl}`;
-      }
-      const cleanUrl = `${baseUrl.replace(/\/$/, '')}/uploads/${filename}`;
-      this.logger.log(`🖼️ Image URL générée : ${cleanUrl}`);
-      return cleanUrl;
+    const { data } = this.supabase.storage
+      .from(this.bucket)
+      .getPublicUrl(filename);
+
+    if (!data || !data.publicUrl) {
+      this.logger.warn(`⚠️ Impossible de générer l'URL publique pour : ${filename}`);
+      return filename;
     }
-    
-    this.logger.warn('⚠️ Aucune URL de base trouvée pour les uploads, retour au chemin relatif');
-    return `/uploads/${filename}`;
+
+    this.logger.log(`🖼️ URL publique Supabase générée : ${data.publicUrl}`);
+    return data.publicUrl;
   }
 }
