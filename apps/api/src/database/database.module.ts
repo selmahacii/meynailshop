@@ -47,8 +47,8 @@ import {
           logging: configService.get('NODE_ENV') === 'development',
           migrationsRun: configService.get('NODE_ENV') === 'production',
           migrationsTableName: 'migrations',
-          ssl: url ? { rejectUnauthorized: false } : false,
-          extra: url ? {
+          ssl: configService.get('DB_SSL') === 'true' || (url && !url.includes('127.0.0.1') && !url.includes('localhost') && !url.includes('postgres')) ? { rejectUnauthorized: false } : false,
+          extra: (configService.get('DB_SSL') === 'true' || (url && !url.includes('127.0.0.1') && !url.includes('localhost') && !url.includes('postgres'))) ? {
             ssl: {
               rejectUnauthorized: false,
             },
