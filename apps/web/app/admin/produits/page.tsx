@@ -264,20 +264,43 @@ export default function AdminProductsPage() {
                                 <div className="p-6 border-t border-creme2">
                                     <div className="flex justify-between items-start mb-4">
                                         <div>
-                                            <p className="text-[10px] uppercase font-bold text-or tracking-[0.2em] mb-1">{product.category}</p>
-                                            <h3 className="font-serif text-lg text-encre group-hover:text-rouge-deep transition-colors">{product.name}</h3>
+                                            <div className="flex items-center space-x-2 mb-1">
+                                                <p className="text-[10px] uppercase font-bold text-or tracking-[0.2em]">{product.category}</p>
+                                                {product.badge && (
+                                                    <span className={cn(
+                                                        "text-[7px] font-black uppercase px-1.5 py-0.5 rounded-sm",
+                                                        product.badge === 'promo' ? "bg-rouge text-creme" : "bg-encre text-or"
+                                                    )}>
+                                                        {product.badge}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <h3 className="font-serif text-lg text-encre group-hover:text-rouge-deep transition-colors line-clamp-1">{product.name}</h3>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center justify-between mt-6">
-                                        <span className="text-lg font-black text-encre">{product.price} DA</span>
-                                        <div className="flex space-x-2">
-                                            <Link 
-                                                href={`/admin/produits/${product.id}`}
-                                                className={cn("px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-sm transition-all", actionButton.style)}
-                                            >
-                                                {actionButton.text}
-                                            </Link>
+                                    <div className="flex flex-col mt-6">
+                                        <div className="flex items-baseline space-x-2">
+                                            <span className="text-xl font-black text-encre">{product.price} DA</span>
+                                            {product.comparePrice && product.comparePrice > product.price && (
+                                                <span className="text-xs text-encre3 line-through opacity-50">{product.comparePrice} DA</span>
+                                            )}
+                                        </div>
+                                        
+                                        <div className="flex items-center justify-between mt-4">
+                                            {product.comparePrice && product.comparePrice > product.price && (
+                                                <span className="text-[9px] font-bold text-rouge-mid bg-rouge/10 px-2 py-1 rounded-sm">
+                                                    -{Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)}%
+                                                </span>
+                                            )}
+                                            <div className="flex space-x-2 ml-auto">
+                                                <Link 
+                                                    href={`/admin/produits/${product.id}`}
+                                                    className={cn("px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-sm transition-all", actionButton.style)}
+                                                >
+                                                    {actionButton.text}
+                                                </Link>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

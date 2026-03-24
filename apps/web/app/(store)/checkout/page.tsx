@@ -16,6 +16,7 @@ enum PaymentMethod {
 }
 import { toast } from 'sonner';
 import { SHIPPING_RATES } from '@/lib/constants/shipping';
+import CheckoutProgress from '@/components/store/checkout/CheckoutProgress';
 
 export default function CheckoutPage() {
     const { items, getSubtotal, getTotal, clear } = useCartStore();
@@ -106,6 +107,15 @@ export default function CheckoutPage() {
                 </Link>
 
                 <h1 className="font-serif text-3xl text-encre mb-8">Paiement Sécurisé</h1>
+
+                <CheckoutProgress 
+                    currentStep={1} 
+                    steps={[
+                        { id: 1, name: 'Contact' },
+                        { id: 2, name: 'Livraison' },
+                        { id: 3, name: 'Paiement' }
+                    ]} 
+                />
 
                 <form onSubmit={handleSubmit} className="space-y-10">
 

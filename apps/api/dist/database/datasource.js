@@ -48,7 +48,10 @@ const coupon_entity_1 = require("./entities/coupon.entity");
 const wishlist_item_entity_1 = require("./entities/wishlist-item.entity");
 const stock_movement_entity_1 = require("./entities/stock-movement.entity");
 const site_settings_entity_1 = require("./entities/site-settings.entity");
-dotenv.config({ path: path.join(process.cwd(), '../../.env') });
+if (process.env.NODE_ENV !== 'production') {
+    const envPath = path.join(process.cwd(), '../../.env');
+    dotenv.config({ path: envPath });
+}
 const url = process.env.DATABASE_URL;
 exports.AppDataSource = new typeorm_1.DataSource({
     type: 'postgres',

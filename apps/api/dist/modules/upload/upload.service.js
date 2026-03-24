@@ -71,6 +71,7 @@ let UploadService = UploadService_1 = class UploadService {
         }
         const filename = `${(0, uuid_1.v4)()}.webp`;
         const filePath = path.join(this.uploadDir, filename);
+        this.logger.log(`📥 Début upload image. Destination: ${filePath}`);
         try {
             await (0, sharp_1.default)(file.buffer)
                 .resize(800, 800, {
@@ -79,19 +80,22 @@ let UploadService = UploadService_1 = class UploadService {
             })
                 .webp({ quality: 80 })
                 .toFile(filePath);
+            this.logger.log(`✅ Fichier écrit avec succès sur le disque : ${filename}`);
             return filename;
         }
         catch (error) {
             const errMsg = error instanceof Error ? error.message : 'Unknown error';
-            this.logger.error(`Error processing image: ${errMsg}`);
+            this.logger.error(`❌ Erreur fatale Sharp lors de l'ecriture : ${errMsg}`);
             throw new common_1.BadRequestException("Erreur lors du traitement de l'image");
         }
     }
     async deleteFile(filename) {
         const filePath = path.join(this.uploadDir, filename);
+        this.logger.log(`🗑️ Demande de suppression : ${filePath}`);
         if (fs.existsSync(filePath)) {
             try {
                 fs.unlinkSync(filePath);
+                this.logger.log(`✅ Fichier supprimé : ${filename}`);
             }
             catch (error) {
                 const errMsg = error instanceof Error ? error.message : 'Unknown error';
@@ -100,6 +104,18 @@ let UploadService = UploadService_1 = class UploadService {
         }
     }
     getFileUrl(filename) {
+        let baseUrl = this.configService.get('API_URL') ||
+            this.configService.get('RENDER_EXTERNAL_URL') ||
+            '';
+        if (baseUrl) {
+            if (!baseUrl.startsWith('http')) {
+                baseUrl = `https://${baseUrl}`;
+            }
+            const cleanUrl = `${baseUrl.replace(/\/$/, '')}/uploads/${filename}`;
+            this.logger.log(`🖼️ Image URL générée : ${cleanUrl}`);
+            return cleanUrl;
+        }
+        this.logger.warn('⚠️ Aucune URL de base trouvée pour les uploads, retour au chemin relatif');
         return `/uploads/${filename}`;
     }
 };

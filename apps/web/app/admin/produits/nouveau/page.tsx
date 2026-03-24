@@ -40,6 +40,8 @@ export default function ProductCreatePage() {
         categoryId: '',
         isActive: true,
         images: [],
+        comparePrice: '',
+        badge: null,
     });
     const [uploading, setUploading] = useState(false);
     const [loadingCategories, setLoadingCategories] = useState(true);
@@ -98,6 +100,8 @@ export default function ProductCreatePage() {
             const createData = {
                 ...product,
                 price: Number(product.price),
+                comparePrice: product.comparePrice ? Number(product.comparePrice) : null,
+                badge: product.badge,
                 stock: Number(product.stock),
                 stockAlert: Number(product.stockAlert),
                 slug: product.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '').replace(/^-+|-+$/g, '') || `product-${Date.now()}`,
@@ -318,6 +322,20 @@ export default function ProductCreatePage() {
                                 </div>
                             </div>
                             <div className="space-y-3">
+                                <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix d'origine (Optionnel)</label>
+                                <div className="relative">
+                                    <input 
+                                        type="number" 
+                                        placeholder="0"
+                                        value={product.comparePrice}
+                                        onChange={(e) => setProduct({...product, comparePrice: e.target.value})}
+                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-lg font-bold text-creme/60 outline-none focus:border-or appearance-none"
+                                    />
+                                    <span className="absolute right-5 top-1/2 -translate-y-1/2 text-creme/20 font-black text-sm">DA</span>
+                                </div>
+                                <p className="text-[9px] text-creme/40 italic">Utilisez ceci pour afficher un prix barré (Promotion).</p>
+                            </div>
+                            <div className="space-y-3">
                                 <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Inventaire Initial</label>
                                 <input 
                                     type="number" 
@@ -355,6 +373,38 @@ export default function ProductCreatePage() {
                                     <option value="">Aucune catégorie disponible</option>
                                 )}
                             </select>
+                        </div>
+                    </div>
+
+                    {/* Badge Selection */}
+                    <div className="bg-white border border-creme2 rounded-sm shadow-xl overflow-hidden">
+                        <div className="p-6 border-b border-creme2 bg-creme/5 flex items-center space-x-3">
+                            <Tag size={18} className="text-or" />
+                            <h2 className="text-xs font-black uppercase tracking-widest text-encre">Badge</h2>
+                        </div>
+                        <div className="p-8">
+                            <div className="grid grid-cols-2 gap-2">
+                                {[
+                                    { id: 'none', label: 'Aucun', value: null },
+                                    { id: 'new', label: 'Nouveau', value: 'new' },
+                                    { id: 'top', label: 'Bestseller', value: 'top' },
+                                    { id: 'promo', label: 'Promotion', value: 'promo' },
+                                ].map((badge) => (
+                                    <button
+                                        key={badge.id}
+                                        type="button"
+                                        onClick={() => setProduct({...product, badge: badge.value})}
+                                        className={cn(
+                                            "py-2 px-3 text-[10px] font-bold uppercase tracking-widest rounded-sm border transition-all",
+                                            product.badge === badge.value
+                                                ? "bg-encre text-or border-encre"
+                                                : "bg-creme/30 text-encre3 border-creme2 hover:border-or"
+                                        )}
+                                    >
+                                        {badge.label}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
 

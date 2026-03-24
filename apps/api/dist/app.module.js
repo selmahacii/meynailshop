@@ -29,7 +29,6 @@ const products_module_2 = require("./modules/products/products.module");
 const orders_module_2 = require("./modules/orders/orders.module");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
-const serve_static_1 = require("@nestjs/serve-static");
 const path_1 = require("path");
 let AppModule = class AppModule {
 };
@@ -37,10 +36,6 @@ exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            serve_static_1.ServeStaticModule.forRoot({
-                rootPath: (0, path_1.join)(process.cwd(), 'uploads'),
-                serveRoot: '/uploads',
-            }),
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
                 envFilePath: [

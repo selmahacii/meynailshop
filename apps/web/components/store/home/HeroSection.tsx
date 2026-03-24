@@ -15,7 +15,7 @@ export default function HeroSection() {
                     initial={{ scale: 1.1, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 10, ease: "easeOut" }}
-                    className="md:hidden w-full h-full"
+                    className="md:hidden w-full h-full relative"
                 >
                     <Image
                         src="/image2.png"
@@ -31,7 +31,7 @@ export default function HeroSection() {
                     initial={{ scale: 1.1, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 12, ease: "easeOut" }}
-                    className="hidden md:block w-full h-full"
+                    className="hidden md:block w-full h-full relative"
                 >
                     <Image
                         src="/image.png"

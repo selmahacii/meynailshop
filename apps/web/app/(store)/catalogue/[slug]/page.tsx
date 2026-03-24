@@ -17,6 +17,8 @@ import {
 } from 'lucide-react';
 import ProductGallery from '@/components/store/products/ProductGallery';
 import ProductCard from '@/components/store/products/ProductCard';
+import ProductCardSkeleton from '@/components/store/products/ProductCardSkeleton';
+import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import { formatPrice } from '@/lib/utils/currency';
 import { useCartStore } from '@/lib/store/cartStore';
 import { toast } from 'sonner';
@@ -95,15 +97,14 @@ export default function ProductPage() {
         <div className="pt-32 pb-24 bg-creme min-h-screen">
             <div className="container mx-auto px-4">
                 {/* Breadcrumbs */}
-                <nav className="text-[10px] uppercase tracking-widest text-encre3 mb-8">
-                    <Link href="/" className="hover:text-or transition-colors">Accueil</Link>
-                    <span className="mx-2">/</span>
-                    <Link href="/catalogue" className="hover:text-or transition-colors">Catalogue</Link>
-                    <span className="mx-2">/</span>
-                    <span className="text-encre font-bold">
-                        {product ? product.name : 'Produit'}
-                    </span>
-                </nav>
+                <div className="mb-8">
+                    <Breadcrumbs 
+                        items={[
+                            { label: 'Catalogue', href: '/catalogue' }, 
+                            { label: product ? product.name : 'Chargement...' }
+                        ]} 
+                    />
+                </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-24">
                     {/* Left: Gallery */}
@@ -249,21 +250,19 @@ export default function ProductPage() {
                     </div>
                 </div>
 
-                {/* Categories / Similar Products Scaffolding */}
-                <div>
+                {/* Similar Products */}
+                <div className="mt-24 border-t border-creme2 pt-16">
                     <div className="flex items-center justify-between mb-12">
-                        <h2 className="font-serif text-3xl text-encre">Vous aimerez aussi</h2>
-                        <Link href="/catalogue" className="text-sm font-bold text-or hover:text-rouge-mid transition-colors uppercase tracking-[0.2em]">Voir tout la collection</Link>
+                        <h2 className="font-serif text-3xl text-encre mb-2">Vous aimerez aussi</h2>
+                        <Link href="/catalogue" className="text-sm font-bold text-or hover:text-rouge-mid transition-colors uppercase tracking-[0.2em]">Voir toute la collection</Link>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {/* These would be fetched from API based on category */}
-                        {[1, 2, 3, 4].map((i) => (
-                            <div key={i} className="opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all">
-                                <div className="aspect-[4/5] bg-creme2 border border-creme2 mb-4"></div>
-                                <div className="h-4 w-2/3 bg-creme2 mb-2"></div>
-                                <div className="h-4 w-1/3 bg-creme2"></div>
-                            </div>
-                        ))}
+                        {loadingProduct ? (
+                            Array(4).fill(0).map((_, i) => <ProductCardSkeleton key={i} />)
+                        ) : (
+                            /* Simplified similar products fetch or static placeholders with skeletons */
+                            Array(4).fill(0).map((_, i) => <ProductCardSkeleton key={i} />)
+                        )}
                     </div>
                 </div>
             </div>

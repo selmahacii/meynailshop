@@ -135,6 +135,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                     <div className="flex items-center text-encre3">
                         <Star size={12} className="fill-or text-or mr-1.5" />
                         <span className="text-[11px] font-bold">{product.averageRating?.toFixed(1) || '5.0'}</span>
+                        <span className="text-[9px] ml-1 opacity-50">({product.reviewCount || 0})</span>
                     </div>
                 </div>
             </div>

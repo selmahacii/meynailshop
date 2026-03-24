@@ -8,6 +8,8 @@ import ProductSort from '@/components/store/products/ProductSort';
 import { Product } from '@/types/product';
 import { StoreAPI } from '@/lib/api/client';
 import { motion, AnimatePresence } from 'framer-motion';
+import ProductCardSkeleton from '@/components/store/products/ProductCardSkeleton';
+import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import { X, Loader2, AlertCircle } from 'lucide-react';
 
 export default function CataloguePage() {
@@ -78,12 +80,8 @@ export default function CataloguePage() {
         <div className="pt-32 pb-24 bg-creme min-h-screen font-sans">
             <div className="container mx-auto px-4">
                 {/* Header / Breadcrumbs */}
-                <div className="mb-8 flex items-center justify-between">
-                    <nav className="text-[10px] uppercase tracking-[0.2em] text-encre3 flex items-center space-x-2 font-black">
-                        <Link href="/" className="hover:text-or transition-colors">Accueil</Link>
-                        <span className="opacity-30">/</span>
-                        <span className="text-encre underline decoration-or/40 underline-offset-4">Catalogue</span>
-                    </nav>
+                <div className="mb-8">
+                    <Breadcrumbs items={[{ label: 'Catalogue' }]} />
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-12">
@@ -107,9 +105,10 @@ export default function CataloguePage() {
                         />
 
                         {loading ? (
-                            <div className="flex flex-col items-center justify-center h-96 bg-white/50 rounded-sm border border-creme2 border-dashed">
-                                <Loader2 size={40} className="animate-spin text-or mb-4" strokeWidth={1.5} />
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-encre3">Exploration du catalogue...</p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 md:gap-10">
+                                {[...Array(6)].map((_, i) => (
+                                    <ProductCardSkeleton key={i} />
+                                ))}
                             </div>
                         ) : (
                             <>

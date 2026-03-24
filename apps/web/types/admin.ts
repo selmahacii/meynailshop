@@ -6,6 +6,8 @@ export interface AdminProduct {
   stock: number;
   alertThreshold: number;
   price: number;
+  comparePrice?: number | null;
+  badge?: 'top' | 'new' | 'promo' | null;
   status: 'in_stock' | 'low_stock' | 'out_of_stock';
   createdAt: string;
   updatedAt: string;

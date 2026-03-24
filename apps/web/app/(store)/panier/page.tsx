@@ -6,6 +6,7 @@ import { Minus, Plus, Trash2, ArrowRight, ShoppingBag } from 'lucide-react';
 import { useCartStore } from '@/lib/store/cartStore';
 import { formatPrice } from '@/lib/utils/currency';
 import { useState, useEffect } from 'react';
+import CartRecommendations from '@/components/store/cart/CartRecommendations';
 
 export default function CartPage() {
     const { items, updateQuantity, removeItem, getSubtotal, getTotal } = useCartStore();
@@ -150,6 +151,9 @@ export default function CartPage() {
                         </div>
                     </div>
                 </div>
+
+                {/* Upselling / Recommendations */}
+                <CartRecommendations />
             </div>
         </div>
     );

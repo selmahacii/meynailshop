@@ -1,8 +1,14 @@
 import { UploadService } from './upload.service';
+interface MulterFile {
+    buffer: Buffer;
+    originalname: string;
+    mimetype: string;
+    size: number;
+}
 export declare class UploadController {
     private readonly uploadService;
     constructor(uploadService: UploadService);
-    uploadProductImage(file: Express.Multer.File): Promise<{
+    uploadProductImage(file: MulterFile): Promise<{
         statusCode: number;
         message: string;
         data: {
@@ -10,7 +16,7 @@ export declare class UploadController {
             url: string;
         };
     }>;
-    uploadProductImages(files: Express.Multer.File[]): Promise<{
+    uploadProductImages(files: MulterFile[]): Promise<{
         statusCode: number;
         message: string;
         data: {
@@ -23,3 +29,4 @@ export declare class UploadController {
         message: string;
     }>;
 }
+export {};

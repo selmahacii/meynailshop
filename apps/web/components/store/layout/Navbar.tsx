@@ -10,11 +10,13 @@ import { useCartStore } from '@/lib/store/cartStore';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useWishlistStore } from '@/lib/store/wishlistStore';
 import { useSettings } from '@/lib/hooks/useSettings';
+import SearchOverlay from '@/components/store/layout/SearchOverlay';
 
 export default function Navbar() {
     const { settings } = useSettings();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
     const pathname = usePathname();
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
@@ -82,7 +84,10 @@ export default function Navbar() {
 
                 {/* Actions */}
                 <div className="flex items-center space-x-3 sm:space-x-5 md:space-x-6">
-                    <button className="text-gold-brand hover:opacity-80 transition-all hover:scale-110 hidden sm:block">
+                    <button 
+                        onClick={() => setIsSearchOpen(true)}
+                        className="text-gold-brand hover:opacity-80 transition-all hover:scale-110 hidden sm:block"
+                    >
                         <Search size={21} strokeWidth={1.5} />
                     </button>
 
@@ -223,6 +228,9 @@ export default function Navbar() {
                     </>
                 )}
             </AnimatePresence>
+
+            {/* Search Overlay */}
+            <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
         </nav>
     );
 }

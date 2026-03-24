@@ -1,0 +1,17 @@
+node_modules
+dist
+.next
+.git
+.npm
+.cache
+*.log
+*.env
+*.env.local
+.vscode
+.agents
+.idea
+*.bak
+*.tmp
+/apps/web/node_modules
+/apps/api/node_modules
+/packages/shared/node_modules

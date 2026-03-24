@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { StoreAPI } from '@/lib/api/client';
 import ProductCard from '@/components/store/products/ProductCard';
 import { Product } from '@/types/product';
+import ProductCardSkeleton from '@/components/store/products/ProductCardSkeleton';
+import CategorySkeleton from '@/components/store/home/CategorySkeleton';
 import { Loader2 } from 'lucide-react';
 
 export default function HomePage() {
@@ -51,9 +53,10 @@ export default function HomePage() {
                 </div>
 
                 {loading && categories.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-20">
-                        <Loader2 className="animate-spin text-or mb-4" size={32} />
-                        <p className="text-encre/40 text-sm">Chargement de votre collection...</p>
+                    <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
+                        {[...Array(5)].map((_, i) => (
+                            <CategorySkeleton key={i} />
+                        ))}
                     </div>
                 ) : categories.length > 0 ? (
                     <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
@@ -118,8 +121,10 @@ export default function HomePage() {
                     </div>
 
                     {loading && featuredProducts.length === 0 ? (
-                        <div className="flex justify-center py-12">
-                            <Loader2 className="animate-spin text-or" size={32} />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                            {[...Array(4)].map((_, i) => (
+                                <ProductCardSkeleton key={i} />
+                            ))}
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">

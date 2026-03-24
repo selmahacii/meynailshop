@@ -1,56 +1,22 @@
-# Multi-stage build for NestJS API
-
-# Build stage
+# Complete monorepo Dockerfile for API
 FROM node:18-alpine AS builder
-
 WORKDIR /app
-
-# Copy root package files
-COPY package*.json ./
-COPY tsconfig*.json ./
-
-# Copy backend source
-COPY apps/api ./apps/api
-COPY packages/shared ./packages/shared
-
-# Install dependencies
-RUN npm ci
-
-# Build backend
+COPY . .
+RUN npm install
+RUN npm run build --workspace=@meey/shared
 RUN npm run build --workspace=@meey/api
 
-# Production stage
 FROM node:18-alpine
-
 WORKDIR /app
-
-# Install dumb-init for proper signal handling
 RUN apk add --no-cache dumb-init
-
-# Copy package files
-COPY package*.json ./
-COPY packages/shared ./packages/shared
-
-# Install production dependencies only
-RUN npm ci --only=production && \
-    npm cache clean --force
-
-# Copy built application from builder
-COPY --from=builder /app/apps/api/dist ./dist
-
-# Create non-root user for security
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
-
-USER nodejs
+# Copy EVERYTHING from builder to ensure all links and modules are preserved
+COPY --from=builder --chown=node:node /app /app
 
 EXPOSE 3001
+USER node
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD node -e "require('http').get('http://localhost:3001/api/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD node -e "require('http').get('http://localhost:3001/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
-
-# Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
-
-CMD ["node", "dist/apps/api/src/main.js"]
+# Correct path to the built entry point (absolute to avoid resolve issues)
+CMD ["node", "apps/api/dist/main.js"]
