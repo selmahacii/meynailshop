@@ -179,12 +179,12 @@ export default function AdminClientsPage() {
                                             </span>
                                         </td>
                                         <td className="px-8 py-5 text-right">
-                                            <button 
-                                                onClick={() => toast.info(`Détails de ${client.firstName} bientôt disponibles`)}
-                                                className="px-4 py-1.5 bg-[#390102] text-[#BFA893] text-[10px] font-black uppercase tracking-widest rounded-sm hover:opacity-90 transition-all border border-[#BFA893]/20 shadow-md"
+                                            <Link 
+                                                href={`/admin/clients/${client.id}`}
+                                                className="inline-block px-4 py-1.5 bg-[#390102] text-[#BFA893] text-[10px] font-black uppercase tracking-widest rounded-sm hover:opacity-90 transition-all border border-[#BFA893]/20 shadow-md"
                                             >
                                                 Voir Profil
-                                            </button>
+                                            </Link>
                                         </td>
                                     </tr>
                                 );

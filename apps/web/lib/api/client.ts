@@ -261,11 +261,21 @@ export class AuthAPI {
 
 export class ReviewsAPI {
   static async getAll(page = 1, limit = 10, status?: string) {
-    const query = new URLSearchParams();
-    query.append('page', String(page));
-    query.append('limit', String(limit));
+    const query = new URLSearchParams({ page: String(page), limit: String(limit) });
     if (status) query.append('status', status);
     return apiGet(`/api/reviews?${query.toString()}`);
+  }
+
+  static async getByProduct(productId: string, page = 1, limit = 10) {
+    return apiGet(`/api/reviews/product/${productId}?page=${page}&limit=${limit}`);
+  }
+
+  static async create(data: { productId: string; rating: number; title: string; content: string; orderId?: string }) {
+    return apiPost('/api/reviews', data);
+  }
+
+  static async getProductRating(productId: string) {
+    return apiGet(`/api/reviews/product/${productId}/rating`);
   }
 
   static async moderate(id: string, status: 'approved' | 'rejected') {

@@ -26,6 +26,7 @@ import { StoreAPI } from '@/lib/api/client';
 import { useEffect } from 'react';
 import { useWishlistStore } from '@/lib/store/wishlistStore';
 import { cn } from '@/lib/utils';
+import ProductReviews from '@/components/store/products/ProductReviews';
 
  
 
@@ -249,6 +250,14 @@ export default function ProductPage() {
                         </div>
                     </div>
                 </div>
+
+                {/* Reviews Section */}
+                {product && (
+                    <ProductReviews 
+                        productId={product.id} 
+                        productName={product.name} 
+                    />
+                )}
 
                 {/* Similar Products */}
                 <div className="mt-24 border-t border-creme2 pt-16">
