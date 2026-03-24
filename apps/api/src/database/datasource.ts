@@ -12,6 +12,7 @@ import { Coupon } from './entities/coupon.entity';
 import { WishlistItem } from './entities/wishlist-item.entity';
 import { StockMovement } from './entities/stock-movement.entity';
 import { SiteSettings } from './entities/site-settings.entity';
+import { SubCategory } from './entities/sub-category.entity';
 
 // Load .env only if not in production
 if (process.env.NODE_ENV !== 'production') {
@@ -41,6 +42,7 @@ export const AppDataSource = new DataSource({
     WishlistItem,
     StockMovement,
     SiteSettings,
+    SubCategory,
   ],
   migrations: ['src/database/migrations/*.ts'],
   synchronize: false,
