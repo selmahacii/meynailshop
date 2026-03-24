@@ -75,6 +75,25 @@ export default function AdminSettingsPage() {
         setSettings((prev: any) => ({ ...prev, [key]: value }));
     };
 
+    const handleReset = async () => {
+        setSaving(true);
+        setError(null);
+        setSuccessMessage(null);
+        try {
+            const res = await SettingsAPI.reset();
+            if (res.success) {
+                setSuccessMessage('La boutique a été réinitialisée à zéro');
+                setTimeout(() => window.location.reload(), 2000);
+            } else {
+                setError(res.error || 'Erreur lors de la réinitialisation');
+            }
+        } catch (err) {
+            setError('Erreur réseau lors de la réinitialisation');
+        } finally {
+            setSaving(false);
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center h-[60vh]">
@@ -208,8 +227,23 @@ export default function AdminSettingsPage() {
                                     <p className="text-sm font-bold text-yellow-800 uppercase tracking-widest">Zone de danger</p>
                                     <p className="text-xs text-yellow-700 mt-1">Les actions ci-dessous sont irréversibles. Procédez avec prudence.</p>
                                     <div className="flex space-x-3 mt-4">
-                                        <button className="px-4 py-2 bg-white border border-yellow-300 text-yellow-700 text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-yellow-100 transition-all">Vider les données de test</button>
-                                        <button className="px-4 py-2 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-red-700 transition-all shadow-md">Réinitialiser la boutique</button>
+                                        <button 
+                                            onClick={() => alert('Fonctionnalité bientôt disponible')}
+                                            className="px-4 py-2 bg-white border border-yellow-300 text-yellow-700 text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-yellow-100 transition-all"
+                                        >
+                                            Vider les données de test
+                                        </button>
+                                        <button 
+                                            onClick={() => {
+                                                if (window.confirm('ATTENTION : Voulez-vous vraiment supprimer TOUTES les données (produits, commandes, clients) ? Cette action est définitive.')) {
+                                                    handleReset();
+                                                }
+                                            }}
+                                            disabled={saving}
+                                            className="px-4 py-2 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-red-700 transition-all shadow-md disabled:opacity-50"
+                                        >
+                                            {saving ? 'Réinitialisation...' : 'Réinitialiser la boutique'}
+                                        </button>
                                     </div>
                                 </div>
                             </div>

@@ -289,6 +289,10 @@ export class SettingsAPI {
   static async update(data: any) {
     return apiPatch('/api/settings', data);
   }
+
+  static async reset() {
+    return apiPost('/api/settings/reset');
+  }
 }
 
 export class ClientsAPI {

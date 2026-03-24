@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Patch, Post, Body, UseGuards } from '@nestjs/common';
 import { SettingsService } from './settings.service';
 import { UpdateSettingsDto } from './dto/update-settings.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -20,5 +20,12 @@ export class SettingsController {
     @Roles(UserRole.ADMIN)
     updateSettings(@Body() updateSettingsDto: UpdateSettingsDto) {
         return this.settingsService.updateSettings(updateSettingsDto);
+    }
+
+    @Post('reset')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
+    resetShop() {
+        return this.settingsService.resetShop();
     }
 }
