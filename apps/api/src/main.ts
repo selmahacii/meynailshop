@@ -138,6 +138,8 @@ async function bootstrap() {
 
   console.log(`✅ API running on port ${port}`);
   console.log(`📚 Health check: http://localhost:${port}/api/health`);
+  console.log(`🔄 [DB] DB_SYNC mode: ${process.env.DB_SYNC === 'true'}`);
+  console.log(`🌍 NODE_ENV: ${process.env.NODE_ENV}`);
 }
 
 bootstrap().catch((err) => {
