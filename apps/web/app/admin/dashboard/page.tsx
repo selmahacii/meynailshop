@@ -11,6 +11,12 @@ import {
     Loader,
     RefreshCw,
     Plus,
+    Wallet,
+    Percent,
+    Warehouse,
+    Activity,
+    CheckCircle2,
+    ShieldAlert
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -98,34 +104,79 @@ export default function AdminDashboard() {
 
     const kpisArray = [
         {
-            name: 'Revenus Totaux',
+            name: 'Revenus (Produits)',
             formattedValue: formatPrice(kpis.totalRevenue || 0),
             delta: revenueDelta,
             icon: TrendingUp,
-            color: 'text-green-600'
+            color: 'text-green-600',
+            description: 'Hors frais de livraison'
         },
         {
+            name: 'Bénéfice Net',
+            formattedValue: formatPrice(kpis.totalProfit || 0),
+            delta: null,
+            icon: Wallet,
+            color: 'text-emerald-600',
+            description: 'Revenus - Coûts d\'achat'
+        },
+        {
+            name: 'Marge Brute',
+            formattedValue: `${kpis.profitMargin || 0}%`,
+            delta: null,
+            icon: Percent,
+            color: 'text-indigo-600',
+            description: 'Rentabilité sur ventes'
+        },
+        {
+            name: 'Valeur de Stock',
+            formattedValue: formatPrice(kpis.inventoryValue || 0),
+            delta: null,
+            icon: Warehouse,
+            color: 'text-blue-600',
+            description: 'Fond de roulement engagé'
+        }
+    ];
+
+    const secondaryKpis = [
+        {
             name: 'Commandes Totales',
-            formattedValue: kpis.totalOrders || 0,
+            value: kpis.totalOrders || 0,
             delta: orderDelta,
             icon: ShoppingCart,
-            color: 'text-blue-600'
         },
         {
             name: 'Clients Actifs',
-            formattedValue: kpis.activeClients || 0,
+            value: kpis.activeClients || 0,
             delta: clientDelta,
             icon: Users,
-            color: 'text-purple-600'
         },
         {
             name: 'Panier Moyen',
-            formattedValue: formatPrice(kpis.averageCart || 0),
+            value: formatPrice(kpis.averageCart || 0),
             delta: avgCartDelta,
             icon: Package,
-            color: 'text-orange-600'
         }
     ];
+
+    const getHealthColor = (status: string) => {
+        switch(status) {
+            case 'excellent': return 'text-green-600 bg-green-50 border-green-200';
+            case 'good': return 'text-blue-600 bg-blue-50 border-blue-200';
+            case 'warning': return 'text-amber-600 bg-amber-50 border-amber-200';
+            case 'danger': return 'text-red-600 bg-red-50 border-red-200';
+            default: return 'text-encre/60 bg-white border-creme';
+        }
+    };
+
+    const getHealthMessage = (status: string) => {
+        switch(status) {
+            case 'excellent': return 'Santé financière excellente. Vos marges sont solides.';
+            case 'good': return 'Activité saine. Votre fond de roulement est correct.';
+            case 'warning': return 'Attention : Marge faible. Surveillez vos coûts d\'achat.';
+            case 'danger': return 'Risque de faillite : Marges insuffisantes pour couvrir les frais.';
+            default: return 'Analyse de santé en cours...';
+        }
+    };
 
     return (
         <div className="p-4 md:p-8 bg-gradient-to-br from-[#FAF5EF] via-[#F9F4EE] to-[#F5EFEA] min-h-screen">
@@ -152,16 +203,54 @@ export default function AdminDashboard() {
                 </div>
             )}
 
-            {/* KPI Cards */}
+            {/* Health Indicator */}
+            <div className={cn(
+                "mb-8 p-4 rounded-xl border flex items-center justify-between shadow-sm",
+                getHealthColor(kpis.healthStatus)
+            )}>
+                <div className="flex items-center gap-4">
+                    <div className="p-2 rounded-full bg-white/50">
+                        {kpis.healthStatus === 'danger' || kpis.healthStatus === 'warning' ? (
+                            <ShieldAlert size={24} />
+                        ) : (
+                            <Activity size={24} />
+                        )}
+                    </div>
+                    <div>
+                        <h4 className="font-bold text-sm uppercase tracking-wider">État du Business</h4>
+                        <p className="text-sm opacity-90">{getHealthMessage(kpis.healthStatus)}</p>
+                    </div>
+                </div>
+                <div className="hidden md:flex flex-col items-end">
+                    <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Score de Rentabilité</span>
+                    <div className="flex items-center gap-1 mt-1">
+                        {[1, 2, 3, 4].map((step) => (
+                            <div 
+                                key={step} 
+                                className={cn(
+                                    "w-8 h-1.5 rounded-full",
+                                    kpis.healthStatus === 'excellent' ? "bg-green-500" :
+                                    kpis.healthStatus === 'good' && step <= 3 ? "bg-blue-500" :
+                                    kpis.healthStatus === 'warning' && step <= 2 ? "bg-amber-500" :
+                                    kpis.healthStatus === 'danger' && step <= 1 ? "bg-red-500" : "bg-black/10"
+                                )}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Financial KPI Cards */}
+            <h2 className="text-xs font-black uppercase tracking-[0.2em] text-encre/40 mb-4 px-2">Performance & Rentabilité</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 {kpisArray.map((kpi: any, idx: number) => (
                     <div
                         key={idx}
-                        className="bg-white rounded-2xl border border-creme border-opacity-50 p-6 hover:shadow-xl transition-all duration-300 group cursor-pointer transform hover:scale-105"
+                        className="bg-white rounded-2xl border border-creme border-opacity-50 p-6 hover:shadow-xl transition-all duration-300 group cursor-pointer"
                     >
                         <div className="flex items-start justify-between mb-4">
                             <div>
-                                <p className="text-xs uppercase tracking-widest text-encre/40 font-bold mb-2">
+                                <p className="text-[10px] uppercase tracking-widest text-encre/40 font-bold mb-2">
                                     {kpi.name}
                                 </p>
                                 <p className="text-2xl font-bold text-encre">
@@ -173,11 +262,34 @@ export default function AdminDashboard() {
                             </div>
                         </div>
                         <div className="flex items-center justify-between">
-                            <span className="text-xs text-encre/40">vs. mois dernier</span>
-                            <span className={cn("text-xs font-semibold", kpi.delta.startsWith('-') ? "text-red-500" : "text-green-600")}>
-                                {kpi.delta}
-                            </span>
+                            <span className="text-[10px] text-encre/40 italic">{kpi.description}</span>
+                            {kpi.delta && (
+                                <span className={cn("text-xs font-semibold", kpi.delta.startsWith('-') ? "text-red-500" : "text-green-600")}>
+                                    {kpi.delta}
+                                </span>
+                            )}
                         </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Operational KPIs */}
+            <h2 className="text-xs font-black uppercase tracking-[0.2em] text-encre/40 mb-4 px-2">Opérations</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                {secondaryKpis.map((kpi: any, idx: number) => (
+                    <div key={idx} className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-creme2 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-white rounded-lg shadow-sm">
+                                <kpi.icon size={18} className="text-encre3" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] uppercase tracking-widest text-encre/40 font-bold">{kpi.name}</p>
+                                <p className="text-lg font-bold text-encre">{kpi.value}</p>
+                            </div>
+                        </div>
+                        <span className={cn("text-[10px] font-black", kpi.delta.startsWith('-') ? "text-red-400" : "text-green-500")}>
+                            {kpi.delta}
+                        </span>
                     </div>
                 ))}
             </div>

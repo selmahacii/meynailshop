@@ -9,6 +9,9 @@ export declare class DashboardService {
     getMetrics(): Promise<{
         kpis: {
             totalRevenue: number;
+            totalProfit: number;
+            profitMargin: number;
+            inventoryValue: number;
             prevRevenue: number;
             totalOrders: number;
             prevOrders: number;
@@ -16,6 +19,7 @@ export declare class DashboardService {
             prevClients: number;
             averageCart: number;
             completedOrders: number;
+            healthStatus: string;
         };
         charts: {
             monthlyRevenue: any[];

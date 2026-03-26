@@ -7,6 +7,9 @@ export declare class DashboardController {
         data: {
             kpis: {
                 totalRevenue: number;
+                totalProfit: number;
+                profitMargin: number;
+                inventoryValue: number;
                 prevRevenue: number;
                 totalOrders: number;
                 prevOrders: number;
@@ -14,6 +17,7 @@ export declare class DashboardController {
                 prevClients: number;
                 averageCart: number;
                 completedOrders: number;
+                healthStatus: string;
             };
             charts: {
                 monthlyRevenue: any[];

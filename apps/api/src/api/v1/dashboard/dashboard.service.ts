@@ -19,18 +19,37 @@ export class DashboardService {
   async getMetrics() {
     console.log('🚀 [DashboardService] Starting getMetrics');
     try {
-      // 1. Current KPI calculations
+      // 1. Current KPI calculations (Using subtotal to exclude shipping)
       const revenueQuery = await this.orderRepository
         .createQueryBuilder('o')
-        .select('SUM(CASE WHEN o.status = \'delivered\' THEN o.total ELSE 0 END)', 'totalRevenue')
+        .select('SUM(CASE WHEN o.status = \'delivered\' THEN o.subtotal ELSE 0 END)', 'totalRevenue')
         .addSelect('COUNT(o.id)', 'totalOrders')
         .addSelect('COUNT(CASE WHEN o.status = \'delivered\' THEN 1 END)', 'completedOrders')
-        .addSelect('AVG(CASE WHEN o.status = \'delivered\' THEN o.total END)', 'averageCart')
+        .addSelect('AVG(CASE WHEN o.status = \'delivered\' THEN o.subtotal END)', 'averageCart')
         .getRawOne()
         .catch(err => {
           console.error('❌ [DashboardService] Revenue query failed:', err);
           return null;
         });
+
+      // 1.1 Profitability engine: Total Cost of Goods Sold (COGS)
+      const cogsQuery = await this.orderItemRepository
+        .createQueryBuilder('oi')
+        .leftJoin('products', 'p', 'p.id = oi.productId')
+        .leftJoin('orders', 'o', 'o.id = oi.orderId')
+        .select('SUM(CASE WHEN o.status = \'delivered\' THEN oi.quantity * COALESCE(p."costPrice", 0) ELSE 0 END)', 'totalCogs')
+        .getRawOne()
+        .catch(err => {
+            console.error('❌ [DashboardService] COGS calculation failed:', err);
+            return { totalCogs: 0 };
+        });
+
+      // 1.2 Inventory metrics for Working Capital (Fond de Roulement)
+      const inventoryQuery = await this.productRepository
+        .createQueryBuilder('p')
+        .select('SUM(p.stock * COALESCE(p."costPrice", 0))', 'inventoryValue')
+        .getRawOne()
+        .catch(() => ({ inventoryValue: 0 }));
 
       // 2. Previous month KPI calculations for deltas
       const lastMonthStart = new Date();
@@ -44,7 +63,7 @@ export class DashboardService {
 
       const prevMonthQuery = await this.orderRepository
         .createQueryBuilder('o')
-        .select('SUM(o.total)', 'totalRevenue')
+        .select('SUM(o.subtotal)', 'totalRevenue')
         .addSelect('COUNT(o.id)', 'totalOrders')
         .where('o.createdAt >= :start', { start: lastMonthStart })
         .andWhere('o.createdAt < :end', { end: thisMonthStart })
@@ -90,9 +109,17 @@ export class DashboardService {
       const wilayaDistribution = await this._getWilayaDistribution();
       const paymentMethodDistribution = await this._getPaymentMethodDistribution();
 
+      const totalCogs = parseFloat(cogsQuery?.totalCogs ?? '0') || 0;
+      const profit = totalRevenue - totalCogs;
+      const margin = totalRevenue > 0 ? (profit / totalRevenue) * 100 : 0;
+      const inventoryValue = parseFloat(inventoryQuery?.inventoryValue ?? '0') || 0;
+
       return {
         kpis: {
           totalRevenue: totalRevenue || 0,
+          totalProfit: Math.round(profit * 100) / 100,
+          profitMargin: Math.round(margin * 10) / 10,
+          inventoryValue: Math.round(inventoryValue * 100) / 100,
           prevRevenue: prevRevenue || 0,
           totalOrders: totalOrders || 0,
           prevOrders: prevOrders || 0,
@@ -100,6 +127,7 @@ export class DashboardService {
           prevClients: prevClients || 0,
           averageCart: Math.round(averageCart * 100) / 100,
           completedOrders: completedOrders,
+          healthStatus: margin > 30 ? 'excellent' : margin > 15 ? 'good' : margin > 5 ? 'warning' : 'danger'
         },
         charts: {
           monthlyRevenue,
@@ -135,7 +163,7 @@ export class DashboardService {
 
       const dataByMonth = await this.orderRepository
         .createQueryBuilder('order')
-        .select('order.total', 'total')
+        .select('order.subtotal', 'total')
         .addSelect('order.createdAt', 'createdAt')
         .where('order.status = :status', { status: 'delivered' })
         .andWhere('order.createdAt >= :start', { start: months[0].start })
