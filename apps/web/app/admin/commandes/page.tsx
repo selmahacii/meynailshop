@@ -16,7 +16,11 @@ import {
     Home,
     Briefcase,
     Package,
-    Printer
+    Printer,
+    Instagram,
+    MessageCircle,
+    Globe,
+    Store
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -134,6 +138,16 @@ export default function AdminOrdersPage() {
             case 'cancelled': return 'Annulée';
             case 'refunded': return 'Remboursée';
             default: return status;
+        }
+    };
+
+    const getSourceIcon = (source: string) => {
+        switch (source) {
+            case 'instagram': return <Instagram size={14} className="text-pink-600" />;
+            case 'whatsapp': return <MessageCircle size={14} className="text-emerald-600" />;
+            case 'facebook': return <Globe size={14} className="text-blue-600" />;
+            case 'store': return <Store size={14} className="text-encre" />;
+            default: return <Globe size={14} className="text-encre/40" />; // Default to website
         }
     };
 
@@ -262,7 +276,10 @@ export default function AdminOrdersPage() {
                             {filteredOrders.map((order) => (
                                 <tr key={order.id} className="hover:bg-creme/5 transition-colors group">
                                     <td className="px-8 py-6">
-                                        <span className="text-sm font-bold text-rouge-mid font-mono tracking-tighter">#{order.id.slice(-4)}</span>
+                                        <div className="flex items-center gap-2">
+                                            {getSourceIcon(order.source)}
+                                            <span className="text-sm font-bold text-rouge-mid font-mono tracking-tighter">#{order.id.slice(-4)}</span>
+                                        </div>
                                     </td>
                                     <td className="px-8 py-6">
                                         <div className="flex flex-col">
@@ -385,7 +402,10 @@ export default function AdminOrdersPage() {
                             <div key={order.id} className="p-5 flex flex-col space-y-4 hover:bg-creme/5 transition-colors">
                                 <div className="flex justify-between items-start">
                                     <div className="flex flex-col">
-                                        <span className="text-sm font-black text-rouge-mid font-mono tracking-tighter mb-1">#{order.orderNumber || order.id.slice(-6)}</span>
+                                        <div className="flex items-center gap-2 mb-1">
+                                            {getSourceIcon(order.source)}
+                                            <span className="text-sm font-black text-rouge-mid font-mono tracking-tighter">#{order.orderNumber || order.id.slice(-6)}</span>
+                                        </div>
                                         <span className="text-xs font-bold tracking-widest text-encre3 uppercase">
                                             {new Date(order.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
                                         </span>
