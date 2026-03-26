@@ -14,12 +14,12 @@ interface BreadcrumbsProps {
 
 export default function Breadcrumbs({ items }: BreadcrumbsProps) {
     return (
-        <nav className="flex items-center space-x-2 text-xs md:text-sm font-medium tracking-wide">
+        <nav className="flex items-center space-x-2 text-[10px] md:text-xs font-black uppercase tracking-[0.2em] overflow-x-auto no-scrollbar pb-1 whitespace-nowrap">
             <Link 
                 href="/" 
-                className="text-encre3 hover:text-or transition-colors flex items-center"
+                className="text-encre3 hover:text-or transition-colors flex items-center flex-shrink-0"
             >
-                <Home size={14} className="mr-1" />
+                <Home size={12} className="mr-1.5" />
                 <span>Accueil</span>
             </Link>
             

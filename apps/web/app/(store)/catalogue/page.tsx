@@ -121,10 +121,10 @@ export default function CataloguePage() {
                                     ...(filters.category ? [{ label: activeCategoryData?.name || 'Catégorie' }] : [])
                                 ]} 
                             />
-                            <h1 className="font-serif text-4xl md:text-6xl text-encre tracking-tight leading-none">
+                            <h1 className="font-serif text-3xl md:text-5xl lg:text-7xl text-encre tracking-tight leading-none">
                                 {activeCategoryData?.name || "Le Catalogue"}
                             </h1>
-                            <p className="text-encre3 text-sm max-w-xl italic leading-relaxed">
+                            <p className="text-encre3 text-[11px] md:text-sm max-w-xl italic leading-relaxed border-l-2 border-or/20 pl-4 py-1">
                                 {activeCategoryData?.description || "Découvrez notre collection méticuleusement sélectionnée de produits d'onglerie et soins de luxe."}
                             </p>
                         </div>
