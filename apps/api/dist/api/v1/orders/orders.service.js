@@ -19,6 +19,7 @@ const typeorm_2 = require("typeorm");
 const entities_1 = require("../../../database/entities");
 const stock_service_1 = require("../../../modules/stock/stock.service");
 const typeorm_3 = require("typeorm");
+const typeorm_4 = require("@nestjs/typeorm");
 let OrdersService = class OrdersService {
     constructor(orderRepository, orderItemRepository, productRepository, reviewRepository, stockService, dataSource) {
         this.orderRepository = orderRepository;
@@ -176,6 +177,7 @@ exports.OrdersService = OrdersService = __decorate([
     __param(1, (0, typeorm_1.InjectRepository)(entities_1.OrderItem)),
     __param(2, (0, typeorm_1.InjectRepository)(entities_1.Product)),
     __param(3, (0, typeorm_1.InjectRepository)(entities_1.Review)),
+    __param(5, (0, typeorm_4.InjectDataSource)()),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Order, Review, OrderItem, Product } from '../../../database/entities';
 import { StockService } from '../../../modules/stock/stock.service';
 import { DataSource } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 @Injectable()
 export class OrdersService {
@@ -17,6 +18,7 @@ export class OrdersService {
     @InjectRepository(Review)
     private reviewRepository: Repository<Review>,
     private stockService: StockService,
+    @InjectDataSource()
     private dataSource: DataSource,
   ) {}
 
