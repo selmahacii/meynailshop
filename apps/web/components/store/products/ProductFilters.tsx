@@ -8,10 +8,18 @@ import { StoreAPI } from '@/lib/api/client';
 interface Category {
     name: string;
     slug: string;
+    imageUrl?: string;
+    subCategories?: {
+        id: string;
+        name: string;
+        slug: string;
+        imageUrl?: string;
+    }[];
 }
 
 export type FilterState = {
     category: string | null;
+    subCategory: string | null;
     priceRanges: string[];
     inStock: boolean;
 };
@@ -57,7 +65,11 @@ export default function ProductFilters({ onClose, currentFilters, onFilterChange
     };
 
     const setCategory = (slug: string | null) => {
-        onFilterChange({ ...currentFilters, category: slug });
+        onFilterChange({ ...currentFilters, category: slug, subCategory: null });
+    };
+
+    const setSubCategory = (slug: string | null) => {
+        onFilterChange({ ...currentFilters, subCategory: slug });
     };
 
     const toggleStock = () => {
@@ -67,6 +79,7 @@ export default function ProductFilters({ onClose, currentFilters, onFilterChange
     const resetFilters = () => {
         onFilterChange({
             category: null,
+            subCategory: null,
             priceRanges: [],
             inStock: false
         });
@@ -97,16 +110,37 @@ export default function ProductFilters({ onClose, currentFilters, onFilterChange
                         </button>
                         <ul className="space-y-1 pl-4">
                             {categories.map((cat) => (
-                                <li key={cat.slug}>
+                                <li key={cat.slug} className="space-y-1">
                                     <button
                                         onClick={() => setCategory(cat.slug)}
                                         className={cn(
                                             "text-xs md:text-[13px] transition-all py-2.5 px-4 w-full text-left rounded-sm font-medium",
-                                            currentFilters.category === cat.slug ? "text-rouge-mid font-bold" : "text-encre3 hover:text-encre hover:bg-creme/20"
+                                            currentFilters.category === cat.slug ? "text-rouge-mid font-bold bg-creme/30" : "text-encre3 hover:text-encre hover:bg-creme/20"
                                         )}
                                     >
                                         {cat.name}
                                     </button>
+                                    
+                                    {/* Subcategories */}
+                                    {currentFilters.category === cat.slug && cat.subCategories && cat.subCategories.length > 0 && (
+                                        <ul className="pl-6 space-y-1 border-l border-creme2 ml-4 mb-2 animate-in slide-in-from-left-2 duration-300">
+                                            {cat.subCategories.map((sub) => (
+                                                <li key={sub.slug}>
+                                                    <button
+                                                        onClick={() => setSubCategory(sub.slug)}
+                                                        className={cn(
+                                                            "text-[11px] py-1.5 px-3 w-full text-left rounded-sm transition-colors",
+                                                            currentFilters.subCategory === sub.slug 
+                                                                ? "text-or font-black underline underline-offset-4" 
+                                                                : "text-encre3 hover:text-encre"
+                                                        )}
+                                                    >
+                                                        {sub.name}
+                                                    </button>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
                                 </li>
                             ))}
                         </ul>

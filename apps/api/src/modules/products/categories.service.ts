@@ -125,4 +125,11 @@ export class CategoriesService {
     if (!sub) throw new NotFoundException('SubCategory not found');
     return await this.subCategoryRepository.remove(sub);
   }
+
+  async updateSubCategory(id: string, data: any) {
+    const sub = await this.subCategoryRepository.findOne({ where: { id } });
+    if (!sub) throw new NotFoundException('SubCategory not found');
+    Object.assign(sub, data);
+    return await this.subCategoryRepository.save(sub);
+  }
 }

@@ -19,6 +19,7 @@ export interface Product {
   sku: string;
   price: number;
   comparePrice?: number;
+  costPrice?: number;
   stock: number;
   images: string[];
   categoryId: string;
@@ -32,4 +33,6 @@ export interface Product {
   updatedAt: string;
   reviewCount?: number;
   averageRating?: number;
+  hasVariants?: boolean;
+  variants?: { sku: string; image: string; label: string }[];
 }

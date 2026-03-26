@@ -84,4 +84,14 @@ export class CategoriesController {
       data: await this.categoriesService.removeSubCategory(id),
     };
   }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @Patch('sub-categories/:id')
+  async updateSub(@Param('id') id: string, @Body() data: any) {
+    return {
+      statusCode: 200,
+      data: await this.categoriesService.updateSubCategory(id, data),
+    };
+  }
 }

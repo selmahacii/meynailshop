@@ -30,6 +30,7 @@ interface Category {
         id: string;
         name: string;
         slug: string;
+        imageUrl?: string;
     }[];
 }
 
@@ -394,18 +395,76 @@ export default function AdminCategoriesPage() {
                                         <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
                                             {editingCategory.subCategories && editingCategory.subCategories.length > 0 ? (
                                                 editingCategory.subCategories.map((sub) => (
-                                                    <div key={sub.id} className="flex items-center justify-between p-3 bg-creme/20 border border-creme2 rounded-sm group">
-                                                        <div className="flex flex-col">
-                                                            <span className="text-sm font-medium text-encre">{sub.name}</span>
-                                                            <span className="text-[9px] text-encre3 font-mono">{sub.slug}</span>
+                                                    <div key={sub.id} className="flex flex-col p-4 bg-creme/20 border border-creme2 rounded-sm group space-y-3">
+                                                        <div className="flex items-center justify-between">
+                                                            <div className="flex flex-col">
+                                                                <span className="text-sm font-bold text-encre">{sub.name}</span>
+                                                                <span className="text-[9px] text-encre3 font-mono">{sub.slug}</span>
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleDeleteSub(sub.id)}
+                                                                className="p-1.5 text-encre3 hover:text-rouge hover:bg-rouge/5 rounded-full transition-all"
+                                                            >
+                                                                <Trash2 size={16} />
+                                                            </button>
                                                         </div>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => handleDeleteSub(sub.id)}
-                                                            className="p-1.5 text-encre3 hover:text-rouge hover:bg-rouge/5 rounded-full transition-all opacity-0 group-hover:opacity-100"
-                                                        >
-                                                            <Trash2 size={14} />
-                                                        </button>
+                                                        
+                                                        {/* Subcategory Image */}
+                                                        <div className="flex items-center gap-3">
+                                                            {sub.imageUrl ? (
+                                                                <div className="relative w-12 h-12 rounded-sm border border-creme2 overflow-hidden shrink-0">
+                                                                    <Image src={sub.imageUrl} fill className="object-cover" alt={sub.name} />
+                                                                </div>
+                                                            ) : (
+                                                                <div className="w-12 h-12 rounded-sm border border-dashed border-creme2 flex items-center justify-center text-encre3 shrink-0">
+                                                                    <ImageIcon size={16} />
+                                                                </div>
+                                                            )}
+                                                            <label className="flex-grow flex items-center justify-center p-2 border border-dashed border-creme2 rounded-sm hover:border-or hover:bg-creme/30 transition-all cursor-pointer">
+                                                                <span className="text-[9px] font-bold uppercase tracking-widest text-encre3">
+                                                                    {sub.imageUrl ? 'Changer l\'image' : 'Ajouter une photo'}
+                                                                </span>
+                                                                <input
+                                                                    type="file"
+                                                                    accept="image/*"
+                                                                    className="hidden"
+                                                                    onChange={async (e) => {
+                                                                        const file = e.target.files?.[0];
+                                                                        if (!file) return;
+                                                                        try {
+                                                                            setSubmitting(true);
+                                                                            const result = await UploadAPI.uploadProductImage(file);
+                                                                            if (result.success) {
+                                                                                // We need an endpoint to update subcategory or re-save
+                                                                                // For simplicity, let's assume we can PATCH sub-categories/ID
+                                                                                const res = await apiFetch(`/api/categories/sub-categories/${sub.id}`, {
+                                                                                    method: 'PATCH',
+                                                                                    body: JSON.stringify({ imageUrl: result.data.url }),
+                                                                                });
+                                                                                if (res.success) {
+                                                                                    toast.success('Image mise à jour');
+                                                                                    fetchCategories().then(() => {
+                                                                                        setEditingCategory(prev => {
+                                                                                            if (!prev) return null;
+                                                                                            const updated = prev.subCategories?.map(s => 
+                                                                                                s.id === sub.id ? { ...s, imageUrl: result.data.url } : s
+                                                                                            );
+                                                                                            return { ...prev, subCategories: updated };
+                                                                                        });
+                                                                                    });
+                                                                                }
+                                                                            }
+                                                                        } catch (err) {
+                                                                            toast.error('Erreur lors de l\'upload');
+                                                                        } finally {
+                                                                            setSubmitting(false);
+                                                                            e.target.value = '';
+                                                                        }
+                                                                    }}
+                                                                />
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 ))
                                             ) : (

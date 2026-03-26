@@ -27,12 +27,14 @@ import { useEffect } from 'react';
 import { useWishlistStore } from '@/lib/store/wishlistStore';
 import { cn } from '@/lib/utils';
 import ProductReviews from '@/components/store/products/ProductReviews';
+import Image from 'next/image';
 
  
 
 export default function ProductPage() {
     const { slug } = useParams();
     const [quantity, setQuantity] = useState(1);
+    const [selectedVariant, setSelectedVariant] = useState<number | null>(null);
     const addItem = useCartStore((state) => state.addItem);
     const { toggleItem, isInWishlist } = useWishlistStore();
 
@@ -112,7 +114,14 @@ export default function ProductPage() {
                     {loadingProduct ? (
                         <div className="aspect-square bg-creme2 animate-pulse rounded-sm" />
                     ) : product ? (
-                        <ProductGallery images={product.images || []} productName={product.name} />
+                        <ProductGallery 
+                            images={[
+                                ...(product.images || []),
+                                ...(product.variants?.map((v: any) => v.image).filter((img: any) => img && !product.images?.includes(img)) || [])
+                            ]} 
+                            productName={product.name}
+                            selectedImage={selectedVariant !== null ? product.variants[selectedVariant]?.image : null}
+                        />
                     ) : null}
 
                     {/* Right: Info */}
@@ -140,6 +149,18 @@ export default function ProductPage() {
                             <h1 className="font-serif text-4xl md:text-5xl text-encre mb-4">{product.name}</h1>
                         ) : (
                             <h1 className="font-serif text-4xl md:text-5xl text-encre mb-4">Produit introuvable</h1>
+                        )}
+
+                        {/* SKU */}
+                        {product && (
+                            <div className="flex items-center space-x-2 mb-4">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-encre3">Réf :</span>
+                                <span className="text-[11px] font-mono font-bold text-encre bg-creme2/50 px-2 py-0.5 rounded-sm">
+                                    {selectedVariant !== null && product.variants[selectedVariant]?.sku 
+                                        ? product.variants[selectedVariant].sku 
+                                        : product.sku}
+                                </span>
+                            </div>
                         )}
 
                         <div className="flex items-center space-x-4 mb-8">
@@ -180,9 +201,44 @@ export default function ProductPage() {
                         <div className="flex items-center space-x-2 mb-8">
                             <div className={`w-2 h-2 rounded-full ${product && product.stock > 0 ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
                             <span className="text-xs font-bold uppercase tracking-widest text-encre">
-                                {product ? (product.stock > 0 ? `En Stock (${product.stock} unités)` : 'Rupture de stock') : ''}
+                                {product ? (product.stock > 0 ? 'En Stock' : 'Rupture de stock') : ''}
                             </span>
                         </div>
+
+                        {/* Variants Section */}
+                        {product && product.hasVariants && product.variants && product.variants.length > 0 && (
+                            <div className="mb-8">
+                                <p className="text-[10px] font-black uppercase tracking-widest text-encre3 mb-3">Références disponibles</p>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                    {product.variants.map((variant: any, index: number) => (
+                                        <button
+                                            key={index}
+                                            type="button"
+                                            onClick={() => setSelectedVariant(selectedVariant === index ? null : index)}
+                                            className={cn(
+                                                "relative flex items-center gap-3 p-3 border rounded-sm transition-all text-left",
+                                                selectedVariant === index
+                                                    ? "border-or bg-or/5 shadow-md"
+                                                    : "border-creme2 bg-white hover:border-or/50 hover:shadow-sm"
+                                            )}
+                                        >
+                                            {variant.image && (
+                                                <div className="relative w-10 h-10 rounded-sm border border-creme2 overflow-hidden shrink-0">
+                                                    <Image src={variant.image} fill className="object-cover" alt={variant.label} />
+                                                </div>
+                                            )}
+                                            <div className="min-w-0">
+                                                <p className="text-xs font-bold text-encre truncate">{variant.label}</p>
+                                                <p className="text-[9px] font-mono text-encre3">{variant.sku}</p>
+                                            </div>
+                                            {selectedVariant === index && (
+                                                <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-or"></div>
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
 
                         {/* Actions */}
                         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-10">

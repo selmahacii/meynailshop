@@ -8,9 +8,10 @@ import { cn } from '@/lib/utils';
 interface ProductGalleryProps {
     images: string[];
     productName?: string;
+    selectedImage?: string | null;
 }
 
-export default function ProductGallery({ images, productName = 'Produit' }: ProductGalleryProps) {
+export default function ProductGallery({ images, productName = 'Produit', selectedImage = null }: ProductGalleryProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isZoomOpen, setIsZoomOpen] = useState(false);
     const [zoomIndex, setZoomIndex] = useState(0);
@@ -65,6 +66,16 @@ export default function ProductGallery({ images, productName = 'Produit' }: Prod
         setZoomIndex(index);
         setIsZoomOpen(true);
     };
+
+    // Update index if selectedImage changes from parent (e.g. variants)
+    useEffect(() => {
+        if (selectedImage) {
+            const index = displayImages.indexOf(selectedImage);
+            if (index !== -1) {
+                setCurrentIndex(index);
+            }
+        }
+    }, [selectedImage, displayImages]);
 
     return (
         <>

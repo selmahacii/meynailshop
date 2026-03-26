@@ -86,6 +86,12 @@ export class Product {
   @Column({ type: 'simple-array', default: '' })
   tags: string[];
 
+  @Column({ type: 'boolean', default: false })
+  hasVariants: boolean;
+
+  @Column({ type: 'jsonb', nullable: true, default: null })
+  variants: { sku: string; image: string; label: string }[] | null;
+
   @CreateDateColumn()
   createdAt: Date;
 

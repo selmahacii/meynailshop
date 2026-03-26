@@ -14,7 +14,9 @@ import {
     Package,
     Tag,
     BarChart3,
-    Plus
+    Plus,
+    X,
+    Layers
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -55,6 +57,49 @@ export default function ProductEditPage() {
             // Reset input
             e.target.value = '';
         }
+    };
+
+    const handleVariantImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, variantIndex: number) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        try {
+            setUploading(true);
+            const result = await UploadAPI.uploadProductImage(file);
+            if (result.success) {
+                const url = result.data.url;
+                const newVariants = [...(product?.variants || [])];
+                newVariants[variantIndex] = { ...newVariants[variantIndex], image: url };
+                setProduct((prev: any) => ({ ...prev, variants: newVariants }));
+                toast.success('Image de variante uploadée');
+            } else {
+                toast.error(result.error || 'Erreur lors de l\'upload');
+            }
+        } catch (err) {
+            toast.error('Erreur technique lors de l\'upload');
+        } finally {
+            setUploading(false);
+            e.target.value = '';
+        }
+    };
+
+    const addVariant = () => {
+        setProduct((prev: any) => ({
+            ...prev,
+            variants: [...(prev.variants || []), { sku: '', image: '', label: '' }]
+        }));
+    };
+
+    const removeVariant = (index: number) => {
+        setProduct((prev: any) => ({
+            ...prev,
+            variants: (prev.variants || []).filter((_: any, i: number) => i !== index)
+        }));
+    };
+
+    const updateVariant = (index: number, field: string, value: string) => {
+        const newVariants = [...(product?.variants || [])];
+        newVariants[index] = { ...newVariants[index], [field]: value };
+        setProduct((prev: any) => ({ ...prev, variants: newVariants }));
     };
 
     useEffect(() => {
@@ -102,6 +147,8 @@ export default function ProductEditPage() {
                 subCategoryId: product.subCategoryId || null,
                 isActive: product.isActive,
                 images: product.images,
+                hasVariants: product.hasVariants || false,
+                variants: product.hasVariants && product.variants?.length > 0 ? product.variants : null,
             };
 
             const result = await ProductsAPI.update(id as string, updateData);
@@ -341,6 +388,116 @@ export default function ProductEditPage() {
                             </div>
                         </div>
                     </div>
+
+                    {/* Multi-References / Variants Section */}
+                    <div className="bg-white border border-creme2 rounded-sm shadow-xl overflow-hidden">
+                        <div className="p-6 border-b border-creme2 bg-creme/5 flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                                <Layers size={18} className="text-or" />
+                                <h2 className="text-xs font-black uppercase tracking-widest text-encre">Multi-Références</h2>
+                            </div>
+                        </div>
+                        <div className="p-8 space-y-6">
+                            {/* Checkbox toggle */}
+                            <label className="flex items-center space-x-3 cursor-pointer group">
+                                <div className="relative">
+                                    <input
+                                        type="checkbox"
+                                        checked={product.hasVariants || false}
+                                        onChange={(e) => {
+                                            setProduct({...product, hasVariants: e.target.checked, variants: e.target.checked ? (product.variants || []) : []});
+                                        }}
+                                        className="sr-only peer"
+                                    />
+                                    <div className="w-11 h-6 bg-creme2 peer-focus:ring-2 peer-focus:ring-or rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-creme2 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-or transition-colors"></div>
+                                </div>
+                                <div>
+                                    <span className="text-sm font-bold text-encre group-hover:text-or transition-colors">Ce produit a plusieurs références</span>
+                                    <p className="text-[10px] text-encre3 mt-0.5">Activez pour ajouter des variantes avec SKU, photo et libellé distincts</p>
+                                </div>
+                            </label>
+
+                            {/* Variants list */}
+                            {product.hasVariants && (
+                                <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                                    {(product.variants || []).map((variant: any, index: number) => (
+                                        <div key={index} className="relative p-5 bg-creme/30 border border-creme2 rounded-sm space-y-4 hover:border-or transition-all">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-or">Variante #{index + 1}</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeVariant(index)}
+                                                    className="p-1 text-encre3 hover:text-rouge hover:bg-rouge/10 rounded-full transition-all"
+                                                >
+                                                    <X size={14} />
+                                                </button>
+                                            </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <label className="text-[9px] uppercase font-black tracking-widest text-encre3">SKU / Référence</label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="MEY-001-RED"
+                                                        value={variant.sku}
+                                                        onChange={(e) => updateVariant(index, 'sku', e.target.value)}
+                                                        className="w-full p-3 bg-white border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all font-mono"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-[9px] uppercase font-black tracking-widest text-encre3">Libellé</label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Ex: Rouge Passion, Bleu Océan..."
+                                                        value={variant.label}
+                                                        onChange={(e) => updateVariant(index, 'label', e.target.value)}
+                                                        className="w-full p-3 bg-white border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all"
+                                                    />
+                                                </div>
+                                            </div>
+                                            {/* Variant image */}
+                                            <div className="space-y-2">
+                                                <label className="text-[9px] uppercase font-black tracking-widest text-encre3">Photo de la variante</label>
+                                                <div className="flex items-center gap-3">
+                                                    {variant.image ? (
+                                                        <div className="relative w-16 h-16 rounded-sm border border-creme2 overflow-hidden shrink-0">
+                                                            <Image src={variant.image} fill className="object-cover" alt={variant.label || 'Variante'} />
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => updateVariant(index, 'image', '')}
+                                                                className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center"
+                                                            >
+                                                                <X size={12} className="text-white" />
+                                                            </button>
+                                                        </div>
+                                                    ) : null}
+                                                    <label className="flex-grow flex items-center justify-center p-3 border-2 border-dashed border-creme2 rounded-sm hover:border-or hover:bg-creme/30 transition-all cursor-pointer">
+                                                        <Plus size={16} className="text-encre3 mr-2" />
+                                                        <span className="text-[10px] font-bold uppercase tracking-widest text-encre3">{variant.image ? 'Changer' : 'Ajouter photo'}</span>
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            className="hidden"
+                                                            onChange={(e) => handleVariantImageUpload(e, index)}
+                                                            disabled={uploading}
+                                                        />
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                    <button
+                                        type="button"
+                                        onClick={addVariant}
+                                        className="w-full p-4 border-2 border-dashed border-creme2 rounded-sm text-encre3 hover:border-or hover:text-or hover:bg-or/5 transition-all flex items-center justify-center space-x-2"
+                                    >
+                                        <Plus size={16} />
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Ajouter une variante</span>
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                 {/* Sidebar Info */}
@@ -349,11 +506,11 @@ export default function ProductEditPage() {
                     <div className="bg-[#1A0A0A] text-creme rounded-sm shadow-2xl overflow-hidden border border-white/5">
                         <div className="p-6 border-b border-white/10 flex items-center space-x-3 bg-black/20">
                             <BarChart3 size={18} className="text-or" />
-                            <h2 className="text-[10px] font-black uppercase tracking-widest text-creme/80">Stock & Prix</h2>
+                            <h2 className="text-[11px] font-black uppercase tracking-widest text-creme/80">Gestion des Tarifs</h2>
                         </div>
                         <div className="p-8 space-y-8">
                             <div className="space-y-3">
-                                <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix de vente public</label>
+                                <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix de Vente (Total payé par le client) (DA) *</label>
                                 <div className="relative">
                                     <input 
                                         type="number" 
@@ -367,7 +524,7 @@ export default function ProductEditPage() {
                             </div>
                             <div className="space-y-3">
                                 <div className="flex justify-between items-end">
-                                    <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix d'origine (Discount info)</label>
+                                    <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix d'origine (Barré si promotion)</label>
                                     {product.comparePrice && product.price && Number(product.comparePrice) > Number(product.price) && (
                                         <span className="text-[10px] font-black text-rouge-mid bg-rouge/20 px-2 py-0.5 rounded-sm animate-pulse">
                                             -{Math.round(((Number(product.comparePrice) - Number(product.price)) / Number(product.comparePrice)) * 100)}%
@@ -384,7 +541,22 @@ export default function ProductEditPage() {
                                     />
                                     <span className="absolute right-5 top-1/2 -translate-y-1/2 text-creme/20 font-black text-sm">DA</span>
                                 </div>
-                                <p className="text-[9px] text-creme/40 italic">Laissez vide si pas de promotion.</p>
+                                <p className="text-[9px] text-creme/40 italic">Utilisé pour afficher un prix barré.</p>
+                            </div>
+
+                            <div className="pt-6 border-t border-white/10 space-y-3">
+                                <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Coût d'Achat (Votre prix d'origine)</label>
+                                <div className="relative">
+                                    <input 
+                                        type="number" 
+                                        placeholder="0"
+                                        value={product.costPrice || ''}
+                                        onChange={(e) => setProduct({...product, costPrice: e.target.value ? parseFloat(e.target.value) : null})}
+                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-lg font-bold text-creme/30 outline-none focus:border-white/20 appearance-none"
+                                    />
+                                    <span className="absolute right-5 top-1/2 -translate-y-1/2 text-creme/10 font-bold text-xs">DA</span>
+                                </div>
+                                <p className="text-[9px] text-creme/20 italic">Prix confidentiel (servant à calculer vos rapports).</p>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-3">

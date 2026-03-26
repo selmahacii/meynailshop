@@ -12,6 +12,8 @@ export interface AdminProduct {
   createdAt: string;
   updatedAt: string;
   images?: string[];
+  hasVariants?: boolean;
+  variants?: { sku: string; image: string; label: string }[];
 }
 
 export interface AdminClient {

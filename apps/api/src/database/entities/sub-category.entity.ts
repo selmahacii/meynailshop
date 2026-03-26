@@ -32,6 +32,9 @@ export class SubCategory {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  imageUrl: string;
+
   @Column({ type: 'uuid' })
   categoryId: string;
 
