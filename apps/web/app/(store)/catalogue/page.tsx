@@ -10,8 +10,9 @@ import { StoreAPI } from '@/lib/api/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCardSkeleton from '@/components/store/products/ProductCardSkeleton';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
-import { X, Loader2, AlertCircle } from 'lucide-react';
+import { X, Loader2, AlertCircle, Filter, SlidersHorizontal, ArrowRight } from 'lucide-react';
 import SubCategoryWidgets from '@/components/store/products/SubCategoryWidgets';
+import { cn } from '@/lib/utils';
 
 export default function CataloguePage() {
     const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
@@ -56,7 +57,6 @@ export default function CataloguePage() {
                 if (filters.subCategory) params.subCategory = filters.subCategory;
                 if (filters.inStock) params.inStock = 'true';
                 
-                // Handle price ranges (simplified to take min/max of all selected)
                 if (filters.priceRanges.length > 0) {
                     let min = Infinity;
                     let max = 0;
@@ -70,7 +70,6 @@ export default function CataloguePage() {
                     params.maxPrice = max;
                 }
 
-                // Handle sorting
                 if (sortBy === 'price-asc') {
                     params.sortBy = 'price';
                     params.order = 'asc';
@@ -99,54 +98,118 @@ export default function CataloguePage() {
         fetchProducts();
     }, [filters, sortBy]);
 
+    const container = {
+        hidden: { opacity: 0 },
+        show: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
     return (
-        <div className="pt-32 pb-24 bg-creme min-h-screen font-sans">
+        <div className="pt-32 pb-24 bg-creme min-h-screen font-sans selection:bg-or selection:text-white">
             <div className="container mx-auto px-4">
-                {/* Header / Breadcrumbs */}
-                <div className="mb-8">
-                    <Breadcrumbs items={[{ label: 'Catalogue' }, ...(filters.category ? [{ label: activeCategoryData?.name || 'Catégorie' }] : [])]} />
-                </div>
+                {/* Header Section */}
+                <div className="mb-12">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div className="space-y-4">
+                            <Breadcrumbs 
+                                items={[
+                                    { label: 'Catalogue', href: '/catalogue' }, 
+                                    ...(filters.category ? [{ label: activeCategoryData?.name || 'Catégorie' }] : [])
+                                ]} 
+                            />
+                            <h1 className="font-serif text-4xl md:text-6xl text-encre tracking-tight leading-none">
+                                {activeCategoryData?.name || "Le Catalogue"}
+                            </h1>
+                            <p className="text-encre3 text-sm max-w-xl italic leading-relaxed">
+                                {activeCategoryData?.description || "Découvrez notre collection méticuleusement sélectionnée de produits d'onglerie et soins de luxe."}
+                            </p>
+                        </div>
 
-                <SubCategoryWidgets 
-                    subCategories={activeCategoryData?.subCategories || []}
-                    activeSubSlug={filters.subCategory}
-                    onSelect={(slug) => setFilters(prev => ({ ...prev, subCategory: slug }))}
-                    title="Spécialités de la collection"
-                    subtitle="Explorez par univers"
-                />
-
-                {/* Subcategory Banner - Compact if widgets are used */}
-                {filters.subCategory && (
-                    <div className="mb-8 flex items-center justify-between bg-white/50 backdrop-blur-sm p-3 px-6 rounded-full border border-or/20 animate-in fade-in duration-500 w-fit mx-auto lg:mx-0">
-                        <div className="flex items-center space-x-3">
-                            <h3 className="text-xs font-serif text-encre">
-                                {activeCategoryData?.subCategories?.find((s:any) => s.slug === filters.subCategory)?.name}
-                            </h3>
-                            <div className="w-1 h-4 bg-or/20 rounded-full" />
-                            <p className="text-[8px] text-or uppercase tracking-[0.2em] font-black">Ciblée</p>
+                        <div className="flex items-center gap-3">
+                            <div className="hidden lg:flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-creme2 shadow-sm text-[10px] font-black uppercase tracking-widest text-encre3">
+                                <SlidersHorizontal size={12} className="text-or" />
+                                {products.length} Produits trouvés
+                            </div>
+                            <button 
+                                onClick={() => setIsMobileFiltersOpen(true)}
+                                className="lg:hidden flex items-center gap-3 px-6 py-3 bg-encre text-creme rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl active:scale-95 transition-all"
+                            >
+                                <Filter size={14} />
+                                Filtrer
+                            </button>
                         </div>
                     </div>
+                </div>
+
+                {/* Universe Widgets */}
+                <div className="animate-in fade-in slide-in-from-top-4 duration-1000">
+                    <SubCategoryWidgets 
+                        subCategories={activeCategoryData?.subCategories || []}
+                        activeSubSlug={filters.subCategory}
+                        onSelect={(slug) => setFilters(prev => ({ ...prev, subCategory: slug }))}
+                        title={activeCategoryData ? `Collection ${activeCategoryData.name}` : "Collections Populaires"}
+                        subtitle="Explorez par univers"
+                    />
+                </div>
+
+                {/* Subcategory Banner - Compact Pill */}
+                {filters.subCategory && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-12 flex items-center gap-3 bg-white/60 backdrop-blur-md p-2 pl-6 pr-2 rounded-full border border-or/20 shadow-sm w-fit mx-auto lg:mx-0 group cursor-pointer hover:border-or/60 transition-all"
+                    >
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-encre">
+                            {activeCategoryData?.subCategories?.find((s:any) => s.slug === filters.subCategory)?.name}
+                        </span>
+                        <button 
+                            onClick={() => setFilters(prev => ({ ...prev, subCategory: null }))}
+                            className="w-8 h-8 rounded-full bg-creme flex items-center justify-center text-encre hover:bg-rouge hover:text-white transition-all shadow-inner"
+                        >
+                            <X size={14} />
+                        </button>
+                    </motion.div>
                 )}
 
-                <div className="flex flex-col lg:flex-row gap-12">
-                    {/* Desktop Sidebar */}
-                    <aside className="hidden lg:block w-72 shrink-0">
-                        <div className="sticky top-32">
+                <div className="flex flex-col lg:flex-row gap-12 items-start">
+                    {/* Desktop Sidebar - Premium Style */}
+                    <aside className="hidden lg:block w-72 shrink-0 sticky top-32 group">
+                        <div className="bg-white/40 backdrop-blur-xl p-8 rounded-2xl border border-white/60 shadow-xl shadow-encre/5 ring-1 ring-black/[0.02]">
+                            <div className="flex items-center justify-between mb-8">
+                                <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-encre select-none">Filtres Raffinés</h3>
+                                <div className="w-1.5 h-1.5 rounded-full bg-or animate-pulse" />
+                            </div>
                             <ProductFilters 
                                 currentFilters={filters}
                                 onFilterChange={setFilters}
                             />
                         </div>
+                        
+                        {/* Help Widget */}
+                        <div className="mt-8 p-6 bg-encre rounded-2xl text-creme overflow-hidden relative group">
+                            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-32 h-32 bg-or/30 blur-3xl rounded-full" />
+                            <h4 className="font-serif text-lg mb-2 relative z-10">Besoin d'aide ?</h4>
+                            <p className="text-[10px] text-creme/60 leading-relaxed mb-4 relative z-10 uppercase tracking-widest font-bold">Nos expertes sont là pour vous guider.</p>
+                            <Link href="/contact" className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-or hover:gap-4 transition-all relative z-10">
+                                Contactez-nous <ArrowRight size={12} />
+                            </Link>
+                        </div>
                     </aside>
 
-                    {/* Main Content */}
+                    {/* Main Content Area */}
                     <section className="flex-grow">
-                        <ProductSort
-                            total={products.length}
-                            currentSort={sortBy}
-                            onSortChange={setSortBy}
-                            onOpenFilters={() => setIsMobileFiltersOpen(true)}
-                        />
+                        <div className="mb-10">
+                            <ProductSort
+                                total={products.length}
+                                currentSort={sortBy}
+                                onSortChange={setSortBy}
+                                onOpenFilters={() => setIsMobileFiltersOpen(true)}
+                            />
+                        </div>
 
                         {loading ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 md:gap-10">
@@ -158,8 +221,9 @@ export default function CataloguePage() {
                             <>
                                 {products.length > 0 ? (
                                     <motion.div 
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
+                                        variants={container}
+                                        initial="hidden"
+                                        animate="show"
                                         className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 md:gap-10"
                                     >
                                         {products.map((product) => (
@@ -167,30 +231,35 @@ export default function CataloguePage() {
                                         ))}
                                     </motion.div>
                                 ) : (
-                                    <div className="bg-white border border-creme2 p-20 text-center rounded-sm shadow-xl flex flex-col items-center">
-                                        <div className="w-16 h-16 bg-creme rounded-full flex items-center justify-center mb-6">
-                                            <AlertCircle size={32} className="text-encre3" strokeWidth={1} />
+                                    <motion.div 
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        className="bg-white/50 backdrop-blur-sm border border-creme2 border-dashed p-20 text-center rounded-3xl shadow-sm flex flex-col items-center"
+                                    >
+                                        <div className="w-20 h-20 bg-creme rounded-full flex items-center justify-center mb-8 shadow-inner ring-8 ring-creme/50">
+                                            <AlertCircle size={40} className="text-encre3" strokeWidth={1} />
                                         </div>
-                                        <h3 className="font-serif text-2xl text-encre mb-4">Aucun produit trouvé</h3>
-                                        <p className="text-encre3 text-sm max-w-sm mb-8 leading-relaxed">
-                                            Nous n'avons trouvé aucun produit correspondant à vos critères de recherche. Essayez de modifier vos filtres.
+                                        <h3 className="font-serif text-3xl text-encre mb-4">Collection Introuvable</h3>
+                                        <p className="text-encre3 text-sm max-w-sm mb-10 leading-relaxed font-medium">
+                                            Nos expertes n'ont pas trouvé de produits correspondant à vos critères actuels.
                                         </p>
                                         <button 
                                             onClick={() => setFilters({ category: null, subCategory: null, priceRanges: [], inStock: false })}
-                                            className="text-or font-black uppercase tracking-[0.2em] text-[10px] border-b-2 border-or/20 pb-1 hover:border-or transition-all"
+                                            className="px-8 py-4 bg-encre text-creme text-[10px] font-black uppercase tracking-[0.3em] rounded-full hover:bg-black transition-all shadow-xl -mt-4 active:scale-95"
                                         >
-                                            Réinitialiser les filtres
+                                            Réinitialiser la vue
                                         </button>
-                                    </div>
+                                    </motion.div>
                                 )}
 
-                                {/* Pagination (Simplified for now) */}
+                                {/* Pagination Design */}
                                 {products.length >= 12 && (
-                                    <div className="mt-20 flex justify-center">
-                                        <div className="p-1 bg-white border border-creme2 rounded-sm shadow-lg flex space-x-1">
-                                            <button className="w-10 h-10 bg-[#1A0A0A] text-or flex items-center justify-center text-[10px] font-bold">01</button>
-                                            <button className="w-10 h-10 text-encre3 hover:bg-creme transition-colors flex items-center justify-center text-[10px] font-bold">02</button>
-                                            <button className="w-10 h-10 text-encre3 hover:bg-creme transition-colors flex items-center justify-center text-[10px] font-bold">03</button>
+                                    <div className="mt-24 flex flex-col items-center space-y-6">
+                                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-encre/30">Continuez l'exploration</p>
+                                        <div className="flex items-center gap-2 p-1.5 bg-white rounded-full border border-creme2 shadow-sm">
+                                            <button className="w-12 h-12 rounded-full bg-encre text-or flex items-center justify-center text-xs font-black shadow-lg">01</button>
+                                            <button className="w-12 h-12 rounded-full text-encre3 hover:bg-creme transition-colors flex items-center justify-center text-xs font-bold hover:scale-110">02</button>
+                                            <button className="w-12 h-12 rounded-full text-encre3 hover:bg-creme transition-colors flex items-center justify-center text-xs font-bold hover:scale-110">03</button>
                                         </div>
                                     </div>
                                 )}
@@ -200,7 +269,7 @@ export default function CataloguePage() {
                 </div>
             </div>
 
-            {/* Mobile Filters Drawer */}
+            {/* Mobile Filters Overlay - Premium Drawer */}
             <AnimatePresence>
                 {isMobileFiltersOpen && (
                     <>
@@ -209,29 +278,46 @@ export default function CataloguePage() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsMobileFiltersOpen(false)}
-                            className="fixed inset-0 bg-encre/60 backdrop-blur-sm z-[100]"
+                            className="fixed inset-0 bg-encre/80 backdrop-blur-md z-[100]"
                         />
                         <motion.div
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
-                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed top-0 right-0 h-full w-[85%] max-w-sm bg-creme z-[110] p-8 overflow-y-auto"
+                            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+                            className="fixed top-0 right-0 h-full w-[90%] max-w-md bg-creme z-[110] shadow-2xl overflow-y-auto"
                         >
-                            <div className="flex justify-between items-center mb-10">
-                                <h3 className="font-serif text-2xl text-encre">Filtres</h3>
-                                <button onClick={() => setIsMobileFiltersOpen(false)} className="text-encre hover:rotate-90 transition-transform">
-                                    <X size={24} />
-                                </button>
+                            <div className="flex flex-col h-full">
+                                <div className="flex justify-between items-center p-8 sticky top-0 bg-creme/90 backdrop-blur-md z-10 border-b border-creme2">
+                                    <div className="flex flex-col">
+                                        <h3 className="font-serif text-3xl text-encre leading-none">Filtres</h3>
+                                        <span className="text-[9px] font-black uppercase tracking-widest text-or mt-2">Personnalisez votre boutique</span>
+                                    </div>
+                                    <button 
+                                        onClick={() => setIsMobileFiltersOpen(false)} 
+                                        className="w-10 h-10 rounded-full border border-creme2 flex items-center justify-center text-encre hover:rotate-90 transition-transform active:scale-90"
+                                    >
+                                        <X size={20} />
+                                    </button>
+                                </div>
+                                <div className="p-8 flex-grow">
+                                    <ProductFilters 
+                                        currentFilters={filters}
+                                        onFilterChange={(newFilters) => {
+                                            setFilters(newFilters);
+                                        }}
+                                        onClose={() => setIsMobileFiltersOpen(false)} 
+                                    />
+                                </div>
+                                <div className="p-8 bg-white border-t border-creme2 sticky bottom-0">
+                                    <button 
+                                        onClick={() => setIsMobileFiltersOpen(false)}
+                                        className="w-full bg-encre text-creme py-5 text-[10px] font-black uppercase tracking-[0.3em] rounded-full shadow-2xl active:scale-95 transition-all"
+                                    >
+                                        Appliquer les changements
+                                    </button>
+                                </div>
                             </div>
-                            <ProductFilters 
-                                currentFilters={filters}
-                                onFilterChange={(newFilters) => {
-                                    setFilters(newFilters);
-                                    // Optionally keep drawer open or close on category change
-                                }}
-                                onClose={() => setIsMobileFiltersOpen(false)} 
-                            />
                         </motion.div>
                     </>
                 )}
