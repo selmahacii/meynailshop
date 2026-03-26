@@ -210,7 +210,10 @@ export default function CategoryPage() {
                                         variants={container}
                                         initial="hidden"
                                         animate="show"
-                                        className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 md:gap-10"
+                                        className={cn(
+                                            "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 md:gap-10",
+                                            !filters.subCategory && "hidden md:grid" // Hide on mobile if no sub
+                                        )}
                                     >
                                         {products.map((product) => (
                                             <ProductCard key={product.id} product={product as any} />
@@ -220,7 +223,10 @@ export default function CategoryPage() {
                                     <motion.div 
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        className="bg-white/50 backdrop-blur-sm border border-creme2 border-dashed p-20 text-center rounded-3xl shadow-sm flex flex-col items-center"
+                                        className={cn(
+                                            "bg-white/50 backdrop-blur-sm border border-creme2 border-dashed p-20 text-center rounded-3xl shadow-sm flex flex-col items-center",
+                                            !filters.subCategory && "hidden md:flex"
+                                        )}
                                     >
                                         <div className="w-20 h-20 bg-creme rounded-full flex items-center justify-center mb-8 shadow-inner ring-8 ring-creme/50">
                                             <AlertCircle size={40} className="text-encre3" strokeWidth={1} />
@@ -238,9 +244,23 @@ export default function CategoryPage() {
                                     </motion.div>
                                 )}
 
+                                {/* Mobile Selection Message if no sub-category */}
+                                {!filters.subCategory && (
+                                    <div className="md:hidden flex flex-col items-center justify-center p-12 text-center bg-white/30 backdrop-blur-md rounded-3xl border border-creme2 border-dashed">
+                                        <div className="w-12 h-12 bg-or/10 rounded-full flex items-center justify-center mb-4">
+                                            <ArrowRight size={20} className="text-or" />
+                                        </div>
+                                        <h4 className="font-serif text-xl text-encre mb-2">Explorez la collection</h4>
+                                        <p className="text-[10px] text-encre3 uppercase tracking-widest font-bold">Choisissez un univers ci-dessus pour voir les produits</p>
+                                    </div>
+                                )}
+
                                 {/* Pagination */}
                                 {products.length >= 12 && (
-                                    <div className="mt-24 flex flex-col items-center space-y-6">
+                                    <div className={cn(
+                                        "mt-24 flex flex-col items-center space-y-6",
+                                        !filters.subCategory && "hidden md:flex"
+                                    )}>
                                         <p className="text-[10px] font-black uppercase tracking-[0.4em] text-encre/30 font-serif italic">Défilement continu de luxe</p>
                                         <div className="flex items-center gap-2 p-1.5 bg-white rounded-full border border-creme2 shadow-sm">
                                             <button className="w-12 h-12 rounded-full bg-encre text-or flex items-center justify-center text-xs font-black shadow-lg">01</button>
