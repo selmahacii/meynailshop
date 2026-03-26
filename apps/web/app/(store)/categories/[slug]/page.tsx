@@ -121,56 +121,87 @@ export default function CategoryPage() {
                     <p className="text-encre3 text-sm max-w-2xl leading-relaxed italic">{activeSubCategory?.description || categoryInfo.description}</p>
                 </div>
 
-                {/* Sub-categories Section (Only if no sub-category selected or as a header) */}
+                {/* Sub-categories Section - SLEEK WIDGETS */}
                 {categoryInfo.subCategories && categoryInfo.subCategories.length > 0 && (
-                    <div className="mb-16">
-                        <div className="flex items-center justify-between mb-8 border-b border-creme2 pb-4">
-                            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-encre">Découvrir l'univers</h2>
+                    <div className="mb-16 -mx-4 px-4 sm:mx-0 sm:px-0">
+                        <div className="flex items-center justify-between mb-10 border-b border-creme2 pb-4">
+                            <div className="flex flex-col">
+                                <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-encre">Collection {categoryInfo.name}</h2>
+                                <p className="text-[9px] text-or font-bold uppercase tracking-widest mt-1">Explorez nos univers</p>
+                            </div>
                             <button 
                                 onClick={() => setFilters(prev => ({ ...prev, subCategory: null }))}
                                 className={cn(
-                                    "text-[9px] font-black uppercase tracking-widest text-encre3 hover:text-or transition-all",
-                                    !filters.subCategory && "hidden"
+                                    "flex items-center gap-2 group transition-all",
+                                    !filters.subCategory && "opacity-0 pointer-events-none"
                                 )}
                             >
-                                Voir tout {categoryInfo.name}
+                                <span className="text-[10px] font-black uppercase tracking-widest text-encre3 group-hover:text-rouge-mid">Réinitialiser</span>
+                                <div className="w-5 h-5 rounded-full border border-creme2 flex items-center justify-center group-hover:bg-creme transition-colors">
+                                    <X size={10} className="text-encre3" />
+                                </div>
                             </button>
                         </div>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+                        
+                        <div className="flex items-start gap-6 md:gap-10 overflow-x-auto no-scrollbar pb-6 snap-x">
+                            {/* "All" Widget */}
+                            <div 
+                                onClick={() => setFilters(prev => ({ ...prev, subCategory: null }))}
+                                className="flex flex-col items-center gap-4 cursor-pointer group flex-shrink-0 snap-start"
+                            >
+                                <div className={cn(
+                                    "w-20 h-20 md:w-24 md:h-24 rounded-full border-2 p-1.5 transition-all duration-500",
+                                    !filters.subCategory 
+                                        ? "border-or scale-110 shadow-lg shadow-or/10 ring-4 ring-or/5" 
+                                        : "border-creme2 group-hover:border-or/40"
+                                )}>
+                                    <div className="w-full h-full rounded-full bg-encre flex items-center justify-center overflow-hidden">
+                                         <div className="text-creme text-[8px] font-black uppercase tracking-widest text-center px-2">Tout voir</div>
+                                    </div>
+                                </div>
+                                <span className={cn(
+                                    "text-[10px] font-black uppercase tracking-widest transition-colors",
+                                    !filters.subCategory ? "text-encre" : "text-encre3"
+                                )}>TOUT</span>
+                            </div>
+
                             {categoryInfo.subCategories.map((sub: any) => (
-                                <motion.div
+                                <div
                                     key={sub.id}
-                                    whileHover={{ y: -5 }}
                                     onClick={() => setFilters(prev => ({ ...prev, subCategory: sub.slug }))}
-                                    className={cn(
-                                        "group cursor-pointer relative bg-white border border-creme2 p-4 md:p-6 transition-all shadow-sm hover:shadow-xl",
-                                        filters.subCategory === sub.slug ? "ring-2 ring-or border-transparent" : "hover:border-or/40"
-                                    )}
+                                    className="flex flex-col items-center gap-4 cursor-pointer group flex-shrink-0 snap-start max-w-[100px]"
                                 >
-                                    <div className="aspect-[4/5] bg-creme2 mb-4 overflow-hidden relative">
-                                        {sub.imageUrl ? (
-                                            <img 
-                                                src={sub.imageUrl} 
-                                                alt={sub.name} 
-                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-creme3 font-serif italic text-4xl">M</div>
-                                        )}
-                                        {sub.hasNewArrivals && (
-                                            <div className="absolute top-2 right-2 px-2 py-1 bg-rouge-deep text-white text-[8px] font-black uppercase tracking-widest shadow-lg">
-                                                Nouveau
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="space-y-1">
-                                        <h3 className="font-serif text-lg text-encre group-hover:text-or transition-colors">{sub.name}</h3>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-[9px] font-black uppercase tracking-widest text-or">{sub.productCount || 0} Articles</span>
-                                            <span className="text-[10px] text-encre font-bold group-hover:translate-x-1 transition-transform">→</span>
+                                    <div className={cn(
+                                        "w-20 h-20 md:w-24 md:h-24 rounded-full border-2 p-1.5 transition-all duration-500 relative",
+                                        filters.subCategory === sub.slug 
+                                            ? "border-or scale-110 shadow-lg shadow-or/10 ring-4 ring-or/5" 
+                                            : "border-creme2 group-hover:border-or/40"
+                                    )}>
+                                        <div className="w-full h-full rounded-full bg-creme2 overflow-hidden relative">
+                                            {sub.imageUrl ? (
+                                                <img 
+                                                    src={sub.imageUrl} 
+                                                    alt={sub.name} 
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-encre3 font-serif italic text-2xl">M</div>
+                                            )}
                                         </div>
+                                        {sub.hasNewArrivals && (
+                                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-rouge-deep rounded-full border-2 border-creme animate-pulse shadow-lg" />
+                                        )}
                                     </div>
-                                </motion.div>
+                                    <div className="text-center">
+                                        <p className={cn(
+                                            "text-[10px] font-black uppercase tracking-widest transition-colors truncate w-full",
+                                            filters.subCategory === sub.slug ? "text-encre" : "text-encre3 group-hover:text-encre"
+                                        )}>
+                                            {sub.name}
+                                        </p>
+                                        <p className="text-[8px] font-bold text-or/60 group-hover:text-or transition-colors">{sub.productCount || 0} ITEMS</p>
+                                    </div>
+                                </div>
                             ))}
                         </div>
                     </div>
