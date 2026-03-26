@@ -170,8 +170,8 @@ export default function ProductCreatePage() {
                 stockAlert: Number(product.stockAlert),
                 slug: product.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '').replace(/^-+|-+$/g, '') || `product-${Date.now()}`,
                 images: product.images.length > 0 ? product.images : ['https://placehold.co/800x800?text=' + encodeURIComponent(product.name)],
-                description: product.description || product.shortDescription || product.name,
-                shortDescription: product.shortDescription || product.name,
+                description: product.description || '',
+                shortDescription: product.shortDescription || product.name || '',
                 hasVariants: product.hasVariants,
                 variants: product.hasVariants && product.variants.length > 0 ? product.variants : null,
             };
@@ -260,7 +260,7 @@ export default function ProductCreatePage() {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] uppercase font-black tracking-widest text-encre3">Description complète</label>
+                                <label className="text-[10px] uppercase font-black tracking-widest text-encre3">Description complète (Optionnel)</label>
                                 <textarea 
                                     rows={5}
                                     placeholder="Détails techniques, conseils d'application, ingrédients..."

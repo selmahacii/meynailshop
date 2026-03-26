@@ -165,8 +165,8 @@ export default function ProductEditPage() {
                 badge: product.badge || null,
                 stock: Number(product.stock),
                 stockAlert: Number(product.stockAlert),
-                description: product.description || product.shortDescription || product.name,
-                shortDescription: product.shortDescription || product.name,
+                description: product.description || '',
+                shortDescription: product.shortDescription || product.name || '',
                 categoryId: product.categoryId,
                 subCategoryId: product.subCategoryId || null,
                 isActive: product.isActive,
@@ -308,7 +308,7 @@ export default function ProductEditPage() {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] uppercase font-black tracking-widest text-encre3">Description détaillée</label>
+                                <label className="text-[10px] uppercase font-black tracking-widest text-encre3">Description détaillée (Optionnel)</label>
                                 <textarea 
                                     rows={6}
                                     value={product.description || ''}

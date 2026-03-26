@@ -230,7 +230,7 @@ export default function ProductPage() {
                         </div>
 
                         <p className="text-encre3 leading-relaxed mb-8 text-lg font-light">
-                            {product ? product.description : 'Description indisponible.'}
+                            {product ? (product.description || product.shortDescription || 'Description indisponible.') : 'Description indisponible.'}
                         </p>
 
                         {/* Photo count indicator */}
