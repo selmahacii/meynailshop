@@ -24,10 +24,13 @@ import { useCartStore } from '@/lib/store/cartStore';
 import { toast } from 'sonner';
 import { StoreAPI } from '@/lib/api/client';
 import { useEffect } from 'react';
+import { useSettings } from '@/lib/hooks/useSettings';
+import { MessageCircle } from 'lucide-react';
 import { useWishlistStore } from '@/lib/store/wishlistStore';
 import { cn } from '@/lib/utils';
 import ProductReviews from '@/components/store/products/ProductReviews';
 import Image from 'next/image';
+import StickyAddToCart from '@/components/store/products/StickyAddToCart';
 
  
 
@@ -41,7 +44,13 @@ export default function ProductPage() {
     const [product, setProduct] = useState<any | null>(null);
     const [loadingProduct, setLoadingProduct] = useState(true);
     const [productError, setProductError] = useState<string | null>(null);
+    const [similarProducts, setSimilarProducts] = useState<any[]>([]);
+    const [loadingSimilar, setLoadingSimilar] = useState(false);
+    const [showSticky, setShowSticky] = useState(false);
+    const { settings } = useSettings();
 
+    const whatsappNumber = "213775436562"; // Fallback or from settings if available
+    
     useEffect(() => {
         let mounted = true;
         async function load() {
@@ -63,6 +72,47 @@ export default function ProductPage() {
         load();
         return () => { mounted = false; };
     }, [slug]);
+
+    useEffect(() => {
+        if (!product?.category?.slug) return;
+        
+        async function fetchSimilar() {
+            setLoadingSimilar(true);
+            try {
+                const res = await StoreAPI.getProducts(1, 4, { category: product.category.slug });
+                if (res.success) {
+                    const items = res.data?.items || res.data || [];
+                    setSimilarProducts(items.filter((item: any) => item.id !== product.id).slice(0, 4));
+                }
+            } catch (err) {
+                console.error('Similar products fetch failed:', err);
+            } finally {
+                setLoadingSimilar(false);
+            }
+        }
+        fetchSimilar();
+    }, [product?.id]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            // Show sticky add to cart after scrolling past the main desktop CTA area (~800px)
+            if (window.scrollY > 800) {
+                setShowSticky(true);
+            } else {
+                setShowSticky(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const handleWhatsappOrder = () => {
+        if (!product) return;
+        const message = `Bonjour MEEY Nail Shop ! Je souhaite commander :\n\nProduit : ${product.name}\nRéférence : ${selectedVariant !== null ? product.variants[selectedVariant].label : product.sku}\nLien : ${window.location.href}\nQuantité : ${quantity}`;
+        const encoded = encodeURIComponent(message);
+        window.open(`https://wa.me/${whatsappNumber}?text=${encoded}`, '_blank');
+    };
 
     const handleAddToCart = () => {
         if (!product) return;
@@ -241,42 +291,53 @@ export default function ProductPage() {
                         )}
 
                         {/* Actions */}
-                        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-10">
-                            <div className="flex items-center border border-creme2 bg-white rounded-sm h-14">
+                        <div className="flex flex-col space-y-4 mb-10">
+                            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                                <div className="flex items-center border border-creme2 bg-white rounded-sm h-14">
+                                    <button
+                                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                        className="px-4 text-encre hover:text-or transition-colors"
+                                    >
+                                        <Minus size={18} />
+                                    </button>
+                                    <span className="w-12 text-center font-bold text-encre">{quantity}</span>
+                                    <button
+                                        onClick={() => setQuantity(Math.min(product ? product.stock : 1, quantity + 1))}
+                                        className="px-4 text-encre hover:text-or transition-colors"
+                                    >
+                                        <Plus size={18} />
+                                    </button>
+                                </div>
+
                                 <button
-                                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                    className="px-4 text-encre hover:text-or transition-colors"
+                                    onClick={handleAddToCart}
+                                    disabled={!product || product.stock === 0}
+                                    className="flex-grow bg-rouge-deep hover:bg-rouge-mid text-creme h-14 rounded-sm font-bold uppercase tracking-widest text-[10px] flex items-center justify-center transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    <Minus size={18} />
+                                    <ShoppingBag className="mr-3" size={18} />
+                                    Ajouter au panier
                                 </button>
-                                <span className="w-12 text-center font-bold text-encre">{quantity}</span>
+
                                 <button
-                                    onClick={() => setQuantity(Math.min(product ? product.stock : 1, quantity + 1))}
-                                    className="px-4 text-encre hover:text-or transition-colors"
+                                    onClick={handleWishlist}
+                                    className={cn(
+                                        "w-14 h-14 border flex items-center justify-center transition-all rounded-sm shrink-0",
+                                        product && isInWishlist(product.id)
+                                            ? "border-rouge-deep text-rouge-deep bg-rouge-deep/5"
+                                            : "border-creme2 text-encre hover:text-rouge-mid hover:border-rouge-mid"
+                                    )}
                                 >
-                                    <Plus size={18} />
+                                    <Heart size={20} className={product && isInWishlist(product.id) ? 'fill-rouge-deep' : ''} />
                                 </button>
                             </div>
 
+                            {/* WhatsApp Fast Order */}
                             <button
-                                onClick={handleAddToCart}
-                                disabled={!product || product.stock === 0}
-                                className="flex-grow bg-rouge-deep hover:bg-rouge-mid text-creme h-14 rounded-sm font-bold uppercase tracking-widest text-xs flex items-center justify-center transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                                onClick={handleWhatsappOrder}
+                                className="w-full flex items-center justify-center gap-3 bg-green-600 hover:bg-green-700 text-white h-14 rounded-sm font-bold uppercase tracking-[0.2em] text-[10px] transition-all shadow-md group"
                             >
-                                <ShoppingBag className="mr-3" size={20} />
-                                Ajouter au panier
-                            </button>
-
-                            <button
-                                onClick={handleWishlist}
-                                className={cn(
-                                    "w-14 h-14 border flex items-center justify-center transition-all rounded-sm",
-                                    product && isInWishlist(product.id)
-                                        ? "border-rouge-deep text-rouge-deep bg-rouge-deep/5"
-                                        : "border-creme2 text-encre hover:text-rouge-mid hover:border-rouge-mid"
-                                )}
-                            >
-                                <Heart size={20} className={product && isInWishlist(product.id) ? 'fill-rouge-deep' : ''} />
+                                <MessageCircle size={20} className="group-hover:scale-110 transition-transform" />
+                                Commander via WhatsApp
                             </button>
                         </div>
 
@@ -322,15 +383,22 @@ export default function ProductPage() {
                         <Link href="/catalogue" className="text-sm font-bold text-or hover:text-rouge-mid transition-colors uppercase tracking-[0.2em]">Voir toute la collection</Link>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {loadingProduct ? (
+                        {loadingSimilar ? (
                             Array(4).fill(0).map((_, i) => <ProductCardSkeleton key={i} />)
+                        ) : similarProducts.length > 0 ? (
+                            similarProducts.map((p) => <ProductCard key={p.id} product={p} />)
                         ) : (
-                            /* Simplified similar products fetch or static placeholders with skeletons */
-                            Array(4).fill(0).map((_, i) => <ProductCardSkeleton key={i} />)
+                            <p className="col-span-full text-center text-encre3 italic py-10">Aucun produit similaire trouvé</p>
                         )}
                     </div>
                 </div>
             </div>
+
+            <StickyAddToCart 
+                product={product} 
+                onAdd={handleAddToCart}
+                visible={showSticky} 
+            />
         </div>
     );
 }
