@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ProductCardSkeleton from '@/components/store/products/ProductCardSkeleton';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import { X, Loader2, AlertCircle } from 'lucide-react';
+import SubCategoryWidgets from '@/components/store/products/SubCategoryWidgets';
 
 export default function CataloguePage() {
     const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
@@ -106,58 +107,24 @@ export default function CataloguePage() {
                     <Breadcrumbs items={[{ label: 'Catalogue' }, ...(filters.category ? [{ label: activeCategoryData?.name || 'Catégorie' }] : [])]} />
                 </div>
 
-                {/* Subcategories Visual Selection */}
-                {activeCategoryData && activeCategoryData.subCategories?.length > 0 && !filters.subCategory && (
-                    <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
-                        <div className="flex flex-col items-center text-center mb-8">
-                            <h2 className="font-serif text-3xl text-encre mb-2">Explorer {activeCategoryData.name}</h2>
-                            <p className="text-encre3 text-[10px] uppercase tracking-[0.3em] font-black">Choisissez une spécialité pour plus de précision</p>
-                        </div>
-                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                            {activeCategoryData.subCategories.map((sub: any) => (
-                                <button
-                                    key={sub.id}
-                                    onClick={() => setFilters({ ...filters, subCategory: sub.slug })}
-                                    className="group relative aspect-square overflow-hidden rounded-sm border border-creme2 hover:border-or transition-all"
-                                >
-                                    <img 
-                                        src={sub.imageUrl || 'https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=400'} 
-                                        alt={sub.name}
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-4">
-                                        <span className="text-creme text-[10px] font-black uppercase tracking-widest">{sub.name}</span>
-                                    </div>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                )}
+                <SubCategoryWidgets 
+                    subCategories={activeCategoryData?.subCategories || []}
+                    activeSubSlug={filters.subCategory}
+                    onSelect={(slug) => setFilters(prev => ({ ...prev, subCategory: slug }))}
+                    title="Spécialités de la collection"
+                    subtitle="Explorez par univers"
+                />
 
-                {/* Subcategory Banner if selected */}
+                {/* Subcategory Banner - Compact if widgets are used */}
                 {filters.subCategory && (
-                    <div className="mb-8 flex items-center justify-between bg-white p-4 rounded-sm border border-or/20 shadow-sm animate-in fade-in duration-500">
-                        <div className="flex items-center space-x-4">
-                            <div className="w-10 h-10 rounded-full overflow-hidden border border-or/20">
-                                <img 
-                                    src={activeCategoryData?.subCategories?.find((s:any) => s.slug === filters.subCategory)?.imageUrl || 'https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=100'} 
-                                    className="w-full h-full object-cover"
-                                    alt="sub"
-                                />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-serif text-encre">
-                                    {activeCategoryData?.subCategories?.find((s:any) => s.slug === filters.subCategory)?.name}
-                                </h3>
-                                <p className="text-[9px] text-encre3 uppercase tracking-widest font-bold">Filtré par sous-catégorie</p>
-                            </div>
+                    <div className="mb-8 flex items-center justify-between bg-white/50 backdrop-blur-sm p-3 px-6 rounded-full border border-or/20 animate-in fade-in duration-500 w-fit mx-auto lg:mx-0">
+                        <div className="flex items-center space-x-3">
+                            <h3 className="text-xs font-serif text-encre">
+                                {activeCategoryData?.subCategories?.find((s:any) => s.slug === filters.subCategory)?.name}
+                            </h3>
+                            <div className="w-1 h-4 bg-or/20 rounded-full" />
+                            <p className="text-[8px] text-or uppercase tracking-[0.2em] font-black">Ciblée</p>
                         </div>
-                        <button 
-                            onClick={() => setFilters({ ...filters, subCategory: null })}
-                            className="p-2 text-encre3 hover:text-rouge transition-colors"
-                        >
-                            <X size={18} />
-                        </button>
                     </div>
                 )}
 
