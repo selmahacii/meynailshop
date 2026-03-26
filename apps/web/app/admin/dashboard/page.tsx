@@ -16,7 +16,12 @@ import {
     Warehouse,
     Activity,
     CheckCircle2,
-    ShieldAlert
+    ShieldAlert,
+    Calendar,
+    ArrowUpRight,
+    ArrowDownRight,
+    Search,
+    Filter,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -37,12 +42,32 @@ import {
 import { DashboardAPI } from '@/lib/api/client';
 import { useAuthStore } from '@/lib/store/authStore';
 import { formatPrice } from '@/lib/utils/currency';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function calculateDelta(current: number, previous: number) {
     if (!previous || previous === 0) return '+0%';
     const delta = ((current - previous) / previous) * 100;
     return (delta >= 0 ? '+' : '') + delta.toFixed(1) + '%';
 }
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="bg-white/90 backdrop-blur-md border border-or/20 p-4 rounded-xl shadow-2xl">
+                <p className="text-[10px] font-black uppercase tracking-widest text-encre/40 mb-2">{label}</p>
+                <p className="text-lg font-bold text-rouge-deep">
+                    {formatPrice(payload[0].value)}
+                </p>
+                {payload[1] && (
+                    <p className="text-xs text-encre3 mt-1">
+                        Volume : {payload[1].value} unités
+                    </p>
+                )}
+            </div>
+        );
+    }
+    return null;
+};
 
 export default function AdminDashboard() {
     const [data, setData] = useState<any>(null);
@@ -79,10 +104,14 @@ export default function AdminDashboard() {
 
     if (loading && !refreshing) {
         return (
-            <div className="flex items-center justify-center h-screen bg-gradient-to-br from-[#FAF5EF] to-[#F5EFEA]">
-                <div className="text-center">
-                    <Loader className="w-12 h-12 text-or animate-spin mx-auto mb-4" />
-                    <p className="text-lg text-encre/60">Chargement du dashboard...</p>
+            <div className="flex items-center justify-center min-h-[80vh] w-full">
+                <div className="flex flex-col items-center">
+                    <div className="relative w-24 h-24 mb-6">
+                        <div className="absolute inset-0 border-4 border-or/20 rounded-full"></div>
+                        <div className="absolute inset-0 border-4 border-or border-t-transparent rounded-full animate-spin"></div>
+                        <Activity className="absolute inset-0 m-auto text-or w-10 h-10 opacity-30 animate-pulse" />
+                    </div>
+                    <p className="text-[10px] uppercase font-black tracking-[0.4em] text-encre/40 animate-pulse ml-1">Analyse des flux...</p>
                 </div>
             </div>
         );
@@ -102,396 +131,382 @@ export default function AdminDashboard() {
     const prevAvgCart = kpis.prevOrders > 0 ? kpis.prevRevenue / kpis.prevOrders : 0;
     const avgCartDelta = calculateDelta(kpis.averageCart || 0, prevAvgCart);
 
-    const kpisArray = [
+    const financialKpis = [
         {
-            name: 'Revenus (Produits)',
-            formattedValue: formatPrice(kpis.totalRevenue || 0),
+            name: 'Revenus Produits',
+            value: formatPrice(kpis.totalRevenue || 0),
             delta: revenueDelta,
             icon: TrendingUp,
-            color: 'text-green-600',
-            description: 'Hors frais de livraison'
+            color: 'text-emerald-600',
+            bg: 'bg-emerald-500/10',
+            desc: 'Net hors livraison'
         },
         {
-            name: 'Bénéfice Net',
-            formattedValue: formatPrice(kpis.totalProfit || 0),
+            name: 'Bénéfice Réel',
+            value: formatPrice(kpis.totalProfit || 0),
             delta: null,
             icon: Wallet,
-            color: 'text-emerald-600',
-            description: 'Revenus - Coûts d\'achat'
+            color: 'text-indigo-600',
+            bg: 'bg-indigo-500/10',
+            desc: 'Revenu - Coût achat'
         },
         {
-            name: 'Marge Brute',
-            formattedValue: `${kpis.profitMargin || 0}%`,
+            name: 'Marge Moyenne',
+            value: `${kpis.profitMargin || 0}%`,
             delta: null,
             icon: Percent,
-            color: 'text-indigo-600',
-            description: 'Rentabilité sur ventes'
+            color: 'text-or',
+            bg: 'bg-or/10',
+            desc: 'Rentabilité brute'
         },
         {
-            name: 'Valeur de Stock',
-            formattedValue: formatPrice(kpis.inventoryValue || 0),
+            name: 'Immobilisation',
+            value: formatPrice(kpis.inventoryValue || 0),
             delta: null,
             icon: Warehouse,
-            color: 'text-blue-600',
-            description: 'Fond de roulement engagé'
+            color: 'text-rouge-brand',
+            bg: 'bg-rouge-brand/10',
+            desc: 'Valeur du stock actuel'
         }
     ];
 
-    const secondaryKpis = [
-        {
-            name: 'Commandes Totales',
-            value: kpis.totalOrders || 0,
-            delta: orderDelta,
-            icon: ShoppingCart,
-        },
-        {
-            name: 'Clients Actifs',
-            value: kpis.activeClients || 0,
-            delta: clientDelta,
-            icon: Users,
-        },
-        {
-            name: 'Panier Moyen',
-            value: formatPrice(kpis.averageCart || 0),
-            delta: avgCartDelta,
-            icon: Package,
-        }
+    const operationalKpis = [
+        { label: 'Commandes', value: kpis.totalOrders || 0, delta: orderDelta, icon: ShoppingCart },
+        { label: 'Clients', value: kpis.activeClients || 0, delta: clientDelta, icon: Users },
+        { label: 'Panier', value: formatPrice(kpis.averageCart || 0), delta: avgCartDelta, icon: Package },
     ];
 
-    const getHealthColor = (status: string) => {
+    const getHealthStyle = (status: string) => {
         switch(status) {
-            case 'excellent': return 'text-green-600 bg-green-50 border-green-200';
-            case 'good': return 'text-blue-600 bg-blue-50 border-blue-200';
-            case 'warning': return 'text-amber-600 bg-amber-50 border-amber-200';
-            case 'danger': return 'text-red-600 bg-red-50 border-red-200';
-            default: return 'text-encre/60 bg-white border-creme';
+            case 'excellent': return { color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-200', icon: CheckCircle2, message: 'Performances exceptionnelles. Vos marges sont saines et votre croissance est stable.' };
+            case 'good': return { color: 'text-blue-600', bg: 'bg-blue-50 border-blue-200', icon: Activity, message: 'Activité stable. Vos indicateurs de rentabilité sont dans le vert.' };
+            case 'warning': return { color: 'text-amber-600', bg: 'bg-amber-50 border-amber-200', icon: AlertTriangle, message: 'Attention : Marge en baisse. Revoyez vos coûts promotionnels ou d\'achat.' };
+            case 'danger': return { color: 'text-red-600', bg: 'bg-red-50 border-red-200', icon: ShieldAlert, message: 'Alerte critique : Le business tourne à perte. Action immédiate requise.' };
+            default: return { color: 'text-encre/40', bg: 'bg-white border-creme', icon: Activity, message: 'Analyse en cours...' };
         }
     };
 
-    const getHealthMessage = (status: string) => {
-        switch(status) {
-            case 'excellent': return 'Santé financière excellente. Vos marges sont solides.';
-            case 'good': return 'Activité saine. Votre fond de roulement est correct.';
-            case 'warning': return 'Attention : Marge faible. Surveillez vos coûts d\'achat.';
-            case 'danger': return 'Risque de faillite : Marges insuffisantes pour couvrir les frais.';
-            default: return 'Analyse de santé en cours...';
-        }
-    };
+    const health = getHealthStyle(kpis.healthStatus);
 
     return (
-        <div className="p-4 md:p-8 bg-gradient-to-br from-[#FAF5EF] via-[#F9F4EE] to-[#F5EFEA] min-h-screen">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h1 className="text-3xl font-serif text-encre mb-1">Tableau de Bord</h1>
-                    <p className="text-sm text-encre/60">Bienvenue, {user?.firstName || 'Administrateur'}</p>
-                </div>
-                <button
-                    onClick={() => fetchMetrics(true)}
-                    disabled={refreshing}
-                    className="px-4 py-2 bg-[#390102] text-[#BFA893] rounded-lg hover:opacity-90 transition-all flex items-center gap-2 disabled:opacity-50 shadow-md border border-[#BFA893]/20"
+        <div className="p-4 sm:p-6 lg:p-10 bg-[#FAF9F6] min-h-screen">
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+                <motion.div 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
                 >
-                    <RefreshCw size={18} className={refreshing ? 'animate-spin' : ''} />
-                    {refreshing ? 'Actualisation...' : 'Actualiser'}
-                </button>
+                    <div className="flex items-center gap-3 text-or mb-2">
+                        <Calendar size={14} className="opacity-50" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em]">Mars 2026 • Live</span>
+                    </div>
+                    <h1 className="text-4xl sm:text-5xl font-serif text-encre">Analytics <span className="text-or">Center</span></h1>
+                    <p className="text-sm text-encre/40 mt-2 font-medium">Suivi temps réel des flux de <span className="text-encre3">MEEY Nail Shop</span></p>
+                </motion.div>
+
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => fetchMetrics(true)}
+                        disabled={refreshing}
+                        className="h-14 px-6 bg-white border border-creme2 rounded-2xl flex items-center gap-3 hover:bg-creme transition-all shadow-sm active:scale-95 disabled:opacity-50"
+                    >
+                        <RefreshCw size={18} className={cn("text-or", refreshing && "animate-spin")} />
+                        <span className="hidden sm:inline text-[10px] font-black uppercase tracking-widest text-encre">Rafraîchir</span>
+                    </button>
+                    <Link
+                        href="/admin/produits/nouveau"
+                        className="h-14 px-6 bg-rouge-brand text-creme rounded-2xl flex items-center gap-3 hover:shadow-xl hover:shadow-rouge-brand/20 transition-all shadow-lg active:scale-95"
+                    >
+                        <Plus size={20} className="text-gold-brand" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Nouveau Produit</span>
+                    </Link>
+                </div>
             </div>
 
             {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-3">
-                    <AlertTriangle size={20} />
-                    {error}
-                </div>
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="bg-red-50 border border-red-200 p-4 rounded-2xl flex items-center gap-4 text-red-700 mb-8"
+                >
+                    <AlertTriangle size={24} />
+                    <p className="text-sm font-medium">{error}</p>
+                </motion.div>
             )}
 
-            {/* Health Indicator */}
-            <div className={cn(
-                "mb-8 p-4 rounded-xl border flex items-center justify-between shadow-sm",
-                getHealthColor(kpis.healthStatus)
-            )}>
-                <div className="flex items-center gap-4">
-                    <div className="p-2 rounded-full bg-white/50">
-                        {kpis.healthStatus === 'danger' || kpis.healthStatus === 'warning' ? (
-                            <ShieldAlert size={24} />
-                        ) : (
-                            <Activity size={24} />
-                        )}
+            {/* Health & Strategy Banner */}
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={cn(
+                    "relative overflow-hidden mb-10 p-6 sm:p-8 rounded-[2rem] border shadow-sm flex flex-col lg:flex-row items-center justify-between gap-8 transition-all duration-500",
+                    health.bg
+                )}
+            >
+                <div className="relative z-10 flex items-center gap-6 text-center lg:text-left flex-col lg:flex-row">
+                    <div className="p-4 bg-white/60 backdrop-blur-md rounded-[1.5rem] shadow-sm">
+                        <health.icon size={40} className={health.color} strokeWidth={1.5} />
                     </div>
                     <div>
-                        <h4 className="font-bold text-sm uppercase tracking-wider">État du Business</h4>
-                        <p className="text-sm opacity-90">{getHealthMessage(kpis.healthStatus)}</p>
+                        <h4 className={cn("text-sm font-black uppercase tracking-[0.2em] mb-2", health.color)}>Santé Stratégique</h4>
+                        <p className="text-encre font-medium text-lg leading-snug lg:max-w-2xl">
+                            {health.message}
+                        </p>
                     </div>
                 </div>
-                <div className="hidden md:flex flex-col items-end">
-                    <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Score de Rentabilité</span>
-                    <div className="flex items-center gap-1 mt-1">
-                        {[1, 2, 3, 4].map((step) => (
+
+                <div className="relative z-10 w-full lg:w-48 bg-white/40 backdrop-blur-md p-6 rounded-[1.5rem] border border-white/50 text-center">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-encre/40 mb-3">Score Marge</p>
+                    <p className={cn("text-3xl font-serif", health.color)}>{kpis.profitMargin || 0}%</p>
+                    <div className="flex justify-center gap-1 mt-3">
+                        {[1, 2, 3, 4, 5].map(i => (
                             <div 
-                                key={step} 
+                                key={i} 
                                 className={cn(
-                                    "w-8 h-1.5 rounded-full",
-                                    kpis.healthStatus === 'excellent' ? "bg-green-500" :
-                                    kpis.healthStatus === 'good' && step <= 3 ? "bg-blue-500" :
-                                    kpis.healthStatus === 'warning' && step <= 2 ? "bg-amber-500" :
-                                    kpis.healthStatus === 'danger' && step <= 1 ? "bg-red-500" : "bg-black/10"
-                                )}
+                                    "w-4 h-1 rounded-full bg-encre/10 transition-colors",
+                                    i <= (kpis.profitMargin / 8) && "bg-current",
+                                    health.color
+                                )} 
                             />
                         ))}
                     </div>
                 </div>
-            </div>
+                
+                {/* Background Decor */}
+                <div className="absolute right-0 top-0 w-64 h-64 bg-current opacity-[0.03] rounded-full -mr-32 -mt-32"></div>
+            </motion.div>
 
-            {/* Financial KPI Cards */}
-            <h2 className="text-xs font-black uppercase tracking-[0.2em] text-encre/40 mb-4 px-2">Performance & Rentabilité</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {kpisArray.map((kpi: any, idx: number) => (
-                    <div
+            {/* Financial Grid */}
+            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-encre/30 mb-6 px-2 flex items-center gap-3">
+                <span className="w-8 h-[1px] bg-current opacity-20"></span>
+                Performance Financière
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
+                {financialKpis.map((kpi, idx) => (
+                    <motion.div
                         key={idx}
-                        className="bg-white rounded-2xl border border-creme border-opacity-50 p-6 hover:shadow-xl transition-all duration-300 group cursor-pointer"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="group bg-white hover:bg-[#FAF9F6] border border-creme2 p-6 rounded-[2rem] transition-all hover:shadow-2xl hover:shadow-black/[0.02] cursor-pointer relative overflow-hidden"
                     >
-                        <div className="flex items-start justify-between mb-4">
-                            <div>
-                                <p className="text-[10px] uppercase tracking-widest text-encre/40 font-bold mb-2">
-                                    {kpi.name}
-                                </p>
-                                <p className="text-2xl font-bold text-encre">
-                                    {kpi.formattedValue}
-                                </p>
+                        <div className="flex items-start justify-between mb-8">
+                            <div className={cn("p-4 rounded-2xl transition-all group-hover:scale-110 shadow-sm", kpi.bg)}>
+                                <kpi.icon size={24} className={kpi.color} strokeWidth={1.5} />
                             </div>
-                            <div className="p-3 bg-gradient-to-br from-or/10 to-or/5 rounded-lg group-hover:from-or/20 group-hover:to-or/10 transition-all">
-                                <kpi.icon size={24} className={cn('transition-all', kpi.color)} />
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <span className="text-[10px] text-encre/40 italic">{kpi.description}</span>
                             {kpi.delta && (
-                                <span className={cn("text-xs font-semibold", kpi.delta.startsWith('-') ? "text-red-500" : "text-green-600")}>
+                                <div className={cn(
+                                    "px-3 py-1 rounded-full text-[10px] font-bold flex items-center gap-1",
+                                    kpi.delta.startsWith('+') ? "text-emerald-600 bg-emerald-50" : "text-rose-500 bg-rose-50"
+                                )}>
+                                    {kpi.delta.startsWith('+') ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
                                     {kpi.delta}
-                                </span>
+                                </div>
                             )}
                         </div>
-                    </div>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-encre/40 mb-1">{kpi.name}</p>
+                        <p className="text-2xl font-bold text-encre mb-4">{kpi.value}</p>
+                        <p className="text-[10px] text-encre3 font-medium italic opacity-60">{kpi.desc}</p>
+                    </motion.div>
                 ))}
             </div>
 
-            {/* Operational KPIs */}
-            <h2 className="text-xs font-black uppercase tracking-[0.2em] text-encre/40 mb-4 px-2">Opérations</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                {secondaryKpis.map((kpi: any, idx: number) => (
-                    <div key={idx} className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-creme2 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-white rounded-lg shadow-sm">
-                                <kpi.icon size={18} className="text-encre3" />
-                            </div>
-                            <div>
-                                <p className="text-[10px] uppercase tracking-widest text-encre/40 font-bold">{kpi.name}</p>
-                                <p className="text-lg font-bold text-encre">{kpi.value}</p>
-                            </div>
+            {/* Main Content Grid (Charts & Lists) */}
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-12">
+                {/* Revenue Trend Area Chart */}
+                <div className="xl:col-span-2 bg-white border border-creme2 p-6 sm:p-8 rounded-[2rem] shadow-sm">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10">
+                        <div>
+                            <h3 className="text-xl font-serif text-encre">Flux de Trésorerie</h3>
+                            <p className="text-[10px] text-encre/40 mt-1 uppercase tracking-widest font-bold font-sans">Revenus Nets des Produits</p>
                         </div>
-                        <span className={cn("text-[10px] font-black", kpi.delta.startsWith('-') ? "text-red-400" : "text-green-500")}>
-                            {kpi.delta}
-                        </span>
+                        <div className="flex items-center gap-2 p-1.5 bg-creme2/30 rounded-xl overflow-x-auto max-w-full">
+                            {['7 Jours', '30 Jours', 'Total'].map((t, i) => (
+                                <button key={i} className={cn("whitespace-nowrap px-4 py-2 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all", i === 1 ? "bg-white text-encre shadow-sm" : "text-encre/40 hover:text-encre")}>
+                                    {t}
+                                </button>
+                            ))}
+                        </div>
                     </div>
-                ))}
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                {/* Revenue Trend */}
-                <div className="lg:col-span-2 bg-white rounded-2xl border border-creme border-opacity-50 p-6 hover:shadow-lg transition-all">
-                    <h3 className="text-lg font-semibold text-encre mb-6 flex items-center gap-2">
-                        <TrendingUp size={20} className="text-or" />
-                        Tendance des Revenus
-                    </h3>
-                    {revTrend.length > 0 ? (
-                        <ResponsiveContainer width="100%" height={300}>
+
+                    <div className="h-[300px] sm:h-[400px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={revTrend}>
                                 <defs>
-                                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#C5A059" stopOpacity={0.4} />
+                                    <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#C5A059" stopOpacity={0.2} />
                                         <stop offset="95%" stopColor="#C5A059" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#E5D4C4" />
-                                <XAxis dataKey="name" stroke="#999" fontSize={12} />
-                                <YAxis stroke="#999" fontSize={12} tickFormatter={(val) => `${val/1000}k`} />
-                                <Tooltip
-                                    formatter={(value: any) => formatPrice(value)}
-                                    contentStyle={{
-                                        backgroundColor: '#FFF',
-                                        border: '1px solid #C5A059',
-                                        borderRadius: '8px',
-                                    }}
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" strokeOpacity={0.5} />
+                                <XAxis 
+                                    dataKey="name" 
+                                    axisLine={false} 
+                                    tickLine={false} 
+                                    tick={{ fill: '#9CA3AF', fontSize: 10, fontWeight: '700' }} 
+                                    dy={10}
                                 />
-                                <Area
-                                    type="monotone"
-                                    dataKey="revenue"
-                                    stroke="#C5A059"
-                                    fillOpacity={1}
-                                    fill="url(#colorRevenue)"
-                                    strokeWidth={3}
+                                <YAxis 
+                                    axisLine={false} 
+                                    tickLine={false} 
+                                    tick={{ fill: '#9CA3AF', fontSize: 10, fontWeight: '700' }} 
+                                    tickFormatter={(v) => `${v/1000}k`}
+                                />
+                                <Tooltip content={<CustomTooltip />} />
+                                <Area 
+                                    type="monotone" 
+                                    dataKey="revenue" 
+                                    stroke="#C5A059" 
+                                    strokeWidth={4} 
+                                    fillOpacity={1} 
+                                    fill="url(#colorRev)" 
                                 />
                             </AreaChart>
                         </ResponsiveContainer>
-                    ) : (
-                        <p className="text-center text-encre/40 py-12 italic">Aucune donnée de transaction disponible</p>
-                    )}
-                </div>
-
-                {/* Product Sales */}
-                <div className="bg-white rounded-2xl border border-creme border-opacity-50 p-6 hover:shadow-lg transition-all">
-                    <h3 className="text-lg font-semibold text-encre mb-6 flex items-center gap-2">
-                        <Package size={20} className="text-or" />
-                        Ventes par Produit
-                    </h3>
-                    {charts?.productSales && charts.productSales.length > 0 ? (
-                        <ResponsiveContainer width="100%" height={300}>
-                            <PieChart>
-                                <Pie
-                                    data={charts.productSales}
-                                    cx="50%"
-                                    cy="50%"
-                                    labelLine={false}
-                                    outerRadius={80}
-                                    fill="#8884d8"
-                                    dataKey="value"
-                                >
-                                    {charts.productSales.map((_: any, index: number) => (
-                                        <Cell
-                                            key={`cell-${index}`}
-                                            fill={['#8B0000', '#C5A059', '#1A0A0A', '#3B82F6'][index % 4]}
-                                        />
-                                    ))}
-                                </Pie>
-                                <Tooltip />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    ) : (
-                        <p className="text-center text-encre/40 py-12 italic">Aucune vente enregistrée</p>
-                    )}
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                {/* Order Status */}
-                <div className="bg-white rounded-2xl border border-creme border-opacity-50 p-6 hover:shadow-lg transition-all">
-                    <h3 className="text-lg font-semibold text-encre mb-6 flex items-center gap-2">
-                        <ShoppingCart size={20} className="text-or" />
-                        Statut des Commandes
-                    </h3>
-                    {charts?.orderStatusBreakdown && charts.orderStatusBreakdown.length > 0 ? (
-                        <ResponsiveContainer width="100%" height={300}>
-                            <PieChart>
-                                <Pie
-                                    data={charts.orderStatusBreakdown}
-                                    cx="50%"
-                                    cy="50%"
-                                    labelLine={false}
-                                    outerRadius={80}
-                                    fill="#8884d8"
-                                    dataKey="value"
-                                >
-                                    {charts.orderStatusBreakdown.map((_: any, index: number) => (
-                                        <Cell
-                                            key={`cell-${index}`}
-                                            fill={['#10B981', '#F59E0B', '#EF4444', '#6B7280'][index % 4]}
-                                        />
-                                    ))}
-                                </Pie>
-                                <Tooltip />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    ) : (
-                        <p className="text-center text-encre/40 py-12 italic">Aucune commande disponible</p>
-                    )}
-                </div>
-
-                {/* Customer Growth */}
-                <div className="bg-white rounded-2xl border border-creme border-opacity-50 p-6 hover:shadow-lg transition-all">
-                    <h3 className="text-lg font-semibold text-encre mb-6 flex items-center gap-2">
-                        <Users size={20} className="text-or" />
-                        Croissance Client
-                    </h3>
-                    {growTrend.length > 0 ? (
-                        <ResponsiveContainer width="100%" height={300}>
-                            <BarChart data={growTrend}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#E5D4C4" />
-                                <XAxis dataKey="month" stroke="#999" fontSize={12} />
-                                <YAxis stroke="#999" fontSize={12} />
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: '#FFF',
-                                        border: '1px solid #C5A059',
-                                        borderRadius: '8px',
-                                    }}
-                                />
-                                <Bar dataKey="customers" fill="#8B0000" radius={[8, 8, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    ) : (
-                        <p className="text-center text-encre/40 py-12 italic">Pas assez de données de croissance</p>
-                    )}
-                </div>
-            </div>
-
-            {/* Stock Alerts */}
-            <div className="bg-white rounded-2xl border border-creme border-opacity-50 p-6 hover:shadow-lg transition-all mb-8">
-                <h3 className="text-lg font-semibold text-encre mb-6 flex items-center gap-2">
-                    <AlertTriangle size={20} className="text-rouge-deep" />
-                    Produits en Stock Faible
-                </h3>
-                {alerts?.lowStockProducts && alerts.lowStockProducts.length > 0 ? (
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-b border-creme">
-                                    <th className="text-left py-3 px-4 text-xs font-semibold text-encre/60 uppercase">Produit</th>
-                                    <th className="text-left py-3 px-4 text-xs font-semibold text-encre/60 uppercase">SKU</th>
-                                    <th className="text-right py-3 px-4 text-xs font-semibold text-encre/60 uppercase">Stock</th>
-                                    <th className="text-right py-3 px-4 text-xs font-semibold text-encre/60 uppercase">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {alerts.lowStockProducts.map((product: any) => (
-                                    <tr key={product.id} className="border-b border-creme/30 hover:bg-or/2 transition-all group">
-                                        <td className="py-3 px-4 text-sm text-encre font-medium">{product.name}</td>
-                                        <td className="py-3 px-4 text-sm text-encre/60 font-mono">{product.sku}</td>
-                                        <td className="py-3 px-4 text-right text-sm font-bold text-rouge-deep">{product.stock}</td>
-                                        <td className="py-3 px-4 text-right">
-                                            <Link href={`/admin/produits?edit=${product.id}`} className="text-or hover:text-rouge-deep transition-colors text-xs font-black uppercase tracking-widest">
-                                                Ajuster
-                                            </Link>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
                     </div>
-                ) : (
-                    <p className="text-center text-encre/40 py-8 font-serif italic">Tout est en ordre, le stock est optimal ✓</p>
-                )}
-            </div>
+                </div>
 
-            {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Link href="/admin/commandes" className="bg-white border border-creme2 hover:border-or rounded-2xl p-6 transition-all hover:shadow-xl group">
-                    <div className="flex items-center justify-between mb-4">
-                        <h4 className="font-semibold text-encre group-hover:text-rouge-deep transition-colors uppercase tracking-widest text-xs">Nouvelle Commande</h4>
-                        <div className="p-2 bg-creme rounded-lg group-hover:bg-or/20 transition-colors">
-                            <ShoppingCart size={18} className="text-or" />
+                {/* Status Breakdown (Operational) */}
+                <div className="bg-white border border-creme2 p-6 sm:p-8 rounded-[2rem] shadow-sm flex flex-col">
+                    <h3 className="text-xl font-serif text-encre mb-8">Opérations</h3>
+                    
+                    <div className="flex-grow flex flex-col justify-center">
+                        <div className="h-[250px] w-full mb-8">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie
+                                        data={charts.orderStatusBreakdown}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={65}
+                                        outerRadius={90}
+                                        paddingAngle={10}
+                                        dataKey="value"
+                                    >
+                                        {charts.orderStatusBreakdown?.map((entry: any, index: number) => (
+                                            <Cell 
+                                                key={`cell-${index}`} 
+                                                fill={['#C5A059', '#3D1414', '#10B981', '#F59E0B', '#6366F1'][index % 5]} 
+                                                className="hover:opacity-80 transition-opacity stroke-white stroke-2 outline-none"
+                                            />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            {charts.orderStatusBreakdown?.slice(0, 4).map((s: any, i: number) => (
+                                <div key={i} className="flex items-center gap-3 p-3 bg-[#FAF9F6] rounded-xl border border-creme2/50">
+                                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: ['#C5A059', '#3D1414', '#10B981', '#F59E0B'][i % 4] }}></div>
+                                    <div className="min-w-0">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-encre/40 truncate">{s.name}</p>
+                                        <p className="text-xs font-bold text-encre">{s.value}</p>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
-                    <p className="text-xs text-encre/60 font-medium">Gérer les flux de commandes entrants</p>
-                </Link>
+                </div>
+            </div>
 
-                <Link href="/admin/produits" className="bg-white border border-creme2 hover:border-or rounded-2xl p-6 transition-all hover:shadow-xl group">
-                    <div className="flex items-center justify-between mb-4">
-                        <h4 className="font-semibold text-encre group-hover:text-rouge-deep transition-colors uppercase tracking-widest text-xs">Nouveau Produit</h4>
-                        <div className="p-2 bg-creme rounded-lg group-hover:bg-or/20 transition-colors">
-                            <Package size={18} className="text-or" />
+            {/* Middle Bar: Secondary Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                {operationalKpis.map((kpi, idx) => (
+                    <div key={idx} className="bg-white border border-creme2 p-6 rounded-2xl flex items-center justify-between group hover:border-or transition-all shadow-sm">
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 bg-creme2/30 rounded-xl group-hover:text-or transition-colors">
+                                <kpi.icon size={20} className="text-encre3" />
+                            </div>
+                            <div>
+                                <p className="text-[9px] font-black uppercase tracking-widest text-encre/40">{kpi.label}</p>
+                                <p className="text-xl font-bold text-encre">{kpi.value}</p>
+                            </div>
+                        </div>
+                        {kpi.delta && (
+                            <span className={cn(
+                                "text-[10px] font-black px-2 py-1 rounded-lg",
+                                kpi.delta.startsWith('+') ? "text-emerald-600 bg-emerald-50" : "text-rose-500 bg-rose-50"
+                            )}>
+                                {kpi.delta}
+                            </span>
+                        )}
+                    </div>
+                ))}
+            </div>
+
+            {/* Bottom Row - Alerts & Activity */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Critical Inventory */}
+                <div className="bg-white border border-creme2 p-6 sm:p-8 rounded-[2rem] shadow-sm">
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                            <h3 className="text-xl font-serif text-encre text-rouge-brand">Stocks Critiques</h3>
+                            <p className="text-[10px] text-encre/40 font-black uppercase tracking-widest mt-1">Réapprovisionnement Urgent</p>
+                        </div>
+                        <div className="p-2 bg-rose-50 rounded-lg">
+                            <AlertTriangle className="text-rose-500 animate-pulse" size={24} />
                         </div>
                     </div>
-                    <p className="text-xs text-encre/60 font-medium">Enrichir le catalogue de la boutique</p>
-                </Link>
 
+                    <div className="space-y-4">
+                        {alerts?.lowStockProducts && alerts.lowStockProducts.length > 0 ? (
+                            alerts.lowStockProducts.slice(0, 5).map((p: any) => (
+                                <div key={p.id} className="flex items-center justify-between p-4 bg-[#FAF9F6] border border-creme2/50 rounded-2xl group hover:border-rouge-brand/30 transition-all">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center font-bold text-rouge-brand border border-creme2 shadow-sm">
+                                            {p.stock}
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-encre">{p.name}</p>
+                                            <p className="text-[10px] font-mono text-encre3 opacity-60 uppercase">{p.sku}</p>
+                                        </div>
+                                    </div>
+                                    <Link 
+                                        href={`/admin/produits?edit=${p.id}`}
+                                        className="p-2 hover:bg-white rounded-lg transition-colors group-hover:text-rouge-brand"
+                                    >
+                                        <ArrowUpRight size={20} />
+                                    </Link>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="text-center py-12 border-2 border-dashed border-creme2 rounded-2xl">
+                                <CheckCircle2 className="mx-auto text-emerald-500 mb-3 opacity-30" size={32} />
+                                <p className="text-sm text-encre/40 font-medium font-serif italic">Tous vos stocks sont sains.</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
 
+                {/* Wilaya Distribution Chart */}
+                <div className="bg-white border border-creme2 p-6 sm:p-8 rounded-[2rem] shadow-sm flex flex-col">
+                    <h3 className="text-xl font-serif text-encre mb-8">Top Destinations</h3>
+                    
+                    <div className="space-y-6 flex-grow">
+                        {charts.wilayaDistribution?.slice(0, 4).map((w: any, i: number) => (
+                            <div key={i} className="space-y-2">
+                                <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-encre/60">
+                                    <span>{w.wilaya}</span>
+                                    <span>{w.percent}%</span>
+                                </div>
+                                <div className="h-2 w-full bg-[#FAF9F6] rounded-full overflow-hidden">
+                                    <motion.div 
+                                        initial={{ width: 0 }}
+                                        whileInView={{ width: `${w.percent}%` }}
+                                        transition={{ duration: 1, ease: 'easeOut' }}
+                                        className="h-full bg-or rounded-full"
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <Link href="/admin/commandes" className="w-full mt-10 py-4 border-2 border-dashed border-creme2 rounded-2xl text-[10px] font-black uppercase tracking-widest text-encre/40 hover:border-or hover:text-or transition-all text-center">
+                        Voir les détails logistiques
+                    </Link>
+                </div>
             </div>
         </div>
     );
