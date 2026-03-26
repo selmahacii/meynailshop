@@ -129,7 +129,10 @@ export default function CataloguePage() {
                             </p>
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        <div className={cn(
+                            "flex items-center gap-3",
+                            !filters.subCategory && "hidden md:flex" // Hide counts/mobile-filter-btn on mobile if no sub-category
+                        )}>
                             <div className="hidden lg:flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-creme2 shadow-sm text-[10px] font-black uppercase tracking-widest text-encre3">
                                 <SlidersHorizontal size={12} className="text-or" />
                                 {products.length} Produits trouvés
@@ -202,7 +205,10 @@ export default function CataloguePage() {
 
                     {/* Main Content Area */}
                     <section className="flex-grow">
-                        <div className="mb-10">
+                        <div className={cn(
+                            "mb-10",
+                            !filters.subCategory && "hidden md:block" // Hide sort/filter on mobile if no sub-category
+                        )}>
                             <ProductSort
                                 total={products.length}
                                 currentSort={sortBy}
