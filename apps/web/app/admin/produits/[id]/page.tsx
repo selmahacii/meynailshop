@@ -506,11 +506,27 @@ export default function ProductEditPage() {
                     <div className="bg-[#1A0A0A] text-creme rounded-sm shadow-2xl overflow-hidden border border-white/5">
                         <div className="p-6 border-b border-white/10 flex items-center space-x-3 bg-black/20">
                             <BarChart3 size={18} className="text-or" />
-                            <h2 className="text-[11px] font-black uppercase tracking-widest text-creme/80">Gestion des Tarifs</h2>
+                            <h2 className="text-[11px] font-black uppercase tracking-widest text-creme/80">Analyses Financières</h2>
                         </div>
                         <div className="p-8 space-y-8">
+                            {/* Cost Price */}
                             <div className="space-y-3">
-                                <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix de Vente (Total payé par le client) (DA) *</label>
+                                <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix d'Achat d'Origine (Votre coût) *</label>
+                                <div className="relative">
+                                    <input 
+                                        type="number" 
+                                        required
+                                        value={product.costPrice || ''}
+                                        onChange={(e) => setProduct({...product, costPrice: e.target.value ? parseFloat(e.target.value) : null})}
+                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-lg font-bold text-creme/30 outline-none focus:border-white/20 appearance-none transition-all"
+                                    />
+                                    <span className="absolute right-5 top-1/2 -translate-y-1/2 text-creme/10 font-bold text-xs">DA</span>
+                                </div>
+                            </div>
+
+                            {/* Selling Price (After Promo) */}
+                            <div className="pt-6 border-t border-white/10 space-y-3">
+                                <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix de Vente après promotion (Montant Payé) *</label>
                                 <div className="relative">
                                     <input 
                                         type="number" 
@@ -519,12 +535,46 @@ export default function ProductEditPage() {
                                         onChange={(e) => setProduct({...product, price: parseFloat(e.target.value)})}
                                         className="w-full p-5 bg-white/5 border border-white/10 rounded-sm text-2xl font-bold text-or outline-none focus:border-or transition-all appearance-none"
                                     />
-                                    <span className="absolute right-5 top-1/2 -translate-y-1/2 text-creme/20 font-black text-sm">DA</span>
+                                    <span className="absolute right-5 top-1/2 -translate-y-1/2 text-or/20 font-black text-sm">DA</span>
                                 </div>
+
+                                {/* PROFITABILITY INDICATORS */}
+                                {product.costPrice && product.price && (
+                                    <div className={cn(
+                                        "p-4 rounded-sm border flex items-center justify-between animate-in fade-in zoom-in-95 duration-500",
+                                        Number(product.price) > Number(product.costPrice) 
+                                            ? "bg-green-500/10 border-green-500/20" 
+                                            : "bg-rouge/10 border-rouge/20"
+                                    )}>
+                                        <div className="flex flex-col">
+                                            <span className="text-[9px] uppercase font-black tracking-widest text-creme/40">Rentabilité</span>
+                                            <span className={cn(
+                                                "text-[10px] font-bold uppercase tracking-widest",
+                                                Number(product.price) > Number(product.costPrice) ? "text-green-400" : "text-rouge-mid"
+                                            )}>
+                                                {Number(product.price) > Number(product.costPrice) ? 'Compatible' : '⚠️ Incompatible'}
+                                            </span>
+                                        </div>
+                                        <div className="text-right">
+                                            <span className="text-[9px] uppercase font-black tracking-widest text-creme/40 block">Marge</span>
+                                            <span className={cn(
+                                                "text-lg font-mono font-black",
+                                                Number(product.price) > Number(product.costPrice) ? "text-creme" : "text-rouge-mid"
+                                            )}>
+                                                {Number(product.price) - Number(product.costPrice)} DA
+                                            </span>
+                                            <span className="text-[10px] text-or block">
+                                                ({Math.round(((Number(product.price) - Number(product.costPrice)) / Number(product.price)) * 100)}%)
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
+
+                            {/* Original Selling Price */}
                             <div className="space-y-3">
                                 <div className="flex justify-between items-end">
-                                    <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix d'origine (Barré si promotion)</label>
+                                    <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix d'Origine de Vente (Barré si promo)</label>
                                     {product.comparePrice && product.price && Number(product.comparePrice) > Number(product.price) && (
                                         <span className="text-[10px] font-black text-rouge-mid bg-rouge/20 px-2 py-0.5 rounded-sm animate-pulse">
                                             -{Math.round(((Number(product.comparePrice) - Number(product.price)) / Number(product.comparePrice)) * 100)}%
@@ -536,47 +586,32 @@ export default function ProductEditPage() {
                                         type="number" 
                                         value={product.comparePrice || ''}
                                         onChange={(e) => setProduct({...product, comparePrice: e.target.value ? parseFloat(e.target.value) : null})}
-                                        placeholder="Ex: 2500"
-                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-lg font-bold text-creme/60 outline-none focus:border-or transition-all appearance-none"
+                                        placeholder="Optionnel"
+                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-lg font-bold text-creme/40 outline-none focus:border-white/20 appearance-none"
                                     />
                                     <span className="absolute right-5 top-1/2 -translate-y-1/2 text-creme/20 font-black text-sm">DA</span>
                                 </div>
-                                <p className="text-[9px] text-creme/40 italic">Utilisé pour afficher un prix barré.</p>
                             </div>
 
-                            <div className="pt-6 border-t border-white/10 space-y-3">
-                                <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Coût d'Achat (Votre prix d'origine)</label>
-                                <div className="relative">
-                                    <input 
-                                        type="number" 
-                                        placeholder="0"
-                                        value={product.costPrice || ''}
-                                        onChange={(e) => setProduct({...product, costPrice: e.target.value ? parseFloat(e.target.value) : null})}
-                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-lg font-bold text-creme/30 outline-none focus:border-white/20 appearance-none"
-                                    />
-                                    <span className="absolute right-5 top-1/2 -translate-y-1/2 text-creme/10 font-bold text-xs">DA</span>
-                                </div>
-                                <p className="text-[9px] text-creme/20 italic">Prix confidentiel (servant à calculer vos rapports).</p>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/10">
                                 <div className="space-y-3">
-                                    <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Quantité en stock</label>
+                                    <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Stock Actuel</label>
                                     <input 
                                         type="number" 
                                         required
                                         value={product.stock}
                                         onChange={(e) => setProduct({...product, stock: parseInt(e.target.value)})}
-                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-sm font-bold outline-none focus:border-or transition-all"
+                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-sm font-bold outline-none focus:border-or transition-all appearance-none text-creme"
                                     />
                                 </div>
                                 <div className="space-y-3">
-                                    <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Alerte stock bas</label>
+                                    <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Alerte Stock</label>
                                     <input 
                                         type="number" 
                                         required
                                         value={product.stockAlert || 5}
                                         onChange={(e) => setProduct({...product, stockAlert: parseInt(e.target.value)})}
-                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-sm font-bold outline-none focus:border-or transition-all"
+                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-sm font-bold outline-none focus:border-or transition-all appearance-none text-creme"
                                     />
                                 </div>
                             </div>
