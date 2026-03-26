@@ -117,7 +117,23 @@ export default function ProductEditPage() {
             setLoading(true);
             const result = await ProductsAPI.getById(id as string);
             if (result.success) {
-                setProduct(result.data);
+                const data = result.data;
+                // UN-MAP for form:
+                // If comparePrice exists in DB (5000), it means it's the original. price (4000) is the promo.
+                if (data.comparePrice) {
+                    setProduct({
+                        ...data,
+                        comparePrice: data.comparePrice, // Required "Original" field in form
+                        price: data.price // Optional "Promo" field in form
+                    });
+                } else {
+                    // No promo in DB. price (5000) is the standard.
+                    setProduct({
+                        ...data,
+                        comparePrice: data.price, // Populate original price input
+                        price: null // Leave promo input empty
+                    });
+                }
             } else {
                 setError(result.error || 'Produit introuvable');
             }
@@ -132,12 +148,20 @@ export default function ProductEditPage() {
         e.preventDefault();
         try {
             setSaving(true);
-            // Prepare data for update
+            // LOGIC: users enters Original Price (Required) and optionally Promo Price.
+            // In DB: price = what client pays, comparePrice = original price to cross out.
+            const originalPriceVal = Number(product.comparePrice);
+            const promoPriceVal = product.price ? Number(product.price) : null;
+            
+            const sellingPrice = promoPriceVal !== null ? promoPriceVal : originalPriceVal;
+            const crossedPrice = promoPriceVal !== null ? originalPriceVal : null;
+
             const updateData = {
                 name: product.name,
                 sku: product.sku,
-                price: Number(product.price),
-                comparePrice: product.comparePrice ? Number(product.comparePrice) : null,
+                price: sellingPrice,
+                comparePrice: crossedPrice,
+                costPrice: Number(product.costPrice),
                 badge: product.badge || null,
                 stock: Number(product.stock),
                 stockAlert: Number(product.stockAlert),
@@ -524,25 +548,40 @@ export default function ProductEditPage() {
                                 </div>
                             </div>
 
-                            {/* Selling Price (After Promo) */}
+                            {/* Base Price (REQUIRED) */}
                             <div className="pt-6 border-t border-white/10 space-y-3">
-                                <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix de Vente après promotion (Montant Payé) *</label>
-                                <div className="relative">
+                                <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix de Vente d'Origine (Requis) *</label>
+                                <div className="relative group">
                                     <input 
                                         type="number" 
                                         required
-                                        value={product.price}
-                                        onChange={(e) => setProduct({...product, price: parseFloat(e.target.value)})}
+                                        value={product.comparePrice || ''}
+                                        onChange={(e) => setProduct({...product, comparePrice: e.target.value ? parseFloat(e.target.value) : null})}
+                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-lg font-bold text-creme/80 outline-none focus:border-creme/40 appearance-none transition-all"
+                                    />
+                                    <span className="absolute right-5 top-1/2 -translate-y-1/2 text-creme/20 font-black text-sm">DA</span>
+                                </div>
+                            </div>
+
+                            {/* Promo Price (OPTIONAL) */}
+                            <div className="pt-6 border-t border-white/10 space-y-3">
+                                <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix de Vente après promotion (Optionnel)</label>
+                                <div className="relative">
+                                    <input 
+                                        type="number" 
+                                        value={product.price || ''}
+                                        onChange={(e) => setProduct({...product, price: e.target.value ? parseFloat(e.target.value) : null})}
+                                        placeholder="Garder vide si pas de promo"
                                         className="w-full p-5 bg-white/5 border border-white/10 rounded-sm text-2xl font-bold text-or outline-none focus:border-or transition-all appearance-none"
                                     />
                                     <span className="absolute right-5 top-1/2 -translate-y-1/2 text-or/20 font-black text-sm">DA</span>
                                 </div>
 
                                 {/* PROFITABILITY INDICATORS */}
-                                {product.costPrice && product.price && (
+                                {(product.price || product.comparePrice) && product.costPrice && (
                                     <div className={cn(
                                         "p-4 rounded-sm border flex items-center justify-between animate-in fade-in zoom-in-95 duration-500",
-                                        Number(product.price) > Number(product.costPrice) 
+                                        (product.price ? Number(product.price) : Number(product.comparePrice)) > Number(product.costPrice) 
                                             ? "bg-green-500/10 border-green-500/20" 
                                             : "bg-rouge/10 border-rouge/20"
                                     )}>
@@ -550,47 +589,25 @@ export default function ProductEditPage() {
                                             <span className="text-[9px] uppercase font-black tracking-widest text-creme/40">Rentabilité</span>
                                             <span className={cn(
                                                 "text-[10px] font-bold uppercase tracking-widest",
-                                                Number(product.price) > Number(product.costPrice) ? "text-green-400" : "text-rouge-mid"
+                                                (product.price ? Number(product.price) : Number(product.comparePrice)) > Number(product.costPrice) ? "text-green-400" : "text-rouge-mid"
                                             )}>
-                                                {Number(product.price) > Number(product.costPrice) ? 'Compatible' : '⚠️ Incompatible'}
+                                                {(product.price ? Number(product.price) : Number(product.comparePrice)) > Number(product.costPrice) ? 'Compatible' : '⚠️ Incompatible'}
                                             </span>
                                         </div>
                                         <div className="text-right">
                                             <span className="text-[9px] uppercase font-black tracking-widest text-creme/40 block">Marge</span>
                                             <span className={cn(
                                                 "text-lg font-mono font-black",
-                                                Number(product.price) > Number(product.costPrice) ? "text-creme" : "text-rouge-mid"
+                                                (product.price ? Number(product.price) : Number(product.comparePrice)) > Number(product.costPrice) ? "text-creme" : "text-rouge-mid"
                                             )}>
-                                                {Number(product.price) - Number(product.costPrice)} DA
+                                                {(product.price ? Number(product.price) : Number(product.comparePrice)) - Number(product.costPrice)} DA
                                             </span>
                                             <span className="text-[10px] text-or block">
-                                                ({Math.round(((Number(product.price) - Number(product.costPrice)) / Number(product.price)) * 100)}%)
+                                                ({Math.round((((product.price ? Number(product.price) : Number(product.comparePrice)) - Number(product.costPrice)) / (product.price ? Number(product.price) : Number(product.comparePrice))) * 100)}%)
                                             </span>
                                         </div>
                                     </div>
                                 )}
-                            </div>
-
-                            {/* Original Selling Price */}
-                            <div className="space-y-3">
-                                <div className="flex justify-between items-end">
-                                    <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix d'Origine de Vente (Barré si promo)</label>
-                                    {product.comparePrice && product.price && Number(product.comparePrice) > Number(product.price) && (
-                                        <span className="text-[10px] font-black text-rouge-mid bg-rouge/20 px-2 py-0.5 rounded-sm animate-pulse">
-                                            -{Math.round(((Number(product.comparePrice) - Number(product.price)) / Number(product.comparePrice)) * 100)}%
-                                        </span>
-                                    )}
-                                </div>
-                                <div className="relative">
-                                    <input 
-                                        type="number" 
-                                        value={product.comparePrice || ''}
-                                        onChange={(e) => setProduct({...product, comparePrice: e.target.value ? parseFloat(e.target.value) : null})}
-                                        placeholder="Optionnel"
-                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-lg font-bold text-creme/40 outline-none focus:border-white/20 appearance-none"
-                                    />
-                                    <span className="absolute right-5 top-1/2 -translate-y-1/2 text-creme/20 font-black text-sm">DA</span>
-                                </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/10">

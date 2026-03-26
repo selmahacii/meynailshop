@@ -20,6 +20,7 @@ export default function CategoryPage() {
     const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState<FilterState>({
         category: slug as string,
+        subCategory: null,
         priceRanges: [],
         inStock: false
     });

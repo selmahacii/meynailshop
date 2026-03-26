@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const PROTECTED_ROUTES = ['/compte', '/admin', '/checkout'];
+const PROTECTED_ROUTES = ['/compte', '/admin'];
 const AUTH_ROUTES = ['/connexion', '/inscription'];
 const ADMIN_ROUTES = ['/admin'];
 

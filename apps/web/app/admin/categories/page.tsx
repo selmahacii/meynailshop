@@ -11,7 +11,8 @@ import {
     Loader,
     AlertCircle,
     ChevronRight,
-    ArrowLeft
+    ArrowLeft,
+    CheckCircle2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -48,7 +49,39 @@ export default function AdminCategoriesPage() {
     });
     const [submitting, setSubmitting] = useState(false);
     const [newSubCategoryName, setNewSubCategoryName] = useState('');
+    const [editingSubId, setEditingSubId] = useState<string | null>(null);
+    const [editingSubName, setEditingSubName] = useState('');
 
+    const handleUpdateSubName = async (subId: string) => {
+        if (!editingSubName.trim()) return;
+        try {
+            setSubmitting(true);
+            const res = await apiFetch(`/api/categories/sub-categories/${subId}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ 
+                    name: editingSubName,
+                    slug: editingSubName.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')
+                }),
+            });
+            if (res.success) {
+                toast.success('Nom mis à jour');
+                setEditingSubId(null);
+                fetchCategories().then(() => {
+                    setEditingCategory((prev: Category | null) => {
+                        if (!prev) return null;
+                        const updated = prev.subCategories?.map((s: any) => 
+                            s.id === subId ? { ...s, name: editingSubName } : s
+                        );
+                        return { ...prev, subCategories: updated };
+                    });
+                });
+            }
+        } catch (err) {
+            toast.error('Erreur');
+        } finally {
+            setSubmitting(false);
+        }
+    };
     const handleAddSubCategory = async () => {
         if (!newSubCategoryName || !editingCategory) return;
         try {
@@ -83,9 +116,9 @@ export default function AdminCategoriesPage() {
             const res = await apiFetch(`/api/categories/sub-categories/${subId}`, { method: 'DELETE' });
             if (res.success) {
                 toast.success('Supprimée !');
-                setEditingCategory(prev => {
+                setEditingCategory((prev: Category | null) => {
                     if (!prev) return null;
-                    return { ...prev, subCategories: prev.subCategories?.filter(s => s.id !== subId) };
+                    return { ...prev, subCategories: prev.subCategories?.filter((s: any) => s.id !== subId) };
                 });
                 fetchCategories();
             }
@@ -397,17 +430,54 @@ export default function AdminCategoriesPage() {
                                                 editingCategory.subCategories.map((sub) => (
                                                     <div key={sub.id} className="flex flex-col p-4 bg-creme/20 border border-creme2 rounded-sm group space-y-3">
                                                         <div className="flex items-center justify-between">
-                                                            <div className="flex flex-col">
-                                                                <span className="text-sm font-bold text-encre">{sub.name}</span>
-                                                                <span className="text-[9px] text-encre3 font-mono">{sub.slug}</span>
+                                                            {editingSubId === sub.id ? (
+                                                                <div className="flex-grow flex gap-2 pr-4">
+                                                                    <input
+                                                                        type="text"
+                                                                        value={editingSubName}
+                                                                        onChange={(e) => setEditingSubName(e.target.value)}
+                                                                        className="flex-grow p-1.5 bg-white border border-or rounded-sm text-sm focus:outline-none"
+                                                                        autoFocus
+                                                                        onKeyDown={(e) => {
+                                                                            if (e.key === 'Enter') handleUpdateSubName(sub.id);
+                                                                            if (e.key === 'Escape') setEditingSubId(null);
+                                                                        }}
+                                                                    />
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => handleUpdateSubName(sub.id)}
+                                                                        className="p-1.5 text-green-600 hover:bg-green-50 rounded-sm"
+                                                                    >
+                                                                        <CheckCircle2 size={16} />
+                                                                    </button>
+                                                                </div>
+                                                            ) : (
+                                                                <div className="flex flex-col flex-grow">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <span className="text-sm font-bold text-encre">{sub.name}</span>
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => {
+                                                                                setEditingSubId(sub.id);
+                                                                                setEditingSubName(sub.name);
+                                                                            }}
+                                                                            className="p-1 text-encre3 hover:text-or transition-colors"
+                                                                        >
+                                                                            <Edit2 size={10} />
+                                                                        </button>
+                                                                    </div>
+                                                                    <span className="text-[9px] text-encre3 font-mono">{sub.slug}</span>
+                                                                </div>
+                                                            )}
+                                                            <div className="flex items-center gap-1">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => handleDeleteSub(sub.id)}
+                                                                    className="p-1.5 text-encre3 hover:text-rouge hover:bg-rouge/5 rounded-full transition-all"
+                                                                >
+                                                                    <Trash2 size={16} />
+                                                                </button>
                                                             </div>
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => handleDeleteSub(sub.id)}
-                                                                className="p-1.5 text-encre3 hover:text-rouge hover:bg-rouge/5 rounded-full transition-all"
-                                                            >
-                                                                <Trash2 size={16} />
-                                                            </button>
                                                         </div>
                                                         
                                                         {/* Subcategory Image */}
