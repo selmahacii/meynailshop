@@ -16,4 +16,10 @@ export declare class CreateProductDto {
     isFeatured?: boolean;
     weight?: number;
     tags?: string[];
+    hasVariants?: boolean;
+    variants?: {
+        sku: string;
+        image: string;
+        label: string;
+    }[];
 }

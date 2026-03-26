@@ -19,7 +19,7 @@ let StoreProductsModule = class StoreProductsModule {
 exports.StoreProductsModule = StoreProductsModule;
 exports.StoreProductsModule = StoreProductsModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([entities_1.Product, entities_1.Category])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([entities_1.Product, entities_1.Category, entities_1.SubCategory])],
         providers: [products_service_1.ProductsService, categories_service_1.CategoriesService],
         controllers: [products_controller_1.StoreProductsController, categories_controller_1.CategoriesController],
         exports: [products_service_1.ProductsService, categories_service_1.CategoriesService],

@@ -5,4 +5,7 @@ export declare class SettingsController {
     constructor(settingsService: SettingsService);
     getSettings(): Promise<import("../../database/entities").SiteSettings>;
     updateSettings(updateSettingsDto: UpdateSettingsDto): Promise<import("../../database/entities").SiteSettings>;
+    resetShop(): Promise<{
+        message: string;
+    }>;
 }

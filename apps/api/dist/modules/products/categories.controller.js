@@ -54,6 +54,24 @@ let CategoriesController = class CategoriesController {
             data: await this.categoriesService.remove(id),
         };
     }
+    async createSub(id, data) {
+        return {
+            statusCode: 201,
+            data: await this.categoriesService.createSubCategory(id, data),
+        };
+    }
+    async removeSub(id) {
+        return {
+            statusCode: 200,
+            data: await this.categoriesService.removeSubCategory(id),
+        };
+    }
+    async updateSub(id, data) {
+        return {
+            statusCode: 200,
+            data: await this.categoriesService.updateSubCategory(id, data),
+        };
+    }
 };
 exports.CategoriesController = CategoriesController;
 __decorate([
@@ -97,6 +115,35 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], CategoriesController.prototype, "remove", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('admin'),
+    (0, common_1.Post)(':id/sub-categories'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], CategoriesController.prototype, "createSub", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('admin'),
+    (0, common_1.Delete)('sub-categories/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], CategoriesController.prototype, "removeSub", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('admin'),
+    (0, common_1.Patch)('sub-categories/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], CategoriesController.prototype, "updateSub", null);
 exports.CategoriesController = CategoriesController = __decorate([
     (0, common_1.Controller)('categories'),
     __metadata("design:paramtypes", [categories_service_1.CategoriesService])

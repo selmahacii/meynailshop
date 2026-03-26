@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Product = void 0;
 const typeorm_1 = require("typeorm");
 const category_entity_1 = require("./category.entity");
+const sub_category_entity_1 = require("./sub-category.entity");
 let Product = class Product {
 };
 exports.Product = Product;
@@ -68,6 +69,10 @@ __decorate([
     __metadata("design:type", String)
 ], Product.prototype, "categoryId", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'uuid', nullable: true }),
+    __metadata("design:type", String)
+], Product.prototype, "subCategoryId", void 0);
+__decorate([
     (0, typeorm_1.Column)({
         type: 'enum',
         enum: ['top', 'new', 'promo'],
@@ -93,6 +98,14 @@ __decorate([
     __metadata("design:type", Array)
 ], Product.prototype, "tags", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'boolean', default: false }),
+    __metadata("design:type", Boolean)
+], Product.prototype, "hasVariants", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true, default: null }),
+    __metadata("design:type", Array)
+], Product.prototype, "variants", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Product.prototype, "createdAt", void 0);
@@ -107,6 +120,13 @@ __decorate([
     (0, typeorm_1.JoinColumn)({ name: 'categoryId' }),
     __metadata("design:type", category_entity_1.Category)
 ], Product.prototype, "category", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => sub_category_entity_1.SubCategory, (subCategory) => subCategory.products, {
+        onDelete: 'SET NULL',
+    }),
+    (0, typeorm_1.JoinColumn)({ name: 'subCategoryId' }),
+    __metadata("design:type", sub_category_entity_1.SubCategory)
+], Product.prototype, "subCategory", void 0);
 exports.Product = Product = __decorate([
     (0, typeorm_1.Entity)('products'),
     (0, typeorm_1.Index)(['slug']),

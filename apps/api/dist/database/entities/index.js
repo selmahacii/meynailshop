@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SiteSettings = exports.StockMovement = exports.WishlistItem = exports.Coupon = exports.Review = exports.OrderItem = exports.Order = exports.Product = exports.Category = exports.Address = exports.User = void 0;
+exports.SiteSettings = exports.SubCategory = exports.StockMovement = exports.WishlistItem = exports.Coupon = exports.Review = exports.OrderItem = exports.Order = exports.Product = exports.Category = exports.Address = exports.User = void 0;
 var user_entity_1 = require("./user.entity");
 Object.defineProperty(exports, "User", { enumerable: true, get: function () { return user_entity_1.User; } });
 var address_entity_1 = require("./address.entity");
@@ -21,6 +21,8 @@ var wishlist_item_entity_1 = require("./wishlist-item.entity");
 Object.defineProperty(exports, "WishlistItem", { enumerable: true, get: function () { return wishlist_item_entity_1.WishlistItem; } });
 var stock_movement_entity_1 = require("./stock-movement.entity");
 Object.defineProperty(exports, "StockMovement", { enumerable: true, get: function () { return stock_movement_entity_1.StockMovement; } });
+var sub_category_entity_1 = require("./sub-category.entity");
+Object.defineProperty(exports, "SubCategory", { enumerable: true, get: function () { return sub_category_entity_1.SubCategory; } });
 var site_settings_entity_1 = require("./site-settings.entity");
 Object.defineProperty(exports, "SiteSettings", { enumerable: true, get: function () { return site_settings_entity_1.SiteSettings; } });
 //# sourceMappingURL=index.js.map

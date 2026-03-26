@@ -26,4 +26,16 @@ export declare class CategoriesController {
             message: string;
         };
     }>;
+    createSub(id: string, data: any): Promise<{
+        statusCode: number;
+        data: import("../../database/entities").SubCategory[];
+    }>;
+    removeSub(id: string): Promise<{
+        statusCode: number;
+        data: import("../../database/entities").SubCategory;
+    }>;
+    updateSub(id: string, data: any): Promise<{
+        statusCode: number;
+        data: import("../../database/entities").SubCategory;
+    }>;
 }

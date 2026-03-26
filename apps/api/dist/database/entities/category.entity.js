@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Category = void 0;
 const typeorm_1 = require("typeorm");
 const product_entity_1 = require("./product.entity");
+const sub_category_entity_1 = require("./sub-category.entity");
 let Category = class Category {
 };
 exports.Category = Category;
@@ -54,6 +55,10 @@ __decorate([
     }),
     __metadata("design:type", Array)
 ], Category.prototype, "products", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => sub_category_entity_1.SubCategory, (subCategory) => subCategory.category),
+    __metadata("design:type", Array)
+], Category.prototype, "subCategories", void 0);
 exports.Category = Category = __decorate([
     (0, typeorm_1.Entity)('categories'),
     (0, typeorm_1.Unique)(['slug'])

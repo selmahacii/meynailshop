@@ -30,6 +30,9 @@ let SettingsController = class SettingsController {
     updateSettings(updateSettingsDto) {
         return this.settingsService.updateSettings(updateSettingsDto);
     }
+    resetShop() {
+        return this.settingsService.resetShop();
+    }
 };
 exports.SettingsController = SettingsController;
 __decorate([
@@ -47,6 +50,14 @@ __decorate([
     __metadata("design:paramtypes", [update_settings_dto_1.UpdateSettingsDto]),
     __metadata("design:returntype", void 0)
 ], SettingsController.prototype, "updateSettings", null);
+__decorate([
+    (0, common_1.Post)('reset'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(shared_1.UserRole.ADMIN),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], SettingsController.prototype, "resetShop", null);
 exports.SettingsController = SettingsController = __decorate([
     (0, common_1.Controller)('settings'),
     __metadata("design:paramtypes", [settings_service_1.SettingsService])

@@ -84,18 +84,6 @@ export default function Footer() {
                                 <MapPin size={20} className="text-gold-brand shrink-0" />
                                 <span>{settings.shopAddress || "Alger, Algérie"}</span>
                             </li>
-                            <li className="flex flex-col md:flex-row items-center md:items-start md:space-x-3 gap-2">
-                                <Phone size={20} className="text-gold-brand shrink-0" />
-                                <a href="tel:0775436562" className="hover:text-gold-brand transition-colors font-medium">
-                                    0775436562
-                                </a>
-                            </li>
-                            <li className="flex flex-col md:flex-row items-center md:items-start md:space-x-3 gap-2">
-                                <Mail size={20} className="text-gold-brand shrink-0" />
-                                <a href="mailto:meeybouabdellah@gmail.com" className="hover:text-gold-brand transition-colors font-medium break-all">
-                                    meeybouabdellah@gmail.com
-                                </a>
-                            </li>
                         </ul>
                     </div>
                 </div>

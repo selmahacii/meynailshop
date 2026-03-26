@@ -41,14 +41,15 @@ exports.DatabaseModule = DatabaseModule = __decorate([
                             entities_1.Coupon,
                             entities_1.WishlistItem,
                             entities_1.StockMovement,
+                            entities_1.SubCategory,
                             entities_1.SiteSettings,
                         ],
-                        synchronize: configService.get('NODE_ENV') !== 'production',
+                        synchronize: configService.get('DB_SYNC') === 'true' || configService.get('NODE_ENV') !== 'production',
                         logging: configService.get('NODE_ENV') === 'development',
-                        migrationsRun: configService.get('NODE_ENV') === 'production',
+                        migrationsRun: configService.get('DB_SYNC') !== 'true' && configService.get('NODE_ENV') === 'production',
                         migrationsTableName: 'migrations',
-                        ssl: url ? { rejectUnauthorized: false } : false,
-                        extra: url ? {
+                        ssl: configService.get('DB_SSL') === 'true' || (url && !url.includes('127.0.0.1') && !url.includes('localhost') && !url.includes('postgres')) ? { rejectUnauthorized: false } : false,
+                        extra: (configService.get('DB_SSL') === 'true' || (url && !url.includes('127.0.0.1') && !url.includes('localhost') && !url.includes('postgres'))) ? {
                             ssl: {
                                 rejectUnauthorized: false,
                             },

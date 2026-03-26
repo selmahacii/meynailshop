@@ -8,4 +8,5 @@ export { Review } from './review.entity';
 export { Coupon } from './coupon.entity';
 export { WishlistItem } from './wishlist-item.entity';
 export { StockMovement } from './stock-movement.entity';
+export { SubCategory } from './sub-category.entity';
 export { SiteSettings } from './site-settings.entity';

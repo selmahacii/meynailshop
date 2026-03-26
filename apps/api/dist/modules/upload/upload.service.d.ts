@@ -8,9 +8,9 @@ interface MulterFile {
 export declare class UploadService {
     private configService;
     private readonly logger;
-    private readonly uploadDir;
+    private readonly supabase;
+    private readonly bucket;
     constructor(configService: ConfigService);
-    private ensureDirExists;
     uploadProductImage(file: MulterFile): Promise<string>;
     deleteFile(filename: string): Promise<void>;
     getFileUrl(filename: string): string;

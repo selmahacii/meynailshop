@@ -16,11 +16,12 @@ exports.CategoriesService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const category_entity_1 = require("../../database/entities/category.entity");
+const entities_1 = require("../../database/entities");
 const slug_util_1 = require("../../common/utils/slug.util");
 let CategoriesService = class CategoriesService {
-    constructor(categoryRepository) {
+    constructor(categoryRepository, subCategoryRepository) {
         this.categoryRepository = categoryRepository;
+        this.subCategoryRepository = subCategoryRepository;
     }
     async create(createCategoryDto) {
         const slug = createCategoryDto.slug || (0, slug_util_1.generateSlug)(createCategoryDto.name);
@@ -38,15 +39,40 @@ let CategoriesService = class CategoriesService {
     }
     async findAll() {
         try {
-            console.log('🔍 [CategoriesService] Fetching all categories...');
-            const categories = await this.categoryRepository.find();
-            console.log(`✅ [CategoriesService] Found ${categories.length} categories`);
-            return categories;
+            return await this.categoryRepository.find({
+                where: { isActive: true },
+                relations: ['subCategories'],
+                order: { displayOrder: 'ASC' }
+            });
         }
         catch (error) {
             console.error('❌ [CategoriesService] findAll Error:', error);
             return [];
         }
+    }
+    async createSubCategory(categoryId, data) {
+        const category = await this.categoryRepository.findOne({ where: { id: categoryId } });
+        if (!category)
+            throw new common_1.NotFoundException('Category not found');
+        const slug = data.slug || (0, slug_util_1.generateSlug)(data.name);
+        const existing = await this.subCategoryRepository.findOne({ where: { slug } });
+        if (existing)
+            throw new common_1.BadRequestException('SubCategory with this slug already exists');
+        const subCategory = this.subCategoryRepository.create({
+            ...data,
+            slug,
+            categoryId
+        });
+        return await this.subCategoryRepository.save(subCategory);
+    }
+    async findSubBySlug(slug) {
+        const sub = await this.subCategoryRepository.findOne({
+            where: { slug, isActive: true },
+            relations: ['products', 'category']
+        });
+        if (!sub)
+            throw new common_1.NotFoundException('SubCategory not found');
+        return sub;
     }
     async findBySlug(slug) {
         const category = await this.categoryRepository.findOne({
@@ -85,11 +111,26 @@ let CategoriesService = class CategoriesService {
         await this.categoryRepository.save(category);
         return { message: 'Category deactivated' };
     }
+    async removeSubCategory(id) {
+        const sub = await this.subCategoryRepository.findOne({ where: { id } });
+        if (!sub)
+            throw new common_1.NotFoundException('SubCategory not found');
+        return await this.subCategoryRepository.remove(sub);
+    }
+    async updateSubCategory(id, data) {
+        const sub = await this.subCategoryRepository.findOne({ where: { id } });
+        if (!sub)
+            throw new common_1.NotFoundException('SubCategory not found');
+        Object.assign(sub, data);
+        return await this.subCategoryRepository.save(sub);
+    }
 };
 exports.CategoriesService = CategoriesService;
 exports.CategoriesService = CategoriesService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(0, (0, typeorm_1.InjectRepository)(entities_1.Category)),
+    __param(1, (0, typeorm_1.InjectRepository)(entities_1.SubCategory)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository])
 ], CategoriesService);
 //# sourceMappingURL=categories.service.js.map

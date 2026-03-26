@@ -18,8 +18,9 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const site_settings_entity_1 = require("../../database/entities/site-settings.entity");
 let SettingsService = class SettingsService {
-    constructor(settingsRepository) {
+    constructor(settingsRepository, dataSource) {
         this.settingsRepository = settingsRepository;
+        this.dataSource = dataSource;
     }
     async onModuleInit() {
         await this.ensureSettingsExist();
@@ -51,11 +52,38 @@ let SettingsService = class SettingsService {
         Object.assign(settings, updateSettingsDto);
         return this.settingsRepository.save(settings);
     }
+    async resetShop() {
+        const currentSettings = await this.getSettings();
+        const tables = [
+            'order_items',
+            'orders',
+            'addresses',
+            'products',
+            'categories',
+            'sub_categories',
+            'reviews',
+            'coupons',
+            'stock_movements',
+            'wishlist_items',
+            'users'
+        ];
+        try {
+            await this.dataSource.query(`TRUNCATE TABLE ${tables.map(t => `"${t}"`).join(', ')} RESTART IDENTITY CASCADE`);
+            await this.settingsRepository.save(currentSettings);
+            return { message: 'Boutique réinitialisée avec succès' };
+        }
+        catch (error) {
+            console.error('Erreur lors du reset de la boutique:', error);
+            throw new Error('Échec de la réinitialisation de la boutique');
+        }
+    }
 };
 exports.SettingsService = SettingsService;
 exports.SettingsService = SettingsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(site_settings_entity_1.SiteSettings)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectDataSource)()),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.DataSource])
 ], SettingsService);
 //# sourceMappingURL=settings.service.js.map

@@ -42,12 +42,16 @@ let ProductsService = class ProductsService {
         const skip = (query.page - 1) * query.limit;
         const queryBuilder = this.productRepository.createQueryBuilder('product')
             .leftJoinAndSelect('product.category', 'category')
+            .leftJoinAndSelect('product.subCategory', 'subCategory')
             .where('product.isActive = :isActive', { isActive: true });
         if (query.search) {
             queryBuilder.andWhere('product.name ILIKE :search', { search: `%${query.search}%` });
         }
         if (query.category) {
             queryBuilder.andWhere('category.slug = :category', { category: query.category });
+        }
+        if (query.subCategory) {
+            queryBuilder.andWhere('subCategory.slug = :subCategory', { subCategory: query.subCategory });
         }
         if (query.minPrice !== undefined && query.minPrice !== null) {
             queryBuilder.andWhere('product.price >= :minPrice', { minPrice: query.minPrice });
@@ -85,7 +89,7 @@ let ProductsService = class ProductsService {
     async findBySlug(slug) {
         const product = await this.productRepository.findOne({
             where: { slug, isActive: true },
-            relations: ['category'],
+            relations: ['category', 'subCategory'],
         });
         if (!product) {
             throw new common_1.NotFoundException('Product not found');
@@ -131,7 +135,7 @@ let ProductsService = class ProductsService {
     async findOne(id) {
         const product = await this.productRepository.findOne({
             where: { id },
-            relations: ['category'],
+            relations: ['category', 'subCategory'],
         });
         if (!product) {
             throw new common_1.NotFoundException('Product not found');
