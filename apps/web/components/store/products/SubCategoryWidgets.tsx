@@ -58,12 +58,12 @@ export default function SubCategoryWidgets({
                     className="flex flex-col items-center gap-4 cursor-pointer group flex-shrink-0 snap-start"
                 >
                     <div className={cn(
-                        "w-20 h-20 md:w-24 md:h-24 rounded-full border-2 p-1.5 transition-all duration-500",
+                        "w-20 h-20 md:w-24 md:h-24 transition-all duration-500 rounded-sm md:rounded-full border-2 p-1.5",
                         !activeSubSlug 
                             ? "border-or scale-110 shadow-lg shadow-or/10 ring-4 ring-or/5" 
                             : "border-creme2 group-hover:border-or/40"
                     )}>
-                        <div className="w-full h-full rounded-full bg-encre flex items-center justify-center overflow-hidden">
+                        <div className="w-full h-full rounded-[2px] md:rounded-full bg-encre flex items-center justify-center overflow-hidden">
                              <div className="text-creme text-[8px] font-black uppercase tracking-widest text-center px-2">TOUT</div>
                         </div>
                     </div>
@@ -80,12 +80,12 @@ export default function SubCategoryWidgets({
                         className="flex flex-col items-center gap-4 cursor-pointer group flex-shrink-0 snap-start max-w-[100px]"
                     >
                         <div className={cn(
-                            "w-20 h-20 md:w-24 md:h-24 rounded-full border-2 p-1.5 transition-all duration-500 relative",
+                            "w-20 h-20 md:w-24 md:h-24 transition-all duration-500 relative rounded-sm md:rounded-full border-2 p-1.5",
                             activeSubSlug === sub.slug 
                                 ? "border-or scale-110 shadow-lg shadow-or/10 ring-4 ring-or/5" 
                                 : "border-creme2 group-hover:border-or/40"
                         )}>
-                            <div className="w-full h-full rounded-full bg-creme2 overflow-hidden relative">
+                            <div className="w-full h-full rounded-[2px] md:rounded-full bg-creme2 overflow-hidden relative">
                                 {sub.imageUrl ? (
                                     <img 
                                         src={sub.imageUrl} 
