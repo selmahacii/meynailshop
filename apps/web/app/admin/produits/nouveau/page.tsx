@@ -149,10 +149,20 @@ export default function ProductCreatePage() {
         }
         try {
             setSaving(true);
+            
+            // LOGIC: users enters Original Price (Required) and optionally Promo Price.
+            // In DB: price = what client pays, comparePrice = original price to cross out.
+            const originalPriceVal = Number(product.comparePrice);
+            const promoPriceVal = product.price ? Number(product.price) : null;
+            
+            const sellingPrice = promoPriceVal !== null ? promoPriceVal : originalPriceVal;
+            const crossedPrice = promoPriceVal !== null ? originalPriceVal : null;
+
             const createData = {
                 ...product,
-                price: Number(product.price),
-                comparePrice: product.comparePrice ? Number(product.comparePrice) : null,
+                price: sellingPrice,
+                comparePrice: crossedPrice,
+                costPrice: Number(product.costPrice),
                 categoryId: product.categoryId,
                 subCategoryId: product.subCategoryId || null,
                 badge: product.badge,
@@ -160,8 +170,6 @@ export default function ProductCreatePage() {
                 stockAlert: Number(product.stockAlert),
                 slug: product.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '').replace(/^-+|-+$/g, '') || `product-${Date.now()}`,
                 images: product.images.length > 0 ? product.images : ['https://placehold.co/800x800?text=' + encodeURIComponent(product.name)],
-                costPrice: Number(product.price) * 0.4,
-                // Ensure NOT NULL fields have a value
                 description: product.description || product.shortDescription || product.name,
                 shortDescription: product.shortDescription || product.name,
                 hasVariants: product.hasVariants,
@@ -489,15 +497,30 @@ export default function ProductCreatePage() {
                                 </div>
                             </div>
 
-                            {/* Selling Price (After Promo) */}
+                            {/* Base Price (REQUIRED) */}
                             <div className="pt-6 border-t border-white/10 space-y-3">
-                                <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix de Vente après promotion (Total Client) *</label>
-                                <div className="relative">
+                                <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix de Vente d'Origine (Requis) *</label>
+                                <div className="relative group">
                                     <input 
                                         type="number" 
                                         required
                                         placeholder="0"
-                                        value={product.price}
+                                        value={product.comparePrice || ''}
+                                        onChange={(e) => setProduct({...product, comparePrice: e.target.value})}
+                                        className="w-full p-5 bg-white/5 border border-white/10 rounded-sm text-2xl font-bold text-creme/80 outline-none focus:border-creme/40 appearance-none transition-all"
+                                    />
+                                    <span className="absolute right-5 top-1/2 -translate-y-1/2 text-creme/20 font-black text-sm">DA</span>
+                                </div>
+                            </div>
+
+                            {/* Promo Price (OPTIONAL) */}
+                            <div className="pt-6 border-t border-white/10 space-y-3">
+                                <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix de Vente après promotion (Optionnel)</label>
+                                <div className="relative">
+                                    <input 
+                                        type="number" 
+                                        placeholder="Laissez vide si pas de promotion"
+                                        value={product.price || ''}
                                         onChange={(e) => setProduct({...product, price: e.target.value})}
                                         className="w-full p-5 bg-white/5 border border-white/10 rounded-sm text-2xl font-bold text-or outline-none focus:border-or appearance-none"
                                     />
@@ -505,10 +528,10 @@ export default function ProductCreatePage() {
                                 </div>
 
                                 {/* PROFITABILITY INDICATORS */}
-                                {product.costPrice && product.price && (
+                                {(product.price || product.comparePrice) && product.costPrice && (
                                     <div className={cn(
                                         "p-4 rounded-sm border flex items-center justify-between animate-in fade-in zoom-in-95 duration-500",
-                                        Number(product.price) > Number(product.costPrice) 
+                                        (product.price ? Number(product.price) : Number(product.comparePrice)) > Number(product.costPrice) 
                                             ? "bg-green-500/10 border-green-500/20" 
                                             : "bg-rouge/10 border-rouge/20"
                                     )}>
@@ -516,48 +539,29 @@ export default function ProductCreatePage() {
                                             <span className="text-[9px] uppercase font-black tracking-widest text-creme/40">Rentabilité</span>
                                             <span className={cn(
                                                 "text-[10px] font-bold uppercase tracking-widest",
-                                                Number(product.price) > Number(product.costPrice) ? "text-green-400" : "text-rouge-mid"
+                                                (product.price ? Number(product.price) : Number(product.comparePrice)) > Number(product.costPrice) ? "text-green-400" : "text-rouge-mid"
                                             )}>
-                                                {Number(product.price) > Number(product.costPrice) ? 'Compatible (Profit)' : '⚠️ Incompatible (Perte)'}
+                                                {(product.price ? Number(product.price) : Number(product.comparePrice)) > Number(product.costPrice) ? 'Compatible (Profit)' : '⚠️ Incompatible (Perte)'}
                                             </span>
                                         </div>
                                         <div className="text-right">
                                             <span className="text-[9px] uppercase font-black tracking-widest text-creme/40 block">Marge</span>
                                             <span className={cn(
                                                 "text-lg font-mono font-black",
-                                                Number(product.price) > Number(product.costPrice) ? "text-creme" : "text-rouge-mid"
+                                                (product.price ? Number(product.price) : Number(product.comparePrice)) > Number(product.costPrice) ? "text-creme" : "text-rouge-mid"
                                             )}>
-                                                {Number(product.price) - Number(product.costPrice)} DA
+                                                {(product.price ? Number(product.price) : Number(product.comparePrice)) - Number(product.costPrice)} DA
                                             </span>
                                             <span className="text-[10px] text-or block">
-                                                ({Math.round(((Number(product.price) - Number(product.costPrice)) / Number(product.price)) * 100)}%)
+                                                ({Math.round((((product.price ? Number(product.price) : Number(product.comparePrice)) - Number(product.costPrice)) / (product.price ? Number(product.price) : Number(product.comparePrice))) * 100)}%)
                                             </span>
                                         </div>
                                     </div>
                                 )}
                             </div>
 
-                            {/* Original Selling Price */}
-                            <div className="space-y-3">
-                                <div className="flex justify-between items-end">
-                                    <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Prix d'Origine de Vente (Barré si promo)</label>
-                                    {product.comparePrice && product.price && Number(product.comparePrice) > Number(product.price) && (
-                                        <span className="text-[10px] font-black text-rouge-mid bg-rouge/20 px-2 py-0.5 rounded-sm animate-pulse">
-                                            -{Math.round(((Number(product.comparePrice) - Number(product.price)) / Number(product.comparePrice)) * 100)}%
-                                        </span>
-                                    )}
-                                </div>
-                                <div className="relative">
-                                    <input 
-                                        type="number" 
-                                        placeholder="Optionnel"
-                                        value={product.comparePrice}
-                                        onChange={(e) => setProduct({...product, comparePrice: e.target.value})}
-                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-lg font-bold text-creme/40 outline-none focus:border-white/20 appearance-none"
-                                    />
-                                    <span className="absolute right-5 top-1/2 -translate-y-1/2 text-creme/10 font-bold text-xs">DA</span>
-                                </div>
-                            </div>
+                            {/* EMPTY SPACE filler for layout consistency */}
+                            <div className="pb-2"></div>
                             
                             <div className="pt-6 border-t border-white/10 space-y-3">
                                 <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Inventaire Initial</label>
