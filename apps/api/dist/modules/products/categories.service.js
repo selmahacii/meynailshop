@@ -77,12 +77,25 @@ let CategoriesService = class CategoriesService {
     async findBySlug(slug) {
         const category = await this.categoryRepository.findOne({
             where: { slug, isActive: true },
-            relations: ['products'],
+            relations: ['subCategories', 'subCategories.products'],
         });
         if (!category) {
             throw new common_1.NotFoundException('Category not found');
         }
-        return category;
+        const subCategories = category.subCategories.map(sub => {
+            const productCount = sub.products ? sub.products.length : 0;
+            const hasNewArrivals = sub.products?.some(p => p.badge === 'new' || p.createdAt > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+            const { products, ...rest } = sub;
+            return {
+                ...rest,
+                productCount,
+                hasNewArrivals
+            };
+        });
+        return {
+            ...category,
+            subCategories
+        };
     }
     async findOne(id) {
         const category = await this.categoryRepository.findOne({

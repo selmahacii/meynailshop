@@ -9,6 +9,7 @@ import { StoreAPI } from '@/lib/api/client';
 import ProductSort from '@/components/store/products/ProductSort';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2, AlertCircle } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const FALLBACK_CATEGORY = { name: 'Catégorie', description: 'Découvrez notre sélection.' };
 
@@ -38,8 +39,17 @@ export default function CategoryPage() {
         async function load() {
             setLoading(true);
             try {
+                // Fetch category info once or when slug changes
+                if (mounted && (categoryInfo.name === 'Catégorie' || categoryInfo.slug !== slug)) {
+                    const catRes = await StoreAPI.getCategoryBySlug(slug as string);
+                    if (catRes.success) {
+                        if (mounted) setCategoryInfo(catRes.data);
+                    }
+                }
+
                 // Prepare params for API
                 const params: any = { category: filters.category };
+                if (filters.subCategory) params.subCategory = filters.subCategory;
                 if (filters.inStock) params.inStock = 'true';
                 
                 if (filters.priceRanges.length > 0) {
@@ -71,16 +81,6 @@ export default function CategoryPage() {
                     const items = paginated?.items || paginated || [];
                     if (mounted) setProducts(items);
                 }
-
-                // Fetch category info once
-                if (mounted && categoryInfo.name === 'Catégorie') {
-                    const catRes = await StoreAPI.getCategories();
-                    if (catRes.success) {
-                        const catList = catRes.data || [];
-                        const found = catList.find((c: any) => c.slug === slug);
-                        if (found && mounted) setCategoryInfo(found);
-                    }
-                }
             } catch (err) {
                 console.error('Category load error:', err);
             } finally {
@@ -89,21 +89,92 @@ export default function CategoryPage() {
         }
         load();
         return () => { mounted = false; };
-    }, [filters, sortBy, slug]);
+    }, [filters, sortBy, slug, categoryInfo.slug]);
+
+    const activeSubCategory = categoryInfo.subCategories?.find((s: any) => s.slug === filters.subCategory);
 
     return (
         <div className="pt-32 pb-24 bg-creme min-h-screen">
             <div className="container mx-auto px-4">
                 {/* Header / Breadcrumbs */}
-                <div className="mb-8 flex items-center justify-between">
-                    <nav className="text-[10px] uppercase tracking-[0.2em] text-encre3 flex items-center space-x-2 font-black">
+                <div className="mb-12">
+                    <nav className="text-[10px] uppercase tracking-[0.2em] text-encre3 flex items-center space-x-2 font-black mb-6">
                         <Link href="/" className="hover:text-or transition-colors">Accueil</Link>
                         <span className="opacity-30">/</span>
                         <Link href="/catalogue" className="hover:text-or transition-colors">Catalogue</Link>
                         <span className="opacity-30">/</span>
-                        <span className="text-encre underline decoration-or/40 underline-offset-4">{categoryInfo.name}</span>
+                        <span className={cn(
+                            "transition-all cursor-pointer",
+                            filters.subCategory ? "text-encre3 hover:text-encre" : "text-encre underline decoration-or/40 underline-offset-4"
+                        )} onClick={() => setFilters(prev => ({ ...prev, subCategory: null }))}>
+                            {categoryInfo.name}
+                        </span>
+                        {filters.subCategory && (
+                            <>
+                                <span className="opacity-30">/</span>
+                                <span className="text-encre underline decoration-or/40 underline-offset-4">{activeSubCategory?.name}</span>
+                            </>
+                        )}
                     </nav>
+
+                    <h1 className="font-serif text-4xl md:text-5xl text-encre mb-4">{activeSubCategory?.name || categoryInfo.name}</h1>
+                    <p className="text-encre3 text-sm max-w-2xl leading-relaxed italic">{activeSubCategory?.description || categoryInfo.description}</p>
                 </div>
+
+                {/* Sub-categories Section (Only if no sub-category selected or as a header) */}
+                {categoryInfo.subCategories && categoryInfo.subCategories.length > 0 && (
+                    <div className="mb-16">
+                        <div className="flex items-center justify-between mb-8 border-b border-creme2 pb-4">
+                            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-encre">Découvrir l'univers</h2>
+                            <button 
+                                onClick={() => setFilters(prev => ({ ...prev, subCategory: null }))}
+                                className={cn(
+                                    "text-[9px] font-black uppercase tracking-widest text-encre3 hover:text-or transition-all",
+                                    !filters.subCategory && "hidden"
+                                )}
+                            >
+                                Voir tout {categoryInfo.name}
+                            </button>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+                            {categoryInfo.subCategories.map((sub: any) => (
+                                <motion.div
+                                    key={sub.id}
+                                    whileHover={{ y: -5 }}
+                                    onClick={() => setFilters(prev => ({ ...prev, subCategory: sub.slug }))}
+                                    className={cn(
+                                        "group cursor-pointer relative bg-white border border-creme2 p-4 md:p-6 transition-all shadow-sm hover:shadow-xl",
+                                        filters.subCategory === sub.slug ? "ring-2 ring-or border-transparent" : "hover:border-or/40"
+                                    )}
+                                >
+                                    <div className="aspect-[4/5] bg-creme2 mb-4 overflow-hidden relative">
+                                        {sub.imageUrl ? (
+                                            <img 
+                                                src={sub.imageUrl} 
+                                                alt={sub.name} 
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-creme3 font-serif italic text-4xl">M</div>
+                                        )}
+                                        {sub.hasNewArrivals && (
+                                            <div className="absolute top-2 right-2 px-2 py-1 bg-rouge-deep text-white text-[8px] font-black uppercase tracking-widest shadow-lg">
+                                                Nouveau
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h3 className="font-serif text-lg text-encre group-hover:text-or transition-colors">{sub.name}</h3>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-or">{sub.productCount || 0} Articles</span>
+                                            <span className="text-[10px] text-encre font-bold group-hover:translate-x-1 transition-transform">→</span>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 <div className="flex flex-col lg:flex-row gap-12">
                     {/* Desktop Sidebar */}
@@ -118,6 +189,12 @@ export default function CategoryPage() {
 
                     {/* Main Content */}
                     <section className="flex-grow">
+                        <div className="flex items-center justify-between mb-8">
+                            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-encre">
+                                {filters.subCategory ? `Produits ${activeSubCategory?.name}` : `Tous les produits ${categoryInfo.name}`}
+                            </h2>
+                        </div>
+                        
                         <ProductSort 
                             total={products.length}
                             currentSort={sortBy}
@@ -151,9 +228,12 @@ export default function CategoryPage() {
                                         <p className="text-encre3 text-sm max-w-sm mb-8 leading-relaxed">
                                             Nous n'avons trouvé aucun produit dans cette catégorie avec les filtres sélectionnés.
                                         </p>
-                                        <Link href="/catalogue" className="text-or font-black uppercase tracking-[0.2em] text-[10px] border-b-2 border-or/20 pb-1 hover:border-or transition-all">
-                                            Explorer tout le catalogue
-                                        </Link>
+                                        <button 
+                                            onClick={() => setFilters({ category: slug as string, subCategory: null, priceRanges: [], inStock: false })}
+                                            className="text-or font-black uppercase tracking-[0.2em] text-[10px] border-b-2 border-or/20 pb-1 hover:border-or transition-all"
+                                        >
+                                            Effacer les filtres
+                                        </button>
                                     </div>
                                 )}
                             </>

@@ -74,14 +74,31 @@ export class CategoriesService {
   async findBySlug(slug: string) {
     const category = await this.categoryRepository.findOne({
       where: { slug, isActive: true },
-      relations: ['products'],
-      });
+      relations: ['subCategories', 'subCategories.products'],
+    });
 
     if (!category) {
       throw new NotFoundException('Category not found');
     }
 
-    return category;
+    // Enrich subcategories with product count and "isNew" flag
+    const subCategories = category.subCategories.map(sub => {
+      const productCount = sub.products ? sub.products.length : 0;
+      const hasNewArrivals = sub.products?.some(p => p.badge === 'new' || p.createdAt > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+      
+      // Clean up products to avoid sending too much data
+      const { products, ...rest } = sub;
+      return {
+        ...rest,
+        productCount,
+        hasNewArrivals
+      };
+    });
+
+    return {
+      ...category,
+      subCategories
+    };
   }
 
   async findOne(id: string) {

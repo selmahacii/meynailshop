@@ -229,6 +229,10 @@ export class StoreAPI {
     return apiGet(API_ENDPOINTS.STORE_CATEGORIES);
   }
 
+  static async getCategoryBySlug(slug: string) {
+    return apiGet(`/api/categories/${slug}`);
+  }
+
   static async getFeatured() {
     return apiGet(API_ENDPOINTS.STORE_FEATURED);
   }
