@@ -51,11 +51,19 @@ export default function SubCategoryWidgets({
                 </button>
             </div>
             
-            <div className="flex items-start gap-6 md:gap-10 overflow-x-auto no-scrollbar pb-6 snap-x">
-                {/* "All" Widget */}
+            <div className={cn(
+                "pb-6 snap-x",
+                !activeSubSlug 
+                    ? "grid grid-cols-2 gap-4 md:flex md:items-start md:gap-10 md:overflow-x-auto md:no-scrollbar" 
+                    : "flex items-start gap-6 md:gap-10 overflow-x-auto no-scrollbar"
+            )}>
+                {/* "All" Widget - Hide in Mobile Grid to save space for specific universes */}
                 <div 
                     onClick={() => onSelect(null)}
-                    className="flex flex-col items-center gap-4 cursor-pointer group flex-shrink-0 snap-start"
+                    className={cn(
+                        "flex flex-col items-center gap-4 cursor-pointer group flex-shrink-0 snap-start",
+                        !activeSubSlug && "hidden md:flex"
+                    )}
                 >
                     <div className={cn(
                         "w-20 h-20 md:w-24 md:h-24 transition-all duration-500 rounded-sm md:rounded-full border-2 p-1.5",
@@ -77,15 +85,26 @@ export default function SubCategoryWidgets({
                     <div
                         key={sub.id}
                         onClick={() => onSelect(sub.slug)}
-                        className="flex flex-col items-center gap-4 cursor-pointer group flex-shrink-0 snap-start max-w-[100px]"
+                        className={cn(
+                            "flex flex-col items-center gap-4 cursor-pointer group transition-all duration-500",
+                            !activeSubSlug 
+                                ? "w-full md:w-auto md:flex-shrink-0 md:snap-start" 
+                                : "flex-shrink-0 snap-start max-w-[100px]"
+                        )}
                     >
                         <div className={cn(
-                            "w-20 h-20 md:w-24 md:h-24 transition-all duration-500 relative rounded-sm md:rounded-full border-2 p-1.5",
+                            "transition-all duration-500 relative border-2 p-1.5",
+                            !activeSubSlug 
+                                ? "w-full aspect-square rounded-2xl md:w-24 md:h-24 md:rounded-full" 
+                                : "w-20 h-20 md:w-24 md:h-24 rounded-sm md:rounded-full",
                             activeSubSlug === sub.slug 
                                 ? "border-or scale-110 shadow-lg shadow-or/10 ring-4 ring-or/5" 
                                 : "border-creme2 group-hover:border-or/40"
                         )}>
-                            <div className="w-full h-full rounded-[2px] md:rounded-full bg-creme2 overflow-hidden relative">
+                            <div className={cn(
+                                "w-full h-full bg-creme2 overflow-hidden relative",
+                                !activeSubSlug ? "rounded-xl md:rounded-full" : "rounded-[2px] md:rounded-full"
+                            )}>
                                 {sub.imageUrl ? (
                                     <img 
                                         src={sub.imageUrl} 
@@ -106,7 +125,8 @@ export default function SubCategoryWidgets({
                         </div>
                         <div className="text-center">
                             <p className={cn(
-                                "text-[10px] font-black uppercase tracking-widest transition-colors truncate w-full",
+                                "font-black uppercase tracking-widest transition-colors truncate w-full",
+                                !activeSubSlug ? "text-xs md:text-[10px]" : "text-[10px]",
                                 activeSubSlug === sub.slug ? "text-encre" : "text-encre3 group-hover:text-encre"
                             )}>
                                 {sub.name}
