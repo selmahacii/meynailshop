@@ -19,6 +19,7 @@ export declare class Order {
     deliveredAt: Date;
     cancelledAt: Date;
     cancellationReason: string;
+    source: string;
     createdAt: Date;
     updatedAt: Date;
     user: User;

@@ -1,9 +1,17 @@
-import { Controller, Get, Patch, Param, Body, Query } from '@nestjs/common';
+import { Controller, Get, Patch, Post, Param, Body, Query } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 
 @Controller('v1/admin/orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
+
+  @Post('manual')
+  async createManual(@Body() data: any) {
+    return {
+      success: true,
+      data: await this.ordersService.createManual(data),
+    };
+  }
 
   @Get()
   async findAll(

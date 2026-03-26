@@ -1,17 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Order, Review } from '../../../database/entities';
+import { Order, Review, OrderItem, Product } from '../../../database/entities';
 import { StockService } from '../../../modules/stock/stock.service';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private orderRepository: Repository<Order>,
+    @InjectRepository(OrderItem)
+    private orderItemRepository: Repository<OrderItem>,
+    @InjectRepository(Product)
+    private productRepository: Repository<Product>,
     @InjectRepository(Review)
     private reviewRepository: Repository<Review>,
     private stockService: StockService,
+    private dataSource: DataSource,
   ) {}
 
   async findAll(page: number = 1, limit: number = 10, status?: string) {
@@ -118,6 +124,66 @@ export class OrdersService {
         totalRevenue: 0,
         pendingReviews: 0,
       };
+    }
+  }
+
+  async createManual(data: any) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const orderNumber = `MAN-${Date.now()}`;
+      
+      const order = queryRunner.manager.create(Order, {
+        orderNumber,
+        source: data.source || 'other',
+        deliveryType: data.deliveryType || 'home',
+        paymentMethod: data.paymentMethod || 'cash_on_delivery',
+        paymentStatus: data.paymentStatus || 'pending',
+        status: 'confirmed',
+        subtotal: data.subtotal,
+        shippingCost: data.shippingCost || 0,
+        total: data.subtotal + (data.shippingCost || 0),
+        shippingAddressSnapshot: data.customer,
+        notes: data.notes,
+      });
+
+      const savedOrder = await queryRunner.manager.save(Order, order);
+
+      for (const item of data.items) {
+        const product = await queryRunner.manager.findOne(Product, { where: { id: item.productId } });
+        if (!product) throw new Error(`Product ${item.productId} not found`);
+
+        const orderItem = queryRunner.manager.create(OrderItem, {
+          orderId: savedOrder.id,
+          productId: item.productId,
+          productName: product.name,
+          productSku: item.productSku || product.sku,
+          productImage: product.images?.[0] || '',
+          unitPrice: item.unitPrice,
+          quantity: item.quantity,
+          subtotal: item.unitPrice * item.quantity,
+        });
+
+        await queryRunner.manager.save(OrderItem, orderItem);
+
+        // Deduct stock
+        await this.stockService.adjustStock(
+          item.productId,
+          -item.quantity,
+          `Commande manuelle (${data.source})`,
+          orderNumber
+        );
+      }
+
+      await queryRunner.commitTransaction();
+      return await this.findOne(savedOrder.id);
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
   }
 }

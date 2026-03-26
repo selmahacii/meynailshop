@@ -87,6 +87,13 @@ export class Order {
   @Column({ type: 'text', nullable: true })
   cancellationReason: string;
 
+  @Column({
+    type: 'enum',
+    enum: ['website', 'instagram', 'whatsapp', 'facebook', 'store', 'other'],
+    default: 'website',
+  })
+  source: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

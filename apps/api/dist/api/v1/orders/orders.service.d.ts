@@ -1,11 +1,15 @@
 import { Repository } from 'typeorm';
-import { Order, Review } from '../../../database/entities';
+import { Order, Review, OrderItem, Product } from '../../../database/entities';
 import { StockService } from '../../../modules/stock/stock.service';
+import { DataSource } from 'typeorm';
 export declare class OrdersService {
     private orderRepository;
+    private orderItemRepository;
+    private productRepository;
     private reviewRepository;
     private stockService;
-    constructor(orderRepository: Repository<Order>, reviewRepository: Repository<Review>, stockService: StockService);
+    private dataSource;
+    constructor(orderRepository: Repository<Order>, orderItemRepository: Repository<OrderItem>, productRepository: Repository<Product>, reviewRepository: Repository<Review>, stockService: StockService, dataSource: DataSource);
     findAll(page?: number, limit?: number, status?: string): Promise<{
         data: Order[];
         pagination: {
@@ -39,4 +43,5 @@ export declare class OrdersService {
         totalRevenue: number;
         pendingReviews: number;
     }>;
+    createManual(data: any): Promise<Order>;
 }

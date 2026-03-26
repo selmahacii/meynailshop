@@ -21,6 +21,7 @@ import {
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { OrdersAPI } from '@/lib/api/client';
+import CreateOrderModal from '@/components/admin/orders/CreateOrderModal';
 
 const tabs = [
     { name: 'Actives', count: 0, key: 'active' },
@@ -37,6 +38,7 @@ export default function AdminOrdersPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         fetchOrders('active');
@@ -173,13 +175,13 @@ export default function AdminOrdersPage() {
                             <Bell size={18} />
                         </button>
                     </div>
-                    <Link 
-                        href="/admin/produits/nouveau"
+                    <button 
+                        onClick={() => setIsModalOpen(true)}
                         className="flex items-center justify-center space-x-2 px-4 py-2 bg-rouge-deep text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md flex-grow sm:flex-grow-0"
                     >
                         <Plus size={16} />
                         <span>Nouveau</span>
-                    </Link>
+                    </button>
                     <Link href="/" className="px-4 py-2 border border-encre text-encre rounded-sm text-xs font-bold hover:bg-encre hover:text-creme transition-all text-center flex-grow sm:flex-grow-0">
                         Boutique
                     </Link>
@@ -233,13 +235,13 @@ export default function AdminOrdersPage() {
 
                     <div className="flex items-center space-x-2 w-full md:w-auto">
 
-                        <Link 
-                            href="/admin/produits/nouveau"
+                        <button 
+                            onClick={() => setIsModalOpen(true)}
                             className="flex-1 md:flex-none flex items-center justify-center space-x-2 px-6 py-2.5 bg-[#1A0A0A] text-creme text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-lg group"
                         >
                             <Plus size={14} className="text-or" />
                             <span>Créer</span>
-                        </Link>
+                        </button>
                     </div>
                 </div>
 
@@ -492,6 +494,15 @@ export default function AdminOrdersPage() {
                     </div>
                 </div>
             </div>
+
+            <CreateOrderModal 
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSuccess={() => {
+                    fetchOrders(activeTab);
+                    fetchStats();
+                }}
+            />
         </div>
     );
 }

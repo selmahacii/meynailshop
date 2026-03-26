@@ -18,11 +18,15 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const entities_1 = require("../../../database/entities");
 const stock_service_1 = require("../../../modules/stock/stock.service");
+const typeorm_3 = require("typeorm");
 let OrdersService = class OrdersService {
-    constructor(orderRepository, reviewRepository, stockService) {
+    constructor(orderRepository, orderItemRepository, productRepository, reviewRepository, stockService, dataSource) {
         this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
+        this.productRepository = productRepository;
         this.reviewRepository = reviewRepository;
         this.stockService = stockService;
+        this.dataSource = dataSource;
     }
     async findAll(page = 1, limit = 10, status) {
         const query = this.orderRepository.createQueryBuilder('order')
@@ -116,14 +120,67 @@ let OrdersService = class OrdersService {
             };
         }
     }
+    async createManual(data) {
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+        try {
+            const orderNumber = `MAN-${Date.now()}`;
+            const order = queryRunner.manager.create(entities_1.Order, {
+                orderNumber,
+                source: data.source || 'other',
+                deliveryType: data.deliveryType || 'home',
+                paymentMethod: data.paymentMethod || 'cash_on_delivery',
+                paymentStatus: data.paymentStatus || 'pending',
+                status: 'confirmed',
+                subtotal: data.subtotal,
+                shippingCost: data.shippingCost || 0,
+                total: data.subtotal + (data.shippingCost || 0),
+                shippingAddressSnapshot: data.customer,
+                notes: data.notes,
+            });
+            const savedOrder = await queryRunner.manager.save(entities_1.Order, order);
+            for (const item of data.items) {
+                const product = await queryRunner.manager.findOne(entities_1.Product, { where: { id: item.productId } });
+                if (!product)
+                    throw new Error(`Product ${item.productId} not found`);
+                const orderItem = queryRunner.manager.create(entities_1.OrderItem, {
+                    orderId: savedOrder.id,
+                    productId: item.productId,
+                    productName: product.name,
+                    productSku: item.productSku || product.sku,
+                    productImage: product.images?.[0] || '',
+                    unitPrice: item.unitPrice,
+                    quantity: item.quantity,
+                    subtotal: item.unitPrice * item.quantity,
+                });
+                await queryRunner.manager.save(entities_1.OrderItem, orderItem);
+                await this.stockService.adjustStock(item.productId, -item.quantity, `Commande manuelle (${data.source})`, orderNumber);
+            }
+            await queryRunner.commitTransaction();
+            return await this.findOne(savedOrder.id);
+        }
+        catch (err) {
+            await queryRunner.rollbackTransaction();
+            throw err;
+        }
+        finally {
+            await queryRunner.release();
+        }
+    }
 };
 exports.OrdersService = OrdersService;
 exports.OrdersService = OrdersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(entities_1.Order)),
-    __param(1, (0, typeorm_1.InjectRepository)(entities_1.Review)),
+    __param(1, (0, typeorm_1.InjectRepository)(entities_1.OrderItem)),
+    __param(2, (0, typeorm_1.InjectRepository)(entities_1.Product)),
+    __param(3, (0, typeorm_1.InjectRepository)(entities_1.Review)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
-        stock_service_1.StockService])
+        typeorm_2.Repository,
+        typeorm_2.Repository,
+        stock_service_1.StockService,
+        typeorm_3.DataSource])
 ], OrdersService);
 //# sourceMappingURL=orders.service.js.map

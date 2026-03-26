@@ -2,6 +2,10 @@ import { OrdersService } from './orders.service';
 export declare class OrdersController {
     private readonly ordersService;
     constructor(ordersService: OrdersService);
+    createManual(data: any): Promise<{
+        success: boolean;
+        data: import("../../../database/entities").Order;
+    }>;
     findAll(page: string, limit: string, status: string): Promise<{
         success: boolean;
         data: {

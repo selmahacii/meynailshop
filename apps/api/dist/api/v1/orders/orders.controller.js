@@ -19,6 +19,12 @@ let OrdersController = class OrdersController {
     constructor(ordersService) {
         this.ordersService = ordersService;
     }
+    async createManual(data) {
+        return {
+            success: true,
+            data: await this.ordersService.createManual(data),
+        };
+    }
     async findAll(page, limit, status) {
         return {
             success: true,
@@ -45,6 +51,13 @@ let OrdersController = class OrdersController {
     }
 };
 exports.OrdersController = OrdersController;
+__decorate([
+    (0, common_1.Post)('manual'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "createManual", null);
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)('page')),

@@ -104,6 +104,14 @@ __decorate([
     __metadata("design:type", String)
 ], Order.prototype, "cancellationReason", void 0);
 __decorate([
+    (0, typeorm_1.Column)({
+        type: 'enum',
+        enum: ['website', 'instagram', 'whatsapp', 'facebook', 'store', 'other'],
+        default: 'website',
+    }),
+    __metadata("design:type", String)
+], Order.prototype, "source", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Order.prototype, "createdAt", void 0);

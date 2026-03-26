@@ -29,6 +29,7 @@ export const API_ENDPOINTS = {
   ORDERS_STATS: `/api/${API_VERSION}/admin/orders/stats`,
   ORDER_ADMIN_DETAIL: (id: string) => `/api/${API_VERSION}/admin/orders/${id}`,
   ORDER_ADMIN_UPDATE_STATUS: (id: string) => `/api/${API_VERSION}/admin/orders/${id}/status`,
+  ORDERS_ADMIN_CREATE_MANUAL: `/api/${API_VERSION}/admin/orders/manual`,
 
   // Public store endpoints (no version prefix)
   STORE_PRODUCTS_LIST: `/api/products`,
@@ -206,6 +207,10 @@ export class OrdersAPI {
 
   static async updateStatus(id: string, status: string) {
     return apiPatch(API_ENDPOINTS.ORDER_ADMIN_UPDATE_STATUS(id), { status });
+  }
+
+  static async createManual(data: any) {
+    return apiPost(API_ENDPOINTS.ORDERS_ADMIN_CREATE_MANUAL, data);
   }
 }
 
