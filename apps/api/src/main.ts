@@ -125,12 +125,13 @@ async function bootstrap() {
       });
       await userRepo.save(admin);
       console.log('✅ Compte Admin par défaut créé (meeybouabdellah@gmail.com)');
-    } else if (adminExists.role !== 'admin') {
+    } else {
+      // FORCE update pour s'assurer que le mot de passe est toujours valide si on perd l'accès
+      const hashedPassword = await bcrypt.hash('meey2026', 12);
+      adminExists.password = hashedPassword;
       adminExists.role = 'admin';
       await userRepo.save(adminExists);
-      console.log('🆙 Rôle Admin mis à jour pour meeybouabdellah@gmail.com');
-    } else {
-      console.log('✅ Accès Admin vérifié pour meeybouabdellah@gmail.com');
+      console.log('🆙 Accès Admin garanti et mis à jour pour meeybouabdellah@gmail.com');
     }
   } catch (e) {
     console.log('ℹ️ Verif admin ignoree ou deja existante');
