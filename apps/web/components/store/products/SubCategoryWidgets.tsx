@@ -86,9 +86,9 @@ export default function SubCategoryWidgets({
                         key={sub.id}
                         onClick={() => onSelect(sub.slug)}
                         className={cn(
-                            "flex flex-col items-center gap-4 cursor-pointer group transition-all duration-500",
+                            "flex flex-col items-center cursor-pointer group transition-all duration-500",
                             !activeSubSlug 
-                                ? "w-full md:w-auto md:flex-shrink-0 md:snap-start" 
+                                ? "w-full md:w-auto md:flex-shrink-0 md:snap-start mb-4" 
                                 : "flex-shrink-0 snap-start max-w-[100px]"
                         )}
                     >
@@ -123,15 +123,15 @@ export default function SubCategoryWidgets({
                                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-rouge-deep rounded-full border-2 border-creme animate-pulse shadow-lg" />
                             )}
                         </div>
-                        <div className="text-center">
+                        <div className="text-center mt-3 flex flex-col items-center justify-start min-h-[44px] w-full px-1">
                             <p className={cn(
-                                "font-black uppercase tracking-widest transition-colors truncate w-full",
-                                !activeSubSlug ? "text-xs md:text-[10px]" : "text-[10px]",
+                                "font-black uppercase tracking-[0.1em] transition-colors leading-tight mb-1",
+                                !activeSubSlug ? "text-[10px] md:text-[9px]" : "text-[9px]",
                                 activeSubSlug === sub.slug ? "text-encre" : "text-encre3 group-hover:text-encre"
                             )}>
                                 {sub.name}
                             </p>
-                            <p className="text-[8px] font-bold text-or/60 group-hover:text-or transition-colors uppercase">{sub.productCount || 0} modèles</p>
+                            <p className="text-[8px] font-bold text-or/60 group-hover:text-or transition-colors uppercase whitespace-nowrap">{sub.productCount || 0} modèles</p>
                         </div>
                     </div>
                 ))}
