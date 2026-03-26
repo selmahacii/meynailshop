@@ -38,4 +38,8 @@ export class ProductsQueryDto extends PaginationDto {
   @IsOptional()
   @IsString()
   inStock?: 'true' | 'false';
+
+  @IsOptional()
+  @IsString()
+  subCategory?: string;
 }

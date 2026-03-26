@@ -8,4 +8,5 @@ export declare class ProductsQueryDto extends PaginationDto {
     sortBy?: 'price' | 'createdAt' | 'popularity' | 'rating';
     order?: 'asc' | 'desc';
     inStock?: 'true' | 'false';
+    subCategory?: string;
 }

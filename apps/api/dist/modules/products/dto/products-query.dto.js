@@ -60,4 +60,9 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], ProductsQueryDto.prototype, "inStock", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], ProductsQueryDto.prototype, "subCategory", void 0);
 //# sourceMappingURL=products-query.dto.js.map
