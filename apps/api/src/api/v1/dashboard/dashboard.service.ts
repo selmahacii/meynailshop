@@ -268,7 +268,7 @@ export class DashboardService {
     try {
       const products = await this.productRepository
         .createQueryBuilder('p')
-        .where('p.stock <= :limit', { limit: 10 })
+        .where('p.stock <= :limit', { limit: 5 })
         .andWhere('p.isActive = :isActive', { isActive: true })
         .orderBy('p.stock', 'ASC')
         .limit(5)

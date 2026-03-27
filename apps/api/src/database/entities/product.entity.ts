@@ -90,7 +90,7 @@ export class Product {
   hasVariants: boolean;
 
   @Column({ type: 'jsonb', nullable: true, default: null })
-  variants: { sku: string; image: string }[] | null;
+  variants: { sku: string; image: string; stock: number }[] | null;
 
   @CreateDateColumn()
   createdAt: Date;

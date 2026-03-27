@@ -25,7 +25,7 @@ export class ProductsController {
   @Get('low-stock')
   async getLowStock(@Query('threshold') threshold: string) {
     try {
-      const thresholdVal = parseInt(threshold) || 10;
+      const thresholdVal = parseInt(threshold) || 5;
       const data = await this.productsService.getLowStockProducts(thresholdVal);
       const items = Array.isArray(data) ? data : [];
       

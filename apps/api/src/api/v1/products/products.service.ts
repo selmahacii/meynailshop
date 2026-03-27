@@ -51,7 +51,7 @@ export class ProductsService {
     return { success: true };
   }
 
-  async getLowStockProducts(threshold: number = 10) {
+  async getLowStockProducts(threshold: number = 5) {
     return await this.productRepository
       .createQueryBuilder('p')
       .where('p.stock <= :threshold', { threshold })

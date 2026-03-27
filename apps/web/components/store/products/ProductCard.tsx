@@ -106,13 +106,24 @@ export default function ProductCard({ product }: ProductCardProps) {
 
                 {/* Quick Add Overlay */}
                 <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-encre/80 via-encre/40 to-transparent z-20">
-                    <button
-                        onClick={handleAddToCart}
-                        className="w-full bg-creme text-encre py-3 text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-or hover:text-rouge-deep transition-colors flex items-center justify-center"
-                    >
-                        <ShoppingBag size={14} className="mr-2" />
-                        Ajouter au panier
-                    </button>
+                    {product.hasVariants ? (
+                        <Link
+                            href={`/catalogue/${product.slug}`}
+                            className="w-full bg-creme text-encre py-3 text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-or hover:text-rouge-deep transition-colors flex items-center justify-center"
+                        >
+                            <ShoppingBag size={14} className="mr-2" />
+                            Choisir options
+                        </Link>
+                    ) : (
+                        <button
+                            onClick={handleAddToCart}
+                            disabled={product.stock === 0}
+                            className="w-full bg-creme text-encre py-3 text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-or hover:text-rouge-deep transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <ShoppingBag size={14} className="mr-2" />
+                            {product.stock === 0 ? 'Épuisé' : 'Ajouter au panier'}
+                        </button>
+                    )}
                 </div>
             </Link>
 

@@ -126,7 +126,7 @@ export default function ProductCreatePage() {
             const nextIndex = prev.variants.length + 1;
             return {
                 ...prev,
-                variants: [...prev.variants, { sku: `REF-${nextIndex}`, image: '' }]
+                variants: [...prev.variants, { sku: `REF-${nextIndex}`, image: '', stock: 0 }]
             };
         });
     };
@@ -138,7 +138,7 @@ export default function ProductCreatePage() {
         }));
     };
 
-    const updateVariant = (index: number, field: string, value: string) => {
+    const updateVariant = (index: number, field: string, value: any) => {
         const newVariants = [...product.variants];
         newVariants[index] = { ...newVariants[index], [field]: value };
         setProduct((prev: any) => ({ ...prev, variants: newVariants }));
@@ -416,6 +416,16 @@ export default function ProductCreatePage() {
                                                         value={variant.sku}
                                                         onChange={(e) => updateVariant(index, 'sku', e.target.value)}
                                                         className="w-full p-3 bg-white border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all font-mono"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-[9px] uppercase font-black tracking-widest text-encre3">Stock initial</label>
+                                                    <input
+                                                        type="number"
+                                                        placeholder="0"
+                                                        value={variant.stock || 0}
+                                                        onChange={(e) => updateVariant(index, 'stock', parseInt(e.target.value) || 0)}
+                                                        className="w-full p-3 bg-white border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all font-bold"
                                                     />
                                                 </div>
                                             </div>

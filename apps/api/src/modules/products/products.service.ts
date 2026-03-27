@@ -53,7 +53,7 @@ export class ProductsService {
     // Ensure variants don't have labels (identified only by sku and image)
     let variants = createProductDto.variants;
     if (variants && Array.isArray(variants)) {
-      variants = variants.map((v: any) => ({ sku: v.sku, image: v.image }));
+      variants = variants.map((v: any) => ({ sku: v.sku, image: v.image, stock: v.stock || 0 }));
     }
 
     const product = this.productRepository.create({
@@ -217,7 +217,7 @@ export class ProductsService {
     const { sku, ...updateData } = updateProductDto;
 
     if (updateData.variants && Array.isArray(updateData.variants)) {
-      updateData.variants = updateData.variants.map((v: any) => ({ sku: v.sku, image: v.image }));
+      updateData.variants = updateData.variants.map((v: any) => ({ sku: v.sku, image: v.image, stock: v.stock || 0 }));
     }
 
     Object.assign(product, updateData);

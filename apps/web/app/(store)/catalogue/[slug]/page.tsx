@@ -119,13 +119,18 @@ export default function ProductPage() {
             return;
         }
 
+        if (variant && variant.stock <= 0) {
+            toast.error("Cette référence est actuellement en rupture de stock");
+            return;
+        }
+
         addItem({
             productId: product.id,
             name: product.name,
             price: product.price,
             image: variant?.image || product.images?.[0] || '',
             quantity: quantity,
-            stock: product.stock,
+            stock: variant ? variant.stock : product.stock,
             variantSku: variant?.sku,
             variantImage: variant?.image
         });
@@ -277,19 +282,33 @@ export default function ProductPage() {
                                 <div className="flex flex-wrap gap-3">
                                     {product.variants.map((variant: any, index: number) => {
                                         const isSelected = selectedVariant === index;
+                                        const isOutOfStock = variant.stock <= 0;
                                         return (
                                             <button
                                                 key={index}
                                                 type="button"
-                                                onClick={() => setSelectedVariant(isSelected ? null : index)}
+                                                onClick={() => {
+                                                    if (isOutOfStock) {
+                                                        toast.error("Cette référence est en rupture de stock");
+                                                        return;
+                                                    }
+                                                    setSelectedVariant(isSelected ? null : index);
+                                                }}
                                                 className={cn(
-                                                    "min-w-[70px] h-12 px-6 rounded-full border transition-all flex items-center justify-center font-black text-[11px] tracking-[0.15em] uppercase",
+                                                    "min-w-[70px] h-12 px-6 rounded-full border transition-all flex items-center justify-center font-black text-[11px] tracking-[0.15em] uppercase relative overflow-hidden",
                                                     isSelected
                                                         ? "bg-rouge-brand border-gold-brand/40 text-gold-brand shadow-xl shadow-rouge-brand/20 scale-105"
-                                                        : "bg-white border-creme2 text-encre3 hover:border-rouge-brand/30 hover:bg-creme/30"
+                                                        : isOutOfStock 
+                                                            ? "bg-creme/10 border-creme2 text-encre3/30 cursor-not-allowed line-through"
+                                                            : "bg-white border-creme2 text-encre3 hover:border-rouge-brand/30 hover:bg-creme/30"
                                                 )}
                                             >
                                                 {variant.sku.replace('REF-', '')}
+                                                {isOutOfStock && (
+                                                   <span className="absolute inset-0 flex items-center justify-center">
+                                                       <div className="w-full h-[1.5px] bg-rouge-brand/20 -rotate-12"></div>
+                                                   </span>
+                                                )}
                                             </button>
                                         );
                                     })}

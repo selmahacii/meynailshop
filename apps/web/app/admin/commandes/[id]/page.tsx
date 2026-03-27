@@ -150,13 +150,6 @@ export default function OrderDetailsPage() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 md:gap-3">
-                    <button 
-                        onClick={() => window.print()}
-                        className="flex items-center space-x-2 px-4 md:px-5 py-2.5 bg-white border border-creme2 text-encre rounded-sm text-xs font-bold shadow-sm hover:border-or hover:text-or transition-all"
-                    >
-                        <Printer size={16} />
-                        <span className="hidden sm:inline">Imprimer</span>
-                    </button>
                     
                     {/* Status Actions */}
                     {order.status === 'shipped' && (
