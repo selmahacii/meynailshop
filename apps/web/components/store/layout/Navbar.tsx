@@ -81,8 +81,8 @@ export default function Navbar() {
                 {/* Desktop Links */}
                 <div className="hidden lg:flex items-center space-x-10">
                     {navLinks.map((link: any) => (
-                        <div 
-                            key={link.name} 
+                        <div
+                            key={link.name}
                             className="relative group"
                             onMouseEnter={() => setActiveCategory(link.name)}
                             onMouseLeave={() => setActiveCategory(null)}
@@ -94,7 +94,7 @@ export default function Navbar() {
                             >
                                 {link.name}
                                 {link.subCategories?.length > 0 && (
-                                    <motion.span 
+                                    <motion.span
                                         animate={{ rotate: activeCategory === link.name ? 180 : 0 }}
                                         className="text-[8px]"
                                     >
@@ -132,7 +132,7 @@ export default function Navbar() {
 
                 {/* Actions */}
                 <div className="flex items-center space-x-3 sm:space-x-5 md:space-x-6">
-                    <button 
+                    <button
                         onClick={() => setIsSearchOpen(true)}
                         className="text-gold-brand hover:opacity-80 transition-all hover:scale-110"
                     >
@@ -156,12 +156,12 @@ export default function Navbar() {
                             // Security Check: Is the cookie still there?
                             const hasCookieToken = document.cookie.includes('accessToken=');
                             const localToken = localStorage.getItem('accessToken');
-                            
+
                             // Self-healing: If cookie is gone but local exists, re-sync!
                             if (isAuthenticated && !hasCookieToken && localToken) {
                                 console.log('[NAVBAR DEBUG] Re-syncing cookie from localStorage...');
                                 document.cookie = `accessToken=${localToken}; path=/; max-age=86400; SameSite=Lax`;
-                            } 
+                            }
                             // Only clean up if BOTH are gone while we think we're auth
                             else if (isAuthenticated && !hasCookieToken && !localToken) {
                                 console.warn('[NAVBAR DEBUG] Total session loss. Cleaning up...');
@@ -249,7 +249,7 @@ export default function Navbar() {
                                                 {link.name}
                                             </Link>
                                             {link.subCategories?.length > 0 && (
-                                                <button 
+                                                <button
                                                     onClick={() => setExpandedCategory(expandedCategory === link.name ? null : link.name)}
                                                     className="p-4 text-gold-brand"
                                                 >
@@ -261,11 +261,11 @@ export default function Navbar() {
                                                 </button>
                                             )}
                                         </div>
-                                        
+
                                         {link.subCategories?.length > 0 && (
                                             <AnimatePresence>
                                                 {expandedCategory === link.name && (
-                                                    <motion.div 
+                                                    <motion.div
                                                         initial={{ height: 0, opacity: 0 }}
                                                         animate={{ height: 'auto', opacity: 1 }}
                                                         exit={{ height: 0, opacity: 0 }}
@@ -301,15 +301,7 @@ export default function Navbar() {
                                 </Link>
                             </div>
 
-                            <div className="p-8 border-t border-gold-brand/10 bg-black/20">
-                                <div className="flex items-center space-x-4 mb-6">
-                                     <div className="flex-1 h-[1px] bg-gold-brand/10"></div>
-                                     <p className="text-[9px] uppercase tracking-[0.2em] text-gold-brand/60 font-bold">Contactez-nous</p>
-                                     <div className="flex-1 h-[1px] bg-gold-brand/10"></div>
-                                 </div>
-                                 <a href="mailto:meeybouabdellah@gmail.com" className="block text-sm text-gold-brand hover:opacity-80 transition-opacity font-medium mb-2 break-all">meeybouabdellah@gmail.com</a>
-                                 <p className="text-xs text-gold-brand/40">Suivez notre excellence au quotidien</p>
-                             </div>
+
                         </motion.div>
                     </>
                 )}
