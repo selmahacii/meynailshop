@@ -95,7 +95,7 @@ export default function SubCategoryWidgets({
                                 : "w-24 h-24 md:w-24 md:h-24 rounded-[35px]",
                             activeSubSlug === sub.slug 
                                 ? "border-or scale-110 shadow-lg shadow-or/10 ring-4 ring-or/5" 
-                                : "border-rouge-brand/5 group-hover:border-rouge-brand/20"
+                                : "border-rouge-brand group-hover:border-rouge-brand/40"
                         )}>
                             <div className={cn(
                                 "w-full h-full bg-creme2 overflow-hidden relative",
