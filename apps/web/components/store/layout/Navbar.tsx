@@ -23,6 +23,7 @@ export default function Navbar() {
     const pathname = usePathname();
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
+    const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
     const cartItemsCount = useCartStore((state) => state.items.length);
     const wishlistItemsCount = useWishlistStore((state) => state.items.length);
     const { user, isAuthenticated } = useAuthStore();
@@ -237,29 +238,52 @@ export default function Navbar() {
                             <div className="flex-1 overflow-y-auto px-8 py-10 space-y-2">
                                 <p className="text-[10px] uppercase tracking-[0.3em] text-gold-brand font-black mb-6">Menu de Navigation</p>
                                 {navLinks.map((link: any) => (
-                                    <div key={link.name}>
-                                        <Link
-                                            href={link.href}
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                            className={`flex items-center justify-between py-4 text-lg font-serif transition-colors border-b border-gold-brand/5 ${pathname === link.href ? 'text-gold-brand font-bold' : 'text-gold-brand/80 hover:text-gold-brand'
-                                                }`}
-                                        >
-                                            {link.name}
-                                        </Link>
+                                    <div key={link.name} className="border-b border-gold-brand/5">
+                                        <div className="flex items-center justify-between">
+                                            <Link
+                                                href={link.href}
+                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                className={`flex-grow py-4 text-lg font-serif transition-colors ${pathname === link.href ? 'text-gold-brand font-bold' : 'text-gold-brand/80 hover:text-gold-brand'
+                                                    }`}
+                                            >
+                                                {link.name}
+                                            </Link>
+                                            {link.subCategories?.length > 0 && (
+                                                <button 
+                                                    onClick={() => setExpandedCategory(expandedCategory === link.name ? null : link.name)}
+                                                    className="p-4 text-gold-brand"
+                                                >
+                                                    <motion.div
+                                                        animate={{ rotate: expandedCategory === link.name ? 180 : 0 }}
+                                                    >
+                                                        ▼
+                                                    </motion.div>
+                                                </button>
+                                            )}
+                                        </div>
                                         
                                         {link.subCategories?.length > 0 && (
-                                            <div className="pl-4 py-2 flex flex-col space-y-2">
-                                                {link.subCategories.map((sub: any) => (
-                                                    <Link
-                                                        key={sub.id}
-                                                        href={`/categories/${link.href.split('/').pop()}/${sub.slug}`}
-                                                        onClick={() => setIsMobileMenuOpen(false)}
-                                                        className="py-2 text-sm text-gold-brand/60 hover:text-gold-brand transition-colors font-serif"
+                                            <AnimatePresence>
+                                                {expandedCategory === link.name && (
+                                                    <motion.div 
+                                                        initial={{ height: 0, opacity: 0 }}
+                                                        animate={{ height: 'auto', opacity: 1 }}
+                                                        exit={{ height: 0, opacity: 0 }}
+                                                        className="pl-6 pb-4 flex flex-col space-y-3 overflow-hidden"
                                                     >
-                                                        — {sub.name}
-                                                    </Link>
-                                                ))}
-                                            </div>
+                                                        {link.subCategories.map((sub: any) => (
+                                                            <Link
+                                                                key={sub.id}
+                                                                href={`/categories/${link.href.split('/').pop()}/${sub.slug}`}
+                                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                                className="py-2 text-sm text-gold-brand/60 hover:text-gold-brand transition-colors font-serif border-l border-gold-brand/10 pl-4"
+                                                            >
+                                                                — {sub.name}
+                                                            </Link>
+                                                        ))}
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
                                         )}
                                     </div>
                                 ))}

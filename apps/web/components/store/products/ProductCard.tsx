@@ -60,20 +60,19 @@ export default function ProductCard({ product }: ProductCardProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="group bg-white border-2 border-rouge-brand/5 shadow-sm hover:shadow-xl hover:border-rouge-brand/20 transition-all duration-500 rounded-[30px] overflow-hidden"
+            className="group bg-white border-2 border-rouge-brand/10 shadow-sm hover:shadow-xl hover:border-rouge-brand/30 transition-all duration-500 rounded-[30px] overflow-hidden"
         >
             <Link href={`/catalogue/${product.slug}`} className="block relative aspect-[4/5] overflow-hidden bg-creme2">
                 {/* Badges */}
                 <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
                     {product.comparePrice && product.comparePrice > product.price && (
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-sm shadow-md bg-rouge text-creme">
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-sm shadow-md bg-rouge-brand text-gold-brand border border-gold-brand/30">
                             -{Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)}%
                         </span>
                     )}
                     {product.badge && (
                         <span className={cn(
-                            "text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-sm shadow-md",
-                            product.badge === 'promo' ? 'bg-rouge-mid text-creme' : 'bg-[#3D1414] text-creme'
+                            "text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-sm shadow-md bg-rouge-brand text-gold-brand border border-gold-brand/20",
                         )}>
                             {product.badge === 'new' ? 'Nouveau' : 
                              product.badge === 'top' ? 'Bestseller' : product.badge}

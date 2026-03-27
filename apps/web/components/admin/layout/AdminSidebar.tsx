@@ -39,6 +39,15 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
     const pathname = usePathname();
     const [badges, setBadges] = useState<Record<string, number>>({});
     const [isLoading, setIsLoading] = useState(true);
+    const [expandedGroups, setExpandedGroups] = useState({
+        principal: true,
+        clients: true,
+        systeme: true
+    });
+
+    const toggleGroup = (group: keyof typeof expandedGroups) => {
+        setExpandedGroups(prev => ({ ...prev, [group]: !prev[group] }));
+    };
 
     useEffect(() => {
         const fetchBadges = async () => {
@@ -60,6 +69,59 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
 
         fetchBadges();
     }, []);
+
+    const renderMenuItem = (item: any) => {
+        const isActive = pathname.startsWith(item.href);
+        const badge = item.name === 'Commandes' ? badges.orders :
+            item.name === 'Stock' ? badges.stock : 
+            item.name === 'Avis clients' ? badges.reviews : item.badge;
+
+        return (
+            <li key={item.name}>
+                <Link
+                    href={item.href}
+                    onClick={onClose}
+                    className={cn(
+                        "flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 group relative overflow-hidden",
+                        isActive
+                            ? "bg-[#BFA893] text-[#390102] shadow-lg shadow-black/20"
+                            : "text-[#BFA893] hover:bg-white/5 border border-transparent hover:border-[#BFA893]/20"
+                    )}
+                >
+                    {isActive && (
+                        <div className="absolute left-0 top-0 w-1 h-full bg-[#BFA893] rounded-r-full shadow-lg shadow-[#BFA893]/50" />
+                    )}
+                    <div className="flex items-center gap-3 relative z-10">
+                        <item.icon
+                            size={18}
+                            className={cn(
+                                "transition-all duration-300",
+                                isActive
+                                    ? "text-[#390102]"
+                                    : "text-[#BFA893] focus:text-[#BFA893]"
+                            )}
+                            strokeWidth={isActive ? 2 : 1.5}
+                        />
+                        <span className={cn(isActive ? "font-semibold" : "font-normal")}>
+                            {item.name}
+                        </span>
+                    </div>
+                    {badge !== null && badge > 0 ? (
+                        <span className={cn(
+                            "text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg border relative z-10 animate-pulse",
+                            isActive
+                                ? "bg-[#390102] text-[#BFA893] border-[#390102]/20"
+                                : "bg-[#BFA893] text-[#390102] border-[#BFA893]/20"
+                        )}>
+                            {badge}
+                        </span>
+                    ) : (
+                        isActive && <ChevronRight size={16} className="text-[#390102] relative z-10" />
+                    )}
+                </Link>
+            </li>
+        );
+    };
 
     return (
         <aside className="w-64 bg-rouge-brand border-r border-gold-brand/10 h-screen flex flex-col shadow-2xl relative">
@@ -91,153 +153,52 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
 
             {/* Navigation */}
             <nav className="flex-grow overflow-y-auto px-3 py-6 scrollbar-thin scrollbar-thumb-gold-brand/30 scrollbar-track-transparent hover:scrollbar-thumb-gold-brand/50 transition-colors duration-300">
-                <div className="mb-6 px-4">
-                    <h3 className="text-[10px] uppercase tracking-[0.2em] text-[#BFA893] font-bold mb-4">Principal</h3>
-                    <ul className="space-y-1">
-                        {menuItems.slice(0, 4).map((item) => {
-                            const isActive = pathname.startsWith(item.href);
-                            const badge = item.name === 'Commandes' ? badges.orders :
-                                item.name === 'Stock' ? badges.stock : item.badge;
-
-                            return (
-                                <li key={item.name}>
-                                    <Link
-                                        href={item.href}
-                                        onClick={onClose}
-                                        className={cn(
-                                            "flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 group relative overflow-hidden",
-                                            isActive
-                                                ? "bg-[#BFA893] text-[#390102] shadow-lg shadow-black/20"
-                                                : "text-[#BFA893] hover:bg-white/5 border border-transparent hover:border-[#BFA893]/20"
-                                        )}
-                                    >
-                                        {isActive && (
-                                            <div className="absolute left-0 top-0 w-1 h-full bg-[#BFA893] rounded-r-full shadow-lg shadow-[#BFA893]/50" />
-                                        )}
-                                        <div className="flex items-center gap-3 relative z-10">
-                                            <item.icon
-                                                size={18}
-                                                className={cn(
-                                                    "transition-all duration-300",
-                                                    isActive
-                                                        ? "text-[#390102]"
-                                                        : "text-[#BFA893] focus:text-[#BFA893]"
-                                                )}
-                                                strokeWidth={isActive ? 2 : 1.5}
-                                            />
-                                            <span className={cn(isActive ? "font-semibold" : "font-normal")}>
-                                                {item.name}
-                                            </span>
-                                        </div>
-                                        {badge !== null && badge > 0 ? (
-                                            <span className={cn(
-                                                "text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg border relative z-10 animate-pulse",
-                                                isActive
-                                                    ? "bg-[#390102] text-[#BFA893] border-[#390102]/20"
-                                                    : "bg-[#BFA893] text-[#390102] border-[#BFA893]/20"
-                                            )}>
-                                                {badge}
-                                            </span>
-                                        ) : (
-                                            isActive && <ChevronRight size={16} className="text-[#390102] relative z-10" />
-                                        )}
-                                    </Link>
-                                </li>
-                            );
-                        })}
-                    </ul>
+                {/* Principal */}
+                <div className="mb-4">
+                    <button 
+                        onClick={() => toggleGroup('principal')}
+                        className="w-full flex items-center justify-between px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-[#BFA893] font-black hover:bg-white/5 transition-colors rounded-lg group"
+                    >
+                        <span>Principal</span>
+                        <ChevronRight size={12} className={cn("transition-transform duration-300", expandedGroups.principal && "rotate-90")} />
+                    </button>
+                    {expandedGroups.principal && (
+                        <ul className="mt-2 space-y-1 px-1">
+                            {menuItems.slice(0, 4).map(renderMenuItem)}
+                        </ul>
+                    )}
                 </div>
 
-                <div className="mb-6 px-4">
-                    <h3 className="text-[10px] uppercase tracking-[0.2em] text-[#BFA893] font-bold mb-4">Clients</h3>
-                    <ul className="space-y-1">
-                        {menuItems.slice(4, 7).map((item) => {
-                            const isActive = pathname.startsWith(item.href);
-                            const badge = item.name === 'Avis clients' ? badges.reviews : item.badge;
-
-                            return (
-                                <li key={item.name}>
-                                    <Link
-                                        href={item.href}
-                                        onClick={onClose}
-                                        className={cn(
-                                            "flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 group relative overflow-hidden",
-                                            isActive
-                                                ? "bg-[#BFA893] text-[#390102] shadow-lg shadow-black/20"
-                                                : "text-[#BFA893] hover:bg-white/5 border border-transparent hover:border-[#BFA893]/20"
-                                        )}
-                                    >
-                                        {isActive && (
-                                            <div className="absolute left-0 top-0 w-1 h-full bg-[#BFA893] rounded-r-full shadow-lg shadow-[#BFA893]/50" />
-                                        )}
-                                        <div className="flex items-center gap-3 relative z-10">
-                                            <item.icon
-                                                size={18}
-                                                className={cn(
-                                                    "transition-all duration-300",
-                                                    isActive
-                                                        ? "text-[#390102]"
-                                                        : "text-[#BFA893]"
-                                                )}
-                                                strokeWidth={isActive ? 2 : 1.5}
-                                            />
-                                            <span>{item.name}</span>
-                                        </div>
-                                        {badge !== null && badge > 0 && (
-                                            <span className={cn(
-                                                "text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg border relative z-10",
-                                                isActive
-                                                    ? "bg-[#390102] text-[#BFA893] border-[#390102]/20"
-                                                    : "bg-[#BFA893] text-[#390102] border-[#BFA893]/20"
-                                            )}>
-                                                {badge}
-                                            </span>
-                                        )}
-                                    </Link>
-                                </li>
-                            );
-                        })}
-                    </ul>
+                {/* Clients */}
+                <div className="mb-4">
+                    <button 
+                        onClick={() => toggleGroup('clients')}
+                        className="w-full flex items-center justify-between px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-[#BFA893] font-black hover:bg-white/5 transition-colors rounded-lg group"
+                    >
+                        <span>Clients</span>
+                        <ChevronRight size={12} className={cn("transition-transform duration-300", expandedGroups.clients && "rotate-90")} />
+                    </button>
+                    {expandedGroups.clients && (
+                        <ul className="mt-2 space-y-1 px-1">
+                            {menuItems.slice(4, 7).map(renderMenuItem)}
+                        </ul>
+                    )}
                 </div>
 
-                <div className="px-4">
-                    <h3 className="text-[10px] uppercase tracking-[0.2em] text-[#BFA893] font-bold mb-4">Système</h3>
-                    <ul className="space-y-1">
-                        {menuItems.slice(7).map((item) => {
-                            const isActive = pathname.startsWith(item.href);
-                            return (
-                                <li key={item.name}>
-                                    <Link
-                                        href={item.href}
-                                        onClick={onClose}
-                                        className={cn(
-                                            "flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 group relative overflow-hidden",
-                                            isActive
-                                                ? "bg-[#BFA893] text-[#390102] shadow-lg shadow-black/20"
-                                                : "text-[#BFA893] hover:bg-white/5 border border-transparent hover:border-[#BFA893]/20"
-                                        )}
-                                    >
-                                        {isActive && (
-                                            <div className="absolute left-0 top-0 w-1 h-full bg-[#BFA893] rounded-r-full shadow-lg shadow-[#BFA893]/50" />
-                                        )}
-                                        <div className="flex items-center gap-3 relative z-10">
-                                            <item.icon
-                                                size={18}
-                                                className={cn(
-                                                    "transition-all duration-300",
-                                                    isActive
-                                                        ? "text-[#390102]"
-                                                        : "text-[#BFA893]"
-                                                )}
-                                                strokeWidth={isActive ? 2 : 1.5}
-                                            />
-                                            <span>{item.name}</span>
-                                        </div>
-                                    </Link>
-                                </li>
-                            );
-                        })}
-                    </ul>
+                {/* Système */}
+                <div className="mb-4">
+                    <button 
+                        onClick={() => toggleGroup('systeme')}
+                        className="w-full flex items-center justify-between px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-[#BFA893] font-black hover:bg-white/5 transition-colors rounded-lg group"
+                    >
+                        <span>Système</span>
+                        <ChevronRight size={12} className={cn("transition-transform duration-300", expandedGroups.systeme && "rotate-90")} />
+                    </button>
+                    {expandedGroups.systeme && (
+                        <ul className="mt-2 space-y-1 px-1">
+                            {menuItems.slice(7).map(renderMenuItem)}
+                        </ul>
+                    )}
                 </div>
             </nav>
         </aside>

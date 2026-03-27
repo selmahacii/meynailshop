@@ -49,10 +49,10 @@ export default function AdminTopbar({ onMenuClick }: { onMenuClick?: () => void 
                 <Link
                     href="/"
                     target="_blank"
-                    className="hidden md:flex items-center text-xs font-semibold uppercase tracking-widest text-encre2 hover:text-rouge-mid transition-colors"
+                    className="flex items-center text-[10px] md:text-sm font-black uppercase tracking-widest text-encre2 hover:text-rouge-brand transition-all border border-creme2 bg-creme2/20 px-3 py-2 rounded-full md:border-0 md:bg-transparent md:px-0 md:py-0"
                 >
-                    <Globe size={16} className="mr-2" />
-                    Boutique
+                    <Globe size={16} className="mr-2 text-or" />
+                    <span className="hidden xs:inline md:inline">Boutique</span>
                 </Link>
 
                 <div className="h-8 w-[1px] bg-creme2 hidden md:block"></div>

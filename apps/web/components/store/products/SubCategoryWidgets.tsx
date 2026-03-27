@@ -84,15 +84,15 @@ export default function SubCategoryWidgets({
                         className={cn(
                             "flex flex-col items-center cursor-pointer group transition-all duration-500",
                             !activeSubSlug 
-                                ? "w-full md:w-auto md:flex-shrink-0 md:snap-start mb-6" 
-                                : "flex-shrink-0 snap-start max-w-[120px]"
+                                ? "w-full md:max-w-[160px] md:flex-shrink-0 md:snap-start mb-6" 
+                                : "flex-shrink-0 snap-start max-w-[100px]"
                         )}
                     >
                         <div className={cn(
-                            "transition-all duration-500 relative border-2 p-1.5",
+                            "transition-all duration-500 relative border-2 p-1",
                             !activeSubSlug 
-                                ? "w-full aspect-square rounded-[50px] md:rounded-[40px]" 
-                                : "w-24 h-24 md:w-28 md:h-28 rounded-[35px]",
+                                ? "w-[120px] h-[120px] md:w-[140px] md:h-[140px] rounded-[40px] md:rounded-[30px]" 
+                                : "w-20 h-20 md:w-24 md:h-24 rounded-[30px]",
                             activeSubSlug === sub.slug 
                                 ? "border-or scale-110 shadow-lg shadow-or/10 ring-4 ring-or/5" 
                                 : "border-rouge-brand/5 group-hover:border-rouge-brand/20"

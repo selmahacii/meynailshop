@@ -210,10 +210,10 @@ export default function ProductPage() {
                         {product && (
                             <div 
                                 onClick={() => toast.info("Le SKU est une référence unique générée automatiquement.")}
-                                className="flex items-center space-x-3 mb-6 bg-creme2/20 p-3 rounded-sm border border-creme2 w-fit cursor-help hover:bg-creme2/30 transition-all active:scale-95"
+                                className="flex items-center space-x-3 mb-6 bg-rouge-brand p-3.5 rounded-xl border border-gold-brand/30 w-fit cursor-help shadow-lg hover:shadow-rouge-brand/20 transition-all active:scale-95 group"
                             >
-                                <span className="text-xs font-black uppercase tracking-widest text-encre3">Réf :</span>
-                                <span className="text-sm font-mono font-black text-encre tracking-widest">
+                                <span className="text-xs font-black uppercase tracking-widest text-gold-brand/60 group-hover:text-gold-brand transition-colors">Réf :</span>
+                                <span className="text-sm font-mono font-black text-gold-brand tracking-widest">
                                     {selectedVariant !== null && product.variants[selectedVariant]?.sku 
                                         ? product.variants[selectedVariant].sku 
                                         : product.sku}
@@ -231,7 +231,7 @@ export default function ProductPage() {
                                 </>
                             )}
                             {product && product.comparePrice && (
-                                <span className="bg-rouge/10 text-rouge text-xs font-bold px-2 py-1 rounded-sm">
+                                <span className="bg-rouge-brand text-gold-brand border border-gold-brand/20 text-xs font-black px-3 py-1.5 rounded-sm shadow-md">
                                     -{Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)}%
                                 </span>
                             )}
@@ -283,10 +283,10 @@ export default function ProductPage() {
                                                 type="button"
                                                 onClick={() => setSelectedVariant(isSelected ? null : index)}
                                                 className={cn(
-                                                    "min-w-[70px] h-12 px-6 rounded-full border transition-all flex items-center justify-center font-bold text-sm tracking-widest",
+                                                    "min-w-[70px] h-12 px-6 rounded-full border transition-all flex items-center justify-center font-black text-[11px] tracking-[0.15em] uppercase",
                                                     isSelected
-                                                        ? "bg-rouge-deep border-rouge-deep text-white shadow-lg shadow-rouge-deep/20 scale-105"
-                                                        : "bg-or/5 border-or/20 text-rouge-deep hover:border-or/50 hover:bg-or/10"
+                                                        ? "bg-rouge-brand border-gold-brand/40 text-gold-brand shadow-xl shadow-rouge-brand/20 scale-105"
+                                                        : "bg-white border-creme2 text-encre3 hover:border-rouge-brand/30 hover:bg-creme/30"
                                                 )}
                                             >
                                                 {variant.sku.replace('REF-', '')}
