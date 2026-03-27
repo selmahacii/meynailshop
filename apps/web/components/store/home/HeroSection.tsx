@@ -73,7 +73,7 @@ export default function HeroSection() {
                         className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 w-full sm:w-auto"
                     >
                         <Link
-                            href="/catalogue"
+                            href="/catalogue?isNew=true"
                             className="bg-gold-brand hover:bg-[#D4C3AC] text-rouge-brand px-10 py-5 rounded-sm font-bold uppercase tracking-widest text-xs transition-all duration-300 flex items-center justify-center group shadow-2xl w-full sm:w-auto"
                         >
                             Découvrir la collection

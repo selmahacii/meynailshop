@@ -27,9 +27,10 @@ function CatalogueContent() {
         category: searchParams.get('category') || null,
         subCategory: searchParams.get('subCategory') || null,
         priceRanges: [],
-        inStock: false
+        inStock: false,
+        isNew: searchParams.get('isNew') === 'true'
     });
-    const [sortBy, setSortBy] = useState('newest');
+    const [sortBy, setSortBy] = useState(searchParams.get('badge') === 'top' ? 'popular' : 'newest');
     const [activeCategoryData, setActiveCategoryData] = useState<any>(null);
     const [allCategories, setAllCategories] = useState<any[]>([]);
 
@@ -37,13 +38,20 @@ function CatalogueContent() {
     useEffect(() => {
         const cat = searchParams.get('category');
         const sub = searchParams.get('subCategory');
+        const isNew = searchParams.get('isNew') === 'true';
+        const badge = searchParams.get('badge');
         
-        if (cat !== filters.category || sub !== filters.subCategory) {
+        if (cat !== filters.category || sub !== filters.subCategory || isNew !== filters.isNew) {
             setFilters(prev => ({
                 ...prev,
                 category: cat,
-                subCategory: sub
+                subCategory: sub,
+                isNew: isNew
             }));
+        }
+
+        if (badge === 'top' && sortBy !== 'popular') {
+            setSortBy('popular');
         }
     }, [searchParams]);
 
