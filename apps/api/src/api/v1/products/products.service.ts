@@ -52,11 +52,36 @@ export class ProductsService {
   }
 
   async getLowStockProducts(threshold: number = 5) {
-    return await this.productRepository
+    const products = await this.productRepository
       .createQueryBuilder('p')
-      .where('p.stock <= :threshold', { threshold })
+      .where('(p.stock <= :threshold OR p."hasVariants" = true)', { threshold })
       .andWhere('p.isActive = :isActive', { isActive: true })
-      .orderBy('p.stock', 'ASC')
       .getMany();
+
+    const results: any[] = [];
+    for (const p of products) {
+      if (!p.hasVariants) {
+        if (p.stock <= (p.stockAlert || threshold)) {
+          results.push({ ...p, isVariant: false });
+        }
+      } else if (p.variants && Array.isArray(p.variants)) {
+        for (const v of p.variants) {
+          const vThreshold = v.stockAlert || p.stockAlert || threshold;
+          if (v.stock <= vThreshold) {
+            results.push({
+              id: `${p.id}-${v.sku}`,
+              name: `${p.name} (${v.sku})`,
+              stock: v.stock,
+              sku: v.sku,
+              isVariant: true,
+              productId: p.id,
+              stockAlert: vThreshold
+            });
+          }
+        }
+      }
+    }
+
+    return results.sort((a, b) => a.stock - b.stock).slice(0, 10);
   }
 }

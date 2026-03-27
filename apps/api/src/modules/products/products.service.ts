@@ -50,10 +50,15 @@ export class ProductsService {
       throw new BadRequestException('Product with this slug or SKU already exists');
     }
 
-    // Ensure variants don't have labels (identified only by sku and image)
+    // Ensure variants don't have labels (identified only by sku, image and stock properties)
     let variants = createProductDto.variants;
     if (variants && Array.isArray(variants)) {
-      variants = variants.map((v: any) => ({ sku: v.sku, image: v.image, stock: v.stock || 0 }));
+      variants = variants.map((v: any) => ({ 
+        sku: v.sku, 
+        image: v.image, 
+        stock: v.stock || 0,
+        stockAlert: v.stockAlert || createProductDto.stockAlert || 5
+      }));
     }
 
     const product = this.productRepository.create({
@@ -217,7 +222,12 @@ export class ProductsService {
     const { sku, ...updateData } = updateProductDto;
 
     if (updateData.variants && Array.isArray(updateData.variants)) {
-      updateData.variants = updateData.variants.map((v: any) => ({ sku: v.sku, image: v.image, stock: v.stock || 0 }));
+      updateData.variants = updateData.variants.map((v: any) => ({ 
+        sku: v.sku, 
+        image: v.image, 
+        stock: v.stock || 0,
+        stockAlert: v.stockAlert || updateData.stockAlert || product.stockAlert || 5
+      }));
     }
 
     Object.assign(product, updateData);

@@ -407,7 +407,7 @@ export default function ProductCreatePage() {
                                                     <X size={14} />
                                                 </button>
                                             </div>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                                 <div className="space-y-2">
                                                     <label className="text-[9px] uppercase font-black tracking-widest text-encre3">SKU / Référence</label>
                                                     <input
@@ -426,6 +426,16 @@ export default function ProductCreatePage() {
                                                         value={variant.stock || 0}
                                                         onChange={(e) => updateVariant(index, 'stock', parseInt(e.target.value) || 0)}
                                                         className="w-full p-3 bg-white border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all font-bold"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-[9px] uppercase font-black tracking-widest text-encre3">Alerte stock</label>
+                                                    <input
+                                                        type="number"
+                                                        placeholder="5"
+                                                        value={variant.stockAlert || 5}
+                                                        onChange={(e) => updateVariant(index, 'stockAlert', parseInt(e.target.value) || 0)}
+                                                        className="w-full p-3 bg-white border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all font-bold text-or"
                                                     />
                                                 </div>
                                             </div>
