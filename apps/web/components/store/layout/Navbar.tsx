@@ -66,12 +66,12 @@ export default function Navbar() {
                 </button>
 
                 <Link href="/" className="flex items-center group lg:mr-0 pl-2 lg:pl-0">
-                    <div className="relative w-[60px] h-[60px] md:w-[80px] md:h-[80px] transition-all duration-500 hover:scale-105">
+                    <div className="relative w-[85px] h-[85px] md:w-[125px] md:h-[125px] transition-all duration-500 hover:scale-[1.15]">
                         <Image
                             src="/logo2.png"
                             alt="MEEY"
                             fill
-                            className="object-contain drop-shadow-[0_0_15px_rgba(0,0,0,0.3)]"
+                            className="object-contain drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
                             priority
                         />
                     </div>
@@ -88,7 +88,7 @@ export default function Navbar() {
                         >
                             <Link
                                 href={link.href}
-                                className={`text-xs md:text-sm font-bold uppercase tracking-[0.2em] transition-all hover:text-white hover:scale-105 drop-shadow-lg flex items-center gap-1 ${pathname === link.href ? 'text-gold-brand border-b-2 border-gold-brand pb-1' : 'text-gold-brand'
+                                className={`text-[10px] md:text-[11px] font-bold uppercase tracking-[0.25em] transition-all hover:text-white hover:scale-105 drop-shadow-lg flex items-center gap-1 ${pathname === link.href ? 'text-gold-brand border-b-2 border-gold-brand pb-1.5' : 'text-gold-brand'
                                     }`}
                             >
                                 {link.name}
@@ -116,7 +116,7 @@ export default function Navbar() {
                                                 <Link
                                                     key={sub.id}
                                                     href={`/categories/${link.href.split('/').pop()}/${sub.slug}`}
-                                                    className="block px-6 py-3 text-[10px] uppercase tracking-widest text-gold-brand hover:bg-gold-brand/10 hover:text-white transition-all font-bold"
+                                                    className="block px-6 py-3.5 text-[9px] uppercase tracking-[0.2em] text-gold-brand hover:bg-gold-brand/10 hover:text-white transition-all font-black"
                                                 >
                                                     {sub.name}
                                                 </Link>
