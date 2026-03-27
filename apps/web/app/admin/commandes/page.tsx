@@ -370,13 +370,6 @@ export default function AdminOrdersPage() {
                                             </button>
                                         )}
 
-                                        {/* Utility Actions */}
-                                        <button 
-                                            onClick={() => window.print()}
-                                            className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-white border-creme2 text-encre hover:border-or hover:text-or"
-                                        >
-                                            Facture
-                                        </button>
                                         <Link 
                                             href={`/admin/commandes/${order.id}`}
                                             className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-[#1A0A0A] text-white border-[#2A1A1A] hover:bg-rouge-deep"
@@ -481,12 +474,6 @@ export default function AdminOrdersPage() {
                                     >
                                         Détail
                                     </Link>
-                                    <button 
-                                        onClick={() => window.print()}
-                                        className="p-2 bg-white border border-creme2 text-encre rounded-sm shadow-sm"
-                                    >
-                                        <Printer size={14} />
-                                    </button>
                                 </div>
                             </div>
                         ))
