@@ -13,20 +13,37 @@ import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import { X, Loader2, AlertCircle, Filter, SlidersHorizontal, ArrowRight } from 'lucide-react';
 import SubCategoryWidgets from '@/components/store/products/SubCategoryWidgets';
 import { cn } from '@/lib/utils';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 export default function CataloguePage() {
+    const searchParams = useSearchParams();
+    const router = useRouter();
     const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState<FilterState>({
-        category: null,
-        subCategory: null,
+        category: searchParams.get('category') || null,
+        subCategory: searchParams.get('subCategory') || null,
         priceRanges: [],
         inStock: false
     });
     const [sortBy, setSortBy] = useState('newest');
     const [activeCategoryData, setActiveCategoryData] = useState<any>(null);
     const [allCategories, setAllCategories] = useState<any[]>([]);
+
+    // Sync filters with URL when page loads or URL changes (for back button/navigation)
+    useEffect(() => {
+        const cat = searchParams.get('category');
+        const sub = searchParams.get('subCategory');
+        
+        if (cat !== filters.category || sub !== filters.subCategory) {
+            setFilters(prev => ({
+                ...prev,
+                category: cat,
+                subCategory: sub
+            }));
+        }
+    }, [searchParams]);
 
     useEffect(() => {
         const fetchCategoryData = async () => {
@@ -158,8 +175,10 @@ export default function CataloguePage() {
                         onSelect={(slug) => {
                             if (activeCategoryData) {
                                 setFilters(prev => ({ ...prev, subCategory: slug }));
+                                router.push(`/catalogue?category=${filters.category}${slug ? `&subCategory=${slug}` : ''}`);
                             } else {
                                 setFilters(prev => ({ ...prev, category: slug, subCategory: null }));
+                                router.push(`/catalogue?category=${slug}`);
                             }
                         }}
                         title={activeCategoryData ? `Collection ${activeCategoryData.name}` : "Collections Populaires"}
@@ -246,7 +265,7 @@ export default function CataloguePage() {
                                         animate="show"
                                         className={cn(
                                             "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 md:gap-10",
-                                            !filters.subCategory && "hidden md:grid" // Hide products on mobile if no sub-category
+                                            !filters.subCategory && filters.category && "hidden" // Hide products completely if category selected but no sub-selected
                                         )}
                                     >
                                         {products.map((product) => (
@@ -278,17 +297,17 @@ export default function CataloguePage() {
                                     </motion.div>
                                 )}
 
-                                {/* Mobile Selection Message if no sub-category */}
-                                {!filters.subCategory && (
-                                    <div className="md:hidden flex flex-col items-center justify-center p-12 text-center bg-white/30 backdrop-blur-md rounded-3xl border border-creme2 border-dashed">
-                                        <div className="w-12 h-12 bg-or/10 rounded-full flex items-center justify-center mb-4">
-                                            <ArrowRight size={20} className="text-or" />
+                                {/* Selection Message if no sub-category */}
+                                {!filters.subCategory && filters.category && (
+                                    <div className="flex flex-col items-center justify-center p-12 md:p-24 text-center bg-white/30 backdrop-blur-md rounded-[40px] border border-creme2 border-dashed shadow-inner w-full">
+                                        <div className="w-16 h-16 bg-or/10 rounded-full flex items-center justify-center mb-6 ring-8 ring-or/5">
+                                            <ArrowRight size={24} className="text-or animate-bounce-x" />
                                         </div>
-                                        <h4 className="font-serif text-xl text-encre mb-2">
-                                            {filters.category ? "Choisissez la collection" : "Choisissez un univers"}
+                                        <h4 className="font-serif text-2xl md:text-4xl text-encre mb-4">
+                                            Découvrez nos collections
                                         </h4>
-                                        <p className="text-[10px] text-encre3 uppercase tracking-widest font-bold">
-                                            {filters.category ? "Sélectionnez une sous-catégorie" : "Sélectionnez une catégorie"} ci-dessus pour explorer les produits
+                                        <p className="text-[10px] md:text-sm text-encre3 uppercase tracking-widest font-bold max-w-sm leading-relaxed">
+                                            Sélectionnez une sous-catégorie ci-dessus pour explorer les produits de la collection {activeCategoryData?.name}
                                         </p>
                                     </div>
                                 )}

@@ -81,7 +81,7 @@ export default function HomePage() {
                                 <Link 
                                     key={cat.id || cat.name} 
                                     href={`/catalogue?category=${slug}`}
-                                    className="group cursor-pointer relative aspect-[4/5] overflow-hidden bg-encre/10 rounded-sm shadow-sm border border-or/5"
+                                    className="group cursor-pointer relative aspect-[4/5] overflow-hidden bg-encre/10 rounded-[40px] shadow-sm border border-or/5"
                                 >
                                     <img 
                                         src={displayImage} 

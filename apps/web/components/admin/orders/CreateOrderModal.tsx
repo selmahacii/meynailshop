@@ -1,19 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-    X, 
-    Search, 
-    Plus, 
-    Minus, 
-    Trash2, 
-    Instagram, 
-    MessageCircle, 
-    Store, 
-    Globe, 
-    User, 
-    MapPin, 
-    Phone, 
+import {
+    X,
+    Search,
+    Plus,
+    Minus,
+    Trash2,
+    Instagram,
+    MessageCircle,
+    Store,
+    Globe,
+    User,
+    MapPin,
+    Phone,
     Check,
     Loader
 } from 'lucide-react';
@@ -30,6 +30,7 @@ interface CreateOrderModalProps {
 
 const sources = [
     { id: 'instagram', name: 'Instagram', icon: Instagram, color: 'text-pink-600 bg-pink-50' },
+    { id: 'whatsapp', name: 'WhatsApp', icon: MessageCircle, color: 'text-emerald-600 bg-emerald-50' },
     { id: 'facebook', name: 'Facebook', icon: Globe, color: 'text-blue-600 bg-blue-50' },
     { id: 'store', name: 'Boutique / Physique', icon: Store, color: 'text-encre bg-creme2' },
     { id: 'other', name: 'Autre', icon: Plus, color: 'text-encre3 bg-creme' },
@@ -41,7 +42,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
     const [searching, setSearching] = useState(false);
     const [query, setQuery] = useState('');
     const [searchResults, setSearchResults] = useState<any[]>([]);
-    
+
     const [formData, setFormData] = useState({
         source: 'instagram',
         deliveryType: 'home',
@@ -164,7 +165,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                 <span className="p-1 px-2.5 bg-or text-white rounded-full">1</span>
                                 Sélection des produits
                             </h3>
-                            
+
                             <div className="relative mb-6">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-encre3" size={18} />
                                 <input
@@ -190,7 +191,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                                     <p className="text-[10px] font-black text-or">{p.price} DA</p>
                                                 </div>
                                             </div>
-                                            <button 
+                                            <button
                                                 onClick={() => addItem(p)}
                                                 className="p-2 bg-encre text-white hover:bg-rouge-deep transition-colors"
                                             >
@@ -220,7 +221,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                                     <td className="px-4 py-4">{item.unitPrice} DA</td>
                                                     <td className="px-4 py-4">
                                                         <div className="flex items-center gap-2">
-                                                            <button 
+                                                            <button
                                                                 onClick={() => {
                                                                     setFormData(prev => ({
                                                                         ...prev,
@@ -232,7 +233,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                                                 <Minus size={12} />
                                                             </button>
                                                             <span className="w-6 text-center font-black">{item.quantity}</span>
-                                                            <button 
+                                                            <button
                                                                 onClick={() => {
                                                                     setFormData(prev => ({
                                                                         ...prev,
@@ -274,18 +275,18 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black uppercase tracking-widest text-encre3">Prénom *</label>
-                                            <input 
-                                                className="w-full p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm" 
-                                                value={formData.customer.firstName} 
-                                                onChange={e => setFormData(prev => ({ ...prev, customer: { ...prev.customer, firstName: e.target.value } }))} 
+                                            <input
+                                                className="w-full p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm"
+                                                value={formData.customer.firstName}
+                                                onChange={e => setFormData(prev => ({ ...prev, customer: { ...prev.customer, firstName: e.target.value } }))}
                                             />
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black uppercase tracking-widest text-encre3">Nom</label>
-                                            <input 
-                                                className="w-full p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm" 
-                                                value={formData.customer.lastName} 
-                                                onChange={e => setFormData(prev => ({ ...prev, customer: { ...prev.customer, lastName: e.target.value } }))} 
+                                            <input
+                                                className="w-full p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm"
+                                                value={formData.customer.lastName}
+                                                onChange={e => setFormData(prev => ({ ...prev, customer: { ...prev.customer, lastName: e.target.value } }))}
                                             />
                                         </div>
                                     </div>
@@ -293,20 +294,20 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                         <label className="text-[10px] font-black uppercase tracking-widest text-encre3">Téléphone *</label>
                                         <div className="relative">
                                             <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-encre3" size={14} />
-                                            <input 
-                                                className="w-full pl-10 p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm" 
+                                            <input
+                                                className="w-full pl-10 p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm"
                                                 placeholder="0X XX XX XX XX"
-                                                value={formData.customer.phone} 
-                                                onChange={e => setFormData(prev => ({ ...prev, customer: { ...prev.customer, phone: e.target.value } }))} 
+                                                value={formData.customer.phone}
+                                                onChange={e => setFormData(prev => ({ ...prev, customer: { ...prev.customer, phone: e.target.value } }))}
                                             />
                                         </div>
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-encre3">Wilaya</label>
-                                        <select 
-                                            className="w-full p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm font-bold" 
-                                            value={formData.customer.wilaya} 
-                                            onChange={e => setFormData(prev => ({ ...prev, customer: { ...prev.customer, wilaya: e.target.value } }))} 
+                                        <select
+                                            className="w-full p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm font-bold"
+                                            value={formData.customer.wilaya}
+                                            onChange={e => setFormData(prev => ({ ...prev, customer: { ...prev.customer, wilaya: e.target.value } }))}
                                         >
                                             <option value="">Sélectionner</option>
                                             {SHIPPING_RATES.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
@@ -314,10 +315,10 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-encre3">Adresse complète</label>
-                                        <textarea 
-                                            className="w-full p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm h-24 resize-none" 
-                                            value={formData.customer.address} 
-                                            onChange={e => setFormData(prev => ({ ...prev, customer: { ...prev.customer, address: e.target.value } }))} 
+                                        <textarea
+                                            className="w-full p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm h-24 resize-none"
+                                            value={formData.customer.address}
+                                            onChange={e => setFormData(prev => ({ ...prev, customer: { ...prev.customer, address: e.target.value } }))}
                                         />
                                     </div>
                                 </div>
@@ -336,7 +337,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                             {sources.map(s => {
                                                 const Icon = s.icon;
                                                 return (
-                                                    <button 
+                                                    <button
                                                         key={s.id}
                                                         onClick={() => setFormData(prev => ({ ...prev, source: s.id }))}
                                                         className={cn(
@@ -356,7 +357,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                     <div className="space-y-3">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-encre3">Mode de livraison</label>
                                         <div className="grid grid-cols-2 gap-4">
-                                            <button 
+                                            <button
                                                 onClick={() => setFormData(prev => ({ ...prev, deliveryType: 'home' }))}
                                                 className={cn(
                                                     "p-4 border text-left rounded-sm transition-all relative overflow-hidden",
@@ -367,7 +368,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                                 <p className="text-[10px] opacity-60 mt-1">Livraison main à main</p>
                                                 {formData.deliveryType === 'home' && <Check className="absolute top-2 right-2 text-or" size={14} />}
                                             </button>
-                                            <button 
+                                            <button
                                                 onClick={() => setFormData(prev => ({ ...prev, deliveryType: 'office' }))}
                                                 className={cn(
                                                     "p-4 border text-left rounded-sm transition-all relative overflow-hidden",
@@ -389,7 +390,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                         <div className="flex justify-between items-center text-xs">
                                             <span className="text-encre3">Livraison</span>
                                             <div className="flex items-center gap-2">
-                                                <input 
+                                                <input
                                                     type="number"
                                                     className="w-20 p-1 text-right bg-white border border-creme2 rounded-sm font-bold"
                                                     value={formData.shippingCost}
@@ -403,7 +404,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                                 <p className="text-[10px] font-black uppercase tracking-widest text-or">Total Final</p>
                                                 <p className="text-2xl font-serif text-encre underline decoration-or decoration-2">{total} DA</p>
                                             </div>
-                                            <button 
+                                            <button
                                                 onClick={handleSubmit}
                                                 disabled={loading || formData.items.length === 0}
                                                 className="px-10 py-4 bg-encre text-creme text-xs font-black uppercase tracking-[0.2em] hover:bg-rouge-deep disabled:opacity-50 transition-all shadow-xl active:scale-95"

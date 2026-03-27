@@ -95,15 +95,15 @@ export default function SubCategoryWidgets({
                         <div className={cn(
                             "transition-all duration-500 relative border-2 p-1.5",
                             !activeSubSlug 
-                                ? "w-full aspect-square rounded-2xl md:w-24 md:h-24 md:rounded-full" 
-                                : "w-20 h-20 md:w-24 md:h-24 rounded-sm md:rounded-full",
+                                ? "w-full aspect-square rounded-[40px]" 
+                                : "w-20 h-20 md:w-24 md:h-24 rounded-[30px]",
                             activeSubSlug === sub.slug 
                                 ? "border-or scale-110 shadow-lg shadow-or/10 ring-4 ring-or/5" 
                                 : "border-creme2 group-hover:border-or/40"
                         )}>
                             <div className={cn(
                                 "w-full h-full bg-creme2 overflow-hidden relative",
-                                !activeSubSlug ? "rounded-xl md:rounded-full" : "rounded-[2px] md:rounded-full"
+                                !activeSubSlug ? "rounded-[34px]" : "rounded-[24px]"
                             )}>
                                 {sub.imageUrl ? (
                                     <img 
