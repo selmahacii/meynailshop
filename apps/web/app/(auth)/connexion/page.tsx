@@ -61,7 +61,7 @@ function LoginForm() {
 
                 if (token) {
                     localStorage.setItem('accessToken', token);
-                    document.cookie = `accessToken=${token}; path=/; max-age=31536000`;
+                    document.cookie = `accessToken=${token}; path=/; max-age=259200`;
                 }
                 
                 setUser(userToStore);
@@ -79,7 +79,7 @@ function LoginForm() {
                 
                 if (accessToken) {
                     localStorage.setItem('accessToken', accessToken);
-                    document.cookie = `accessToken=${accessToken}; path=/; max-age=31536000`;
+                    document.cookie = `accessToken=${accessToken}; path=/; max-age=259200`;
                 }
 
                 // If authData itself looks like a user (has id/email/role)
