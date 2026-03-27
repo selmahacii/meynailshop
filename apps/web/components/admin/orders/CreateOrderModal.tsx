@@ -85,12 +85,17 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
         }
     }, [formData.customer.wilaya, formData.deliveryType]);
 
-    const addItem = (product: any) => {
-        const existing = formData.items.find(i => i.productId === product.id);
+    const addItem = (product: any, variant?: any) => {
+        const itemKey = variant ? `${product.id}-${variant.sku}` : product.id;
+        const existing = formData.items.find(i => (i.variantSku === variant?.sku && i.productId === product.id) || (i.productId === product.id && !variant && !i.variantSku));
+        
         if (existing) {
             setFormData(prev => ({
                 ...prev,
-                items: prev.items.map(i => i.productId === product.id ? { ...i, quantity: i.quantity + 1 } : i)
+                items: prev.items.map(i => {
+                    const match = variant ? (i.productId === product.id && i.variantSku === variant.sku) : (i.productId === product.id && !i.variantSku);
+                    return match ? { ...i, quantity: i.quantity + 1 } : i;
+                })
             }));
         } else {
             setFormData(prev => ({
@@ -101,15 +106,20 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                     unitPrice: product.price,
                     quantity: 1,
                     productSku: product.sku,
-                    image: product.images?.[0] || ''
+                    variantSku: variant?.sku,
+                    variantImage: variant?.image,
+                    image: variant?.image || product.images?.[0] || ''
                 }]
             }));
         }
-        toast.info(`${product.name} ajouté`);
+        toast.info(`${product.name} ${variant ? `(${variant.sku})` : ''} ajouté`);
     };
 
-    const removeItem = (id: string) => {
-        setFormData(prev => ({ ...prev, items: prev.items.filter(i => i.productId !== id) }));
+    const removeItem = (productId: string, variantSku?: string) => {
+        setFormData(prev => ({ 
+            ...prev, 
+            items: prev.items.filter(i => !(i.productId === productId && i.variantSku === variantSku)) 
+        }));
     };
 
     const subtotal = formData.items.reduce((sum, i) => sum + (i.unitPrice * i.quantity), 0);
@@ -181,22 +191,49 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                             {searchResults.length > 0 && (
                                 <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-[#FAF9F6] border border-creme2 rounded-sm animate-in slide-in-from-top-2">
                                     {searchResults.map(p => (
-                                        <div key={p.id} className="flex items-center justify-between p-3 bg-white border border-creme2 hover:border-or transition-all group">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-12 h-12 bg-creme2 overflow-hidden flex-shrink-0">
-                                                    <img src={p.images?.[0]} alt="" className="w-full h-full object-cover" />
+                                        <div key={p.id} className="bg-white border border-creme2 rounded-sm overflow-hidden flex flex-col">
+                                            <div className="flex items-center justify-between p-3 border-b border-creme2/50 hover:bg-creme/10 transition-colors group">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-12 h-12 bg-creme2 overflow-hidden flex-shrink-0">
+                                                        <img src={p.images?.[0]} alt="" className="w-full h-full object-cover" />
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <p className="text-xs font-bold text-encre truncate">{p.name}</p>
+                                                        <p className="text-[10px] font-black text-or">{p.price} DA</p>
+                                                    </div>
                                                 </div>
-                                                <div className="min-w-0">
-                                                    <p className="text-xs font-bold text-encre truncate">{p.name}</p>
-                                                    <p className="text-[10px] font-black text-or">{p.price} DA</p>
-                                                </div>
+                                                {!p.references?.length ? (
+                                                    <button
+                                                        onClick={() => addItem(p)}
+                                                        className="p-2 bg-encre text-white hover:bg-rouge-deep transition-colors"
+                                                    >
+                                                        <Plus size={14} />
+                                                    </button>
+                                                ) : (
+                                                    <span className="text-[8px] font-black uppercase tracking-widest text-encre3 bg-creme2 px-2 py-1 rounded-sm">Voir Refs</span>
+                                                )}
                                             </div>
-                                            <button
-                                                onClick={() => addItem(p)}
-                                                className="p-2 bg-encre text-white hover:bg-rouge-deep transition-colors"
-                                            >
-                                                <Plus size={14} />
-                                            </button>
+
+                                            {p.references?.length > 0 && (
+                                                <div className="p-2 bg-creme/5 space-y-2">
+                                                    {p.references.map((ref: any, idx: number) => (
+                                                        <div key={ref.sku || idx} className="flex items-center justify-between p-2 bg-white/50 border border-dotted border-creme2 rounded-sm">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-8 h-8 rounded-full overflow-hidden border border-creme2">
+                                                                    <img src={ref.image} alt="" className="w-full h-full object-cover" />
+                                                                </div>
+                                                                <span className="text-[10px] font-bold text-encre3 font-mono">{ref.sku}</span>
+                                                            </div>
+                                                            <button 
+                                                                onClick={() => addItem(p, ref)}
+                                                                className="p-1.5 bg-or text-white rounded-sm hover:bg-encre transition-colors shadow-sm"
+                                                            >
+                                                                <Plus size={12} />
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
                                     ))}
                                 </div>
@@ -216,8 +253,18 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                         </thead>
                                         <tbody className="divide-y divide-creme2">
                                             {formData.items.map(item => (
-                                                <tr key={item.productId} className="text-xs">
-                                                    <td className="px-4 py-4 font-bold text-encre">{item.name}</td>
+                                                <tr key={item.variantSku ? `${item.productId}-${item.variantSku}` : item.productId} className="text-xs hover:bg-creme/5 transition-colors">
+                                                    <td className="px-4 py-4">
+                                                        <div className="flex items-center gap-3">
+                                                            <img src={item.image} className="w-8 h-8 object-cover rounded-sm border border-creme2" />
+                                                            <div>
+                                                                <p className="font-bold text-encre">{item.name}</p>
+                                                                {item.variantSku && (
+                                                                    <p className="text-[8px] font-black text-rouge-deep uppercase tracking-widest mt-0.5">Réf: {item.variantSku}</p>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </td>
                                                     <td className="px-4 py-4">{item.unitPrice} DA</td>
                                                     <td className="px-4 py-4">
                                                         <div className="flex items-center gap-2">
@@ -225,7 +272,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                                                 onClick={() => {
                                                                     setFormData(prev => ({
                                                                         ...prev,
-                                                                        items: prev.items.map(i => i.productId === item.productId ? { ...i, quantity: Math.max(1, i.quantity - 1) } : i)
+                                                                        items: prev.items.map(i => (i.productId === item.productId && i.variantSku === item.variantSku) ? { ...i, quantity: Math.max(1, i.quantity - 1) } : i)
                                                                     }));
                                                                 }}
                                                                 className="p-1 hover:bg-creme rounded transition-colors"
@@ -237,7 +284,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                                                 onClick={() => {
                                                                     setFormData(prev => ({
                                                                         ...prev,
-                                                                        items: prev.items.map(i => i.productId === item.productId ? { ...i, quantity: i.quantity + 1 } : i)
+                                                                        items: prev.items.map(i => (i.productId === item.productId && i.variantSku === item.variantSku) ? { ...i, quantity: i.quantity + 1 } : i)
                                                                     }));
                                                                 }}
                                                                 className="p-1 hover:bg-creme rounded transition-colors"
@@ -248,7 +295,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                                     </td>
                                                     <td className="px-4 py-4 font-black">{item.unitPrice * item.quantity} DA</td>
                                                     <td className="px-4 py-4 text-right">
-                                                        <button onClick={() => removeItem(item.productId)} className="text-rouge-mid hover:text-black">
+                                                        <button onClick={() => removeItem(item.productId, item.variantSku)} className="text-rouge-mid hover:text-black">
                                                             <Trash2 size={14} />
                                                         </button>
                                                     </td>

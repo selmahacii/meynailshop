@@ -49,7 +49,7 @@ export default function CartPage() {
                     <div className="lg:col-span-2 space-y-6">
                         {items.map((item) => (
                             <div
-                                key={item.productId}
+                                key={item.variantSku ? `${item.productId}-${item.variantSku}` : item.productId}
                                 className="flex flex-col sm:flex-row bg-white p-4 border border-creme2 shadow-sm gap-6 relative group"
                             >
                                 <button

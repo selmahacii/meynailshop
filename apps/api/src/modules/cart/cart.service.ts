@@ -110,6 +110,7 @@ export class CartService {
   async updateItem(
     userId: string,
     productId: string,
+    variantSku: string | undefined,
     updateCartItemDto: UpdateCartItemDto,
   ): Promise<CartItem> {
     const product = await this.productRepository.findOne({
@@ -130,7 +131,7 @@ export class CartService {
     };
 
     const itemIndex = cart.items.findIndex(
-      (item) => item.productId === productId,
+      (item) => item.productId === productId && item.variantSku === variantSku,
     );
 
     if (itemIndex < 0) {
@@ -146,13 +147,15 @@ export class CartService {
     return cart.items[itemIndex];
   }
 
-  async removeItem(userId: string, productId: string): Promise<void> {
+  async removeItem(userId: string, productId: string, variantSku?: string): Promise<void> {
     const cartKey = this.getCartKey(userId);
     const cart = (await this.cacheManager.get<CartData>(cartKey)) || {
       items: [],
     };
 
-    cart.items = cart.items.filter((item) => item.productId !== productId);
+    cart.items = cart.items.filter(
+      (item) => !(item.productId === productId && item.variantSku === variantSku),
+    );
 
     if (cart.items.length === 0) {
       await this.cacheManager.del(cartKey);

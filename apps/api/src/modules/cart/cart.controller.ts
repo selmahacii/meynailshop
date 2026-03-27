@@ -80,6 +80,7 @@ export class CartController {
     const cartItem = await this.cartService.updateItem(
       user.id,
       productId,
+      updateCartItemDto.variantSku,
       updateCartItemDto,
     );
 
@@ -95,8 +96,9 @@ export class CartController {
   async removeItem(
     @CurrentUser() user: any,
     @Param('productId') productId: string,
+    @Query('variantSku') variantSku?: string,
   ) {
-    await this.cartService.removeItem(user.id, productId);
+    await this.cartService.removeItem(user.id, productId, variantSku);
 
     return {
       statusCode: 200,

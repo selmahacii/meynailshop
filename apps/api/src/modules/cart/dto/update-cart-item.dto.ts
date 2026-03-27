@@ -1,4 +1,4 @@
-import { IsNumber, Min, Max } from 'class-validator';
+import { IsNumber, Min, Max, IsString, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class UpdateCartItemDto {
@@ -7,4 +7,8 @@ export class UpdateCartItemDto {
   @Min(1)
   @Max(999)
   quantity: number;
+
+  @IsString()
+  @IsOptional()
+  variantSku?: string;
 }
