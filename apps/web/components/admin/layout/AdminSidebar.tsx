@@ -56,7 +56,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                 const productsRes = await ProductsAPI.getLowStock();
 
                 setBadges({
-                    orders: ordersRes?.data?.pending || 0,
+                    orders: ordersRes?.data?.active || 0,
                     stock: productsRes?.data?.total || productsRes?.data?.items?.length || 0,
                     reviews: ordersRes?.data?.pendingReviews || 0,
                 });
@@ -68,6 +68,19 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
         };
 
         fetchBadges();
+
+        // Refresh badges every 30 seconds to keep counts in sync
+        const interval = setInterval(fetchBadges, 30000);
+
+        // Listen for internal events (e.g. from Order details page)
+        window.addEventListener('orderUpdated', fetchBadges);
+        window.addEventListener('stockUpdated', fetchBadges);
+
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('orderUpdated', fetchBadges);
+            window.removeEventListener('stockUpdated', fetchBadges);
+        };
     }, []);
 
     const renderMenuItem = (item: any) => {

@@ -102,6 +102,9 @@ export default function AdminStockPage() {
                 setProducts(prev => prev.map(p => p.id === id ? { ...p, stock: newStock } : p));
                 setInlineEdits(prev => { const n = { ...prev }; delete n[id]; return n; });
                 toast.success('Stock mis à jour');
+                
+                // Refresh sidebar badge
+                window.dispatchEvent(new Event('stockUpdated'));
             } else {
                 toast.error(result.error || 'Erreur de mise à jour');
             }

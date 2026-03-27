@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, Between } from 'typeorm';
+import { Repository, Like, Between, Brackets } from 'typeorm';
 import { Product } from '../../database/entities/product.entity';
 import { Category } from '../../database/entities/category.entity';
 import { PaginatedResult } from '../../common/pagination/paginated-result.interface';
@@ -79,7 +79,31 @@ export class ProductsService {
       .where('product.isActive = :isActive', { isActive: true });
 
     if (query.search) {
-      queryBuilder.andWhere('product.name ILIKE :search', { search: `%${query.search}%` });
+      const search = `%${query.search}%`;
+      queryBuilder.andWhere(new Brackets(qb => {
+        qb.where('product.name ILIKE :search', { search })
+          .orWhere('product.sku ILIKE :search', { search })
+          .orWhere('category.name ILIKE :search', { search })
+          .orWhere('subCategory.name ILIKE :search', { search });
+        
+        // Complex JSONB Search for variant SKUs: 
+        // We check if any element in the 'variants' array has a 'sku' field matching the search
+        qb.orWhere(`EXISTS (
+          SELECT 1 FROM jsonb_array_elements(CASE WHEN product.variants IS NULL THEN '[]'::jsonb ELSE product.variants END) v 
+          WHERE v->>'sku' ILIKE :search
+        )`, { search });
+        
+        // Price search if input is numeric
+        const priceValue = parseFloat(query.search);
+        if (!isNaN(priceValue)) {
+            qb.orWhere('product.price = :exactPrice', { exactPrice: priceValue });
+            // Or allow price range around search (e.g. within 10% or +/- 50 DA)
+            qb.orWhere('product.price BETWEEN :minP AND :maxP', { 
+                minP: priceValue - 100, 
+                maxP: priceValue + 100 
+            });
+        }
+      }));
     }
 
     if (query.category) {

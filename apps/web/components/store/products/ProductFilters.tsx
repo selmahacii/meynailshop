@@ -23,6 +23,7 @@ export type FilterState = {
     priceRanges: string[];
     inStock: boolean;
     isNew?: boolean;
+    search?: string | null;
 };
 
 const priceRanges = [

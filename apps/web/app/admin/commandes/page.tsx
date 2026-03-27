@@ -102,6 +102,12 @@ export default function AdminOrdersPage() {
                 // Refresh orders on the same page and stats
                 await fetchOrders(activeTab === 'active' ? 'active' : activeTab, pagination.page);
                 await fetchStats();
+                
+                // Track update globally for sidebar
+                window.dispatchEvent(new Event('orderUpdated'));
+                if (['cancelled', 'returned'].includes(newStatus)) {
+                    window.dispatchEvent(new Event('stockUpdated'));
+                }
             } else {
                 setError(result.error || 'Erreur lors de la mise à jour');
             }
@@ -508,6 +514,7 @@ export default function AdminOrdersPage() {
                 onSuccess={() => {
                     fetchOrders(activeTab);
                     fetchStats();
+                    window.dispatchEvent(new Event('orderUpdated'));
                 }}
             />
         </div>

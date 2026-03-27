@@ -308,7 +308,11 @@ export default function Navbar() {
             </AnimatePresence>
 
             {/* Search Overlay */}
-            <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+            <SearchOverlay 
+                isOpen={isSearchOpen} 
+                onClose={() => setIsSearchOpen(false)} 
+                allCategories={categories}
+            />
         </nav>
     );
 }

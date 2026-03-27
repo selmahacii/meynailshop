@@ -64,6 +64,14 @@ export default function OrderDetailsPage() {
             const result = await OrdersAPI.updateStatus(id as string, newStatus);
             if (result.success) {
                 setOrder(result.data);
+                
+                // Signal to sidebar/other components to refresh counts
+                window.dispatchEvent(new Event('orderUpdated'));
+                
+                // If the status involves stock (cancelled/returned), trigger stock update too
+                if (['cancelled', 'returned'].includes(newStatus)) {
+                    window.dispatchEvent(new Event('stockUpdated'));
+                }
             } else {
                 alert(result.error || 'Erreur lors du changement de statut');
             }

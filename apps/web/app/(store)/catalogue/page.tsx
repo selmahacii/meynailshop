@@ -28,7 +28,8 @@ function CatalogueContent() {
         subCategory: searchParams.get('subCategory') || null,
         priceRanges: [],
         inStock: false,
-        isNew: searchParams.get('isNew') === 'true'
+        isNew: searchParams.get('isNew') === 'true',
+        search: searchParams.get('search') || null
     });
     const [sortBy, setSortBy] = useState(searchParams.get('badge') === 'top' ? 'popular' : 'newest');
     const [activeCategoryData, setActiveCategoryData] = useState<any>(null);
@@ -40,13 +41,15 @@ function CatalogueContent() {
         const sub = searchParams.get('subCategory');
         const isNew = searchParams.get('isNew') === 'true';
         const badge = searchParams.get('badge');
+        const search = searchParams.get('search');
         
-        if (cat !== filters.category || sub !== filters.subCategory || isNew !== filters.isNew) {
+        if (cat !== filters.category || sub !== filters.subCategory || isNew !== filters.isNew || search !== filters.search) {
             setFilters(prev => ({
                 ...prev,
                 category: cat,
                 subCategory: sub,
-                isNew: isNew
+                isNew: isNew,
+                search: search
             }));
         }
 
@@ -86,6 +89,7 @@ function CatalogueContent() {
                 if (filters.subCategory) params.subCategory = filters.subCategory;
                 if (filters.inStock) params.inStock = 'true';
                 if (filters.isNew) params.badge = 'new';
+                if (filters.search) params.search = filters.search;
                 
                 if (filters.priceRanges.length > 0) {
                     let min = Infinity;
@@ -198,26 +202,65 @@ function CatalogueContent() {
                 </div>
 
                 {/* Return/Reset Banner */}
-                {filters.category && (
+                {(filters.category || filters.search) && (
                     <motion.div 
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="mb-12 flex items-center gap-3 bg-white/60 backdrop-blur-md p-2 pl-6 pr-2 rounded-full border border-or/20 shadow-sm w-fit mx-auto lg:mx-0 group cursor-pointer hover:border-or/60 transition-all"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="mb-12 flex flex-wrap items-center gap-4 animate-in fade-in"
                     >
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-encre">
-                            {filters.subCategory ? activeCategoryData?.subCategories?.find((s:any) => s.slug === filters.subCategory)?.name : activeCategoryData?.name}
-                        </span>
+                        {filters.category && (
+                            <div className="flex items-center gap-3 bg-white/60 backdrop-blur-md p-2 pl-6 pr-2 rounded-full border border-or/20 shadow-sm group ">
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-encre">
+                                    Collection: {filters.subCategory ? activeCategoryData?.subCategories?.find((s:any) => s.slug === filters.subCategory)?.name : activeCategoryData?.name}
+                                </span>
+                                <button 
+                                    onClick={() => {
+                                        if (filters.subCategory) {
+                                            setFilters(prev => ({ ...prev, subCategory: null }));
+                                            const params = new URLSearchParams(searchParams.toString());
+                                            params.delete('subCategory');
+                                            router.push(`/catalogue?${params.toString()}`);
+                                        } else {
+                                            setFilters(prev => ({ ...prev, category: null, subCategory: null }));
+                                            const params = new URLSearchParams(searchParams.toString());
+                                            params.delete('category');
+                                            router.push(`/catalogue?${params.toString()}`);
+                                        }
+                                    }}
+                                    className="w-8 h-8 rounded-full bg-creme flex items-center justify-center text-encre hover:bg-rouge hover:text-white transition-all shadow-inner"
+                                >
+                                    <X size={14} />
+                                </button>
+                            </div>
+                        )}
+
+                        {filters.search && (
+                            <div className="flex items-center gap-3 bg-white/60 backdrop-blur-md p-2 pl-6 pr-2 rounded-full border border-or/20 shadow-sm group">
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-encre">
+                                    Recherche: "{filters.search}"
+                                </span>
+                                <button 
+                                    onClick={() => {
+                                        setFilters(prev => ({ ...prev, search: null }));
+                                        const params = new URLSearchParams(searchParams.toString());
+                                        params.delete('search');
+                                        router.push(`/catalogue?${params.toString()}`);
+                                    }}
+                                    className="w-8 h-8 rounded-full bg-creme flex items-center justify-center text-encre hover:bg-rouge hover:text-white transition-all shadow-inner"
+                                >
+                                    <X size={14} />
+                                </button>
+                            </div>
+                        )}
+
                         <button 
                             onClick={() => {
-                                if (filters.subCategory) {
-                                    setFilters(prev => ({ ...prev, subCategory: null }));
-                                } else {
-                                    setFilters(prev => ({ ...prev, category: null, subCategory: null }));
-                                }
+                                setFilters({ category: null, subCategory: null, priceRanges: [], inStock: false });
+                                router.push('/catalogue');
                             }}
-                            className="w-8 h-8 rounded-full bg-creme flex items-center justify-center text-encre hover:bg-rouge hover:text-white transition-all shadow-inner"
+                            className="text-[10px] font-bold text-encre3 hover:text-rouge transition-colors uppercase tracking-widest underline underline-offset-4"
                         >
-                            <X size={14} />
+                            Tout effacer
                         </button>
                     </motion.div>
                 )}
