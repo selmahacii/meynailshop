@@ -239,9 +239,13 @@ export default function ProductCreatePage() {
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-[10px] uppercase font-black tracking-widest text-encre3">SKU (Référence)</label>
-                                    <div className="w-full p-4 bg-creme2/10 border border-creme2 border-dashed rounded-sm text-sm text-encre3 font-mono italic">
-                                        Généré automatiquement (ex: MEEY-001)
-                                    </div>
+                                    <input 
+                                        type="text" 
+                                        readOnly
+                                        placeholder="Généré automatiquement (ex: MEEY-001)"
+                                        onClick={() => toast.info("L'identifiant SKU MEEY est généré automatiquement lors de la création et ne peut pas être modifié.")}
+                                        className="w-full p-4 bg-creme2/10 border border-creme2 border-dashed rounded-sm text-sm text-encre3 font-mono italic cursor-pointer outline-none"
+                                    />
                                 </div>
                             </div>
                             <div className="space-y-2">

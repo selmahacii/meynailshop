@@ -292,9 +292,9 @@ export default function ProductEditPage() {
                                     <input 
                                         type="text" 
                                         readOnly
-                                        disabled
                                         value={product.sku}
-                                        className="w-full p-4 bg-creme2/20 border border-creme2 rounded-sm text-sm text-encre3 opacity-70 outline-none transition-all font-mono cursor-not-allowed"
+                                        onClick={() => toast.info("L'identifiant SKU MEEY ne peut pas être modifié une fois généré.")}
+                                        className="w-full p-4 bg-creme2/20 border border-creme2 rounded-sm text-sm text-encre3 opacity-80 outline-none transition-all font-mono cursor-pointer"
                                         title="L'identifiant SKU MEEY ne peut pas être modifié"
                                     />
                                 </div>
