@@ -15,7 +15,9 @@ import SubCategoryWidgets from '@/components/store/products/SubCategoryWidgets';
 import { cn } from '@/lib/utils';
 import { useSearchParams, useRouter } from 'next/navigation';
 
-export default function CataloguePage() {
+import { Suspense } from 'react';
+
+function CatalogueContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
@@ -386,5 +388,17 @@ export default function CataloguePage() {
                 )}
             </AnimatePresence>
         </div>
+    );
+}
+
+export default function CataloguePage() {
+    return (
+        <Suspense fallback={
+            <div className="pt-32 pb-24 flex items-center justify-center min-h-screen">
+                <Loader2 className="animate-spin text-or" size={40} />
+            </div>
+        }>
+            <CatalogueContent />
+        </Suspense>
     );
 }
