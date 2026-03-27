@@ -25,7 +25,6 @@ import { toast } from 'sonner';
 import { StoreAPI } from '@/lib/api/client';
 import { useEffect } from 'react';
 import { useSettings } from '@/lib/hooks/useSettings';
-import { MessageCircle } from 'lucide-react';
 import { useWishlistStore } from '@/lib/store/wishlistStore';
 import { cn } from '@/lib/utils';
 import ProductReviews from '@/components/store/products/ProductReviews';
@@ -198,7 +197,10 @@ export default function ProductPage() {
 
                         {/* SKU */}
                         {product && (
-                            <div className="flex items-center space-x-3 mb-6 bg-creme2/20 p-3 rounded-sm border border-creme2 w-fit">
+                            <div 
+                                onClick={() => toast.info("Le SKU est une référence unique générée automatiquement.")}
+                                className="flex items-center space-x-3 mb-6 bg-creme2/20 p-3 rounded-sm border border-creme2 w-fit cursor-help hover:bg-creme2/30 transition-all active:scale-95"
+                            >
                                 <span className="text-xs font-black uppercase tracking-widest text-encre3">Réf :</span>
                                 <span className="text-sm font-mono font-black text-encre tracking-widest">
                                     {selectedVariant !== null && product.variants[selectedVariant]?.sku 
@@ -261,23 +263,23 @@ export default function ProductPage() {
                                             type="button"
                                             onClick={() => setSelectedVariant(selectedVariant === index ? null : index)}
                                             className={cn(
-                                                "relative flex items-center gap-3 p-3 border rounded-sm transition-all text-left",
+                                                "relative flex items-center gap-3 p-3 border rounded-[20px] transition-all text-left overflow-hidden",
                                                 selectedVariant === index
-                                                    ? "border-or bg-or/5 shadow-md"
+                                                    ? "border-or bg-or/5 shadow-md ring-2 ring-or/20"
                                                     : "border-creme2 bg-white hover:border-or/50 hover:shadow-sm"
                                             )}
                                         >
                                             {variant.image && (
-                                                <div className="relative w-10 h-10 rounded-sm border border-creme2 overflow-hidden shrink-0">
-                                                    <Image src={variant.image} fill className="object-cover" alt={variant.label} />
+                                                <div className="relative w-12 h-12 rounded-xl border border-creme2 overflow-hidden shrink-0 shadow-sm">
+                                                    <Image src={variant.image} fill className="object-cover" alt={variant.sku || `Variant ${index}`} />
                                                 </div>
                                             )}
-                                            <div className="min-w-0">
-                                                <p className="text-xs font-bold text-encre truncate">{variant.label}</p>
-                                                <p className="text-[9px] font-mono text-encre3">{variant.sku}</p>
+                                            <div className="min-w-0 pr-2">
+                                                <p className="text-[10px] font-black font-mono text-encre tracking-widest truncate">{variant.sku}</p>
+                                                <p className="text-[8px] uppercase tracking-tighter text-encre3 font-bold">Référence disponible</p>
                                             </div>
                                             {selectedVariant === index && (
-                                                <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-or"></div>
+                                                <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-or animate-pulse"></div>
                                             )}
                                         </button>
                                     ))}

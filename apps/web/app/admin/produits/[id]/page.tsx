@@ -83,10 +83,13 @@ export default function ProductEditPage() {
     };
 
     const addVariant = () => {
-        setProduct((prev: any) => ({
-            ...prev,
-            variants: [...(prev.variants || []), { sku: '', image: '' }]
-        }));
+        setProduct((prev: any) => {
+            const nextVariantIndex = (prev.variants || []).length + 1;
+            return {
+                ...prev,
+                variants: [...(prev.variants || []), { sku: `REF-${nextVariantIndex}`, image: '' }]
+            };
+        });
     };
 
     const removeVariant = (index: number) => {

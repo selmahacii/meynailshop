@@ -122,10 +122,13 @@ export default function ProductCreatePage() {
     };
 
     const addVariant = () => {
-        setProduct((prev: any) => ({
-            ...prev,
-            variants: [...prev.variants, { sku: '', image: '' }]
-        }));
+        setProduct((prev: any) => {
+            const nextIndex = prev.variants.length + 1;
+            return {
+                ...prev,
+                variants: [...prev.variants, { sku: `REF-${nextIndex}`, image: '' }]
+            };
+        });
     };
 
     const removeVariant = (index: number) => {

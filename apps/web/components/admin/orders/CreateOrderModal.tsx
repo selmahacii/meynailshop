@@ -30,7 +30,6 @@ interface CreateOrderModalProps {
 
 const sources = [
     { id: 'instagram', name: 'Instagram', icon: Instagram, color: 'text-pink-600 bg-pink-50' },
-    { id: 'whatsapp', name: 'WhatsApp', icon: MessageCircle, color: 'text-emerald-600 bg-emerald-50' },
     { id: 'facebook', name: 'Facebook', icon: Globe, color: 'text-blue-600 bg-blue-50' },
     { id: 'store', name: 'Boutique / Physique', icon: Store, color: 'text-encre bg-creme2' },
     { id: 'other', name: 'Autre', icon: Plus, color: 'text-encre3 bg-creme' },
