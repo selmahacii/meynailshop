@@ -60,7 +60,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="group bg-white border border-creme2 shadow-sm hover:shadow-md transition-all duration-300"
+            className="group bg-white border border-creme2 shadow-sm hover:shadow-md transition-all duration-300 rounded-[30px] overflow-hidden"
         >
             <Link href={`/catalogue/${product.slug}`} className="block relative aspect-[4/5] overflow-hidden bg-creme2">
                 {/* Badges */}

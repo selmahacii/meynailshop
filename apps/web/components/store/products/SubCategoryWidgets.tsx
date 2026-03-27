@@ -54,7 +54,7 @@ export default function SubCategoryWidgets({
             <div className={cn(
                 "pb-6 snap-x",
                 !activeSubSlug 
-                    ? "grid grid-cols-2 gap-4 md:flex md:items-start md:gap-10 md:overflow-x-auto md:no-scrollbar" 
+                    ? "grid grid-cols-2 gap-6 sm:gap-8 md:flex md:items-start md:gap-10 md:overflow-x-auto md:no-scrollbar" 
                     : "flex items-start gap-6 md:gap-10 overflow-x-auto no-scrollbar"
             )}>
                 {/* "All" Widget - Hide in Mobile Grid to save space for specific universes */}
@@ -75,10 +75,6 @@ export default function SubCategoryWidgets({
                              <div className="text-creme text-[8px] font-black uppercase tracking-widest text-center px-2">TOUT</div>
                         </div>
                     </div>
-                    <span className={cn(
-                        "text-[10px] font-black uppercase tracking-widest transition-colors",
-                        !activeSubSlug ? "text-encre" : "text-encre3"
-                    )}>VOIR TOUT</span>
                 </div>
 
                 {subCategories.map((sub: any) => (
@@ -88,22 +84,22 @@ export default function SubCategoryWidgets({
                         className={cn(
                             "flex flex-col items-center cursor-pointer group transition-all duration-500",
                             !activeSubSlug 
-                                ? "w-full md:w-auto md:flex-shrink-0 md:snap-start mb-4" 
-                                : "flex-shrink-0 snap-start max-w-[100px]"
+                                ? "w-full md:w-auto md:flex-shrink-0 md:snap-start mb-6" 
+                                : "flex-shrink-0 snap-start max-w-[120px]"
                         )}
                     >
                         <div className={cn(
                             "transition-all duration-500 relative border-2 p-1.5",
                             !activeSubSlug 
-                                ? "w-full aspect-square rounded-[40px]" 
-                                : "w-20 h-20 md:w-24 md:h-24 rounded-[30px]",
+                                ? "w-full aspect-square rounded-[50px] md:rounded-[40px]" 
+                                : "w-24 h-24 md:w-28 md:h-28 rounded-[35px]",
                             activeSubSlug === sub.slug 
                                 ? "border-or scale-110 shadow-lg shadow-or/10 ring-4 ring-or/5" 
                                 : "border-creme2 group-hover:border-or/40"
                         )}>
                             <div className={cn(
                                 "w-full h-full bg-creme2 overflow-hidden relative",
-                                !activeSubSlug ? "rounded-[34px]" : "rounded-[24px]"
+                                !activeSubSlug ? "rounded-[44px] md:rounded-[34px]" : "rounded-[29px]"
                             )}>
                                 {sub.imageUrl ? (
                                     <img 
@@ -120,18 +116,18 @@ export default function SubCategoryWidgets({
                                 )}
                             </div>
                             {sub.hasNewArrivals && (
-                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-rouge-deep rounded-full border-2 border-creme animate-pulse shadow-lg" />
+                                <div className="absolute top-2 right-2 w-5 h-5 bg-rouge-deep rounded-full border-4 border-white shadow-lg animate-pulse" />
                             )}
                         </div>
-                        <div className="text-center mt-3 flex flex-col items-center justify-start min-h-[44px] w-full px-1">
+                        <div className="text-center mt-4 flex flex-col items-center justify-start min-h-[44px] w-full px-1">
                             <p className={cn(
                                 "font-black uppercase tracking-[0.1em] transition-colors leading-tight mb-1",
-                                !activeSubSlug ? "text-[10px] md:text-[9px]" : "text-[9px]",
-                                activeSubSlug === sub.slug ? "text-encre" : "text-encre3 group-hover:text-encre"
+                                !activeSubSlug ? "text-[12px] md:text-[9px]" : "text-[10px]",
+                                activeSubSlug === sub.slug ? "text-encre font-black" : "text-encre3 group-hover:text-encre"
                             )}>
                                 {sub.name}
                             </p>
-                            <p className="text-[8px] font-bold text-or/60 group-hover:text-or transition-colors uppercase whitespace-nowrap">{sub.productCount || 0} modèles</p>
+                            <p className="text-[9px] font-bold text-or/60 group-hover:text-or transition-colors uppercase whitespace-nowrap">{sub.productCount || 0} modèles</p>
                         </div>
                     </div>
                 ))}

@@ -106,7 +106,7 @@ export default function CategoryPage() {
         <div className="pt-32 pb-24 bg-creme min-h-screen selection:bg-or selection:text-white">
             <div className="container mx-auto px-4">
                 {/* Header Section */}
-                <div className="mb-12">
+                <div className="mb-8 md:mb-12">
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div className="space-y-4">
                             <nav className="text-[9px] uppercase tracking-[0.3em] text-encre3 flex items-center space-x-3 font-black">
@@ -133,23 +133,6 @@ export default function CategoryPage() {
                             <p className="text-encre3 text-sm max-w-2xl leading-relaxed italic border-l-2 border-or/20 pl-6 py-1">
                                 {activeSubCategory?.description || categoryInfo.description}
                             </p>
-                        </div>
-
-                        <div className={cn(
-                            "flex items-center gap-3",
-                            !filters.subCategory && "hidden md:flex" // Hide counts/mobile-filter-btn on mobile if no sub-category
-                        )}>
-                            <div className="hidden lg:flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-creme2 shadow-sm text-[10px] font-black uppercase tracking-widest text-encre3">
-                                <SlidersHorizontal size={12} className="text-or" />
-                                {products.length} Items disponible
-                            </div>
-                            <button 
-                                onClick={() => setIsMobileFiltersOpen(true)}
-                                className="lg:hidden flex items-center gap-3 px-6 py-3 bg-encre text-creme rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl active:scale-95 transition-all"
-                            >
-                                <Filter size={14} />
-                                Filtrer
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -250,14 +233,10 @@ export default function CategoryPage() {
                                     </motion.div>
                                 )}
 
-                                {/* Mobile Selection Message if no sub-category */}
+                                {/* Mobile Selection Grid if no sub-category - Show nothing else */}
                                 {!filters.subCategory && (
-                                    <div className="md:hidden flex flex-col items-center justify-center p-12 text-center bg-white/30 backdrop-blur-md rounded-3xl border border-creme2 border-dashed">
-                                        <div className="w-12 h-12 bg-or/10 rounded-full flex items-center justify-center mb-4">
-                                            <ArrowRight size={20} className="text-or" />
-                                        </div>
-                                        <h4 className="font-serif text-xl text-encre mb-2">Explorez la collection</h4>
-                                        <p className="text-[10px] text-encre3 uppercase tracking-widest font-bold">Choisissez un univers ci-dessus pour voir les produits</p>
+                                    <div className="md:hidden py-10">
+                                        <p className="text-center text-[10px] font-black uppercase tracking-[0.4em] text-encre3/40 mb-12">Veuillez choisir un univers</p>
                                     </div>
                                 )}
 
