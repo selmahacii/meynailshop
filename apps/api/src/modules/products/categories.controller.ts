@@ -12,6 +12,8 @@ import { CategoriesService } from './categories.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto, CreateSubCategoryDto, UpdateSubCategoryDto } from './dto/categories.dto';
 
 @Controller('categories')
 export class CategoriesController {
@@ -36,7 +38,7 @@ export class CategoriesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @Post()
-  async create(@Body() createCategoryDto: any) {
+  async create(@Body() createCategoryDto: CreateCategoryDto) {
     return {
       statusCode: 201,
       message: 'Category created',
@@ -47,7 +49,7 @@ export class CategoriesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateCategoryDto: any) {
+  async update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
     return {
       statusCode: 200,
       message: 'Category updated',
@@ -68,7 +70,7 @@ export class CategoriesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @Post(':id/sub-categories')
-  async createSub(@Param('id') id: string, @Body() data: any) {
+  async createSub(@Param('id') id: string, @Body() data: CreateSubCategoryDto) {
     return {
       statusCode: 201,
       data: await this.categoriesService.createSubCategory(id, data),
@@ -88,7 +90,7 @@ export class CategoriesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @Patch('sub-categories/:id')
-  async updateSub(@Param('id') id: string, @Body() data: any) {
+  async updateSub(@Param('id') id: string, @Body() data: UpdateSubCategoryDto) {
     return {
       statusCode: 200,
       data: await this.categoriesService.updateSubCategory(id, data),
