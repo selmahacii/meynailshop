@@ -7,8 +7,8 @@ interface CartStoreState {
   couponCode?: string;
   couponDiscount: number;
   addItem: (item: CartItem) => void;
-  removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  removeItem: (productId: string, variantSku?: string) => void;
+  updateQuantity: (productId: string, variantSku: string | undefined, quantity: number) => void;
   setCoupon: (code: string, discount: number) => void;
   removeCoupon: () => void;
   clear: () => void;
@@ -27,11 +27,13 @@ export const useCartStore = create<CartStoreState>()(
       couponDiscount: 0,
 
       addItem: (newItem) => set((state) => {
-        const existingItem = state.items.find(i => i.productId === newItem.productId);
+        const existingItem = state.items.find(i => 
+          i.productId === newItem.productId && i.variantSku === newItem.variantSku
+        );
         if (existingItem) {
           return {
             items: state.items.map(i =>
-              i.productId === newItem.productId
+              i.productId === newItem.productId && i.variantSku === newItem.variantSku
                 ? { ...i, quantity: Math.min(i.stock, i.quantity + newItem.quantity) }
                 : i
             )
@@ -40,13 +42,16 @@ export const useCartStore = create<CartStoreState>()(
         return { items: [...state.items, newItem] };
       }),
 
-      removeItem: (productId) => set((state) => ({
-        items: state.items.filter(i => i.productId !== productId),
+      removeItem: (productId, variantSku) => set((state) => ({
+        items: state.items.filter(i => 
+          !(i.productId === productId && i.variantSku === variantSku)
+        ),
       })),
 
-      updateQuantity: (productId, quantity) => set((state) => ({
+      updateQuantity: (productId, variantSku, quantity) => set((state) => ({
         items: state.items.map(i =>
-          i.productId === productId ? { ...i, quantity: Math.max(1, Math.min(i.stock, quantity)) } : i
+          i.productId === productId && i.variantSku === variantSku 
+            ? { ...i, quantity: Math.max(1, Math.min(i.stock, quantity)) } : i
         ),
       })),
 

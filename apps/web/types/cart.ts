@@ -5,6 +5,8 @@ export interface CartItem {
   price: number;
   image: string;
   stock: number;
+  variantSku?: string;
+  variantImage?: string;
 }
 
 export interface CartState {

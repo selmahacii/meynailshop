@@ -68,7 +68,12 @@ export default function CheckoutPage() {
                 },
                 paymentMethod,
                 deliveryType: formData.deliveryType,
-                items: items.map(i => ({ productId: i.productId, quantity: i.quantity })),
+                items: items.map(i => ({ 
+                    productId: i.productId, 
+                    quantity: i.quantity,
+                    variantSku: i.variantSku,
+                    variantImage: i.variantImage
+                })),
             });
 
             clear();
@@ -311,6 +316,9 @@ export default function CheckoutPage() {
                             </div>
                             <div className="flex-grow">
                                 <h4 className="font-serif text-sm text-encre leading-tight pr-4">{item.name}</h4>
+                                {item.variantSku && (
+                                    <p className="text-[10px] font-black uppercase text-encre3 tracking-widest mt-0.5">Réf: {item.variantSku}</p>
+                                )}
                                 <p className="text-xs text-encre3 mt-1">Qté: {item.quantity}</p>
                             </div>
                             <div className="text-right shrink-0">

@@ -30,6 +30,7 @@ import { cn } from '@/lib/utils';
 import ProductReviews from '@/components/store/products/ProductReviews';
 import Image from 'next/image';
 import StickyAddToCart from '@/components/store/products/StickyAddToCart';
+import { motion } from 'framer-motion';
 
  
 
@@ -110,15 +111,25 @@ export default function ProductPage() {
 
     const handleAddToCart = () => {
         if (!product) return;
+        
+        const variant = selectedVariant !== null ? product.variants[selectedVariant] : null;
+        
+        if (product.hasVariants && !variant) {
+            toast.error("Veuillez sélectionner une référence");
+            return;
+        }
+
         addItem({
             productId: product.id,
             name: product.name,
             price: product.price,
-            image: product.images?.[0] || '',
+            image: variant?.image || product.images?.[0] || '',
             quantity: quantity,
-            stock: product.stock
+            stock: product.stock,
+            variantSku: variant?.sku,
+            variantImage: variant?.image
         });
-        toast.success(`${quantity} ${product.name} ajoutés au panier`);
+        toast.success(`${quantity} ${product.name} ${variant ? `(${variant.sku})` : ''} ajoutés au panier`);
     };
 
     const handleWishlist = () => {
@@ -255,35 +266,49 @@ export default function ProductPage() {
                         {/* Variants Section */}
                         {product && product.hasVariants && product.variants && product.variants.length > 0 && (
                             <div className="mb-8">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-encre3 mb-3">Références disponibles</p>
-                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                    {product.variants.map((variant: any, index: number) => (
-                                        <button
-                                            key={index}
-                                            type="button"
-                                            onClick={() => setSelectedVariant(selectedVariant === index ? null : index)}
-                                            className={cn(
-                                                "relative flex items-center gap-3 p-3 border rounded-[20px] transition-all text-left overflow-hidden",
-                                                selectedVariant === index
-                                                    ? "border-or bg-or/5 shadow-md ring-2 ring-or/20"
-                                                    : "border-creme2 bg-white hover:border-or/50 hover:shadow-sm"
-                                            )}
-                                        >
-                                            {variant.image && (
-                                                <div className="relative w-12 h-12 rounded-xl border border-creme2 overflow-hidden shrink-0 shadow-sm">
-                                                    <Image src={variant.image} fill className="object-cover" alt={variant.sku || `Variant ${index}`} />
-                                                </div>
-                                            )}
-                                            <div className="min-w-0 pr-2">
-                                                <p className="text-[10px] font-black font-mono text-encre tracking-widest truncate">{variant.sku}</p>
-                                                <p className="text-[8px] uppercase tracking-tighter text-encre3 font-bold">Référence disponible</p>
-                                            </div>
-                                            {selectedVariant === index && (
-                                                <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-or animate-pulse"></div>
-                                            )}
-                                        </button>
-                                    ))}
+                                <div className="flex items-center justify-between mb-4">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-encre3">Choisissez votre référence</p>
+                                    {selectedVariant !== null && (
+                                        <span className="text-[10px] font-bold text-rouge-deep uppercase animate-pulse">
+                                            Réf: {product.variants[selectedVariant].sku}
+                                        </span>
+                                    )}
                                 </div>
+                                <div className="flex flex-wrap gap-3">
+                                    {product.variants.map((variant: any, index: number) => {
+                                        const isSelected = selectedVariant === index;
+                                        return (
+                                            <button
+                                                key={index}
+                                                type="button"
+                                                onClick={() => setSelectedVariant(isSelected ? null : index)}
+                                                className={cn(
+                                                    "min-w-[70px] h-12 px-6 rounded-full border transition-all flex items-center justify-center font-bold text-sm tracking-widest",
+                                                    isSelected
+                                                        ? "bg-rouge-deep border-rouge-deep text-white shadow-lg shadow-rouge-deep/20 scale-105"
+                                                        : "bg-or/5 border-or/20 text-rouge-deep hover:border-or/50 hover:bg-or/10"
+                                                )}
+                                            >
+                                                {variant.sku.replace('REF-', '')}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                                {selectedVariant !== null && product.variants[selectedVariant].image && (
+                                    <motion.div 
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="mt-6 flex items-center gap-4 p-4 bg-white/50 backdrop-blur-sm border border-creme2 rounded-2xl"
+                                    >
+                                        <div className="relative w-16 h-16 rounded-xl border border-creme2 overflow-hidden shadow-sm">
+                                            <Image src={product.variants[selectedVariant].image} fill className="object-cover" alt="Selected variant" />
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-encre3">Aperçu sélection</p>
+                                            <p className="text-sm font-bold text-encre">{product.variants[selectedVariant].sku}</p>
+                                        </div>
+                                    </motion.div>
+                                )}
                             </div>
                         )}
 

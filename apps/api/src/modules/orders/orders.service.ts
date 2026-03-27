@@ -38,7 +38,7 @@ export class OrdersService {
   async create(
     userId: string | null,
     createOrderDto: CreateOrderDto,
-    cartItems: Array<{ productId: string; quantity: number }>,
+    cartItems: Array<{ productId: string; quantity: number; variantSku?: string; variantImage?: string }>,
   ): Promise<Order> {
     if (!cartItems || cartItems.length === 0) {
       throw new BadRequestException('Cart is empty');
@@ -99,8 +99,10 @@ export class OrdersService {
         const orderItem = this.orderItemRepository.create({
           productId: product.id,
           productName: product.name,
-          productSku: product.sku,
-          productImage: product.images?.[0] || '',
+          productSku: cartItem.variantSku || product.sku,
+          productImage: cartItem.variantImage || product.images?.[0] || '',
+          variantSku: cartItem.variantSku,
+          variantImage: cartItem.variantImage,
           unitPrice: Number(product.price),
           quantity: cartItem.quantity,
           subtotal: itemSubtotal,

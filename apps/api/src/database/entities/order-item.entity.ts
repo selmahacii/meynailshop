@@ -33,6 +33,12 @@ export class OrderItem {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   unitPrice: number;
 
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  variantSku: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  variantImage: string;
+
   @Column({ type: 'int' })
   quantity: number;
 

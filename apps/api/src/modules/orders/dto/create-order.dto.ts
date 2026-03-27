@@ -7,6 +7,14 @@ class OrderItemDto {
 
   @IsNumber()
   quantity: number;
+
+  @IsOptional()
+  @IsString()
+  variantSku?: string;
+
+  @IsOptional()
+  @IsString()
+  variantImage?: string;
 }
 
 export class CreateOrderDto {

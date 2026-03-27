@@ -9,6 +9,7 @@ interface CartItemProps {
   image: string;
   price: number;
   quantity: number;
+  variantSku?: string;
   onQuantityChange: (quantity: number) => void;
   onRemove: () => void;
 }
@@ -19,6 +20,7 @@ export function CartItem({
   image,
   price,
   quantity,
+  variantSku,
   onQuantityChange,
   onRemove,
 }: CartItemProps) {
@@ -37,6 +39,9 @@ export function CartItem({
 
       <div className="flex-1 min-w-0">
         <h3 className="font-outfit font-semibold text-encre truncate">{name}</h3>
+        {variantSku && (
+          <p className="text-[10px] font-black uppercase text-encre3 tracking-widest mt-0.5">Réf: {variantSku}</p>
+        )}
         <p className="text-or font-serif text-lg">{formatPrice(price)}</p>
 
         <div className="flex items-center gap-2 mt-2">

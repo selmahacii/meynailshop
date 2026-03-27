@@ -53,7 +53,7 @@ export default function CartPage() {
                                 className="flex flex-col sm:flex-row bg-white p-4 border border-creme2 shadow-sm gap-6 relative group"
                             >
                                 <button
-                                    onClick={() => removeItem(item.productId)}
+                                    onClick={() => removeItem(item.productId, item.variantSku)}
                                     className="absolute top-4 right-4 text-encre3 hover:text-rouge transition-colors sm:opacity-0 group-hover:opacity-100"
                                 >
                                     <Trash2 size={18} />
@@ -77,13 +77,16 @@ export default function CartPage() {
                                                 {item.name}
                                             </h3>
                                         </Link>
+                                        {item.variantSku && (
+                                            <p className="text-[10px] font-black uppercase text-encre3 tracking-widest mt-0.5">Réf: {item.variantSku}</p>
+                                        )}
                                         <p className="text-encre3 text-sm mt-1">{formatPrice(item.price)}</p>
                                     </div>
 
                                     <div className="flex items-center justify-between mt-6">
                                         <div className="flex items-center border border-creme2 rounded-sm h-10 w-fit">
                                             <button
-                                                onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                                                onClick={() => updateQuantity(item.productId, item.variantSku, item.quantity - 1)}
                                                 className="px-3 h-full flex items-center justify-center text-encre hover:text-or transition-colors disabled:opacity-50"
                                                 disabled={item.quantity <= 1}
                                             >
@@ -93,7 +96,7 @@ export default function CartPage() {
                                                 {item.quantity}
                                             </span>
                                             <button
-                                                onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                                                onClick={() => updateQuantity(item.productId, item.variantSku, item.quantity + 1)}
                                                 className="px-3 h-full flex items-center justify-center text-encre hover:text-or transition-colors disabled:opacity-50"
                                                 disabled={item.quantity >= item.stock}
                                             >
