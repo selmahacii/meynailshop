@@ -15,8 +15,9 @@ export class CreateProductDto {
   @IsString()
   shortDescription: string;
 
+  @IsOptional()
   @IsString()
-  sku: string;
+  sku?: string;
 
   @Type(() => Number)
   @IsNumber()
@@ -77,5 +78,5 @@ export class CreateProductDto {
 
   @IsOptional()
   @IsArray()
-  variants?: { sku: string; image: string; label: string }[];
+  variants?: { sku: string; image: string }[];
 }

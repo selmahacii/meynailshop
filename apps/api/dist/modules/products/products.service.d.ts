@@ -7,7 +7,8 @@ export declare class ProductsService {
     private productRepository;
     private categoryRepository;
     constructor(productRepository: Repository<Product>, categoryRepository: Repository<Category>);
-    create(createProductDto: any): Promise<Product>;
+    private generateNextSku;
+    create(createProductDto: any): Promise<Product[]>;
     findAll(query: ProductsQueryDto): Promise<PaginatedResult<Product>>;
     findBySlug(slug: string): Promise<Product>;
     findFeatured(limit?: number): Promise<Product[]>;

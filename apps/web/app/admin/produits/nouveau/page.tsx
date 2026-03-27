@@ -124,7 +124,7 @@ export default function ProductCreatePage() {
     const addVariant = () => {
         setProduct((prev: any) => ({
             ...prev,
-            variants: [...prev.variants, { sku: '', image: '', label: '' }]
+            variants: [...prev.variants, { sku: '', image: '' }]
         }));
     };
 
@@ -239,14 +239,9 @@ export default function ProductCreatePage() {
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-[10px] uppercase font-black tracking-widest text-encre3">SKU (Référence)</label>
-                                    <input 
-                                        type="text" 
-                                        required
-                                        placeholder="MEY-001"
-                                        value={product.sku}
-                                        onChange={(e) => setProduct({...product, sku: e.target.value})}
-                                        className="w-full p-4 bg-creme2/20 border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all font-mono"
-                                    />
+                                    <div className="w-full p-4 bg-creme2/10 border border-creme2 border-dashed rounded-sm text-sm text-encre3 font-mono italic">
+                                        Généré automatiquement (ex: MEEY-001)
+                                    </div>
                                 </div>
                             </div>
                             <div className="space-y-2">
@@ -386,7 +381,7 @@ export default function ProductCreatePage() {
                                 </div>
                                 <div>
                                     <span className="text-sm font-bold text-encre group-hover:text-or transition-colors">Ce produit a plusieurs références</span>
-                                    <p className="text-[10px] text-encre3 mt-0.5">Activez pour ajouter des variantes avec SKU, photo et libellé distincts</p>
+                                    <p className="text-[10px] text-encre3 mt-0.5">Activez pour ajouter des variantes avec SKU et photo distincts</p>
                                 </div>
                             </label>
 
@@ -416,16 +411,6 @@ export default function ProductCreatePage() {
                                                         className="w-full p-3 bg-white border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all font-mono"
                                                     />
                                                 </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-[9px] uppercase font-black tracking-widest text-encre3">Libellé</label>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Ex: Rouge Passion, Bleu Océan..."
-                                                        value={variant.label}
-                                                        onChange={(e) => updateVariant(index, 'label', e.target.value)}
-                                                        className="w-full p-3 bg-white border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all"
-                                                    />
-                                                </div>
                                             </div>
                                             {/* Variant image */}
                                             <div className="space-y-2">
@@ -433,7 +418,7 @@ export default function ProductCreatePage() {
                                                 <div className="flex items-center gap-3">
                                                     {variant.image ? (
                                                         <div className="relative w-16 h-16 rounded-sm border border-creme2 overflow-hidden shrink-0">
-                                                            <Image src={variant.image} fill className="object-cover" alt={variant.label || 'Variante'} />
+                                                            <Image src={variant.image} fill className="object-cover" alt="Variante" />
                                                             <button
                                                                 type="button"
                                                                 onClick={() => updateVariant(index, 'image', '')}

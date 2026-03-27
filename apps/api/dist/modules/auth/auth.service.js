@@ -87,7 +87,7 @@ let AuthService = class AuthService {
             sub: user.id,
             role: user.role,
         };
-        const expiresIn = this.configService.get('JWT_EXPIRES_IN') || '24h';
+        const expiresIn = this.configService.get('JWT_EXPIRES_IN') || '365d';
         const accessToken = await this.jwtService.signAsync(payload, { expiresIn });
         const refreshToken = await this.jwtService.signAsync({ ...payload, tokenType: 'refresh' }, { expiresIn: this.configService.get('JWT_REFRESH_EXPIRES_IN') || '7d' });
         return {
@@ -134,7 +134,7 @@ let AuthService = class AuthService {
                 sub: user.id,
                 role: user.role,
             };
-            const expiresIn = this.configService.get('JWT_EXPIRES_IN') || '24h';
+            const expiresIn = this.configService.get('JWT_EXPIRES_IN') || '365d';
             const accessToken = await this.jwtService.signAsync(newPayload, { expiresIn });
             const newRefreshToken = await this.jwtService.signAsync({ ...newPayload, tokenType: 'refresh' }, { expiresIn: this.configService.get('JWT_REFRESH_EXPIRES_IN') || '7d' });
             return {

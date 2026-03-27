@@ -20,7 +20,7 @@ export declare class StoreProductsController {
     create(createProductDto: any): Promise<{
         statusCode: number;
         message: string;
-        data: import("../../database/entities").Product;
+        data: import("../../database/entities").Product[];
     }>;
     update(id: string, updateProductDto: any): Promise<{
         statusCode: number;

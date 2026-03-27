@@ -99,13 +99,12 @@ async function bootstrap() {
             await userRepo.save(admin);
             console.log('✅ Compte Admin par défaut créé (meeybouabdellah@gmail.com)');
         }
-        else if (adminExists.role !== 'admin') {
+        else {
+            const hashedPassword = await bcrypt.hash('meey2026', 12);
+            adminExists.password = hashedPassword;
             adminExists.role = 'admin';
             await userRepo.save(adminExists);
-            console.log('🆙 Rôle Admin mis à jour pour meeybouabdellah@gmail.com');
-        }
-        else {
-            console.log('✅ Accès Admin vérifié pour meeybouabdellah@gmail.com');
+            console.log('🆙 Accès Admin garanti et mis à jour pour meeybouabdellah@gmail.com');
         }
     }
     catch (e) {

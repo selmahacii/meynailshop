@@ -33,6 +33,7 @@ __decorate([
     __metadata("design:type", String)
 ], CreateProductDto.prototype, "shortDescription", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateProductDto.prototype, "sku", void 0);

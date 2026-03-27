@@ -30,6 +30,8 @@ export interface Product {
   isFeatured: boolean;
   weight: number;
   tags: string[];
+  hasVariants: boolean;
+  variants: { sku: string; image: string }[] | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -57,7 +59,7 @@ export interface CreateProductDto {
   slug: string;
   description: string;
   shortDescription: string;
-  sku: string;
+  sku?: string;
   price: number;
   comparePrice?: number;
   costPrice: number;
@@ -71,6 +73,8 @@ export interface CreateProductDto {
   isFeatured: boolean;
   weight: number;
   tags: string[];
+  hasVariants?: boolean;
+  variants?: { sku: string; image: string }[] | null;
 }
 
 export interface UpdateProductDto extends Partial<CreateProductDto> {}

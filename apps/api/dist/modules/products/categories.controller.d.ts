@@ -1,4 +1,6 @@
 import { CategoriesService } from './categories.service';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto, CreateSubCategoryDto, UpdateSubCategoryDto } from './dto/categories.dto';
 export declare class CategoriesController {
     private categoriesService;
     constructor(categoriesService: CategoriesService);
@@ -33,12 +35,12 @@ export declare class CategoriesController {
             products: import("../../database/entities").Product[];
         };
     }>;
-    create(createCategoryDto: any): Promise<{
+    create(createCategoryDto: CreateCategoryDto): Promise<{
         statusCode: number;
         message: string;
         data: import("../../database/entities").Category[];
     }>;
-    update(id: string, updateCategoryDto: any): Promise<{
+    update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<{
         statusCode: number;
         message: string;
         data: import("../../database/entities").Category;
@@ -49,7 +51,7 @@ export declare class CategoriesController {
             message: string;
         };
     }>;
-    createSub(id: string, data: any): Promise<{
+    createSub(id: string, data: CreateSubCategoryDto): Promise<{
         statusCode: number;
         data: import("../../database/entities").SubCategory[];
     }>;
@@ -57,7 +59,7 @@ export declare class CategoriesController {
         statusCode: number;
         data: import("../../database/entities").SubCategory;
     }>;
-    updateSub(id: string, data: any): Promise<{
+    updateSub(id: string, data: UpdateSubCategoryDto): Promise<{
         statusCode: number;
         data: import("../../database/entities").SubCategory;
     }>;

@@ -16,22 +16,53 @@ export class ProductsService {
     private categoryRepository: Repository<Category>,
   ) { }
 
+  private async generateNextSku(): Promise<string> {
+    const lastProduct = await this.productRepository.createQueryBuilder('product')
+      .where("product.sku LIKE 'MEEY-%'")
+      .orderBy("SUBSTRING(product.sku, 6)::INTEGER", "DESC")
+      .getOne();
+
+    let nextNumber = 1;
+    if (lastProduct && lastProduct.sku) {
+      const parts = lastProduct.sku.split('-');
+      if (parts.length > 1) {
+        const currentNumber = parseInt(parts[1]);
+        if (!isNaN(currentNumber)) {
+          nextNumber = currentNumber + 1;
+        }
+      }
+    }
+
+    return `MEEY-${nextNumber.toString().padStart(3, '0')}`;
+  }
+
   async create(createProductDto: any) {
     const slug = createProductDto.slug || generateSlug(createProductDto.name);
+    
+    // Auto-generate SKU MEEY-001 format
+    const sku = await this.generateNextSku();
 
-    const existingProduct = await this.productRepository.findOne({
-      where: [{ slug }, { sku: createProductDto.sku }],
-    });
+    const existingProduct = await this.productRepository.createQueryBuilder('product')
+      .where('product.slug = :slug OR product.sku = :sku', { slug, sku })
+      .getOne();
 
     if (existingProduct) {
       throw new BadRequestException('Product with this slug or SKU already exists');
     }
 
+    // Ensure variants don't have labels (identified only by sku and image)
+    let variants = createProductDto.variants;
+    if (variants && Array.isArray(variants)) {
+      variants = variants.map((v: any) => ({ sku: v.sku, image: v.image }));
+    }
+
     const product = this.productRepository.create({
       ...createProductDto,
+      sku,
       slug,
+      variants
     });
-    return await this.productRepository.save(product as unknown as Product);
+    return await this.productRepository.save(product);
   }
 
   async findAll(query: ProductsQueryDto): Promise<PaginatedResult<Product>> {
@@ -168,6 +199,11 @@ export class ProductsService {
       throw new NotFoundException('Product not found');
     }
 
+    // SKU is immutable after creation
+    if (updateProductDto.sku && updateProductDto.sku !== product.sku) {
+      throw new BadRequestException('Le SKU principal (MEEY) ne peut pas être modifié');
+    }
+
     if (updateProductDto.slug && updateProductDto.slug !== product.slug) {
       const existed = await this.productRepository.findOne({
         where: { slug: updateProductDto.slug },
@@ -177,7 +213,14 @@ export class ProductsService {
       }
     }
 
-    Object.assign(product, updateProductDto);
+    // Prepare update data: ensure SKU is not changed and labels are removed from variants
+    const { sku, ...updateData } = updateProductDto;
+
+    if (updateData.variants && Array.isArray(updateData.variants)) {
+      updateData.variants = updateData.variants.map((v: any) => ({ sku: v.sku, image: v.image }));
+    }
+
+    Object.assign(product, updateData);
     return await this.productRepository.save(product);
   }
 

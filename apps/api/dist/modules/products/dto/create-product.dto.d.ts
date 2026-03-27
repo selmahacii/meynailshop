@@ -3,7 +3,7 @@ export declare class CreateProductDto {
     slug?: string;
     description: string;
     shortDescription: string;
-    sku: string;
+    sku?: string;
     price: number;
     comparePrice?: number;
     costPrice: number;
@@ -20,6 +20,5 @@ export declare class CreateProductDto {
     variants?: {
         sku: string;
         image: string;
-        label: string;
     }[];
 }

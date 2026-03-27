@@ -24,17 +24,41 @@ let ProductsService = class ProductsService {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
     }
+    async generateNextSku() {
+        const lastProduct = await this.productRepository.createQueryBuilder('product')
+            .where("product.sku LIKE 'MEEY-%'")
+            .orderBy("SUBSTRING(product.sku, 6)::INTEGER", "DESC")
+            .getOne();
+        let nextNumber = 1;
+        if (lastProduct && lastProduct.sku) {
+            const parts = lastProduct.sku.split('-');
+            if (parts.length > 1) {
+                const currentNumber = parseInt(parts[1]);
+                if (!isNaN(currentNumber)) {
+                    nextNumber = currentNumber + 1;
+                }
+            }
+        }
+        return `MEEY-${nextNumber.toString().padStart(3, '0')}`;
+    }
     async create(createProductDto) {
         const slug = createProductDto.slug || (0, slug_util_1.generateSlug)(createProductDto.name);
-        const existingProduct = await this.productRepository.findOne({
-            where: [{ slug }, { sku: createProductDto.sku }],
-        });
+        const sku = await this.generateNextSku();
+        const existingProduct = await this.productRepository.createQueryBuilder('product')
+            .where('product.slug = :slug OR product.sku = :sku', { slug, sku })
+            .getOne();
         if (existingProduct) {
             throw new common_1.BadRequestException('Product with this slug or SKU already exists');
         }
+        let variants = createProductDto.variants;
+        if (variants && Array.isArray(variants)) {
+            variants = variants.map((v) => ({ sku: v.sku, image: v.image }));
+        }
         const product = this.productRepository.create({
             ...createProductDto,
+            sku,
             slug,
+            variants
         });
         return await this.productRepository.save(product);
     }
@@ -147,6 +171,9 @@ let ProductsService = class ProductsService {
         if (!product) {
             throw new common_1.NotFoundException('Product not found');
         }
+        if (updateProductDto.sku && updateProductDto.sku !== product.sku) {
+            throw new common_1.BadRequestException('Le SKU principal (MEEY) ne peut pas être modifié');
+        }
         if (updateProductDto.slug && updateProductDto.slug !== product.slug) {
             const existed = await this.productRepository.findOne({
                 where: { slug: updateProductDto.slug },
@@ -155,7 +182,11 @@ let ProductsService = class ProductsService {
                 throw new common_1.BadRequestException('Slug already exists');
             }
         }
-        Object.assign(product, updateProductDto);
+        const { sku, ...updateData } = updateProductDto;
+        if (updateData.variants && Array.isArray(updateData.variants)) {
+            updateData.variants = updateData.variants.map((v) => ({ sku: v.sku, image: v.image }));
+        }
+        Object.assign(product, updateData);
         return await this.productRepository.save(product);
     }
     async remove(id) {

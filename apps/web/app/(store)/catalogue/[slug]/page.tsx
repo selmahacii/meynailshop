@@ -49,7 +49,7 @@ export default function ProductPage() {
     const [showSticky, setShowSticky] = useState(false);
     const { settings } = useSettings();
 
-    const whatsappNumber = "213775436562"; // Fallback or from settings if available
+
     
     useEffect(() => {
         let mounted = true;
@@ -107,12 +107,7 @@ export default function ProductPage() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const handleWhatsappOrder = () => {
-        if (!product) return;
-        const message = `Bonjour MEEY Nail Shop ! Je souhaite commander :\n\nProduit : ${product.name}\nRéférence : ${selectedVariant !== null ? product.variants[selectedVariant].label : product.sku}\nLien : ${window.location.href}\nQuantité : ${quantity}`;
-        const encoded = encodeURIComponent(message);
-        window.open(`https://wa.me/${whatsappNumber}?text=${encoded}`, '_blank');
-    };
+
 
     const handleAddToCart = () => {
         if (!product) return;
@@ -203,9 +198,9 @@ export default function ProductPage() {
 
                         {/* SKU */}
                         {product && (
-                            <div className="flex items-center space-x-2 mb-4">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-encre3">Réf :</span>
-                                <span className="text-[11px] font-mono font-bold text-encre bg-creme2/50 px-2 py-0.5 rounded-sm">
+                            <div className="flex items-center space-x-3 mb-6 bg-creme2/20 p-3 rounded-sm border border-creme2 w-fit">
+                                <span className="text-xs font-black uppercase tracking-widest text-encre3">Réf :</span>
+                                <span className="text-sm font-mono font-black text-encre tracking-widest">
                                     {selectedVariant !== null && product.variants[selectedVariant]?.sku 
                                         ? product.variants[selectedVariant].sku 
                                         : product.sku}
@@ -331,14 +326,6 @@ export default function ProductPage() {
                                 </button>
                             </div>
 
-                            {/* WhatsApp Fast Order */}
-                            <button
-                                onClick={handleWhatsappOrder}
-                                className="w-full flex items-center justify-center gap-3 bg-green-600 hover:bg-green-700 text-white h-14 rounded-sm font-bold uppercase tracking-[0.2em] text-[10px] transition-all shadow-md group"
-                            >
-                                <MessageCircle size={20} className="group-hover:scale-110 transition-transform" />
-                                Commander via WhatsApp
-                            </button>
                         </div>
 
                         {/* Trust Badges */}

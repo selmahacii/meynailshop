@@ -26,21 +26,23 @@ export default function CataloguePage() {
     });
     const [sortBy, setSortBy] = useState('newest');
     const [activeCategoryData, setActiveCategoryData] = useState<any>(null);
+    const [allCategories, setAllCategories] = useState<any[]>([]);
 
     useEffect(() => {
         const fetchCategoryData = async () => {
-            if (filters.category) {
-                try {
-                    const res = await StoreAPI.getCategories();
-                    if (res.success) {
+            try {
+                const res = await StoreAPI.getCategories();
+                if (res.success) {
+                    setAllCategories(res.data);
+                    if (filters.category) {
                         const cat = res.data.find((c: any) => c.slug === filters.category);
                         setActiveCategoryData(cat);
+                    } else {
+                        setActiveCategoryData(null);
                     }
-                } catch (err) {
-                    console.error(err);
                 }
-            } else {
-                setActiveCategoryData(null);
+            } catch (err) {
+                console.error(err);
             }
         };
         fetchCategoryData();
@@ -151,26 +153,38 @@ export default function CataloguePage() {
                 {/* Universe Widgets */}
                 <div className="animate-in fade-in slide-in-from-top-4 duration-1000">
                     <SubCategoryWidgets 
-                        subCategories={activeCategoryData?.subCategories || []}
-                        activeSubSlug={filters.subCategory}
-                        onSelect={(slug) => setFilters(prev => ({ ...prev, subCategory: slug }))}
+                        subCategories={activeCategoryData ? (activeCategoryData.subCategories || []) : allCategories}
+                        activeSubSlug={activeCategoryData ? filters.subCategory : filters.category}
+                        onSelect={(slug) => {
+                            if (activeCategoryData) {
+                                setFilters(prev => ({ ...prev, subCategory: slug }));
+                            } else {
+                                setFilters(prev => ({ ...prev, category: slug, subCategory: null }));
+                            }
+                        }}
                         title={activeCategoryData ? `Collection ${activeCategoryData.name}` : "Collections Populaires"}
-                        subtitle="Explorez par univers"
+                        subtitle={activeCategoryData ? "Explorez par sous-catégorie" : "Explorez par univers"}
                     />
                 </div>
 
-                {/* Subcategory Banner - Compact Pill */}
-                {filters.subCategory && (
+                {/* Return/Reset Banner */}
+                {filters.category && (
                     <motion.div 
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="mb-12 flex items-center gap-3 bg-white/60 backdrop-blur-md p-2 pl-6 pr-2 rounded-full border border-or/20 shadow-sm w-fit mx-auto lg:mx-0 group cursor-pointer hover:border-or/60 transition-all"
                     >
                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-encre">
-                            {activeCategoryData?.subCategories?.find((s:any) => s.slug === filters.subCategory)?.name}
+                            {filters.subCategory ? activeCategoryData?.subCategories?.find((s:any) => s.slug === filters.subCategory)?.name : activeCategoryData?.name}
                         </span>
                         <button 
-                            onClick={() => setFilters(prev => ({ ...prev, subCategory: null }))}
+                            onClick={() => {
+                                if (filters.subCategory) {
+                                    setFilters(prev => ({ ...prev, subCategory: null }));
+                                } else {
+                                    setFilters(prev => ({ ...prev, category: null, subCategory: null }));
+                                }
+                            }}
                             className="w-8 h-8 rounded-full bg-creme flex items-center justify-center text-encre hover:bg-rouge hover:text-white transition-all shadow-inner"
                         >
                             <X size={14} />
@@ -270,8 +284,12 @@ export default function CataloguePage() {
                                         <div className="w-12 h-12 bg-or/10 rounded-full flex items-center justify-center mb-4">
                                             <ArrowRight size={20} className="text-or" />
                                         </div>
-                                        <h4 className="font-serif text-xl text-encre mb-2">Choisissez un univers</h4>
-                                        <p className="text-[10px] text-encre3 uppercase tracking-widest font-bold">Sélectionnez une sous-catégorie ci-dessus pour explorer les produits</p>
+                                        <h4 className="font-serif text-xl text-encre mb-2">
+                                            {filters.category ? "Choisissez la collection" : "Choisissez un univers"}
+                                        </h4>
+                                        <p className="text-[10px] text-encre3 uppercase tracking-widest font-bold">
+                                            {filters.category ? "Sélectionnez une sous-catégorie" : "Sélectionnez une catégorie"} ci-dessus pour explorer les produits
+                                        </p>
                                     </div>
                                 )}
 
