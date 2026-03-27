@@ -271,6 +271,7 @@ export default function AdminProductsPage() {
                                                 )}
                                             </div>
                                             <h3 className="font-serif text-lg text-encre group-hover:text-rouge-deep transition-colors line-clamp-1">{product.name}</h3>
+                                            <p className="text-[9px] font-mono text-encre3 mt-1 leading-none">{product.sku}</p>
                                         </div>
                                     </div>
 

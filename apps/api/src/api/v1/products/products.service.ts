@@ -47,8 +47,9 @@ export class ProductsService {
 
       return {
         ...p,
-        category: p.category?.name || '—',
-        subCategory: p.subCategory?.name || '—',
+        sku: p.sku && p.sku.trim() !== '' ? p.sku : `REF-${p.id.slice(0, 6).toUpperCase()}`,
+        category: typeof p.category === 'object' ? (p.category as any)?.name : (p.category || '—'),
+        subCategory: typeof p.subCategory === 'object' ? (p.subCategory as any)?.name : (p.subCategory || '—'),
         status,
         alertThreshold: p.stockAlert || 5
       };
