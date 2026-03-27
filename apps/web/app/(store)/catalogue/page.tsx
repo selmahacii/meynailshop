@@ -77,6 +77,7 @@ function CatalogueContent() {
                 if (filters.category) params.category = filters.category;
                 if (filters.subCategory) params.subCategory = filters.subCategory;
                 if (filters.inStock) params.inStock = 'true';
+                if (filters.isNew) params.badge = 'new';
                 
                 if (filters.priceRanges.length > 0) {
                     let min = Infinity;
