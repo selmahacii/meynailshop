@@ -20,6 +20,8 @@ export interface CartItem {
   productPrice: number;
   productImage: string;
   productSku: string;
+  variantSku?: string;
+  variantImage?: string;
   subtotal: number;
 }
 
@@ -67,7 +69,7 @@ export class CartService {
     };
 
     const existingItemIndex = cart.items.findIndex(
-      (item) => item.productId === addToCartDto.productId,
+      (item) => item.productId === addToCartDto.productId && item.variantSku === addToCartDto.variantSku,
     );
 
     let cartItem: CartItem;
@@ -90,8 +92,10 @@ export class CartService {
         quantity: addToCartDto.quantity,
         productName: product.name,
         productPrice: Number(product.price),
-        productImage: product.images?.[0] || '',
+        productImage: addToCartDto.variantImage || product.images?.[0] || '',
         productSku: product.sku,
+        variantSku: addToCartDto.variantSku,
+        variantImage: addToCartDto.variantImage,
         subtotal: Number(product.price) * addToCartDto.quantity,
       };
 

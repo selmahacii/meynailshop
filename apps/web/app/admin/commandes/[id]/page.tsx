@@ -238,7 +238,12 @@ export default function OrderDetailsPage() {
                                                     </div>
                                                     <div>
                                                         <p className="text-sm font-bold text-encre line-clamp-1">{item.productName}</p>
-                                                        <p className="text-[10px] text-encre3 font-mono mt-1">SKU: {item.productSku}</p>
+                                                        <div className="flex flex-wrap items-center gap-2 mt-1">
+                                                            <p className="text-[10px] text-encre3 font-mono uppercase tracking-widest border border-creme2 px-2 py-0.5 rounded-sm bg-creme/20">SKU: {item.productSku}</p>
+                                                            {item.variantSku && item.variantSku !== item.productSku && (
+                                                                <p className="text-[9px] font-black text-rouge-deep uppercase bg-rouge-deep/5 px-2 py-0.5 rounded-sm animate-pulse tracking-widest">Référence: {item.variantSku}</p>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -272,7 +277,12 @@ export default function OrderDetailsPage() {
                                     </div>
                                     <div className="flex-grow min-w-0">
                                         <p className="text-sm font-black text-encre uppercase tracking-tighter line-clamp-2 leading-tight">{item.productName}</p>
-                                        <p className="text-[9px] text-encre3 font-bold mt-1 uppercase tracking-widest">SKU: {item.productSku}</p>
+                                        <div className="flex flex-col gap-1 mt-2">
+                                            <p className="text-[9px] text-encre3 font-bold uppercase tracking-widest">SKU: {item.productSku}</p>
+                                            {item.variantSku && item.variantSku !== item.productSku && (
+                                                <p className="text-[9px] font-black text-rouge-deep uppercase tracking-widest">Réf: {item.variantSku}</p>
+                                            )}
+                                        </div>
                                         
                                         <div className="mt-4 flex items-end justify-between">
                                             <div className="text-[10px] text-encre3 font-bold">
