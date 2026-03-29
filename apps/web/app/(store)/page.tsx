@@ -119,7 +119,7 @@ export default function HomePage() {
                             <h2 className="font-serif text-3xl md:text-4xl text-encre mb-2">Meilleures Ventes</h2>
                             <p className="text-encre3 text-xs">Les indispensables plébiscités par nos clientes</p>
                         </div>
-                        <Link href="/catalogue" className="text-rouge-mid font-medium hover:text-rouge hover:underline text-sm md:text-base">
+                        <Link href="/catalogue?badge=top" className="text-rouge-mid font-medium hover:text-rouge hover:underline text-sm md:text-base">
                             Tout voir →
                         </Link>
                     </div>
