@@ -77,60 +77,95 @@ export default function SubCategoryWidgets({
                     </div>
                 </div>
 
-                {subCategories.map((sub: any) => (
-                    <div
-                        key={sub.id}
-                        onClick={() => onSelect(sub.slug)}
-                        className={cn(
-                            "flex flex-col items-center cursor-pointer group transition-all duration-500",
-                            !activeSubSlug 
-                                ? "w-full md:max-w-[160px] md:flex-shrink-0 md:snap-start mb-6" 
-                                : "flex-shrink-0 snap-start max-w-[100px]"
-                        )}
-                    >
-                        <div className={cn(
-                            "transition-all duration-500 relative border-2 p-1",
-                            !activeSubSlug 
-                                ? "w-[150px] h-[150px] md:w-[140px] md:h-[140px] rounded-[55px] md:rounded-[30px]" 
-                                : "w-24 h-24 md:w-24 md:h-24 rounded-[35px]",
-                            activeSubSlug === sub.slug 
-                                ? "border-or scale-110 shadow-lg shadow-or/10 ring-4 ring-or/5" 
-                                : "border-rouge-brand group-hover:border-rouge-brand/40"
-                        )}>
-                            <div className={cn(
-                                "w-full h-full bg-creme2 overflow-hidden relative",
-                                !activeSubSlug ? "rounded-[50px] md:rounded-[34px]" : "rounded-[31px]"
-                            )}>
-                                {sub.imageUrl ? (
-                                    <img 
-                                        src={sub.imageUrl} 
-                                        alt={sub.name} 
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
-                                    />
-                                ) : (
-                                    <img 
-                                        src={`https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=200`}
-                                        alt={sub.name}
-                                        className="w-full h-full object-cover opacity-50 grayscale"
-                                    />
-                                )}
-                            </div>
-                            {sub.hasNewArrivals && (
-                                <div className="absolute top-2 right-2 w-5 h-5 bg-rouge-deep rounded-full border-4 border-white shadow-lg animate-pulse" />
+                {subCategories.map((sub: any) => {
+                    const isCardStyle = !activeSubSlug;
+                    return (
+                        <div
+                            key={sub.id}
+                            onClick={() => onSelect(sub.slug)}
+                            className={cn(
+                                "cursor-pointer group transition-all duration-500",
+                                isCardStyle
+                                    ? "w-full bg-white border-2 border-rouge-brand shadow-sm hover:shadow-2xl hover:border-rouge-brand/50 rounded-[24px] overflow-hidden flex flex-col md:max-w-[200px] md:flex-shrink-0 md:snap-start mb-6"
+                                    : "flex flex-col items-center flex-shrink-0 snap-start max-w-[100px]"
+                            )}
+                        >
+                            {isCardStyle ? (
+                                <>
+                                    <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden border-b-2 border-rouge-brand/10">
+                                        {sub.imageUrl ? (
+                                            <img 
+                                                src={sub.imageUrl} 
+                                                alt={sub.name} 
+                                                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
+                                            />
+                                        ) : (
+                                            <img 
+                                                src={`https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=200`}
+                                                alt={sub.name}
+                                                className="absolute inset-0 w-full h-full object-cover opacity-50 grayscale group-hover:scale-105 transition-transform duration-700 ease-out"
+                                            />
+                                        )}
+                                        {sub.hasNewArrivals && (
+                                            <div className="absolute top-3 left-3 z-10">
+                                                <span className="text-[8px] font-black uppercase tracking-[0.2em] px-2 py-1 rounded-sm shadow-md bg-rouge-brand text-gold-brand border border-gold-brand/20">
+                                                    Nouveau
+                                                </span>
+                                            </div>
+                                        )}
+                                        <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-encre/80 via-encre/40 to-transparent z-20 md:flex justify-center hidden">
+                                            <span className="text-creme text-[9px] font-bold uppercase tracking-widest">Explorer</span>
+                                        </div>
+                                    </div>
+                                    <div className="p-4 text-center flex-grow flex flex-col justify-center">
+                                        <p className="font-serif text-[14px] md:text-lg text-encre group-hover:text-rouge-mid transition-colors line-clamp-2 md:line-clamp-1 mb-1 leading-tight">
+                                            {sub.name}
+                                        </p>
+                                        <p className="text-[8px] md:text-[9px] font-bold text-or/80 uppercase tracking-widest">
+                                            {sub.productCount || 0} modèles
+                                        </p>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className={cn(
+                                        "transition-all duration-500 relative border-2 p-1 w-24 h-24 md:w-24 md:h-24 rounded-[35px]",
+                                        activeSubSlug === sub.slug 
+                                            ? "border-or scale-110 shadow-lg shadow-or/10 ring-4 ring-or/5" 
+                                            : "border-rouge-brand group-hover:border-rouge-brand/40"
+                                    )}>
+                                        <div className="w-full h-full bg-creme2 overflow-hidden relative rounded-[31px]">
+                                            {sub.imageUrl ? (
+                                                <img 
+                                                    src={sub.imageUrl} 
+                                                    alt={sub.name} 
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                                                />
+                                            ) : (
+                                                <img 
+                                                    src={`https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=200`}
+                                                    alt={sub.name}
+                                                    className="w-full h-full object-cover opacity-50 grayscale"
+                                                />
+                                            )}
+                                        </div>
+                                        {sub.hasNewArrivals && (
+                                            <div className="absolute top-1 right-1 w-4 h-4 bg-rouge-deep rounded-full border-2 border-white shadow-lg animate-pulse" />
+                                        )}
+                                    </div>
+                                    <div className="text-center mt-3 flex flex-col items-center">
+                                        <p className={cn(
+                                            "text-[9px] md:text-[10px] font-black uppercase tracking-[0.1em] transition-colors leading-tight mb-1",
+                                            activeSubSlug === sub.slug ? "text-encre" : "text-encre3 group-hover:text-encre"
+                                        )}>
+                                            {sub.name}
+                                        </p>
+                                    </div>
+                                </>
                             )}
                         </div>
-                        <div className="text-center mt-4 flex flex-col items-center justify-start min-h-[44px] w-full px-1">
-                            <p className={cn(
-                                "font-black uppercase tracking-[0.1em] transition-colors leading-tight mb-1",
-                                !activeSubSlug ? "text-[12px] md:text-[9px]" : "text-[10px]",
-                                activeSubSlug === sub.slug ? "text-encre font-black" : "text-encre3 group-hover:text-encre"
-                            )}>
-                                {sub.name}
-                            </p>
-                            <p className="text-[9px] font-bold text-or/60 group-hover:text-or transition-colors uppercase whitespace-nowrap">{sub.productCount || 0} modèles</p>
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </div>
     );
