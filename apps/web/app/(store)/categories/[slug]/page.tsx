@@ -187,7 +187,7 @@ export default function CategoryPage() {
                         </div>
 
                         {loading ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 md:gap-10">
+                            <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10">
                                 {[...Array(6)].map((_, i) => (
                                     <ProductCardSkeleton key={i} />
                                 ))}
@@ -200,7 +200,7 @@ export default function CategoryPage() {
                                         initial="hidden"
                                         animate="show"
                                         className={cn(
-                                            "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 md:gap-10",
+                                            "grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10",
                                             !filters.subCategory && "hidden md:grid" // Hide on mobile if no sub
                                         )}
                                     >
