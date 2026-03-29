@@ -57,112 +57,96 @@ export default function SubCategoryWidgets({
                     ? "grid grid-cols-2 gap-6 sm:gap-8 md:flex md:items-start md:gap-10 md:overflow-x-auto md:no-scrollbar" 
                     : "flex items-start gap-6 md:gap-10 overflow-x-auto no-scrollbar"
             )}>
-                {/* "All" Widget - Hide in Mobile Grid to save space for specific universes */}
+                {/* "All" Widget - Always Horizontal if activeSubSlug */}
                 <div 
                     onClick={() => onSelect(null)}
                     className={cn(
-                        "flex flex-col items-center gap-4 cursor-pointer group flex-shrink-0 snap-start",
-                        !activeSubSlug && "hidden md:flex"
+                        "cursor-pointer group transition-all duration-500",
+                        !activeSubSlug 
+                            ? "hidden md:flex flex-col items-center flex-shrink-0 snap-start" 
+                            : "flex flex-col flex-shrink-0 snap-start max-w-[120px] md:max-w-[200px]"
                     )}
                 >
                     <div className={cn(
-                        "w-20 h-20 md:w-24 md:h-24 transition-all duration-500 rounded-sm md:rounded-full border-2 p-1.5",
-                        !activeSubSlug 
-                            ? "border-or scale-110 shadow-lg shadow-or/10 ring-4 ring-or/5" 
-                            : "border-creme2 group-hover:border-or/40"
+                        "w-full bg-white shadow-sm hover:shadow-lg rounded-[24px] overflow-hidden flex flex-col border-2",
+                        !activeSubSlug ? "border-or shadow-or/10 ring-4 ring-or/5" : "border-rouge-brand/20 hover:border-rouge-brand/50"
                     )}>
-                        <div className="w-full h-full rounded-[2px] md:rounded-full bg-encre flex items-center justify-center overflow-hidden">
-                             <div className="text-creme text-[8px] font-black uppercase tracking-widest text-center px-2">TOUT</div>
+                        <div className="relative aspect-[4/5] w-full bg-encre flex items-center justify-center overflow-hidden border-b-2 border-rouge-brand/10">
+                            <span className="text-creme text-[10px] md:text-xs font-black uppercase tracking-widest text-center px-4">TOUT VOIR</span>
+                        </div>
+                        <div className="p-3 md:p-4 text-center flex-grow flex flex-col justify-center">
+                            <p className={cn(
+                                "font-serif text-[12px] md:text-lg transition-colors line-clamp-2 md:line-clamp-1 leading-tight",
+                                !activeSubSlug ? "text-or font-bold" : "text-encre group-hover:text-rouge-mid"
+                            )}>
+                                Général
+                            </p>
                         </div>
                     </div>
                 </div>
 
                 {subCategories.map((sub: any) => {
-                    const isCardStyle = !activeSubSlug;
+                    const isActive = activeSubSlug === sub.slug;
                     return (
                         <div
                             key={sub.id}
                             onClick={() => onSelect(sub.slug)}
                             className={cn(
                                 "cursor-pointer group transition-all duration-500",
-                                isCardStyle
-                                    ? "w-full bg-white border-2 border-rouge-brand shadow-sm hover:shadow-2xl hover:border-rouge-brand/50 rounded-[24px] overflow-hidden flex flex-col md:max-w-[200px] md:flex-shrink-0 md:snap-start mb-6"
-                                    : "flex flex-col items-center flex-shrink-0 snap-start max-w-[100px]"
+                                !activeSubSlug
+                                    ? "w-full flex flex-col md:max-w-[200px] md:flex-shrink-0 md:snap-start mb-6"
+                                    : "flex flex-col flex-shrink-0 snap-start w-[140px] md:max-w-[200px]" // Use reasonable width in horizontal scroll
                             )}
                         >
-                            {isCardStyle ? (
-                                <>
-                                    <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden border-b-2 border-rouge-brand/10">
-                                        {sub.imageUrl ? (
-                                            <img 
-                                                src={sub.imageUrl} 
-                                                alt={sub.name} 
-                                                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
-                                            />
-                                        ) : (
-                                            <img 
-                                                src={`https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=200`}
-                                                alt={sub.name}
-                                                className="absolute inset-0 w-full h-full object-cover opacity-50 grayscale group-hover:scale-105 transition-transform duration-700 ease-out"
-                                            />
-                                        )}
-                                        {sub.hasNewArrivals && (
-                                            <div className="absolute top-3 left-3 z-10">
-                                                <span className="text-[8px] font-black uppercase tracking-[0.2em] px-2 py-1 rounded-sm shadow-md bg-rouge-brand text-gold-brand border border-gold-brand/20">
-                                                    Nouveau
-                                                </span>
-                                            </div>
-                                        )}
-                                        <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-encre/80 via-encre/40 to-transparent z-20 md:flex justify-center hidden">
-                                            <span className="text-creme text-[9px] font-bold uppercase tracking-widest">Explorer</span>
-                                        </div>
-                                    </div>
-                                    <div className="p-4 text-center flex-grow flex flex-col justify-center">
-                                        <p className="font-serif text-[14px] md:text-lg text-encre group-hover:text-rouge-mid transition-colors line-clamp-2 md:line-clamp-1 mb-1 leading-tight">
-                                            {sub.name}
-                                        </p>
-                                        <p className="text-[8px] md:text-[9px] font-bold text-or/80 uppercase tracking-widest">
-                                            {sub.productCount || 0} modèles
-                                        </p>
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <div className={cn(
-                                        "transition-all duration-500 relative border-2 p-1 w-24 h-24 md:w-24 md:h-24 rounded-[35px]",
-                                        activeSubSlug === sub.slug 
-                                            ? "border-or scale-110 shadow-lg shadow-or/10 ring-4 ring-or/5" 
-                                            : "border-rouge-brand group-hover:border-rouge-brand/40"
-                                    )}>
-                                        <div className="w-full h-full bg-creme2 overflow-hidden relative rounded-[31px]">
-                                            {sub.imageUrl ? (
-                                                <img 
-                                                    src={sub.imageUrl} 
-                                                    alt={sub.name} 
-                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
-                                                />
-                                            ) : (
-                                                <img 
-                                                    src={`https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=200`}
-                                                    alt={sub.name}
-                                                    className="w-full h-full object-cover opacity-50 grayscale"
-                                                />
+                            <div className={cn(
+                                "w-full bg-white shadow-sm hover:shadow-2xl rounded-[24px] overflow-hidden flex flex-col transition-all duration-500 border-2",
+                                isActive 
+                                    ? "border-or scale-[1.02] md:scale-105 shadow-xl shadow-or/10 ring-4 ring-or/10" 
+                                    : "border-rouge-brand hover:border-rouge-brand/50"
+                            )}>
+                                <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden border-b-2 border-rouge-brand/10">
+                                    {sub.imageUrl ? (
+                                        <img 
+                                            src={sub.imageUrl} 
+                                            alt={sub.name} 
+                                            className={cn(
+                                                "absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out",
+                                                !isActive && "group-hover:scale-105"
+                                            )} 
+                                        />
+                                    ) : (
+                                        <img 
+                                            src={`https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=200`}
+                                            alt={sub.name}
+                                            className={cn(
+                                                "absolute inset-0 w-full h-full object-cover opacity-50 grayscale transition-transform duration-700 ease-out",
+                                                !isActive && "group-hover:scale-105"
                                             )}
+                                        />
+                                    )}
+                                    {sub.hasNewArrivals && (
+                                        <div className="absolute top-2 left-2 md:top-3 md:left-3 z-10">
+                                            <span className="text-[7px] md:text-[8px] font-black uppercase tracking-[0.2em] px-1.5 md:px-2 py-0.5 md:py-1 rounded-sm shadow-md bg-rouge-brand text-gold-brand border border-gold-brand/20">
+                                                Nouveau
+                                            </span>
                                         </div>
-                                        {sub.hasNewArrivals && (
-                                            <div className="absolute top-1 right-1 w-4 h-4 bg-rouge-deep rounded-full border-2 border-white shadow-lg animate-pulse" />
-                                        )}
+                                    )}
+                                    <div className="absolute inset-x-0 bottom-0 p-2 md:p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-encre/80 via-encre/40 to-transparent z-20 flex justify-center hidden md:flex">
+                                        <span className="text-creme text-[8px] md:text-[9px] font-bold uppercase tracking-widest">{isActive ? "Séléctionné" : "Explorer"}</span>
                                     </div>
-                                    <div className="text-center mt-3 flex flex-col items-center">
-                                        <p className={cn(
-                                            "text-[9px] md:text-[10px] font-black uppercase tracking-[0.1em] transition-colors leading-tight mb-1",
-                                            activeSubSlug === sub.slug ? "text-encre" : "text-encre3 group-hover:text-encre"
-                                        )}>
-                                            {sub.name}
-                                        </p>
-                                    </div>
-                                </>
-                            )}
+                                </div>
+                                <div className="p-2 md:p-4 text-center flex-grow flex flex-col justify-center">
+                                    <p className={cn(
+                                        "font-serif text-[12px] md:text-lg transition-colors line-clamp-2 md:line-clamp-1 mb-0.5 md:mb-1 leading-tight",
+                                        isActive ? "text-or font-bold" : "text-encre group-hover:text-rouge-mid"
+                                    )}>
+                                        {sub.name}
+                                    </p>
+                                    <p className="text-[7px] md:text-[8px] font-bold text-or/80 uppercase tracking-widest">
+                                        {sub.productCount || 0} modèles
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     );
                 })}
