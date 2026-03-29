@@ -60,22 +60,22 @@ export default function ProductCard({ product }: ProductCardProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="group bg-white border-2 border-rouge-brand shadow-sm hover:shadow-2xl hover:border-rouge-brand/50 transition-all duration-500 rounded-[30px] overflow-hidden"
+            className="group bg-white border-2 border-rouge-brand shadow-sm hover:shadow-2xl hover:border-rouge-brand/50 transition-all duration-500 rounded-[20px] sm:rounded-[30px] overflow-hidden"
         >
             <Link href={`/catalogue/${product.slug}`} className="block relative aspect-[4/5] overflow-hidden bg-creme2">
                 {/* Badges */}
-                <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
+                <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-10 flex flex-col gap-1.5">
                     {product.comparePrice && product.comparePrice > product.price && (
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-sm shadow-md bg-rouge-brand text-gold-brand border border-gold-brand/30">
+                        <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.1em] sm:tracking-[0.2em] px-2 py-1 sm:px-3 sm:py-1.5 rounded-sm shadow-md bg-rouge-brand text-gold-brand border border-gold-brand/30">
                             -{Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)}%
                         </span>
                     )}
                     {product.badge && (
                         <span className={cn(
-                            "text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-sm shadow-md bg-rouge-brand text-gold-brand border border-gold-brand/20",
+                            "text-[7px] sm:text-[9px] font-black uppercase tracking-[0.1em] sm:tracking-[0.2em] px-2 py-1 sm:px-3 sm:py-1.5 rounded-sm shadow-md bg-rouge-brand text-gold-brand border border-gold-brand/20",
                         )}>
                             {product.badge === 'new' ? 'Nouveau' : 
-                             product.badge === 'top' ? 'Bestseller' : product.badge}
+                             product.badge === 'top' ? 'Best' : product.badge}
                         </span>
                     )}
                 </div>
@@ -83,11 +83,12 @@ export default function ProductCard({ product }: ProductCardProps) {
                 {/* Wishlist Button */}
                 <button
                     onClick={handleWishlist}
-                    className={`absolute top-4 right-4 z-10 p-2.5 rounded-full bg-white text-encre hover:scale-110 transition-all shadow-md ${
+                    className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-10 p-1.5 sm:p-2.5 rounded-full bg-white text-encre hover:scale-110 transition-all shadow-md ${
                         inWishlist ? 'text-rouge-deep' : 'hover:text-rouge-mid'
                     }`}
                 >
-                    <Heart size={16} strokeWidth={2} className={inWishlist ? 'fill-rouge-deep' : ''} />
+                    <Heart size={13} strokeWidth={2} className={cn('sm:hidden', inWishlist ? 'fill-rouge-deep' : '')} />
+                    <Heart size={16} strokeWidth={2} className={cn('hidden sm:block', inWishlist ? 'fill-rouge-deep' : '')} />
                 </button>
 
                 {/* Image */}
@@ -127,30 +128,30 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </div>
             </Link>
 
-            <div className="p-6">
-                <div className="mb-2">
-                    <Link href={`/categories/${product.category?.slug || '#'}`} className="text-[9px] font-black text-or uppercase tracking-[0.2em] hover:text-rouge-deep transition-colors">
+            <div className="p-3 sm:p-6">
+                <div className="mb-1 sm:mb-2">
+                    <Link href={`/categories/${product.category?.slug || '#'}`} className="text-[8px] sm:text-[9px] font-black text-or uppercase tracking-[0.15em] sm:tracking-[0.2em] hover:text-rouge-deep transition-colors">
                         {product.category?.name || 'Onglerie'}
                     </Link>
                 </div>
 
-                <Link href={`/catalogue/${product.slug}`} className="block mb-3">
-                    <h3 className="font-serif text-xl text-encre hover:text-rouge-mid transition-colors line-clamp-1 leading-tight">
+                <Link href={`/catalogue/${product.slug}`} className="block mb-2 sm:mb-3">
+                    <h3 className="font-serif text-[14px] sm:text-xl text-encre hover:text-rouge-mid transition-colors line-clamp-2 sm:line-clamp-1 leading-tight">
                         {product.name}
                     </h3>
                 </Link>
 
-                <div className="flex items-center justify-between mt-4">
-                    <div className="flex items-baseline space-x-3">
-                        <span className="text-xl font-bold text-encre">{formatPrice(product.price)}</span>
+                <div className="flex items-center justify-between mt-2 sm:mt-4">
+                    <div className="flex flex-col sm:flex-row sm:items-baseline sm:space-x-3">
+                        <span className="text-[14px] sm:text-xl font-bold text-encre">{formatPrice(product.price)}</span>
                         {product.comparePrice && (
-                            <span className="text-sm text-encre3 line-through">{formatPrice(product.comparePrice)}</span>
+                            <span className="text-[10px] sm:text-sm text-encre3 line-through">{formatPrice(product.comparePrice)}</span>
                         )}
                     </div>
                     <div className="flex items-center text-encre3">
-                        <Star size={12} className="fill-or text-or mr-1.5" />
-                        <span className="text-[11px] font-bold">{product.averageRating?.toFixed(1) || '5.0'}</span>
-                        <span className="text-[9px] ml-1 opacity-50">({product.reviewCount || 0})</span>
+                        <Star size={10} className="fill-or text-or mr-1" />
+                        <span className="text-[10px] sm:text-[11px] font-bold">{product.averageRating?.toFixed(1) || '5.0'}</span>
+                        <span className="hidden sm:inline text-[9px] ml-1 opacity-50">({product.reviewCount || 0})</span>
                     </div>
                 </div>
             </div>

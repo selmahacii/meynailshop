@@ -125,13 +125,13 @@ export default function HomePage() {
                     </div>
 
                     {loading && featuredProducts.length === 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                             {[...Array(4)].map((_, i) => (
                                 <ProductCardSkeleton key={i} />
                             ))}
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                             {featuredProducts.length > 0 ? (
                                 featuredProducts.slice(0, 4).map((product) => (
                                     <ProductCard key={product.id} product={product} />
