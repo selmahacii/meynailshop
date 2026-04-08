@@ -14,7 +14,7 @@ export default function CheckoutSuccessPage() {
                     Merci pour votre confiance. Votre commande <strong>#ORD-2026-001</strong> a bien été enregistrée.
                 </p>
                 <p className="text-encre3 text-sm mb-8">
-                    Un email de confirmation vous a été envoyé contenant tous les détails.
+                    Notre équipe prépare votre commande et vous contactera très prochainement.
                 </p>
 
                 <div className="bg-creme2 p-6 rounded-sm mb-8 text-left">

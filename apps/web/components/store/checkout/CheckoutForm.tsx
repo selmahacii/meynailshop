@@ -26,7 +26,6 @@ export function CheckoutForm({ onSubmit, loading = false }: CheckoutFormProps) {
       firstName: '',
       lastName: '',
       phone: '',
-      email: '',
       street: '',
       wilaya: '',
       commune: '',
@@ -51,13 +50,6 @@ export function CheckoutForm({ onSubmit, loading = false }: CheckoutFormProps) {
         />
       </div>
 
-      <Input
-        {...register('email')}
-        type="email"
-        label="Email"
-        placeholder="jean@example.com"
-        error={errors.email?.message}
-      />
 
       <Input
         {...register('phone')}

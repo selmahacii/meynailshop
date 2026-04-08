@@ -25,7 +25,6 @@ export default function CheckoutPage() {
 
     // Form states
     const [formData, setFormData] = useState({
-        email: '',
         firstName: '',
         lastName: '',
         phone: '',
@@ -60,7 +59,6 @@ export default function CheckoutPage() {
                 shippingAddress: {
                     firstName: formData.firstName,
                     lastName: formData.lastName,
-                    email: formData.email,
                     phone: formData.phone,
                     address: formData.address,
                     wilaya: formData.wilaya,
@@ -124,27 +122,11 @@ export default function CheckoutPage() {
 
                 <form onSubmit={handleSubmit} className="space-y-10">
 
-                    {/* Contact */}
+                    {/* Contact - Removed Email as per request */}
                     <section>
                         <h2 className="text-sm font-bold uppercase tracking-widest text-encre border-b border-creme2 pb-2 mb-6">1. Contact</h2>
                         <div className="space-y-4">
-                            <div>
-                                <label htmlFor="email" className="sr-only">Adresse e-mail</label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    placeholder="Adresse e-mail"
-                                    required
-                                    value={formData.email}
-                                    onChange={handleInputChange}
-                                    className="w-full p-4 bg-creme2 border border-creme focus:outline-none focus:border-or focus:ring-1 focus:ring-or text-sm text-encre placeholder-encre3/70 transition-all font-medium"
-                                />
-                            </div>
-                            <div className="flex items-center">
-                                <input type="checkbox" id="news" className="w-4 h-4 text-or border-creme2 focus:ring-or rounded-sm" />
-                                <label htmlFor="news" className="ml-2 text-sm text-encre3 cursor-pointer">M'informer des nouveautés et offres exclusives</label>
-                            </div>
+                            <p className="text-xs text-encre3 uppercase tracking-tighter">Veuillez renseigner vos informations de livraison ci-dessous.</p>
                         </div>
                     </section>
 
