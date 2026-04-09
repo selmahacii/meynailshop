@@ -68,7 +68,7 @@ export default function SearchOverlay({ isOpen, onClose, allCategories = [] }: S
                     setResults(items.slice(0, 6));
                 }
             } catch (err) {
-                console.error('Search error:', err);
+
             } finally {
                 setLoading(false);
             }

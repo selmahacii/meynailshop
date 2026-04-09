@@ -60,7 +60,7 @@ export async function apiFetch<T = any>(
 
   const url = `${BASE_URL}${endpoint}`;
 
-  console.log(`🔄 API Request: ${fetchOptions.method || 'GET'} ${url}`);
+
 
   const isFormData = fetchOptions.body instanceof FormData;
   const headers: Record<string, string> = {
@@ -76,7 +76,7 @@ export async function apiFetch<T = any>(
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
-      console.warn(`⏰ API Request timeout: ${url}`);
+
       controller.abort();
     }, timeout);
 
@@ -88,14 +88,14 @@ export async function apiFetch<T = any>(
 
     clearTimeout(timeoutId);
 
-    console.log(`📡 API Response: ${response.status} ${response.statusText} for ${url}`);
+
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
       
       // Auto-clear token and redirect on 401 (Unauthorized)
       if (response.status === 401 && typeof window !== 'undefined') {
-        console.warn('🔒 Session expired or invalid. Clearing token and redirecting to login.');
+
         localStorage.removeItem('accessToken');
         document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         
@@ -105,11 +105,7 @@ export async function apiFetch<T = any>(
         }
       }
 
-      console.error(`❌ API Error: ${response.status} ${response.statusText}`, {
-        url,
-        status: response.status,
-        error: errorData
-      });
+
       return {
         data: null as T,
         success: false,
@@ -118,11 +114,11 @@ export async function apiFetch<T = any>(
     }
 
     const data = await response.json();
-    console.log(`✅ API Success: ${url}`, { dataKeys: Object.keys(data) });
+
 
     return { data: data.data || data, success: true };
   } catch (error) {
-    console.error(`💥 API Network Error: ${url}`, error);
+
     return {
       data: null as T,
       success: false,

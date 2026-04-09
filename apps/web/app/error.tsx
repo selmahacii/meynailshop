@@ -11,7 +11,7 @@ interface ErrorProps {
 
 export default function GlobalError({ error, reset }: ErrorProps) {
   useEffect(() => {
-    console.error('Error caught by global error boundary:', error);
+
   }, [error]);
 
   return (

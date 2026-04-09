@@ -11,7 +11,7 @@ export function middleware(request: NextRequest) {
   // No longer redirecting away from auth pages to allow users to "repair" sessions
   // if store and cookies become inconsistent.
 
-  console.log(`[MIDDLEWARE DEBUG] Requesting: ${pathname}, Authenticated: ${!!token}`);
+
 
   // Base64URL decoder for Edge Runtime
   const decodeJWT = (token: string) => {
@@ -29,19 +29,19 @@ export function middleware(request: NextRequest) {
   // Protect admin routes
   if (ADMIN_ROUTES.some(route => pathname.startsWith(route))) {
     if (!token) {
-        console.log('[MIDDLEWARE DEBUG] Admin route blocked: No token');
+
         return NextResponse.redirect(new URL('/connexion?redirect=/admin', request.url));
     }
 
     const payload = decodeJWT(token);
-    console.log(`[MIDDLEWARE DEBUG] Decoded payload:`, payload);
+
 
     if (!payload || payload.role !== 'admin') {
-      console.warn(`[MIDDLEWARE DEBUG] Admin route blocked: Improper role [${payload?.role || 'none'}]. REDIRECTING TO HOME.`);
+
       return NextResponse.redirect(new URL('/', request.url));
     }
     
-    console.log('[MIDDLEWARE DEBUG] Admin route allowed');
+
   }
 
   // Protect user account routes

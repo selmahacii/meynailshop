@@ -25,11 +25,11 @@ export default function HomePage() {
                 ]);
 
                 if (catRes.success) {
-                    console.log('📦 Categories Data:', catRes.data);
+
                     setCategories(catRes.data || []);
                 }
                 if (featRes.success) {
-                    console.log('📦 Featured Products Data:', featRes.data);
+
                     setFeaturedProducts(featRes.data || []);
                 }
             } catch (err) {

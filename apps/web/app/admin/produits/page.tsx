@@ -45,13 +45,13 @@ export default function AdminProductsPage() {
 
     const fetchProducts = async () => {
         try {
-            console.log('🔄 Products: Starting data fetch');
+
             setLoading(true);
             const result = await ProductsAPI.getAll(1, 50); // Get first page with 50 items
-            console.log('📦 Products: API result received', result);
+
 
             if (result.success && result.data) {
-                console.log('✅ Products: Data loaded successfully', result.data);
+
                 let filteredProducts = result.data.items || [];
 
                 // Filter based on active tab
@@ -64,11 +64,11 @@ export default function AdminProductsPage() {
 
                 setProducts(filteredProducts);
             } else {
-                console.error('❌ Products: API returned error', result.error);
+
                 setError(result.error || 'Erreur lors du chargement des produits');
             }
         } catch (err) {
-            console.error('💥 Products: Network error', err);
+
             setError('Impossible de charger les produits');
         } finally {
             setLoading(false);
@@ -95,7 +95,7 @@ export default function AdminProductsPage() {
                 });
             }
         } catch (err) {
-            console.error('Stats error:', err);
+
         }
     };
 

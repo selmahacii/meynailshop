@@ -41,7 +41,7 @@ export function useSettings() {
                     listeners.forEach(l => l(res.data));
                 }
             } catch (err) {
-                console.error('Failed to fetch settings:', err);
+
             } finally {
                 setLoading(false);
             }
@@ -69,7 +69,7 @@ export function useSettings() {
             }
             return res;
         } catch (err) {
-            console.error('Failed to refresh settings:', err);
+
             return { success: false, error: 'Network error' };
         }
     };

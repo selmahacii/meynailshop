@@ -51,21 +51,21 @@ export default function AdminOrdersPage() {
 
     const fetchOrders = async (status?: string, page: number = 1) => {
         try {
-            console.log('🔄 Orders: Starting data fetch', status ? `for status: ${status}` : '', `page: ${page}`);
+
             setLoading(true);
             const result = await OrdersAPI.getAll(page, 50, status);
-            console.log('📋 Orders: API result received', result);
+
 
             if (result.success) {
-                console.log('✅ Orders: Data loaded successfully', result.data);
+
                 setOrders(result.data.data || []);
                 setPagination(result.data.pagination || { total: 0, page: 1, limit: 10, pages: 1 });
             } else {
-                console.error('❌ Orders: API returned error', result.error);
+
                 setError(result.error || 'Erreur lors du chargement des commandes');
             }
         } catch (err) {
-            console.error('💥 Orders: Network error', err);
+
             setError('Impossible de charger les commandes');
         } finally {
             setLoading(false);
@@ -74,12 +74,12 @@ export default function AdminOrdersPage() {
 
     const fetchStats = async () => {
         try {
-            console.log('🔄 Orders Stats: Starting stats fetch');
+
             const result = await OrdersAPI.getStats();
-            console.log('📊 Orders Stats: API result received', result);
+
 
             if (result.success) {
-                console.log('✅ Orders Stats: Stats loaded successfully', result.data);
+
                 setStats(result.data);
                 // Update tab counts
                 tabs[0].count = result.data.active || 0;
@@ -87,10 +87,10 @@ export default function AdminOrdersPage() {
                 tabs[2].count = result.data.shipped || 0;
                 tabs[3].count = result.data.history || 0;
             } else {
-                console.error('❌ Orders Stats: API returned error', result.error);
+
             }
         } catch (err) {
-            console.error('💥 Orders Stats: Network error', err);
+
         }
     };
 
@@ -113,7 +113,7 @@ export default function AdminOrdersPage() {
             }
         } catch (err) {
             setError('Impossible de mettre à jour la commande');
-            console.error('Update error:', err);
+
         } finally {
             setUpdatingOrder(null);
         }

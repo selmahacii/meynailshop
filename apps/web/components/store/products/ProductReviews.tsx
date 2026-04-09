@@ -42,7 +42,7 @@ export default function ProductReviews({ productId, productName }: ProductReview
       if (reviewsRes.success) setReviews(reviewsRes.data.items);
       if (statsRes.success) setStats(statsRes.data);
     } catch (error) {
-      console.error('Error fetching reviews:', error);
+
     } finally {
       setLoading(false);
     }

@@ -44,7 +44,7 @@ function LoginForm() {
             }
 
             const result = await response.json();
-            console.log('[DEBUG] Raw Login Response:', result);
+
 
             // Handle nesting: NestJS often wraps in a 'data' property
             let authData = result.data || result;
@@ -55,9 +55,9 @@ function LoginForm() {
                 const userToStore = authData.user;
                 const token = authData.accessToken;
                 
-                console.log('[DEBUG] Scenario A - Nesting found {accessToken, user}');
-                console.log('[DEBUG] Token:', token ? 'Exists' : 'Missing');
-                console.log('[DEBUG] User to store:', userToStore);
+
+
+
 
                 if (token) {
                     localStorage.setItem('accessToken', token);
@@ -74,7 +74,7 @@ function LoginForm() {
                 }
             } else {
                 // Scenario: Flat object or other structure
-                console.log('[DEBUG] Scenario B - Fallback extraction');
+
                 const accessToken = authData.accessToken;
                 
                 if (accessToken) {
@@ -93,12 +93,12 @@ function LoginForm() {
                         router.push(redirectUrl);
                     }
                 } else {
-                    console.error('[DEBUG] Could not identify user data in response:', authData);
+
                     toast.error('Erreur: Données utilisateur introuvables');
                 }
             }
         } catch (error) {
-            console.error('Login error:', error);
+
             const message = 'Erreur de connexion. Essayez à nouveau.';
             toast.error(message);
             setErrorMsg(message);
