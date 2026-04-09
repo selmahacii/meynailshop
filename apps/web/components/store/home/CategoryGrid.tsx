@@ -84,11 +84,7 @@ export function CategoryGrid({
                 {category.name}
               </h3>
 
-              {category.productCount !== undefined && (
-                <p className="text-sm text-encre3 group-hover:text-white/80 transition">
-                  {category.productCount} produit{category.productCount !== 1 ? 's' : ''}
-                </p>
-              )}
+
 
               <div className="mt-4 opacity-0 group-hover:opacity-100 transition">
                 <span className="inline-block px-4 py-2 bg-rouge hover:bg-rouge-mid text-white rounded font-outfit font-medium text-sm">

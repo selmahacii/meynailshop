@@ -167,10 +167,7 @@ function CatalogueContent() {
                             "flex items-center gap-3",
                             !filters.subCategory && "hidden md:flex" // Hide counts/mobile-filter-btn on mobile if no sub-category
                         )}>
-                            <div className="hidden lg:flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-creme2 shadow-sm text-[10px] font-black uppercase tracking-widest text-encre3">
-                                <SlidersHorizontal size={12} className="text-or" />
-                                {products.length} Produits trouvés
-                            </div>
+
                             <button 
                                 onClick={() => setIsMobileFiltersOpen(true)}
                                 className="lg:hidden flex items-center gap-3 px-6 py-3 bg-encre text-creme rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl active:scale-95 transition-all"

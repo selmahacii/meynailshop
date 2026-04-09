@@ -142,9 +142,7 @@ export default function SubCategoryWidgets({
                                     )}>
                                         {sub.name}
                                     </p>
-                                    <p className="text-[7px] md:text-[8px] font-bold text-or/80 uppercase tracking-widest">
-                                        {sub.productCount || 0} modèles
-                                    </p>
+
                                 </div>
                             </div>
                         </div>

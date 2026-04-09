@@ -13,7 +13,6 @@ export default function ProductSort({ total, onOpenFilters, currentSort, onSortC
     return (
         <div className="flex flex-col md:flex-row justify-between items-center py-8 mb-12 space-y-4 md:space-y-0">
             <div className="text-[11px] md:text-xs text-encre3 font-medium">
-                Affichage de <span className="text-encre font-bold">{total}</span> produits
             </div>
 
             <div className="flex items-center space-x-6">
