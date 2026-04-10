@@ -47,6 +47,106 @@ Les fichiers suivants restent à générer (structures créées, code fourni ci-
 
 ---
 
+## 📐 Architecture Technique
+
+### 🏗️ Survol du Système
+```mermaid
+graph TD
+    subgraph "Frontend (Next.js 14 - App Router)"
+        A[Storefront - Client] -->|Queries/Actions| B[Zustand Stores]
+        A -->|Navigation| C[Middleware Auth]
+        D[Admin Dashboard] -->|API Calls| E[lib/api/client.ts]
+        B -->|Cart/Auth State| A
+        E -->|JWT in Headers| F[Backend API]
+    end
+
+    subgraph "Backend (NestJS - REST API)"
+        F --> G[Auth Guard / JWT Strategy]
+        G --> H[Controllers - v1/admin/v1/public]
+        H --> I[Services - Business Logic]
+        I --> J[TypeORM Repositories]
+    end
+
+    subgraph "Infrastructure"
+        J --> K[(PostgreSQL Database)]
+        I --> L[Local/Cloud Storage - Images]
+    end
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style D fill:#bbf,stroke:#333,stroke-width:2px
+    style K fill:#dfd,stroke:#333,stroke-width:2px
+```
+
+### 🧬 Modèle de Données (ERD)
+```mermaid
+erDiagram
+    USER ||--o{ ORDER : "passe"
+    CATEGORY ||--o{ PRODUCT : "contient"
+    CATEGORY ||--o{ SUB_CATEGORY : "possède"
+    SUB_CATEGORY ||--o{ PRODUCT : "affine"
+    PRODUCT ||--o{ ORDER_ITEM : "inclus dans"
+    ORDER ||--o{ ORDER_ITEM : "contient"
+
+    USER {
+        uuid id
+        string email
+        string password
+        string role "admin | client"
+        string firstName
+        string lastName
+    }
+
+    PRODUCT {
+        uuid id
+        string name
+        string sku "MEEY-XXX"
+        float price
+        float costPrice
+        int stock
+        int stockAlert
+        jsonb variants
+        boolean hasVariants
+    }
+
+    ORDER {
+        uuid id
+        string orderNumber
+        string status "pending|processing|shipped|delivered|cancelled"
+        float total
+        jsonb shippingAddress
+        string paymentMethod
+    }
+```
+
+### 🔄 Flux de Notification Stock
+```mermaid
+sequenceDiagram
+    participant Admin
+    participant Notifications
+    participant ProductPage
+    participant API
+    participant DB
+
+    Note over Admin: Clic sur Alerte Stock
+    Admin->>Notifications: Clique sur Notification
+    Notifications->>Notifications: setNotifications(filter...)
+    Notifications->>ProductPage: Redirige vers /admin/produits/[id]?variant=SKU
+    
+    Note over ProductPage: Effet de défilement (useEffect)
+    ProductPage->>ProductPage: Scroll vers ID variant-SKU
+    ProductPage->>ProductPage: Highlight (CSS ring-2)
+    
+    Admin->>ProductPage: Met à jour le stock (input)
+    Admin->>ProductPage: Clic sur 'Enregistrer'
+    ProductPage->>API: PATCH /v1/admin/products/[id]
+    API->>DB: UPDATE products SET stock = N
+    DB-->>API: OK
+    API-->>ProductPage: {success: true}
+    ProductPage->>ProductPage: toast.success('Mis à jour')
+```
+
+---
+
 ## 🚀 Installation & Démarrage
 
 ### Prérequis
