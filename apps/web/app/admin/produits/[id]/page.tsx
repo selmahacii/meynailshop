@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import {
     ArrowLeft,
     Save,
@@ -26,6 +26,9 @@ import { toast } from 'sonner';
 export default function ProductEditPage() {
     const { id } = useParams();
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const targetedVariant = searchParams.get('variant');
+    const highlight = searchParams.get('highlight');
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -114,6 +117,25 @@ export default function ProductEditPage() {
             .then(res => setCategories(res.data || []))
             .catch(() => {});
     }, [id]);
+
+    // Scroll to targeted variant or stock if present
+    useEffect(() => {
+        if (!loading) {
+            if (targetedVariant) {
+                const element = document.getElementById(`variant-${targetedVariant}`);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    toast.info(`Mise à jour requise pour la variante: ${targetedVariant}`);
+                }
+            } else if (highlight === 'stock') {
+                const element = document.getElementById('stock-input');
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    toast.info(`Mise à jour du stock requise`);
+                }
+            }
+        }
+    }, [loading, targetedVariant, highlight]);
 
     const fetchProduct = async () => {
         try {
@@ -449,7 +471,14 @@ export default function ProductEditPage() {
                             {product.hasVariants && (
                                 <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
                                     {(product.variants || []).map((variant: any, index: number) => (
-                                        <div key={index} className="relative p-5 bg-creme/30 border border-creme2 rounded-sm space-y-4 hover:border-or transition-all">
+                                        <div 
+                                            key={index} 
+                                            id={`variant-${variant.sku}`}
+                                            className={cn(
+                                                "relative p-5 bg-creme/30 border border-creme2 rounded-sm space-y-4 hover:border-or transition-all",
+                                                targetedVariant === variant.sku && "border-or bg-or/5 ring-2 ring-or ring-offset-2"
+                                            )}
+                                        >
                                             <div className="flex items-center justify-between mb-2">
                                                 <span className="text-[10px] font-black uppercase tracking-widest text-or">Variante #{index + 1}</span>
                                                 <button
@@ -627,10 +656,14 @@ export default function ProductEditPage() {
                                     <label className="text-[9px] uppercase font-black tracking-[0.2em] text-creme/40">Stock Actuel</label>
                                     <input 
                                         type="number" 
+                                        id="stock-input"
                                         required
                                         value={product.stock}
                                         onChange={(e) => setProduct({...product, stock: parseInt(e.target.value)})}
-                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-sm font-bold outline-none focus:border-or transition-all appearance-none text-creme"
+                                        className={cn(
+                                            "w-full p-4 bg-white/5 border border-white/10 rounded-sm text-sm font-bold outline-none focus:border-or transition-all appearance-none text-creme",
+                                            highlight === 'stock' && "border-or ring-2 ring-or ring-offset-2 bg-or/10"
+                                        )}
                                     />
                                 </div>
                                 <div className="space-y-3">

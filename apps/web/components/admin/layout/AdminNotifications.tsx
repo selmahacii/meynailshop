@@ -44,7 +44,7 @@ export default function AdminNotifications() {
                         title: 'Stock Faible',
                         description: `${p.name} : seulement ${p.stock} restant(s)`,
                         time: 'Maintenant',
-                        link: `/admin/produits?q=${p.name}`,
+                        link: `/admin/produits/${p.productId || p.id}${p.isVariant ? `?variant=${p.sku}` : '?highlight=stock'}`,
                         priority: p.stock === 0 ? 'high' : 'medium'
                     });
                 });
@@ -158,7 +158,11 @@ export default function AdminNotifications() {
                                     <Link 
                                         key={n.id} 
                                         href={n.link}
-                                        onClick={() => setIsOpen(false)}
+                                        onClick={() => {
+                                            setIsOpen(false);
+                                            // Optimistically remove the notification from list when clicked
+                                            setNotifications(prev => prev.filter(item => item.id !== n.id));
+                                        }}
                                         className="group block p-4 hover:bg-creme/30 transition-all border-l-4 border-transparent hover:border-or"
                                     >
                                         <div className="flex gap-4">
