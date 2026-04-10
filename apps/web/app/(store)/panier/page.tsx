@@ -54,7 +54,8 @@ export default function CartPage() {
                             >
                                 <button
                                     onClick={() => removeItem(item.productId, item.variantSku)}
-                                    className="absolute top-4 right-4 text-encre3 hover:text-rouge transition-colors sm:opacity-0 group-hover:opacity-100"
+                                    className="absolute -top-2 -right-2 p-2 bg-white border border-creme2 rounded-full text-encre3 hover:text-rouge transition-all shadow-md z-10 lg:opacity-0 lg:group-hover:opacity-100 sm:top-4 sm:right-4 sm:bg-transparent sm:border-none sm:shadow-none"
+                                    aria-label="Supprimer le produit"
                                 >
                                     <Trash2 size={18} />
                                 </button>

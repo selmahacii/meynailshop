@@ -18,6 +18,7 @@ import {
     Printer,
     MoreVertical,
     ChevronRight,
+    ChevronDown,
     Loader,
     Home,
     Briefcase,
@@ -34,6 +35,7 @@ export default function OrderDetailsPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [updating, setUpdating] = useState(false);
+    const [isStatusOpen, setIsStatusOpen] = useState(false);
 
     useEffect(() => {
         if (id) {
@@ -52,7 +54,6 @@ export default function OrderDetailsPage() {
             }
         } catch (err) {
             setError('Erreur lors de la récupération de la commande');
-            console.error(err);
         } finally {
             setLoading(false);
         }
@@ -181,22 +182,43 @@ export default function OrderDetailsPage() {
                         </div>
                     )}
 
-                    <div className="relative group">
-                        <button className="flex items-center space-x-2 px-5 md:px-6 py-2.5 bg-encre text-creme rounded-sm text-[10px] md:text-sm font-bold uppercase tracking-widest hover:bg-black transition-all shadow-md">
+                    <div className="relative">
+                        <button 
+                            onClick={() => setIsStatusOpen(!isStatusOpen)}
+                            className="flex items-center space-x-2 px-5 md:px-6 py-2.5 bg-encre text-creme rounded-sm text-[10px] md:text-sm font-bold uppercase tracking-widest hover:bg-black transition-all shadow-md"
+                        >
                             <span>Changer Statut</span>
-                            <ChevronRight size={14} className="rotate-90" />
+                            <ChevronDown size={14} className={cn("transition-transform duration-200", isStatusOpen && "rotate-180")} />
                         </button>
-                        <div className="absolute right-0 top-full mt-1 w-56 bg-white border border-creme2 shadow-xl rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                            {['confirmed', 'processing', 'shipped', 'delivered', 'returned', 'cancelled'].map((s) => (
-                                <button
-                                    key={s}
-                                    onClick={() => updateStatus(s)}
-                                    className="w-full text-left px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-encre3 hover:text-or hover:bg-creme/50 border-b border-creme2 last:border-0 transition-all"
-                                >
-                                    {getStatusInfo(s).label}
-                                </button>
-                            ))}
-                        </div>
+                        
+                        {isStatusOpen && (
+                            <>
+                                {/* Click outside overlay for mobile */}
+                                <div 
+                                    className="fixed inset-0 z-[60] md:hidden" 
+                                    onClick={() => setIsStatusOpen(false)}
+                                />
+                                
+                                <div className="absolute right-0 md:left-auto top-full mt-2 w-56 bg-white border border-creme2 shadow-2xl rounded-sm z-[70] animate-in fade-in slide-in-from-top-2 duration-200 overflow-hidden">
+                                    {['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'returned', 'cancelled'].map((s) => (
+                                        <button
+                                            key={s}
+                                            onClick={() => {
+                                                updateStatus(s);
+                                                setIsStatusOpen(false);
+                                            }}
+                                            className={cn(
+                                                "w-full text-left px-5 py-4 text-[10px] font-bold uppercase tracking-widest transition-all border-b border-creme2 last:border-0 flex items-center justify-between group/item",
+                                                order.status === s ? "bg-creme/30 text-or" : "text-encre3 hover:text-or hover:bg-creme/10"
+                                            )}
+                                        >
+                                            <span>{getStatusInfo(s).label}</span>
+                                            {order.status === s && <div className="w-1.5 h-1.5 rounded-full bg-or shadow-[0_0_8px_rgba(212,175,55,0.6)]" />}
+                                        </button>
+                                    ))}
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

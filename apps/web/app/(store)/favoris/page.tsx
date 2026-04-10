@@ -180,7 +180,7 @@ export default function FavorisPage() {
                                                     removeItem(item.productId);
                                                     toast.success('Retiré des favoris');
                                                 }}
-                                                className="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-rouge-deep hover:bg-rouge-deep hover:text-white transition-all shadow-md opacity-0 group-hover:opacity-100"
+                                                className="absolute top-2 right-2 w-8 h-8 bg-white border border-creme2 rounded-full flex items-center justify-center text-rouge-deep hover:bg-rouge-deep hover:text-white transition-all shadow-md z-10 lg:opacity-0 lg:group-hover:opacity-100"
                                                 title="Retirer des favoris"
                                             >
                                                 <Heart size={14} className="fill-current" />
