@@ -41,7 +41,7 @@ export default function CheckoutPage() {
     // Real shipping calculation
     const selectedWilayaRate = SHIPPING_RATES.find(w => w.id === formData.wilaya);
     const shippingCost = selectedWilayaRate 
-        ? (formData.deliveryType === 'home' ? selectedWilayaRate.homeRate : selectedWilayaRate.deskRate)
+        ? (formData.deliveryType === 'home' ? selectedWilayaRate.homeRate : (selectedWilayaRate.deskRate ?? selectedWilayaRate.homeRate))
         : 0;
     const finalTotal = getTotal() + shippingCost;
 
@@ -151,15 +151,17 @@ export default function CheckoutPage() {
                                 <button
                                     type="button"
                                     onClick={() => setFormData(prev => ({ ...prev, deliveryType: 'office' }))}
+                                    disabled={selectedWilayaRate && selectedWilayaRate.deskRate === null}
                                     className={cn(
                                         "px-3 py-1.5 border rounded-sm flex items-center gap-2 transition-all text-[9px] font-bold uppercase tracking-widest",
                                         formData.deliveryType === 'office'
                                             ? "border-or bg-or/5 text-or"
-                                            : "border-creme2 text-encre3 hover:border-creme"
+                                            : "border-creme2 text-encre3 hover:border-creme font-medium",
+                                        selectedWilayaRate && selectedWilayaRate.deskRate === null && "opacity-30 cursor-not-allowed grayscale"
                                     )}
                                 >
                                     <Briefcase size={12} />
-                                    Bureau
+                                    Bureau {selectedWilayaRate && selectedWilayaRate.deskRate === null && "(Indisponible)"}
                                 </button>
                             </div>
                         </div>
