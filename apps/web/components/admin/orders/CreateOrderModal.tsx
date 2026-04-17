@@ -81,7 +81,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
         if (rate) {
             setFormData(prev => ({
                 ...prev,
-                shippingCost: formData.deliveryType === 'home' ? rate.homeRate : rate.deskRate,
+                shippingCost: formData.deliveryType === 'home' ? rate.homeRate : (rate.deskRate ?? 0),
                 returnCost: rate.returnRate
             }));
         }

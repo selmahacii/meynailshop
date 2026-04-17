@@ -17,6 +17,7 @@ import {
     Briefcase,
     Package,
     Printer,
+    Truck,
     Instagram,
     MessageCircle,
     Globe,
@@ -31,6 +32,7 @@ const tabs = [
     { name: 'Actives', count: 0, key: 'active' },
     { name: 'En attente', count: 0, key: 'pending' },
     { name: 'Expédiées', count: 0, key: 'shipped' },
+    { name: 'Retournées', count: 0, key: 'returned' },
     { name: 'Historique', count: 0, key: 'history' },
 ];
 
@@ -85,7 +87,8 @@ export default function AdminOrdersPage() {
                 tabs[0].count = result.data.active || 0;
                 tabs[1].count = result.data.pending || 0;
                 tabs[2].count = result.data.shipped || 0;
-                tabs[3].count = result.data.history || 0;
+                tabs[3].count = result.data.returned || 0;
+                tabs[4].count = result.data.history || 0;
             } else {
 
             }
@@ -262,6 +265,24 @@ export default function AdminOrdersPage() {
                             <Plus size={14} className="text-or" />
                             <span>Créer</span>
                         </button>
+                    </div>
+                </div>
+                
+                {/* Status Summary Bar */}
+                <div className="grid grid-cols-2 gap-4 p-4 bg-white border-b border-creme2">
+                    <div className="bg-blue-50/50 p-4 rounded-sm border border-blue-100 flex items-center justify-between">
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-blue-600 mb-1">En Livraison</p>
+                            <p className="text-xl font-serif text-encre">{stats?.shipped || 0}</p>
+                        </div>
+                        <Truck className="text-blue-200" size={32} />
+                    </div>
+                    <div className="bg-rouge-deep/5 p-4 rounded-sm border border-rouge-deep/10 flex items-center justify-between">
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-rouge-mid mb-1">Retours</p>
+                            <p className="text-xl font-serif text-encre">{stats?.returned || 0}</p>
+                        </div>
+                        <RotateCcw className="text-rouge-deep/20" size={32} />
                     </div>
                 </div>
 
@@ -447,33 +468,32 @@ export default function AdminOrdersPage() {
                                 </div>
 
                                 <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-creme2/50">
-                                    {order.status === 'pending' && (
-                                        <button
-                                            onClick={() => updateOrderStatus(order.id, 'confirmed')}
+                                    <div className="relative flex-1">
+                                        <select 
+                                            className="w-full px-4 py-2 bg-creme2/40 border border-creme2 rounded-sm text-[10px] font-black uppercase tracking-widest outline-none focus:border-or transition-all appearance-none text-encre cursor-pointer pr-10"
+                                            value={order.status}
+                                            onChange={(e) => updateOrderStatus(order.id, e.target.value)}
                                             disabled={updatingOrder === order.id}
-                                            className="flex-1 px-3 py-2 bg-indigo-700 text-white rounded-sm text-[9px] font-black uppercase tracking-widest disabled:opacity-50"
                                         >
-                                            Confirmer
-                                        </button>
-                                    )}
-                                    {(order.status === 'confirmed' || order.status === 'processing') && (
-                                        <button
-                                            onClick={() => updateOrderStatus(order.id, 'shipped')}
-                                            disabled={updatingOrder === order.id}
-                                            className="flex-1 px-3 py-2 bg-blue-700 text-white rounded-sm text-[9px] font-black uppercase tracking-widest disabled:opacity-50"
-                                        >
-                                            Expédier
-                                        </button>
-                                    )}
-                                    {order.status === 'shipped' && (
-                                        <button
-                                            onClick={() => updateOrderStatus(order.id, 'delivered')}
-                                            disabled={updatingOrder === order.id}
-                                            className="flex-1 px-3 py-2 bg-green-700 text-white rounded-sm text-[9px] font-black uppercase tracking-widest disabled:opacity-50"
-                                        >
-                                            Livrée
-                                        </button>
-                                    )}
+                                            <optgroup label="Traitement">
+                                                {order.status === 'pending' && <option value="pending">⏳ En attente</option>}
+                                                <option value="confirmed">✅ Confirmé</option>
+                                                <option value="shipped">🚚 Expédié</option>
+                                            </optgroup>
+                                            <optgroup label="Finalisation">
+                                                <option value="delivered">📦 Livrée</option>
+                                                <option value="returned">🔄 Retour</option>
+                                                <option value="cancelled">❌ Annulée</option>
+                                            </optgroup>
+                                        </select>
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                                            {updatingOrder === order.id ? (
+                                                <Loader size={12} className="animate-spin text-or" />
+                                            ) : (
+                                                <ChevronDown size={14} className="text-encre3" />
+                                            )}
+                                        </div>
+                                    </div>
                                     <Link 
                                         href={`/admin/commandes/${order.id}`}
                                         className="flex-1 px-3 py-2 bg-[#1A0A0A] text-white rounded-sm text-[9px] font-black uppercase tracking-widest text-center"
