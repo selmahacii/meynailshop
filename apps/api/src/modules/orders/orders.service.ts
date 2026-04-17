@@ -13,6 +13,7 @@ import { Address } from '../../database/entities/address.entity';
 import { Product } from '../../database/entities/product.entity';
 import { Coupon } from '../../database/entities/coupon.entity';
 import { PaginatedResult } from '../../common/pagination/paginated-result.interface';
+import { SiteSettings } from '../../database/entities/site-settings.entity';
 import { generateOrderNumber } from '../../common/utils/order-number.util';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
@@ -149,7 +150,22 @@ export class OrdersService {
         await queryRunner.manager.save(Coupon, coupon);
       }
 
-      const shippingCost = 300; // Fixed shipping cost
+      const settings = await queryRunner.manager.findOne(SiteSettings, { where: {} });
+      let shippingCost = settings?.shippingCostDefault || 600;
+      let returnCost = 0;
+
+      if (shippingAddress && settings?.shippingFees) {
+        const wilayaRate = settings.shippingFees.find((f: any) => f.id === shippingAddress.wilaya || f.name === shippingAddress.wilaya);
+        if (wilayaRate) {
+          shippingCost = createOrderDto.deliveryType === 'home' ? wilayaRate.homeRate : (wilayaRate.deskRate ?? wilayaRate.homeRate);
+          returnCost = wilayaRate.returnRate || 0;
+        }
+      }
+
+      if (subtotal >= Number(settings?.freeShippingThreshold || 10000)) {
+        shippingCost = 0;
+      }
+
       const total = subtotal - discount + shippingCost;
 
       const order = this.orderRepository.create({
@@ -161,6 +177,7 @@ export class OrdersService {
         deliveryType: createOrderDto.deliveryType,
         subtotal,
         shippingCost,
+        returnCost,
         discount,
         total,
         shippingAddressSnapshot: shippingAddress,

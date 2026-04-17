@@ -9,4 +9,5 @@ export declare class UpdateSettingsDto {
     notifyStockAlert?: boolean;
     notifyNewOrder?: boolean;
     notifyNewReview?: boolean;
+    shippingFees?: any;
 }

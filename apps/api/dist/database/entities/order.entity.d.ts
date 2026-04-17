@@ -10,6 +10,7 @@ export declare class Order {
     paymentMethod: string;
     subtotal: number;
     shippingCost: number;
+    returnCost: number;
     discount: number;
     total: number;
     shippingAddressSnapshot: any;

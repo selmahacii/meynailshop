@@ -22,6 +22,7 @@ const order_item_entity_1 = require("../../database/entities/order-item.entity")
 const address_entity_1 = require("../../database/entities/address.entity");
 const product_entity_1 = require("../../database/entities/product.entity");
 const coupon_entity_1 = require("../../database/entities/coupon.entity");
+const site_settings_entity_1 = require("../../database/entities/site-settings.entity");
 const order_number_util_1 = require("../../common/utils/order-number.util");
 let OrdersService = class OrdersService {
     constructor(orderRepository, orderItemRepository, addressRepository, productRepository, couponRepository, dataSource) {
@@ -121,7 +122,19 @@ let OrdersService = class OrdersService {
                 coupon.usedCount += 1;
                 await queryRunner.manager.save(coupon_entity_1.Coupon, coupon);
             }
-            const shippingCost = 300;
+            const settings = await queryRunner.manager.findOne(site_settings_entity_1.SiteSettings, { where: {} });
+            let shippingCost = settings?.shippingCostDefault || 600;
+            let returnCost = 0;
+            if (shippingAddress && settings?.shippingFees) {
+                const wilayaRate = settings.shippingFees.find((f) => f.id === shippingAddress.wilaya || f.name === shippingAddress.wilaya);
+                if (wilayaRate) {
+                    shippingCost = createOrderDto.deliveryType === 'home' ? wilayaRate.homeRate : (wilayaRate.deskRate ?? wilayaRate.homeRate);
+                    returnCost = wilayaRate.returnRate || 0;
+                }
+            }
+            if (subtotal >= Number(settings?.freeShippingThreshold || 10000)) {
+                shippingCost = 0;
+            }
             const total = subtotal - discount + shippingCost;
             const order = this.orderRepository.create({
                 userId,
@@ -132,6 +145,7 @@ let OrdersService = class OrdersService {
                 deliveryType: createOrderDto.deliveryType,
                 subtotal,
                 shippingCost,
+                returnCost,
                 discount,
                 total,
                 shippingAddressSnapshot: shippingAddress,

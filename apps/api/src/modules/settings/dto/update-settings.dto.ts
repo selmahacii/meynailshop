@@ -40,4 +40,7 @@ export class UpdateSettingsDto {
     @IsBoolean()
     @IsOptional()
     notifyNewReview?: boolean;
+
+    @IsOptional()
+    shippingFees?: any;
 }

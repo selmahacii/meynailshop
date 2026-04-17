@@ -40,6 +40,9 @@ export class SiteSettings {
   @Column({ type: 'boolean', default: true })
   notifyNewReview: boolean;
 
+  @Column({ type: 'jsonb', nullable: true })
+  shippingFees: any;
+
   @UpdateDateColumn()
   updatedAt: Date;
 }

@@ -108,7 +108,11 @@ export class OrdersService {
         delivered: orders.filter((o: any) => o.status === 'delivered').length,
         cancelled: orders.filter((o: any) => o.status === 'cancelled').length,
         returned: orders.filter((o: any) => o.status === 'returned').length,
-        totalRevenue: orders.reduce((sum: number, o: any) => sum + (Number(o.total) || 0), 0),
+        totalRevenue: orders.reduce((sum: number, o: any) => {
+          if (o.status === 'delivered') return sum + (Number(o.total) || 0);
+          if (o.status === 'returned') return sum - (Number(o.returnCost) || 0);
+          return sum;
+        }, 0),
         pendingReviews,
       };
 
@@ -146,6 +150,7 @@ export class OrdersService {
         status: 'confirmed',
         subtotal: data.subtotal,
         shippingCost: data.shippingCost || 0,
+        returnCost: data.returnCost || 0,
         total: data.subtotal + (data.shippingCost || 0),
         shippingAddressSnapshot: data.customer,
         notes: data.notes,

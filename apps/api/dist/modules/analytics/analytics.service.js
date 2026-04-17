@@ -25,17 +25,23 @@ let AnalyticsService = class AnalyticsService {
     }
     async getDashboard() {
         const totalOrders = await this.orderRepository.count();
-        const totalRevenue = await this.orderRepository
+        const deliveredRevenue = await this.orderRepository
             .createQueryBuilder('order')
             .select('SUM(order.total)', 'sum')
             .where('order.status = :status', { status: 'delivered' })
             .getRawOne();
+        const returnCosts = await this.orderRepository
+            .createQueryBuilder('order')
+            .select('SUM(order.returnCost)', 'sum')
+            .where('order.status = :status', { status: 'returned' })
+            .getRawOne();
+        const totalRevenue = (Number(deliveredRevenue?.sum) || 0) - (Number(returnCosts?.sum) || 0);
         const activeProducts = await this.productRepository.count({
             where: { isActive: true },
         });
         return {
             totalOrders,
-            totalRevenue: totalRevenue?.sum || 0,
+            totalRevenue: totalRevenue,
             activeProducts,
             timestamp: new Date(),
         };

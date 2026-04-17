@@ -10,5 +10,6 @@ export declare class SiteSettings {
     notifyStockAlert: boolean;
     notifyNewOrder: boolean;
     notifyNewReview: boolean;
+    shippingFees: any;
     updatedAt: Date;
 }

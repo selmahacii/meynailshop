@@ -7,7 +7,7 @@ export declare class AnalyticsService {
     constructor(orderRepository: Repository<Order>, productRepository: Repository<Product>);
     getDashboard(): Promise<{
         totalOrders: number;
-        totalRevenue: any;
+        totalRevenue: number;
         activeProducts: number;
         timestamp: Date;
     }>;

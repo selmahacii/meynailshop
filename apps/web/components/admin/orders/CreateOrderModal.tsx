@@ -55,6 +55,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
         },
         items: [] as any[],
         shippingCost: 700,
+        returnCost: 200,
         notes: '',
     });
 
@@ -80,7 +81,8 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
         if (rate) {
             setFormData(prev => ({
                 ...prev,
-                shippingCost: formData.deliveryType === 'home' ? rate.homeRate : rate.deskRate
+                shippingCost: formData.deliveryType === 'home' ? rate.homeRate : rate.deskRate,
+                returnCost: rate.returnRate
             }));
         }
     }, [formData.customer.wilaya, formData.deliveryType]);

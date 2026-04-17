@@ -64,4 +64,8 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)
 ], UpdateSettingsDto.prototype, "notifyNewReview", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Object)
+], UpdateSettingsDto.prototype, "shippingFees", void 0);
 //# sourceMappingURL=update-settings.dto.js.map

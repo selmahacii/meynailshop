@@ -6,7 +6,7 @@ export declare class AnalyticsController {
         statusCode: number;
         data: {
             totalOrders: number;
-            totalRevenue: any;
+            totalRevenue: number;
             activeProducts: number;
             timestamp: Date;
         };
