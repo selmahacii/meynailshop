@@ -56,15 +56,15 @@ let CartController = class CartController {
         };
     }
     async updateItem(user, productId, updateCartItemDto) {
-        const cartItem = await this.cartService.updateItem(user.id, productId, updateCartItemDto);
+        const cartItem = await this.cartService.updateItem(user.id, productId, updateCartItemDto.variantSku, updateCartItemDto);
         return {
             statusCode: 200,
             message: 'Cart item updated',
             data: cartItem,
         };
     }
-    async removeItem(user, productId) {
-        await this.cartService.removeItem(user.id, productId);
+    async removeItem(user, productId, variantSku) {
+        await this.cartService.removeItem(user.id, productId, variantSku);
         return {
             statusCode: 200,
             message: 'Item removed from cart',
@@ -164,8 +164,9 @@ __decorate([
     (0, common_1.Delete)('items/:productId'),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),
     __param(1, (0, common_1.Param)('productId')),
+    __param(2, (0, common_1.Query)('variantSku')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:paramtypes", [Object, String, String]),
     __metadata("design:returntype", Promise)
 ], CartController.prototype, "removeItem", null);
 __decorate([

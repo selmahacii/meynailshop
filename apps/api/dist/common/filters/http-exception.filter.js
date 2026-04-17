@@ -14,16 +14,32 @@ let HttpExceptionFilter = class HttpExceptionFilter {
         const response = ctx.getResponse();
         const status = exception.getStatus();
         const exceptionResponse = exception.getResponse();
-        let message = 'An error occurred';
+        let message = 'Une erreur est survenue';
         let errors = [];
+        const frenchFallback = {
+            [common_1.HttpStatus.UNAUTHORIZED]: "Votre session a expiré ou vos identifiants sont incorrects.",
+            [common_1.HttpStatus.FORBIDDEN]: "Vous n'avez pas l'autorisation d'accéder à cette section.",
+            [common_1.HttpStatus.NOT_FOUND]: "La ressource demandée n'existe pas ou plus.",
+            [common_1.HttpStatus.INTERNAL_SERVER_ERROR]: "Le serveur rencontre une difficulté technique. Veuillez réessayer plus tard.",
+            [common_1.HttpStatus.BAD_REQUEST]: "Veuillez vérifier les informations saisies.",
+        };
         if (typeof exceptionResponse === 'object' && 'message' in exceptionResponse) {
             if (Array.isArray(exceptionResponse.message)) {
                 errors = exceptionResponse.message;
-                message = 'Validation failed';
+                message = 'Certains champs sont invalides.';
             }
             else if (typeof exceptionResponse.message === 'string') {
-                message = exceptionResponse.message;
+                const rawMsg = exceptionResponse.message;
+                if (rawMsg === 'Unauthorized' || rawMsg === 'Forbidden' || rawMsg === 'Not Found' || rawMsg === 'Bad Request') {
+                    message = frenchFallback[status] || rawMsg;
+                }
+                else {
+                    message = rawMsg;
+                }
             }
+        }
+        else {
+            message = frenchFallback[status] || message;
         }
         response.status(status).json({
             statusCode: status,
@@ -40,15 +56,22 @@ let AllExceptionsFilter = class AllExceptionsFilter {
     catch(exception, host) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
-        let message = 'Internal server error';
+        let message = 'Désolé, une erreur technique est survenue.';
         let statusCode = common_1.HttpStatus.INTERNAL_SERVER_ERROR;
         if (exception instanceof common_1.HttpException) {
             statusCode = exception.getStatus();
             const res = exception.getResponse();
-            message = typeof res === 'string' ? res : res.message || 'Http Error';
+            const rawMessage = typeof res === 'string' ? res : res.message || 'Erreur inconnue';
+            const mappings = {
+                'Unauthorized': "Désolé, vous n'êtes pas autorisé à faire cela. Veuillez vous connecter.",
+                'Forbidden': "Accès refusé. Veuillez vérifier vos droits.",
+                'Not Found': "Désolé, cette page ou ce produit n'existe pas.",
+                'Bad Request': "Les données saisies ne sont pas valides.",
+            };
+            message = mappings[rawMessage] || rawMessage;
         }
         else if (exception instanceof Error) {
-            message = exception.message;
+            message = process.env.NODE_ENV === 'development' ? exception.message : 'Une erreur inattendue est survenue au cœur du système.';
         }
         console.error('🔥 [AllExceptionsFilter] Exception caught:', exception);
         response.status(statusCode).json({

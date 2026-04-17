@@ -247,14 +247,36 @@ let DashboardService = class DashboardService {
     }
     async _getLowStockProducts() {
         try {
-            const products = await this.productRepository
+            const allProducts = await this.productRepository
                 .createQueryBuilder('p')
-                .where('p.stock <= :limit', { limit: 10 })
-                .andWhere('p.isActive = :isActive', { isActive: true })
-                .orderBy('p.stock', 'ASC')
-                .limit(5)
+                .where('p.isActive = :isActive', { isActive: true })
+                .andWhere('(p.stock <= p."stockAlert" OR p."hasVariants" = true)')
                 .getMany();
-            return products.map((p) => ({ id: p.id, name: p.name, stock: p.stock, sku: p.sku }));
+            const results = [];
+            const DEFAULT_ALERT = 5;
+            for (const p of allProducts) {
+                if (!p.hasVariants) {
+                    if (p.stock <= (p.stockAlert || DEFAULT_ALERT)) {
+                        results.push({ id: p.id, name: p.name, stock: p.stock, sku: p.sku, isVariant: false });
+                    }
+                }
+                else if (p.variants && Array.isArray(p.variants)) {
+                    for (const v of p.variants) {
+                        const threshold = v.stockAlert || p.stockAlert || DEFAULT_ALERT;
+                        if (v.stock <= threshold) {
+                            results.push({
+                                id: `${p.id}-${v.sku}`,
+                                name: `${p.name} (${v.sku})`,
+                                stock: v.stock,
+                                sku: v.sku,
+                                isVariant: true,
+                                productId: p.id
+                            });
+                        }
+                    }
+                }
+            }
+            return results.sort((a, b) => a.stock - b.stock).slice(0, 10);
         }
         catch (error) {
             console.warn('⚠️ [DashboardService] Low stock products failed:', error.message);

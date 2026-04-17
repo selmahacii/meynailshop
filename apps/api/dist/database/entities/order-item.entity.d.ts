@@ -7,6 +7,8 @@ export declare class OrderItem {
     productSku: string;
     productImage: string;
     unitPrice: number;
+    variantSku: string;
+    variantImage: string;
     quantity: number;
     subtotal: number;
     order: Order;

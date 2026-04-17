@@ -52,7 +52,12 @@ let ProductsService = class ProductsService {
         }
         let variants = createProductDto.variants;
         if (variants && Array.isArray(variants)) {
-            variants = variants.map((v) => ({ sku: v.sku, image: v.image }));
+            variants = variants.map((v) => ({
+                sku: v.sku,
+                image: v.image,
+                stock: v.stock || 0,
+                stockAlert: v.stockAlert || createProductDto.stockAlert || 5
+            }));
         }
         const product = this.productRepository.create({
             ...createProductDto,
@@ -69,7 +74,25 @@ let ProductsService = class ProductsService {
             .leftJoinAndSelect('product.subCategory', 'subCategory')
             .where('product.isActive = :isActive', { isActive: true });
         if (query.search) {
-            queryBuilder.andWhere('product.name ILIKE :search', { search: `%${query.search}%` });
+            const search = `%${query.search}%`;
+            queryBuilder.andWhere(new typeorm_2.Brackets(qb => {
+                qb.where('product.name ILIKE :search', { search })
+                    .orWhere('product.sku ILIKE :search', { search })
+                    .orWhere('category.name ILIKE :search', { search })
+                    .orWhere('subCategory.name ILIKE :search', { search });
+                qb.orWhere(`EXISTS (
+          SELECT 1 FROM jsonb_array_elements(CASE WHEN product.variants IS NULL THEN '[]'::jsonb ELSE product.variants END) v 
+          WHERE v->>'sku' ILIKE :search
+        )`, { search });
+                const priceValue = parseFloat(query.search);
+                if (!isNaN(priceValue)) {
+                    qb.orWhere('product.price = :exactPrice', { exactPrice: priceValue });
+                    qb.orWhere('product.price BETWEEN :minP AND :maxP', {
+                        minP: priceValue - 100,
+                        maxP: priceValue + 100
+                    });
+                }
+            }));
         }
         if (query.category) {
             queryBuilder.andWhere('category.slug = :category', { category: query.category });
@@ -184,7 +207,12 @@ let ProductsService = class ProductsService {
         }
         const { sku, ...updateData } = updateProductDto;
         if (updateData.variants && Array.isArray(updateData.variants)) {
-            updateData.variants = updateData.variants.map((v) => ({ sku: v.sku, image: v.image }));
+            updateData.variants = updateData.variants.map((v) => ({
+                sku: v.sku,
+                image: v.image,
+                stock: v.stock || 0,
+                stockAlert: v.stockAlert || updateData.stockAlert || product.stockAlert || 5
+            }));
         }
         Object.assign(product, updateData);
         return await this.productRepository.save(product);

@@ -82,8 +82,10 @@ let OrdersService = class OrdersService {
                 const orderItem = this.orderItemRepository.create({
                     productId: product.id,
                     productName: product.name,
-                    productSku: product.sku,
-                    productImage: product.images?.[0] || '',
+                    productSku: cartItem.variantSku || product.sku,
+                    productImage: cartItem.variantImage || product.images?.[0] || '',
+                    variantSku: cartItem.variantSku,
+                    variantImage: cartItem.variantImage,
                     unitPrice: Number(product.price),
                     quantity: cartItem.quantity,
                     subtotal: itemSubtotal,

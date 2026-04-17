@@ -44,7 +44,7 @@ let CartService = class CartService {
         const cart = (await this.cacheManager.get(cartKey)) || {
             items: [],
         };
-        const existingItemIndex = cart.items.findIndex((item) => item.productId === addToCartDto.productId);
+        const existingItemIndex = cart.items.findIndex((item) => item.productId === addToCartDto.productId && item.variantSku === addToCartDto.variantSku);
         let cartItem;
         if (existingItemIndex >= 0) {
             const newQuantity = cart.items[existingItemIndex].quantity + addToCartDto.quantity;
@@ -62,8 +62,10 @@ let CartService = class CartService {
                 quantity: addToCartDto.quantity,
                 productName: product.name,
                 productPrice: Number(product.price),
-                productImage: product.images?.[0] || '',
+                productImage: addToCartDto.variantImage || product.images?.[0] || '',
                 productSku: product.sku,
+                variantSku: addToCartDto.variantSku,
+                variantImage: addToCartDto.variantImage,
                 subtotal: Number(product.price) * addToCartDto.quantity,
             };
             cart.items.push(cartItem);
@@ -71,7 +73,7 @@ let CartService = class CartService {
         await this.cacheManager.set(cartKey, cart, this.CART_TTL);
         return cartItem;
     }
-    async updateItem(userId, productId, updateCartItemDto) {
+    async updateItem(userId, productId, variantSku, updateCartItemDto) {
         const product = await this.productRepository.findOne({
             where: { id: productId, isActive: true },
         });
@@ -85,7 +87,7 @@ let CartService = class CartService {
         const cart = (await this.cacheManager.get(cartKey)) || {
             items: [],
         };
-        const itemIndex = cart.items.findIndex((item) => item.productId === productId);
+        const itemIndex = cart.items.findIndex((item) => item.productId === productId && item.variantSku === variantSku);
         if (itemIndex < 0) {
             throw new common_1.NotFoundException('Item not found in cart');
         }
@@ -95,12 +97,12 @@ let CartService = class CartService {
         await this.cacheManager.set(cartKey, cart, this.CART_TTL);
         return cart.items[itemIndex];
     }
-    async removeItem(userId, productId) {
+    async removeItem(userId, productId, variantSku) {
         const cartKey = this.getCartKey(userId);
         const cart = (await this.cacheManager.get(cartKey)) || {
             items: [],
         };
-        cart.items = cart.items.filter((item) => item.productId !== productId);
+        cart.items = cart.items.filter((item) => !(item.productId === productId && item.variantSku === variantSku));
         if (cart.items.length === 0) {
             await this.cacheManager.del(cartKey);
         }

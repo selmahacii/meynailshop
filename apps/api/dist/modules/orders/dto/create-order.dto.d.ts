@@ -1,6 +1,8 @@
 declare class OrderItemDto {
     productId: string;
     quantity: number;
+    variantSku?: string;
+    variantImage?: string;
 }
 export declare class CreateOrderDto {
     addressId?: string;

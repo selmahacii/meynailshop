@@ -20,10 +20,20 @@ __decorate([
     __metadata("design:type", String)
 ], AddToCartDto.prototype, "productId", void 0);
 __decorate([
-    (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.Min)(1),
     (0, class_validator_1.Max)(999),
+    (0, class_transformer_1.Type)(() => Number),
     __metadata("design:type", Number)
 ], AddToCartDto.prototype, "quantity", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], AddToCartDto.prototype, "variantSku", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], AddToCartDto.prototype, "variantImage", void 0);
 //# sourceMappingURL=add-to-cart.dto.js.map

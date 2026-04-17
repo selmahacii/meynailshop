@@ -19,6 +19,8 @@ export declare class OrdersService {
     create(userId: string | null, createOrderDto: CreateOrderDto, cartItems: Array<{
         productId: string;
         quantity: number;
+        variantSku?: string;
+        variantImage?: string;
     }>): Promise<Order>;
     findAll(userId: string, query: OrdersQueryDto, isAdmin?: boolean): Promise<PaginatedResult<Order>>;
     findOne(id: string, userId?: string): Promise<Order>;

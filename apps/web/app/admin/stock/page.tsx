@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import {
     Search, Bell, Download, Plus, AlertTriangle, TrendingDown, Package,
     Loader, AlertCircle, RefreshCw, Edit3, Check, X, ChevronUp, ChevronDown,
+    ChevronLeft, ChevronRight,
     Minus, ArrowUpCircle, ArrowDownCircle, BarChart2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -51,17 +52,21 @@ export default function AdminStockPage() {
     const [loading, setLoading]       = useState(true);
     const [error, setError]           = useState<string | null>(null);
     const [saving, setSaving]         = useState<string | null>(null); // id currently saving
+    const [page, setPage]             = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const ITEMS_PER_PAGE = 20;
     const [modal, setModal]           = useState<AdjustModal>({ open: false, item: null, mode: 'set', value: '' });
     const [inlineEdits, setInlineEdits] = useState<Record<string, string>>({}); // id -> draft value
 
-    useEffect(() => { fetchProducts(); }, []);
+    useEffect(() => { fetchProducts(); }, [page, search]);
 
     const fetchProducts = async () => {
         try {
             setLoading(true); setError(null);
-            const result = await ProductsAPI.getAll(1, 200);
+            const result = await ProductsAPI.getAll(page, ITEMS_PER_PAGE, search);
             if (result.success && result.data) {
                 setProducts(result.data.items || result.data || []);
+                setTotalPages(result.data.totalPages || 1);
             } else {
                 setError(result.error || 'Erreur de chargement');
             }
@@ -83,8 +88,8 @@ export default function AdminStockPage() {
 
     const filtered = useMemo(() => stockItems
         .filter(i => filter === 'all' || i.status === filter)
-        .filter(i => !search || i.name.toLowerCase().includes(search.toLowerCase()) || i.ref.toLowerCase().includes(search.toLowerCase()))
-    , [stockItems, filter, search]);
+        // Search is now handled by the API re-fetching
+    , [stockItems, filter]);
 
     const counts = useMemo(() => ({
         ok: stockItems.filter(i => i.status === 'ok').length,
@@ -154,7 +159,7 @@ export default function AdminStockPage() {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-encre3 group-focus-within:text-or transition-colors" size={15} />
                         <input
                             type="text" placeholder="Rechercher produit ou SKU..."
-                            value={search} onChange={e => setSearch(e.target.value)}
+                            value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
                             className="pl-9 pr-4 py-2 bg-white border border-creme2 rounded-sm text-sm focus:outline-none focus:border-or focus:ring-1 focus:ring-or w-full sm:w-52 xl:w-64 shadow-sm transition-all"
                         />
                         {search && (
@@ -390,6 +395,52 @@ export default function AdminStockPage() {
                                 </div>
                             ))}
                         </div>
+
+                        {/* Pagination UI */}
+                        {totalPages > 1 && (
+                            <div className="flex items-center justify-center space-x-2 p-6 border-t border-creme2 bg-creme/5">
+                                <button
+                                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                                    disabled={page === 1}
+                                    className="p-2 border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or disabled:opacity-30 disabled:hover:text-encre3 disabled:hover:border-creme2 transition-all bg-white"
+                                >
+                                    <ChevronLeft size={18} />
+                                </button>
+                                
+                                <div className="flex items-center space-x-1">
+                                    {[...Array(totalPages)].map((_, i) => {
+                                        const p = i + 1;
+                                        if (p === 1 || p === totalPages || (p >= page - 1 && p <= page + 1)) {
+                                            return (
+                                                <button
+                                                    key={p}
+                                                    onClick={() => setPage(p)}
+                                                    className={cn(
+                                                        "w-8 h-8 flex items-center justify-center text-[10px] font-bold rounded-sm transition-all",
+                                                        page === p 
+                                                            ? "bg-encre text-creme shadow-md" 
+                                                            : "bg-white border border-creme2 text-encre3 hover:border-or hover:text-or"
+                                                    )}
+                                                >
+                                                    {p}
+                                                </button>
+                                            );
+                                        } else if (p === page - 2 || p === page + 2) {
+                                            return <span key={p} className="px-0.5 text-encre3 text-[10px]">...</span>;
+                                        }
+                                        return null;
+                                    })}
+                                </div>
+
+                                <button
+                                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                    disabled={page === totalPages}
+                                    className="p-2 border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or disabled:opacity-30 disabled:hover:text-encre3 disabled:hover:border-creme2 transition-all bg-white"
+                                >
+                                    <ChevronRight size={18} />
+                                </button>
+                            </div>
+                        )}
                     </>
                 )}
             </div>

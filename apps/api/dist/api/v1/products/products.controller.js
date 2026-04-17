@@ -19,8 +19,8 @@ let ProductsController = class ProductsController {
     constructor(productsService) {
         this.productsService = productsService;
     }
-    async findAll(page, limit) {
-        const result = await this.productsService.findAll(parseInt(page || '1'), parseInt(limit || '10'));
+    async findAll(page, limit, search) {
+        const result = await this.productsService.findAll(parseInt(page || '1'), parseInt(limit || '10'), search);
         return {
             success: true,
             data: {
@@ -36,7 +36,7 @@ let ProductsController = class ProductsController {
     }
     async getLowStock(threshold) {
         try {
-            const thresholdVal = parseInt(threshold) || 10;
+            const thresholdVal = parseInt(threshold) || 5;
             const data = await this.productsService.getLowStockProducts(thresholdVal);
             const items = Array.isArray(data) ? data : [];
             return {
@@ -98,8 +98,9 @@ __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)('page')),
     __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('search')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", Promise)
 ], ProductsController.prototype, "findAll", null);
 __decorate([

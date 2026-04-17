@@ -22,4 +22,9 @@ __decorate([
     (0, class_validator_1.Max)(999),
     __metadata("design:type", Number)
 ], UpdateCartItemDto.prototype, "quantity", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateCartItemDto.prototype, "variantSku", void 0);
 //# sourceMappingURL=update-cart-item.dto.js.map

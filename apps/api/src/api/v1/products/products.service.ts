@@ -31,13 +31,21 @@ export class ProductsService {
     return `MEEY-${nextNumber.toString().padStart(3, '0')}`;
   }
 
-  async findAll(page: number = 1, limit: number = 10) {
-    const [items, total] = await this.productRepository.findAndCount({
-      relations: ['category', 'subCategory'],
-      skip: (page - 1) * limit,
-      take: limit,
-      order: { createdAt: 'DESC' }
-    });
+  async findAll(page: number = 1, limit: number = 10, search?: string) {
+    const queryBuilder = this.productRepository.createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.subCategory', 'subCategory');
+
+    if (search) {
+      const searchPattern = `%${search}%`;
+      queryBuilder.where('(product.name ILIKE :search OR product.sku ILIKE :search OR category.name ILIKE :search OR subCategory.name ILIKE :search)', { search: searchPattern });
+    }
+
+    const [items, total] = await queryBuilder
+      .skip((page - 1) * limit)
+      .take(limit)
+      .orderBy('product.createdAt', 'DESC')
+      .getManyAndCount();
 
     // Map to include virtual status if needed by frontend
     const data = items.map(p => {

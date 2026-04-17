@@ -49,7 +49,7 @@ export declare class CartController {
         message: string;
         data: import("./cart.service").CartItem;
     }>;
-    removeItem(user: any, productId: string): Promise<{
+    removeItem(user: any, productId: string, variantSku?: string): Promise<{
         statusCode: number;
         message: string;
     }>;

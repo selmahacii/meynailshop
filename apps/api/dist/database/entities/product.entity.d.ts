@@ -24,6 +24,8 @@ export declare class Product {
     variants: {
         sku: string;
         image: string;
+        stock: number;
+        stockAlert: number;
     }[] | null;
     createdAt: Date;
     updatedAt: Date;

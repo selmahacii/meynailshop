@@ -11,6 +11,8 @@ import {
     LayoutGrid,
     List,
     ChevronDown,
+    ChevronLeft,
+    ChevronRight,
     MoreVertical,
     Edit2,
     ShoppingBag,
@@ -37,38 +39,35 @@ export default function AdminProductsPage() {
     const [stats, setStats] = useState<AdminStats | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [search, setSearch] = useState('');
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const ITEMS_PER_PAGE = 12;
 
     useEffect(() => {
         fetchProducts();
         fetchStats();
-    }, [activeTab]);
+    }, [activeTab, search, page]);
 
     const fetchProducts = async () => {
         try {
-
             setLoading(true);
-            const result = await ProductsAPI.getAll(1, 50); // Get first page with 50 items
-
+            const result = await ProductsAPI.getAll(page, ITEMS_PER_PAGE, search);
 
             if (result.success && result.data) {
-
-                let filteredProducts = result.data.items || [];
-
-                // Filter based on active tab
+                let items = result.data.items || [];
+                
+                // Server-side filtering is better, but keeping activeTab logic for compatibility
                 if (activeTab === 'low') {
-                    filteredProducts = filteredProducts.filter((p: AdminProduct) => p.status === 'low_stock');
-                } else if (activeTab !== 'all') {
-                    // For category filtering, we'd need to match category names
-                    // For now, just show all products
+                    items = items.filter((p: AdminProduct) => p.status === 'low_stock');
                 }
 
-                setProducts(filteredProducts);
+                setProducts(items);
+                setTotalPages(result.data.totalPages || 1);
             } else {
-
                 setError(result.error || 'Erreur lors du chargement des produits');
             }
         } catch (err) {
-
             setError('Impossible de charger les produits');
         } finally {
             setLoading(false);
@@ -111,9 +110,9 @@ export default function AdminProductsPage() {
 
     const getActionButton = (product: AdminProduct) => {
         if (product.stock === 0) {
-            return { text: 'Commander', style: 'bg-rouge text-creme hover:bg-rouge-deep' };
+            return { text: 'Gérer', style: 'bg-rouge text-creme hover:bg-rouge-deep' };
         } else if (product.stock <= product.alertThreshold) {
-            return { text: 'Commander', style: 'bg-or text-encre hover:bg-encre hover:text-creme' };
+            return { text: 'Gérer', style: 'bg-or text-encre hover:bg-encre hover:text-creme' };
         } else {
             return { text: 'Éditer', style: 'bg-[#1A0A0A] text-creme hover:bg-rouge-deep' };
         }
@@ -134,6 +133,11 @@ export default function AdminProductsPage() {
                         <input
                             type="text"
                             placeholder="Rechercher..."
+                            value={search}
+                            onChange={(e) => {
+                                setSearch(e.target.value);
+                                setPage(1); // Reset to first page on search
+                            }}
                             className="pl-10 pr-4 py-2 bg-white border border-creme2 rounded-sm text-sm focus:outline-none focus:border-or focus:ring-1 focus:ring-or w-full sm:w-48 xl:w-64 shadow-sm transition-all"
                         />
                     </div>
@@ -303,6 +307,53 @@ export default function AdminProductsPage() {
                             </div>
                         );
                     })}
+                </div>
+            )}
+
+            {/* Pagination UI */}
+            {!loading && !error && products.length > 0 && totalPages > 1 && (
+                <div className="flex items-center justify-center space-x-2 mt-12 py-8 border-t border-creme2">
+                    <button
+                        onClick={() => setPage(p => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                        className="p-2 border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or disabled:opacity-30 disabled:hover:text-encre3 disabled:hover:border-creme2 transition-all"
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                    
+                    <div className="flex items-center space-x-1">
+                        {[...Array(totalPages)].map((_, i) => {
+                            const p = i + 1;
+                            // Basic pagination logic: show first, last, and pages around current
+                            if (p === 1 || p === totalPages || (p >= page - 1 && p <= page + 1)) {
+                                return (
+                                    <button
+                                        key={p}
+                                        onClick={() => setPage(p)}
+                                        className={cn(
+                                            "w-10 h-10 flex items-center justify-center text-xs font-bold rounded-sm transition-all",
+                                            page === p 
+                                                ? "bg-encre text-creme shadow-md" 
+                                                : "bg-white border border-creme2 text-encre3 hover:border-or hover:text-or"
+                                        )}
+                                    >
+                                        {p}
+                                    </button>
+                                );
+                            } else if (p === page - 2 || p === page + 2) {
+                                return <span key={p} className="px-1 text-encre3">...</span>;
+                            }
+                            return null;
+                        })}
+                    </div>
+
+                    <button
+                        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                        disabled={page === totalPages}
+                        className="p-2 border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or disabled:opacity-30 disabled:hover:text-encre3 disabled:hover:border-creme2 transition-all"
+                    >
+                        <ChevronRight size={20} />
+                    </button>
                 </div>
             )}
 

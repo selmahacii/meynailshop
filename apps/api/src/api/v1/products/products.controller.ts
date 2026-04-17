@@ -6,8 +6,16 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Get()
-  async findAll(@Query('page') page: string, @Query('limit') limit: string) {
-    const result = await this.productsService.findAll(parseInt(page || '1'), parseInt(limit || '10'));
+  async findAll(
+    @Query('page') page: string, 
+    @Query('limit') limit: string,
+    @Query('search') search: string
+  ) {
+    const result = await this.productsService.findAll(
+      parseInt(page || '1'), 
+      parseInt(limit || '10'),
+      search
+    );
     return {
       success: true,
       data: {

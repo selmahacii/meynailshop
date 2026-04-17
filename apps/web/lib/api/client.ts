@@ -159,8 +159,12 @@ export class DashboardAPI {
 }
 
 export class ProductsAPI {
-  static async getAll(page = 1, limit = 10) {
-    return apiGet(API_ENDPOINTS.PRODUCTS_ADMIN_LIST + `?page=${page}&limit=${limit}`);
+  static async getAll(page = 1, limit = 10, search?: string) {
+    const query = new URLSearchParams();
+    query.append('page', String(page));
+    query.append('limit', String(limit));
+    if (search) query.append('search', search);
+    return apiGet(API_ENDPOINTS.PRODUCTS_ADMIN_LIST + `?${query.toString()}`);
   }
 
   static async getLowStock(threshold = 10) {

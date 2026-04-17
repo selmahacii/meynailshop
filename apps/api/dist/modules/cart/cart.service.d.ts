@@ -11,6 +11,8 @@ export interface CartItem {
     productPrice: number;
     productImage: string;
     productSku: string;
+    variantSku?: string;
+    variantImage?: string;
     subtotal: number;
 }
 export interface CartData {
@@ -29,8 +31,8 @@ export declare class CartService {
     constructor(cacheManager: Cache, productRepository: Repository<Product>, couponRepository: Repository<Coupon>);
     private getCartKey;
     addItem(userId: string, addToCartDto: AddToCartDto): Promise<CartItem>;
-    updateItem(userId: string, productId: string, updateCartItemDto: UpdateCartItemDto): Promise<CartItem>;
-    removeItem(userId: string, productId: string): Promise<void>;
+    updateItem(userId: string, productId: string, variantSku: string | undefined, updateCartItemDto: UpdateCartItemDto): Promise<CartItem>;
+    removeItem(userId: string, productId: string, variantSku?: string): Promise<void>;
     getCart(userId: string): Promise<CartData | null>;
     getCartItems(userId: string): Promise<CartItem[]>;
     clearCart(userId: string): Promise<void>;
