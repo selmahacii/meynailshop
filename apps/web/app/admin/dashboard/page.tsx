@@ -43,6 +43,7 @@ import { DashboardAPI } from '@/lib/api/client';
 import { useAuthStore } from '@/lib/store/authStore';
 import { formatPrice } from '@/lib/utils/currency';
 import { motion, AnimatePresence } from 'framer-motion';
+import { SHIPPING_RATES } from '@/lib/constants/shipping';
 
 function calculateDelta(current: number, previous: number) {
     if (!previous || previous === 0) return '+0%';
@@ -488,7 +489,7 @@ export default function AdminDashboard() {
                         {charts.wilayaDistribution?.slice(0, 4).map((w: any, i: number) => (
                             <div key={i} className="space-y-2">
                                 <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-encre/60">
-                                    <span>{w.wilaya}</span>
+                                    <span>{SHIPPING_RATES.find(r => r.id === w.wilaya)?.name || w.wilaya}</span>
                                     <span>{w.percent}%</span>
                                 </div>
                                 <div className="h-2 w-full bg-[#FAF9F6] rounded-full overflow-hidden">

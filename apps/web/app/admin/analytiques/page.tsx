@@ -19,6 +19,7 @@ import Link from 'next/link';
 import { formatPrice } from '@/lib/utils/currency';
 import { DashboardAPI } from '@/lib/api/client';
 import { motion } from 'framer-motion';
+import { SHIPPING_RATES } from '@/lib/constants/shipping';
 
 function calculateDelta(current: number, previous: number) {
     if (!previous || previous === 0) return '+0%';
@@ -213,7 +214,9 @@ export default function AdminAnalyticsPage() {
                     <div className="space-y-4">
                         {charts.wilayaDistribution && charts.wilayaDistribution.length > 0 ? charts.wilayaDistribution.map((w: any, i: number) => (
                             <div key={i} className="flex items-center space-x-4">
-                                <span className="text-[10px] font-bold uppercase text-encre3 w-32 truncate">{w.wilaya}</span>
+                                <span className="text-[10px] font-bold uppercase text-encre3 w-32 truncate">
+                                    {SHIPPING_RATES.find(r => r.id === w.wilaya)?.name || w.wilaya}
+                                </span>
                                 <div className="flex-grow h-2 bg-creme2 rounded-full overflow-hidden">
                                     <div 
                                         className={cn("h-full rounded-full", i === 0 ? "bg-rouge-deep" : "bg-or")} 
