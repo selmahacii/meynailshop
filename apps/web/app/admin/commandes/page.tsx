@@ -105,7 +105,7 @@ export default function AdminOrdersPage() {
                 // Refresh orders on the same page and stats
                 await fetchOrders(activeTab === 'active' ? 'active' : activeTab, pagination.page);
                 await fetchStats();
-                
+
                 // Track update globally for sidebar
                 window.dispatchEvent(new Event('orderUpdated'));
                 if (['cancelled', 'returned'].includes(newStatus)) {
@@ -161,7 +161,7 @@ export default function AdminOrdersPage() {
     };
 
     const filteredOrders = activeTab === 'all' || activeTab === 'active' || activeTab === 'history'
-        ? orders 
+        ? orders
         : orders.filter(order => order.status === activeTab);
 
     if (loading && orders.length === 0) {
@@ -198,7 +198,7 @@ export default function AdminOrdersPage() {
                             <Bell size={18} />
                         </button>
                     </div>
-                    <button 
+                    <button
                         onClick={() => setIsModalOpen(true)}
                         className="flex items-center justify-center space-x-2 px-4 py-2 bg-rouge-deep text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md flex-grow sm:flex-grow-0"
                     >
@@ -258,7 +258,7 @@ export default function AdminOrdersPage() {
 
                     <div className="flex items-center space-x-2 w-full md:w-auto">
 
-                        <button 
+                        <button
                             onClick={() => setIsModalOpen(true)}
                             className="flex-1 md:flex-none flex items-center justify-center space-x-2 px-6 py-2.5 bg-[#1A0A0A] text-creme text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-lg group"
                         >
@@ -267,7 +267,7 @@ export default function AdminOrdersPage() {
                         </button>
                     </div>
                 </div>
-                
+
                 {/* Status Summary Bar */}
                 <div className="grid grid-cols-2 gap-4 p-4 bg-white border-b border-creme2">
                     <div className="bg-blue-50/50 p-4 rounded-sm border border-blue-100 flex items-center justify-between">
@@ -311,10 +311,10 @@ export default function AdminOrdersPage() {
                                     <td className="px-8 py-6">
                                         <div className="flex flex-col">
                                             <span className="text-sm font-bold text-encre">
-                                                {order.user 
-                                                    ? `${order.user.firstName} ${order.user.lastName}` 
-                                                    : (order.shippingAddressSnapshot?.firstName 
-                                                        ? `${order.shippingAddressSnapshot.firstName} ${order.shippingAddressSnapshot.lastName}` 
+                                                {order.user
+                                                    ? `${order.user.firstName} ${order.user.lastName}`
+                                                    : (order.shippingAddressSnapshot?.firstName
+                                                        ? `${order.shippingAddressSnapshot.firstName} ${order.shippingAddressSnapshot.lastName}`
                                                         : 'Client anonyme')}
                                                 {!order.user && <span className="ml-2 text-[8px] bg-creme2 text-encre3 px-1 rounded tracking-tighter">INVITÉ</span>}
                                             </span>
@@ -337,7 +337,7 @@ export default function AdminOrdersPage() {
                                         {new Date(order.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
                                     </td>
                                     <td className="px-8 py-6 text-sm font-black text-encre">
-                                        {Number(order.total).toLocaleString('fr-FR')} DA
+                                        {(Number(order.subtotal || 0) + Number(order.shippingCost || 0) - Number(order.discount || 0)).toLocaleString('fr-FR')} DA
                                     </td>
                                     <td className="px-8 py-6">
                                         <span className={cn(
@@ -397,7 +397,7 @@ export default function AdminOrdersPage() {
                                             </button>
                                         )}
 
-                                        <Link 
+                                        <Link
                                             href={`/admin/commandes/${order.id}`}
                                             className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-[#1A0A0A] text-white border-[#2A1A1A] hover:bg-rouge-deep"
                                         >
@@ -441,10 +441,10 @@ export default function AdminOrdersPage() {
                                 <div className="flex items-center justify-between">
                                     <div className="flex flex-col">
                                         <span className="text-sm font-black text-encre flex items-center">
-                                            {order.user 
-                                                ? `${order.user.firstName} ${order.user.lastName}` 
-                                                : (order.shippingAddressSnapshot?.firstName 
-                                                    ? `${order.shippingAddressSnapshot.firstName} ${order.shippingAddressSnapshot.lastName}` 
+                                            {order.user
+                                                ? `${order.user.firstName} ${order.user.lastName}`
+                                                : (order.shippingAddressSnapshot?.firstName
+                                                    ? `${order.shippingAddressSnapshot.firstName} ${order.shippingAddressSnapshot.lastName}`
                                                     : 'Client anonyme')}
                                             {!order.user && <span className="ml-2 text-[7px] bg-creme2 text-encre3 px-1 rounded tracking-tighter">INVITÉ</span>}
                                         </span>
@@ -463,13 +463,13 @@ export default function AdminOrdersPage() {
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <span className="text-sm font-black text-or">{Number(order.total).toLocaleString('fr-FR')} DA</span>
+                                        <span className="text-sm font-black text-or">{(Number(order.subtotal || 0) + Number(order.shippingCost || 0) - Number(order.discount || 0)).toLocaleString('fr-FR')} DA</span>
                                     </div>
                                 </div>
 
                                 <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-creme2/50">
                                     <div className="relative flex-1">
-                                        <select 
+                                        <select
                                             className="w-full px-4 py-2 bg-creme2/40 border border-creme2 rounded-sm text-[10px] font-black uppercase tracking-widest outline-none focus:border-or transition-all appearance-none text-encre cursor-pointer pr-10"
                                             value={order.status}
                                             onChange={(e) => updateOrderStatus(order.id, e.target.value)}
@@ -477,8 +477,8 @@ export default function AdminOrdersPage() {
                                         >
                                             <optgroup label="Traitement">
                                                 {order.status === 'pending' && <option value="pending">⏳ En attente</option>}
-                                                <option value="confirmed">✅ Confirmé</option>
-                                                <option value="shipped">🚚 Expédié</option>
+                                                <option value="confirmed"> Confirmé</option>
+                                                <option value="shipped"> Expédié</option>
                                             </optgroup>
                                             <optgroup label="Finalisation">
                                                 <option value="delivered">📦 Livrée</option>
@@ -494,7 +494,7 @@ export default function AdminOrdersPage() {
                                             )}
                                         </div>
                                     </div>
-                                    <Link 
+                                    <Link
                                         href={`/admin/commandes/${order.id}`}
                                         className="flex-1 px-3 py-2 bg-[#1A0A0A] text-white rounded-sm text-[9px] font-black uppercase tracking-widest text-center"
                                     >
@@ -528,7 +528,7 @@ export default function AdminOrdersPage() {
                 </div>
             </div>
 
-            <CreateOrderModal 
+            <CreateOrderModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onSuccess={() => {

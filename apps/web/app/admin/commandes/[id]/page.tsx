@@ -337,11 +337,17 @@ export default function OrderDetailsPage() {
                                         <span>-{Number(order.discount).toLocaleString()} DA</span>
                                     </div>
                                 )}
+                                <div className="flex justify-between items-center text-[10px] font-black text-encre3 uppercase tracking-widest pt-4 border-t border-creme2/50">
+                                    <span>Total Net (Produit + Livraison)</span>
+                                    <span className="text-encre font-black">{(Number(order.subtotal || 0) + Number(order.shippingCost || 0)).toLocaleString()} DA</span>
+                                </div>
                                 <div className="pt-6 border-t-2 border-creme2 flex justify-between items-end">
-                                    <span className="text-xs font-black uppercase tracking-[0.2em] text-encre">Total à payer</span>
+                                    <div className="flex flex-col">
+                                        <span className="text-xs font-black uppercase tracking-[0.2em] text-encre">Total à payer</span>
+                                        <span className="text-[8px] font-bold text-rouge-mid uppercase tracking-widest mt-1">Montant final</span>
+                                    </div>
                                     <div className="text-right">
-                                        <span className="block text-[8px] font-black text-encre3 uppercase tracking-widest mb-1">Montant final</span>
-                                        <span className="text-2xl md:text-3xl font-black text-or">{Number(order.total).toLocaleString()} DA</span>
+                                        <span className="text-2xl md:text-3xl font-black text-or">{(Number(order.subtotal || 0) + Number(order.shippingCost || 0) - Number(order.discount || 0)).toLocaleString()} DA</span>
                                     </div>
                                 </div>
                             </div>
@@ -421,6 +427,9 @@ export default function OrderDetailsPage() {
                                         {order.deliveryType === 'office' ? <Briefcase size={14} className="text-or" /> : <Home size={14} className="text-or" />}
                                         <span>Livraison {order.deliveryType === 'office' ? 'au Bureau' : 'à Domicile'}</span>
                                     </div>
+                                    <p className="mt-2 text-[10px] font-bold text-encre3 uppercase tracking-widest">
+                                        À encaisser: <span className="text-rouge-mid font-black">{(Number(order.subtotal || 0) + Number(order.shippingCost || 0) - Number(order.discount || 0)).toLocaleString()} DA</span>
+                                    </p>
                                 </div>
                                 <p className="pt-2 text-[10px] opacity-60">Algérie</p>
                             </div>
