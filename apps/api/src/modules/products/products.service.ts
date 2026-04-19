@@ -80,34 +80,28 @@ export class ProductsService {
 
     if (query.search) {
       try {
-        const searchTerm = `%${query.search.toLowerCase()}%`;
-        const priceValue = parseFloat(query.search);
-        const isNumeric = !isNaN(priceValue);
+        const searchInput = query.search.trim();
+        const terms = searchInput.split(/\s+/).filter(t => t.length > 0);
         
-        console.log(`🔍 [ProductsService] Search triggered: "${query.search}"`);
-        
-        queryBuilder.andWhere(new Brackets(qb => {
-          // Standard text search on primary fields
-          qb.where('LOWER(product.name) LIKE :searchTerm', { searchTerm })
-            .orWhere('LOWER(product.sku) LIKE :searchTerm', { searchTerm })
-            .orWhere('LOWER(product.description) LIKE :searchTerm', { searchTerm });
-
-          // Search in categories if joined
-          qb.orWhere('LOWER(category.name) LIKE :searchTerm', { searchTerm })
-            .orWhere('LOWER(subCategory.name) LIKE :searchTerm', { searchTerm });
-          
-          // Search in tags (safely)
-          qb.orWhere('LOWER(product.tags) LIKE :searchTerm', { searchTerm });
-
-          // Numeric search if applicable
-          if (isNumeric) {
-              qb.orWhere('product.price = :exactPrice', { exactPrice: priceValue })
-                .orWhere('product.price BETWEEN :minP AND :maxP', { 
-                  minP: priceValue - 50, 
-                  maxP: priceValue + 50 
-                });
-          }
-        }));
+        if (terms.length > 0) {
+          queryBuilder.andWhere(new Brackets(qb => {
+            const params: Record<string, string> = {};
+            
+            terms.forEach((term, index) => {
+              const paramName = `t${index}`;
+              const searchTerm = `%${term}%`;
+              params[paramName] = searchTerm;
+              
+              const sql = `(product.name ILIKE :${paramName} OR product.sku ILIKE :${paramName} OR category.name ILIKE :${paramName} OR product.description ILIKE :${paramName})`;
+              
+              if (index === 0) {
+                qb.where(sql, params);
+              } else {
+                qb.andWhere(sql, params);
+              }
+            });
+          }));
+        }
       } catch (err) {
         console.error('❌ [ProductsService] Search construction failed:', err);
       }
@@ -147,6 +141,11 @@ export class ProductsService {
     }
 
     try {
+      if (query.search) {
+          console.log(`🔍 [ProductsService] SQL: ${queryBuilder.getSql()}`);
+          console.log(`🔍 [ProductsService] Params:`, queryBuilder.getParameters());
+      }
+      
       const [products, total] = await queryBuilder
         .skip(skip)
         .take(query.limit)
