@@ -69,12 +69,18 @@ export class DashboardService {
       }
       const cogsQuery = await cogsQueryBuilder.getRawOne().catch(() => ({ totalCogs: 0 }));
 
-      // 1.2 Inventory (Total Value is always current total)
-      const inventoryQuery = await this.productRepository
-        .createQueryBuilder('p')
-        .select('SUM(p.stock * COALESCE(p."costPrice", 0))', 'inventoryValue')
-        .getRawOne()
-        .catch(() => ({ inventoryValue: 0 }));
+      // 1.2 Inventory metrics (Real-time calculation including Variants)
+      const allActiveProducts = await this.productRepository.find({ where: { isActive: true } });
+      const inventoryData = allActiveProducts.reduce((sum, p) => {
+        const cost = Number(p.costPrice) || 0;
+        if (!p.hasVariants) {
+          return sum + (p.stock * cost);
+        } else if (p.variants && Array.isArray(p.variants)) {
+          const variantStock = p.variants.reduce((vSum, v) => vSum + (v.stock || 0), 0);
+          return sum + (variantStock * cost);
+        }
+        return sum;
+      }, 0);
 
       // 2. Previous range comparison for Deltas
       let prevRevenue = 0;
@@ -113,7 +119,7 @@ export class DashboardService {
           totalRevenue,
           totalProfit: Math.round(profit * 100) / 100,
           profitMargin: margin,
-          inventoryValue: 0, 
+          inventoryValue: Math.round(inventoryData * 100) / 100, 
           prevRevenue,
           totalOrders,
           prevOrders,
