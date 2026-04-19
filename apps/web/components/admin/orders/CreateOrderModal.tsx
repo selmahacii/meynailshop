@@ -308,10 +308,34 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                 </div>
 
                                 <div className="max-h-[600px] overflow-y-auto pr-2 custom-scrollbar border border-creme2 rounded-sm bg-white">
-                                    {(selectedCategory || selectedSubCategory) ? (
+                                    <div className="p-4 border-b border-creme2 bg-creme2/5">
+                                        <div className="relative">
+                                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-encre3" size={14} />
+                                            <input
+                                                type="text"
+                                                placeholder="Recherche par Nom ou Référence (SKU)..."
+                                                className="w-full pl-10 pr-4 h-10 bg-white border border-creme2 rounded-sm focus:outline-none focus:border-or transition-all text-[11px] font-bold text-encre"
+                                                value={query}
+                                                onChange={(e) => setQuery(e.target.value)}
+                                            />
+                                            {searching && <Loader className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-or" size={14} />}
+                                            {query && (
+                                                <button 
+                                                    onClick={() => setQuery('')}
+                                                    className="absolute right-10 top-1/2 -translate-y-1/2 text-encre3 hover:text-rouge-brand"
+                                                >
+                                                    <X size={12} />
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {(query.length > 0 || selectedCategory || selectedSubCategory) ? (
                                         <div className="divide-y divide-creme2">
                                             <div className="bg-creme2/10 px-4 py-2 border-b border-creme2/50 sticky top-0 bg-white z-10 font-black text-[9px] text-or uppercase tracking-widest flex items-center justify-between">
-                                                <span>{selectedSubCategory?.name || selectedCategory?.name}</span>
+                                                <span>
+                                                    {query ? `Résultats pour "${query}"` : (selectedSubCategory?.name || selectedCategory?.name)}
+                                                </span>
                                                 <span className="text-[7px] text-encre3 opacity-50">{searchResults.length} articles</span>
                                             </div>
                                             <div className="divide-y divide-creme2">
@@ -319,7 +343,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                             </div>
                                             {searchResults.length === 0 && !searching && (
                                                 <div className="py-20 text-center">
-                                                    <p className="text-xs font-serif italic text-encre3">Aucun produit dans cette sélection</p>
+                                                    <p className="text-xs font-serif italic text-encre3">Aucun produit ne correspond à vos critères</p>
                                                 </div>
                                             )}
                                         </div>
