@@ -525,44 +525,63 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess, initialPr
                     Sélectionnez vos articles pour continuer
                   </div>
                 ) : (
-                  <div className="space-y-2.5 max-h-40 overflow-y-auto mb-5 custom-scrollbar pr-2">
+                  <div className="space-y-3 max-h-48 overflow-y-auto mb-6 custom-scrollbar pr-2">
                     {cart.map((item, idx) => (
-                      <div key={`${item.product.id}-${item.variant?.sku || idx}`} className="flex items-center justify-between bg-creme2/20 p-3 rounded-2xl border border-gold-brand/5 backdrop-blur-sm">
-                        <div className="flex-1 truncate">
-                          <p className="text-xs font-bold text-rouge-brand truncate pr-3">{item.product.name}</p>
-                          {item.variant && (
-                            <p className="text-[9px] font-black text-gold-brand uppercase tracking-widest">{item.variant.label} ({item.variant.sku})</p>
-                          )}
-                          <p className="text-[10px] font-black text-encre/60 uppercase tracking-tighter mt-0.5">{item.product.price.toLocaleString()} DA / unité</p>
+                      <div 
+                        key={`${item.product.id}-${item.variant?.sku || idx}`} 
+                        className="flex items-center gap-4 bg-white/60 p-4 rounded-3xl border border-gold-brand/10 shadow-sm hover:shadow-md transition-all group"
+                      >
+                        {/* Item Image */}
+                        <div className="relative shrink-0 w-16 h-16 rounded-2xl overflow-hidden border border-gold-brand/10">
+                          <img 
+                            src={item.variant?.image || item.product.images[0] || '/placeholder.png'} 
+                            alt={item.product.name} 
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          />
+                        </div>
+
+                        {/* Item Details */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-col">
+                            <h5 className="text-[13px] font-bold text-rouge-brand truncate">{item.product.name}</h5>
+                            {item.variant ? (
+                              <p className="text-[10px] font-black text-gold-brand uppercase tracking-widest mt-0.5">
+                                Réf: {item.variant.label}
+                                <span className="ml-2 opacity-50 font-medium">({item.variant.sku})</span>
+                              </p>
+                            ) : (
+                              <p className="text-[10px] font-black text-encre3 uppercase tracking-widest mt-0.5">
+                                Unique
+                              </p>
+                            )}
+                          </div>
+                          <p className="text-[11px] font-bold text-encre mt-2">
+                            {item.product.price.toLocaleString()} <span className="text-[9px] uppercase">DA</span>
+                          </p>
                         </div>
                         
-                        <div className="flex items-center gap-4">
+                        <div className="flex flex-col items-end gap-3 shrink-0">
                           {/* Quantity control */}
-                          <div className="flex items-center bg-white border-2 border-creme2 rounded-xl h-10 p-1">
+                          <div className="flex items-center bg-creme2/50 border border-gold-brand/10 rounded-xl h-8 p-0.5">
                             <button 
                               onClick={(e) => { e.stopPropagation(); updateQuantity(item.product.id, -1, item.variant?.sku); }}
-                              className="w-8 h-full flex items-center justify-center text-gold-brand hover:text-rouge-brand transition-colors"
+                              className="w-7 h-full flex items-center justify-center text-encre3 hover:text-rouge-brand transition-colors"
                             >
-                              <Minus size={14} strokeWidth={3} />
+                              <Minus size={10} strokeWidth={4} />
                             </button>
-                            <span className="w-10 text-center text-sm font-black text-encre font-mono">{item.quantity}</span>
+                            <span className="w-8 text-center text-[11px] font-black text-encre">{item.quantity}</span>
                             <button 
                               onClick={(e) => { e.stopPropagation(); updateQuantity(item.product.id, 1, item.variant?.sku); }}
-                              className="w-8 h-full flex items-center justify-center text-gold-brand hover:text-rouge-brand transition-colors"
+                              className="w-7 h-full flex items-center justify-center text-encre3 hover:text-rouge-brand transition-colors"
                             >
-                              <Plus size={14} strokeWidth={3} />
+                              <Plus size={10} strokeWidth={4} />
                             </button>
                           </div>
-                          
-                          <p className="text-sm font-black text-encre w-24 text-right tabular-nums">
-                            {(item.product.price * item.quantity).toLocaleString()} DA
-                          </p>
-
                           <button 
                             onClick={(e) => { e.stopPropagation(); removeFromCart(item.product.id, item.variant?.sku); }}
-                            className="p-2 text-encre3 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
+                            className="p-1.5 text-encre3/40 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
                           >
-                            <Trash2 size={18} />
+                            <Trash2 size={16} />
                           </button>
                         </div>
                       </div>
@@ -593,12 +612,12 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess, initialPr
                     </div>
                   </div>
                   
-                  <div className="flex justify-between items-center pt-4 pb-1">
-                    <span className="text-xs font-black text-rouge-brand uppercase tracking-[0.2em] flex items-center gap-2">
-                       Net à Payer
+                  <div className="flex justify-between items-center pt-5 pb-1">
+                    <span className="text-[11px] font-black text-rouge-brand uppercase tracking-[0.25em] flex items-center gap-2">
+                       A Encaisser
                     </span>
-                    <span className="text-3xl font-serif text-rouge-mid tracking-tight">
-                      {total.toLocaleString()} <span className="text-base font-sans font-bold uppercase ml-1">DA</span>
+                    <span className="text-4xl font-serif text-rouge-mid tracking-tight font-medium">
+                      {(total).toLocaleString()} <span className="text-sm font-sans font-black uppercase ml-1 opacity-60">DA</span>
                     </span>
                   </div>
                 </div>
