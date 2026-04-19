@@ -60,23 +60,27 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
     });
 
     useEffect(() => {
-        if (query.length > 2) {
-            const timer = setTimeout(async () => {
-                setSearching(true);
-                try {
-                    const res = await StoreAPI.getProducts(1, 10, { search: query });
-                    if (res.success) setSearchResults(res.data.data);
-                } finally {
-                    setSearching(false);
+        const fetchInitialOrSearch = async () => {
+            setSearching(true);
+            try {
+                // Search as user types (min 1 char) or get initial products if empty
+                const res = await StoreAPI.getProducts(1, 15, { search: query });
+                if (res.success) {
+                    const items = res.data?.items || (Array.isArray(res.data) ? res.data : []);
+                    setSearchResults(items);
                 }
-            }, 500);
-            return () => clearTimeout(timer);
-        } else {
-            setSearchResults([]);
-        }
+            } finally {
+                setSearching(false);
+            }
+        };
+
+        const timer = setTimeout(fetchInitialOrSearch, query.length > 0 ? 300 : 0);
+        return () => clearTimeout(timer);
     }, [query]);
 
     useEffect(() => {
+        if (!formData.customer.wilaya) return;
+        
         const rate = SHIPPING_RATES.find(r => r.name === formData.customer.wilaya);
         if (rate) {
             setFormData(prev => ({
