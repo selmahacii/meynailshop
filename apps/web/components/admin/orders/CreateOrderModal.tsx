@@ -39,7 +39,11 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess, initialPr
 
   // Cart & Search State
   const [searchQuery, setSearchQuery] = useState('');
-  const [cart, setCart] = useState<{ product: Product; quantity: number }[]>([]);
+  const [cart, setCart] = useState<{ 
+    product: Product; 
+    variant?: { sku: string; label: string; image?: string }; 
+    quantity: number 
+  }[]>([]);
   const [isSaving, setIsSaving] = useState(false);
 
   // Fetch products if not provided
@@ -102,32 +106,39 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess, initialPr
   }, [searchQuery, products]);
 
   // Cart actions
-  const addToCart = (product: Product) => {
+  const addToCart = (product: Product, variant?: { sku: string; label: string; image?: string }) => {
     setCart(prev => {
-      const existing = prev.find(item => item.product.id === product.id);
+      const existing = prev.find(item => 
+        item.product.id === product.id && 
+        (!variant || item.variant?.sku === variant.sku)
+      );
+      
       if (existing) {
         return prev.map(item => 
-          item.product.id === product.id 
+          (item.product.id === product.id && (!variant || item.variant?.sku === variant.sku))
             ? { ...item, quantity: item.quantity + 1 } 
             : item
         );
       }
-      return [...prev, { product, quantity: 1 }];
+      return [...prev, { product, variant, quantity: 1 }];
     });
+    toast.success(`${product.name} ${variant ? `(${variant.label})` : ''} ajouté`);
   };
 
-  const updateQuantity = (productId: string, delta: number) => {
+  const updateQuantity = (productId: string, delta: number, variantSku?: string) => {
     setCart(prev => prev.map(item => {
-      if (item.product.id === productId) {
-        const newQ = Math.max(1, item.quantity + delta);
-        return { ...item, quantity: newQ };
+      if (item.product.id === productId && (!variantSku || item.variant?.sku === variantSku)) {
+        const newQty = Math.max(1, item.quantity + delta);
+        return { ...item, quantity: newQty };
       }
       return item;
     }));
   };
 
-  const removeFromCart = (productId: string) => {
-    setCart(prev => prev.filter(item => item.product.id !== productId));
+  const removeFromCart = (productId: string, variantSku?: string) => {
+    setCart(prev => prev.filter(item => 
+      !(item.product.id === productId && (!variantSku || item.variant?.sku === variantSku))
+    ));
   };
 
   const handleSave = async () => {
@@ -152,6 +163,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess, initialPr
         },
         items: cart.map(item => ({
           productId: item.product.id,
+          variantSku: item.variant?.sku, // Added variant support
           quantity: item.quantity,
           price: item.product.price
         })),
@@ -437,28 +449,53 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess, initialPr
                     filteredProducts.map(product => (
                       <div 
                         key={product.id} 
-                        className="flex items-center justify-between p-3.5 rounded-2xl border-2 border-transparent bg-white shadow-sm hover:border-gold-brand/30 hover:shadow-md transition-all group cursor-pointer"
-                        onClick={() => addToCart(product)}
+                        className="p-4 rounded-3xl border-2 border-transparent bg-white shadow-sm hover:border-gold-brand/30 transition-all flex flex-col gap-4"
                       >
-                        <div className="flex items-center gap-4">
-                          <div className="relative overflow-hidden rounded-xl border border-gold-brand/10">
-                            <img 
-                              src={product.images[0] || '/placeholder.png'} 
-                              alt={product.name} 
-                              className="w-14 h-14 object-cover transform group-hover:scale-110 transition-transform duration-500"
-                            />
-                          </div>
-                          <div>
-                            <p className="text-sm font-bold text-encre line-clamp-1 group-hover:text-rouge-brand transition-colors">{product.name}</p>
-                            <div className="flex items-center gap-3 mt-1.5">
-                              <span className="text-[9px] font-black uppercase tracking-widest text-gold-brand bg-creme px-2 py-0.5 rounded-md">{product.sku}</span>
-                              <span className="text-sm font-black text-rouge-mid">{product.price.toLocaleString()} DA</span>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div className="relative overflow-hidden rounded-2xl border border-gold-brand/10">
+                              <img 
+                                src={product.images[0] || '/placeholder.png'} 
+                                alt={product.name} 
+                                className="w-16 h-16 object-cover"
+                              />
+                            </div>
+                            <div>
+                              <p className="text-base font-bold text-encre text-rouge-brand">{product.name}</p>
+                              <div className="flex items-center gap-3 mt-1 underline decoration-gold-brand/30">
+                                <span className="text-[10px] font-black uppercase text-gold-brand">{product.sku}</span>
+                                <span className="text-base font-black text-rouge-mid">{product.price.toLocaleString()} DA</span>
+                              </div>
                             </div>
                           </div>
+                          {!product.hasVariants && (
+                            <button 
+                              onClick={() => addToCart(product)}
+                              className="h-12 w-12 rounded-2xl bg-creme text-rouge-brand flex items-center justify-center hover:bg-rouge-brand hover:text-creme transition-all shadow-sm"
+                            >
+                              <Plus size={20} />
+                            </button>
+                          )}
                         </div>
-                        <div className="h-10 w-10 rounded-xl bg-creme text-rouge-brand flex items-center justify-center group-hover:bg-rouge-brand group-hover:text-creme transition-all shadow-sm">
-                          <Plus size={18} />
-                        </div>
+
+                        {/* Variants Selection Area */}
+                        {product.hasVariants && product.variants && (
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 border-t border-gold-brand/5">
+                            {product.variants.map((v, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => addToCart(product, v)}
+                                className="flex flex-col items-center p-2 rounded-xl border border-gold-brand/10 bg-creme/30 hover:bg-white hover:border-gold-brand transition-all text-center group"
+                              >
+                                {v.image && (
+                                  <img src={v.image} alt={v.label} className="w-8 h-8 rounded-md mb-1.5 object-cover" />
+                                )}
+                                <span className="text-[10px] font-black uppercase tracking-tighter text-encre3 group-hover:text-rouge-brand">{v.label}</span>
+                                <span className="text-[8px] font-bold text-gold-brand mt-0.5">{v.sku}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     ))
                   )}
@@ -488,28 +525,31 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess, initialPr
                   </div>
                 ) : (
                   <div className="space-y-2.5 max-h-40 overflow-y-auto mb-5 custom-scrollbar pr-2">
-                    {cart.map(item => (
-                      <div key={item.product.id} className="flex items-center justify-between bg-creme2/20 p-3 rounded-xl border border-gold-brand/5 backdrop-blur-sm">
+                    {cart.map((item, idx) => (
+                      <div key={`${item.product.id}-${item.variant?.sku || idx}`} className="flex items-center justify-between bg-creme2/20 p-3 rounded-2xl border border-gold-brand/5 backdrop-blur-sm">
                         <div className="flex-1 truncate">
-                          <p className="text-xs font-bold text-encre truncate pr-3">{item.product.name}</p>
-                          <p className="text-[10px] font-black text-gold-brand uppercase tracking-tighter mt-0.5">{item.product.price.toLocaleString()} DA / unité</p>
+                          <p className="text-xs font-bold text-rouge-brand truncate pr-3">{item.product.name}</p>
+                          {item.variant && (
+                            <p className="text-[9px] font-black text-gold-brand uppercase tracking-widest">{item.variant.label} ({item.variant.sku})</p>
+                          )}
+                          <p className="text-[10px] font-black text-encre/60 uppercase tracking-tighter mt-0.5">{item.product.price.toLocaleString()} DA / unité</p>
                         </div>
                         
                         <div className="flex items-center gap-4">
                           {/* Quantity control */}
-                          <div className="flex items-center bg-white border-2 border-creme2 rounded-xl h-9 p-1">
+                          <div className="flex items-center bg-white border-2 border-creme2 rounded-xl h-10 p-1">
                             <button 
-                              onClick={(e) => { e.stopPropagation(); updateQuantity(item.product.id, -1); }}
-                              className="w-7 h-full flex items-center justify-center text-gold-brand hover:text-rouge-brand transition-colors"
+                              onClick={(e) => { e.stopPropagation(); updateQuantity(item.product.id, -1, item.variant?.sku); }}
+                              className="w-8 h-full flex items-center justify-center text-gold-brand hover:text-rouge-brand transition-colors"
                             >
-                              <Minus size={12} strokeWidth={3} />
+                              <Minus size={14} strokeWidth={3} />
                             </button>
-                            <span className="w-8 text-center text-xs font-black text-encre font-mono">{item.quantity}</span>
+                            <span className="w-10 text-center text-sm font-black text-encre font-mono">{item.quantity}</span>
                             <button 
-                              onClick={(e) => { e.stopPropagation(); updateQuantity(item.product.id, 1); }}
-                              className="w-7 h-full flex items-center justify-center text-gold-brand hover:text-rouge-brand transition-colors"
+                              onClick={(e) => { e.stopPropagation(); updateQuantity(item.product.id, 1, item.variant?.sku); }}
+                              className="w-8 h-full flex items-center justify-center text-gold-brand hover:text-rouge-brand transition-colors"
                             >
-                              <Plus size={12} strokeWidth={3} />
+                              <Plus size={14} strokeWidth={3} />
                             </button>
                           </div>
                           
@@ -518,10 +558,10 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess, initialPr
                           </p>
 
                           <button 
-                            onClick={(e) => { e.stopPropagation(); removeFromCart(item.product.id); }}
+                            onClick={(e) => { e.stopPropagation(); removeFromCart(item.product.id, item.variant?.sku); }}
                             className="p-2 text-encre3 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
                           >
-                            <Trash2 size={16} />
+                            <Trash2 size={18} />
                           </button>
                         </div>
                       </div>
