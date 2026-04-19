@@ -176,7 +176,8 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess, initialPr
           commune: '',
           address: '',
           note: '',
-          deliveryType: 'home'
+          deliveryType: 'home',
+          source: 'instagram'
         });
       } else {
         console.error("[CreateOrderModal] API Error creating order:", res.error);
