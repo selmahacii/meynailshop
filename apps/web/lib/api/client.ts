@@ -153,8 +153,9 @@ export function apiDelete<T = any>(endpoint: string, options?: RequestOptions) {
 
 // Service classes
 export class DashboardAPI {
-  static async getMetrics() {
-    return apiGet(API_ENDPOINTS.DASHBOARD_METRICS);
+  static async getMetrics(range?: string) {
+    const query = range ? `?range=${range}` : '';
+    return apiGet(API_ENDPOINTS.DASHBOARD_METRICS + query);
   }
 }
 

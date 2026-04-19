@@ -73,18 +73,12 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 export default function AdminDashboard() {
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [refreshing, setRefreshing] = useState(false);
+    const [timeRange, setTimeRange] = useState<'7d' | '30d' | 'all'>('30d');
     const { user } = useAuthStore();
 
     useEffect(() => {
         fetchMetrics();
-
-        // Écouteur pour rafraîchir le dashboard quand une commande est modifiée ailleurs
-        const handleUpdate = () => fetchMetrics(true);
-        window.addEventListener('orderUpdated', handleUpdate);
-        return () => window.removeEventListener('orderUpdated', handleUpdate);
-    }, []);
+    }, [timeRange]); // Refetch when range changes
 
     const fetchMetrics = async (isRefresh = false) => {
         try {
@@ -92,7 +86,7 @@ export default function AdminDashboard() {
             else setLoading(true);
             
             setError(null);
-            const result = await DashboardAPI.getMetrics();
+            const result = await DashboardAPI.getMetrics(timeRange);
             
             if (result.success && result.data) {
                 setData(result.data);
@@ -327,9 +321,20 @@ export default function AdminDashboard() {
                             <p className="text-[10px] text-encre/40 mt-1 uppercase tracking-widest font-bold font-sans">Revenus Nets des Produits</p>
                         </div>
                         <div className="flex items-center gap-2 p-1.5 bg-creme2/30 rounded-xl overflow-x-auto max-w-full">
-                            {['7 Jours', '30 Jours', 'Total'].map((t, i) => (
-                                <button key={i} className={cn("whitespace-nowrap px-4 py-2 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all", i === 1 ? "bg-white text-encre shadow-sm" : "text-encre/40 hover:text-encre")}>
-                                    {t}
+                            {[
+                                { id: '7d', label: '7 Jours' },
+                                { id: '30d', label: '30 Jours' },
+                                { id: 'all', label: 'Total' }
+                            ].map((range) => (
+                                <button 
+                                    key={range.id} 
+                                    onClick={() => setTimeRange(range.id as any)}
+                                    className={cn(
+                                        "whitespace-nowrap px-4 py-2 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all", 
+                                        timeRange === range.id ? "bg-white text-encre shadow-sm" : "text-encre/40 hover:text-encre"
+                                    )}
+                                >
+                                    {range.label}
                                 </button>
                             ))}
                         </div>
