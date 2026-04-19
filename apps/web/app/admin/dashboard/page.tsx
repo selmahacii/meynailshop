@@ -79,6 +79,11 @@ export default function AdminDashboard() {
 
     useEffect(() => {
         fetchMetrics();
+
+        // Écouteur pour rafraîchir le dashboard quand une commande est modifiée ailleurs
+        const handleUpdate = () => fetchMetrics(true);
+        window.addEventListener('orderUpdated', handleUpdate);
+        return () => window.removeEventListener('orderUpdated', handleUpdate);
     }, []);
 
     const fetchMetrics = async (isRefresh = false) => {

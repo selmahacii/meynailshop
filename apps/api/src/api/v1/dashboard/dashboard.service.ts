@@ -312,12 +312,13 @@ export class DashboardService {
       // Using raw SQL for JSONB aggregations to avoid QueryBuilder inconsistencies
       const rawData = await this.orderRepository.query(`
         SELECT 
-          "shippingAddressSnapshot"->>'wilaya' as "wilayaCode",
-          "shippingAddressSnapshot"->>'wilayaName' as "wilayaName",
+          COALESCE("shippingAddressSnapshot"->>'wilayaCode', "shippingAddressSnapshot"->>'wilaya') as "wilayaCode",
+          COALESCE("shippingAddressSnapshot"->>'wilayaName', "shippingAddressSnapshot"->>'wilaya') as "wilayaName",
           COUNT(*) as "count"
         FROM "orders"
-        WHERE "shippingAddressSnapshot"->>'wilaya' IS NOT NULL
-        GROUP BY "shippingAddressSnapshot"->>'wilaya', "shippingAddressSnapshot"->>'wilayaName'
+        WHERE "shippingAddressSnapshot"->>'wilaya' IS NOT NULL 
+           OR "shippingAddressSnapshot"->>'wilayaName' IS NOT NULL
+        GROUP BY 1, 2
         ORDER BY "count" DESC
         LIMIT 5
       `);

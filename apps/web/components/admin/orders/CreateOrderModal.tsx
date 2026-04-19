@@ -380,7 +380,18 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                         <select
                                             className="w-full p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm font-bold"
                                             value={formData.customer.wilaya}
-                                            onChange={e => setFormData(prev => ({ ...prev, customer: { ...prev.customer, wilaya: e.target.value } }))}
+                                            onChange={e => {
+                                                const selected = SHIPPING_RATES.find(r => r.name === e.target.value);
+                                                setFormData(prev => ({ 
+                                                    ...prev, 
+                                                    customer: { 
+                                                        ...prev.customer, 
+                                                        wilaya: e.target.value,
+                                                        wilayaCode: selected?.id,
+                                                        wilayaName: e.target.value
+                                                    } 
+                                                }));
+                                            }}
                                         >
                                             <option value="">Sélectionner</option>
                                             {SHIPPING_RATES.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
