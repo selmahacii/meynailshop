@@ -82,23 +82,24 @@ export class DashboardService {
       const prevOrders = parseInt(prevMonthQuery?.totalOrders ?? '0') || 0;
 
       // Get active clients
-      const activeClients = await this.userRepository.count({
-        where: { role: 'client', isActive: true },
-      }).catch(err => {
-        console.error('❌ [DashboardService] User count failed:', err);
-        return 0;
-      });
+      const activeClients = await this.userRepository.createQueryBuilder('u')
+        .where('u.role = :role', { role: 'client' })
+        .andWhere('u.isActive = :isActive', { isActive: true })
+        .getCount()
+        .catch(err => {
+          console.error('❌ [DashboardService] User count failed:', err);
+          return 0;
+        });
 
-      const prevClients = await this.userRepository.count({
-        where: { 
-          role: 'client', 
-          isActive: true,
-          createdAt: LessThanOrEqual(lastMonthStart)
-        },
-      }).catch(err => {
-        console.error('❌ [DashboardService] Prev user count failed:', err);
-        return 0;
-      });
+      const prevClients = await this.userRepository.createQueryBuilder('u')
+        .where('u.role = :role', { role: 'client' })
+        .andWhere('u.isActive = :isActive', { isActive: true })
+        .andWhere('u.createdAt <= :limitDate', { limitDate: lastMonthStart })
+        .getCount()
+        .catch(err => {
+          console.error('❌ [DashboardService] Prev user count failed:', err);
+          return 0;
+        });
 
       // 3. Fetch real data from optimized methods
       const monthlyRevenue = await this._getMonthlyTrendOptimized();
