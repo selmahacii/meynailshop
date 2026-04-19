@@ -22,10 +22,15 @@ export class DashboardService {
       // 1. Current KPI calculations (Using subtotal to exclude shipping)
       const revenueQuery = await this.orderRepository
         .createQueryBuilder('o')
-        .select('SUM(CASE WHEN o.status = \'delivered\' THEN o.subtotal ELSE 0 END)', 'totalRevenue')
+        .select(`SUM(CASE 
+          WHEN o.status IN ('confirmed', 'processing', 'shipped', 'delivered') THEN o.subtotal 
+          ELSE 0 
+        END)`, 'totalRevenue')
         .addSelect('COUNT(o.id)', 'totalOrders')
-        .addSelect('COUNT(CASE WHEN o.status = \'delivered\' THEN 1 END)', 'completedOrders')
-        .addSelect('AVG(CASE WHEN o.status = \'delivered\' THEN o.subtotal END)', 'averageCart')
+        .addSelect("COUNT(CASE WHEN o.status = 'delivered' THEN 1 END)", 'completedOrders')
+        .addSelect(`AVG(CASE 
+          WHEN o.status IN ('confirmed', 'processing', 'shipped', 'delivered') THEN o.subtotal 
+        END)`, 'averageCart')
         .getRawOne()
         .catch(err => {
           console.error('❌ [DashboardService] Revenue query failed:', err);
@@ -166,7 +171,7 @@ export class DashboardService {
         .createQueryBuilder('order')
         .select('order.subtotal', 'total')
         .addSelect('order.createdAt', 'createdAt')
-        .where('order.status = :status', { status: 'delivered' })
+        .where("order.status IN ('confirmed', 'processing', 'shipped', 'delivered')")
         .andWhere('order.createdAt >= :start', { start: months[0].start })
         .getRawMany();
 
