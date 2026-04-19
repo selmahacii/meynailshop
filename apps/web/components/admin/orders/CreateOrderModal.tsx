@@ -163,13 +163,14 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess, initialPr
         },
         items: cart.map(item => ({
           productId: item.product.id,
-          variantSku: item.variant?.sku, // Added variant support
+          variantSku: item.variant?.sku,
           quantity: item.quantity,
-          price: item.product.price
+          unitPrice: item.product.price
         })),
         deliveryType: customer.deliveryType,
+        subtotal: subtotal,
         shippingCost: deliveryCost,
-        note: customer.note,
+        notes: customer.note,
         source: customer.source
       };
 
@@ -404,10 +405,10 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess, initialPr
             </div>
 
             {/* RIGHT COLUMN: Products, Cart & Calc */}
-            <div className="w-full lg:w-7/12 flex flex-col bg-creme/50 min-h-[600px] lg:min-h-0">
+            <div className="w-full lg:w-7/12 flex flex-col bg-creme/50 min-h-[700px] lg:h-full lg:min-h-0">
               
               {/* Product Search & Selection list */}
-              <div className="p-6 pb-2 border-b border-gold-brand/10 flex-1 overflow-hidden flex flex-col">
+              <div className="p-6 pb-2 border-b border-gold-brand/10 flex-[2] overflow-hidden flex flex-col min-h-[350px]">
                 <div className="relative mb-6">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gold-brand" size={20} />
                   <input 
