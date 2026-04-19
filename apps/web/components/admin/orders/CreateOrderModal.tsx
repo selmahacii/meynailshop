@@ -56,6 +56,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
         },
         items: [] as any[],
         shippingCost: 700,
+        discount: 0,
         notes: '',
     });
 
@@ -169,39 +170,48 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
     };
 
     const renderProductCard = (p: any) => (
-        <div key={p.id} className="bg-white border border-creme2 rounded-sm overflow-hidden flex flex-col hover:border-or transition-all shadow-sm">
-            <div className="flex items-center justify-between p-3 border-b border-creme2/50 group">
-                <div className="flex items-center gap-3 w-full">
-                    <div className="w-10 h-10 bg-creme2 overflow-hidden flex-shrink-0 rounded-sm">
+        <div key={p.id} className="bg-white border-b border-creme2 hover:bg-creme/10 transition-colors group">
+            <div className="flex items-center justify-between p-2.5 gap-4">
+                <div className="flex items-center gap-3 min-w-0 flex-grow">
+                    <div className="w-8 h-8 bg-creme2 overflow-hidden flex-shrink-0 rounded-sm border border-creme2">
                         <img src={p.images?.[0]} alt="" className="w-full h-full object-cover" />
                     </div>
-                    <div className="min-w-0 flex-grow">
-                        <p className="text-[11px] font-bold text-encre truncate">{p.name}</p>
-                        <p className="text-[10px] font-black text-or">{p.price} DA</p>
+                    <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                            <p className="text-[10px] font-black uppercase text-encre truncate">{p.name}</p>
+                            <span className={cn(
+                                "text-[7px] px-1.5 py-0.5 rounded-full font-black uppercase tracking-tighter",
+                                p.stock > 10 ? "bg-emerald-100 text-emerald-700" : p.stock > 0 ? "bg-or/20 text-or" : "bg-rouge-brand/10 text-rouge-brand"
+                            )}>
+                                {p.stock > 0 ? `${p.stock} en stock` : 'Rupture'}
+                            </span>
+                        </div>
+                        <p className="text-[9px] font-bold text-or">{p.price} DA <span className="text-encre3 font-normal ml-2">SKU: {p.sku || 'N/A'}</span></p>
                     </div>
                 </div>
                 {!p.variants?.length && (
                     <button
                         onClick={() => addItem(p)}
-                        className="p-2 bg-encre text-white hover:bg-or transition-colors rounded-sm ml-2"
+                        className="px-3 py-1.5 bg-encre text-white hover:bg-or text-[9px] font-black uppercase tracking-widest rounded-sm transition-all shadow-sm active:scale-95"
                     >
-                        <Plus size={14} />
+                        AJOUTER
                     </button>
                 )}
             </div>
 
             {p.variants && p.variants.length > 0 && (
-                <div className="p-2 bg-creme/10 space-y-1">
+                <div className="px-10 pb-2 flex flex-wrap gap-2">
                     {p.variants.map((v: any) => (
-                        <div key={v.sku} className="flex items-center justify-between p-1.5 bg-white/50 border border-dotted border-creme2 rounded-sm">
-                            <span className="text-[9px] font-bold text-encre3 font-mono truncate mr-2">{v.sku}</span>
-                            <button 
-                                onClick={() => addItem(p, v)}
-                                className="p-1 bg-or/80 text-white rounded-sm hover:bg-encre transition-colors"
-                            >
-                                <Plus size={10} />
-                            </button>
-                        </div>
+                        <button 
+                            key={v.sku} 
+                            onClick={() => addItem(p, v)}
+                            className="flex items-center gap-2 px-2 py-1 bg-white border border-creme2 rounded-sm hover:border-or transition-all group/v"
+                        >
+                            <span className="text-[8px] font-black text-encre3 uppercase tracking-tighter group-hover/v:text-or">{v.sku}</span>
+                            <div className="w-px h-2 bg-creme2" />
+                            <span className="text-[8px] font-bold text-encre">{v.stock || 0}</span>
+                            <Plus size={8} className="text-or" />
+                        </button>
                     ))}
                 </div>
             )}
@@ -246,15 +256,15 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                     {searching && <Loader className="absolute right-4 top-1/2 -translate-y-1/2 animate-spin text-or" size={18} />}
                                 </div>
 
-                                <div className="max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                                <div className="max-h-[600px] overflow-y-auto pr-2 custom-scrollbar border border-creme2 rounded-sm bg-white">
                                     {Object.keys(groupedResults).length > 0 ? (
-                                        <div className="space-y-8">
+                                        <div className="divide-y divide-creme2">
                                             {Object.entries(groupedResults).map(([catName, products]) => (
-                                                <div key={catName} className="space-y-4">
-                                                    <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-encre3 bg-creme2/20 px-4 py-2 rounded-sm sticky top-0 bg-white z-10 border-b border-creme2/50">
+                                                <div key={catName}>
+                                                    <h4 className="text-[9px] font-black uppercase tracking-[0.3em] text-encre3 bg-creme2/20 px-4 py-2 sticky top-0 bg-white z-10 border-b border-creme2/50">
                                                         {catName}
                                                     </h4>
-                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                    <div className="divide-y divide-creme2/30">
                                                         {products.map(p => renderProductCard(p))}
                                                     </div>
                                                 </div>
@@ -262,7 +272,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                         </div>
                                     ) : (
                                         !searching && (
-                                            <div className="py-20 text-center border-2 border-dashed border-creme2 rounded-sm">
+                                            <div className="py-20 text-center">
                                                 <p className="text-xs font-serif italic text-encre3">Aucun produit trouvé</p>
                                             </div>
                                         )
@@ -272,58 +282,52 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                         </div>
 
                         {/* Right Column: Checkout & Info (Col 5) */}
-                        <div className="lg:col-span-5 space-y-8">
+                        <div className="lg:col-span-5 space-y-6">
                             {/* Section 2: Selected Items */}
-                            <div className="bg-white p-6 rounded-sm border border-creme2 shadow-sm animate-in slide-in-from-right-4">
-                                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-encre mb-6 flex items-center gap-2">
-                                    <span className="w-6 h-6 bg-encre text-white rounded-full flex items-center justify-center text-[10px]">2</span>
-                                    Panier Client
+                            <div className="bg-white p-6 rounded-sm border border-creme2 shadow-sm">
+                                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-encre mb-4 flex items-center gap-2">
+                                    <span className="w-5 h-5 bg-encre text-white rounded-full flex items-center justify-center text-[9px]">2</span>
+                                    Panier en cours
                                 </h3>
                                 {formData.items.length > 0 ? (
                                     <div className="space-y-4">
-                                        <div className="divide-y divide-creme2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                                        <div className="divide-y divide-creme2 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
                                             {formData.items.map((item, idx) => (
                                                 <div key={idx} className="py-3 flex items-center justify-between gap-4">
                                                     <div className="flex items-center gap-3 flex-grow min-w-0">
-                                                        <div className="w-10 h-10 rounded border border-creme2 overflow-hidden flex-shrink-0">
-                                                            <img src={item.image} className="w-full h-full object-cover" />
-                                                        </div>
                                                         <div className="min-w-0">
-                                                            <p className="text-[11px] font-bold text-encre truncate">{item.name}</p>
-                                                            {item.variantSku && <p className="text-[9px] font-black text-or uppercase">{item.variantSku}</p>}
+                                                            <p className="text-[10px] font-black uppercase text-encre truncate">{item.name}</p>
+                                                            {item.variantSku && <p className="text-[8px] font-black text-or uppercase tracking-tighter">{item.variantSku}</p>}
                                                         </div>
                                                     </div>
                                                     <div className="flex items-center gap-3">
-                                                        <div className="flex items-center bg-creme2/20 rounded-sm p-1">
-                                                            <button onClick={() => updateQuantity(idx, -1)} className="p-1 hover:text-or"><Minus size={10} /></button>
-                                                            <span className="w-6 text-center text-xs font-black">{item.quantity}</span>
-                                                            <button onClick={() => updateQuantity(idx, 1)} className="p-1 hover:text-or"><Plus size={10} /></button>
+                                                        <div className="flex items-center bg-creme2/20 rounded-sm p-0.5 border border-creme2">
+                                                            <button onClick={() => updateQuantity(idx, -1)} className="p-1 hover:text-or transition-colors"><Minus size={10} /></button>
+                                                            <span className="w-6 text-center text-[10px] font-black">{item.quantity}</span>
+                                                            <button onClick={() => updateQuantity(idx, 1)} className="p-1 hover:text-or transition-colors"><Plus size={10} /></button>
                                                         </div>
-                                                        <button onClick={() => removeItem(idx)} className="text-rouge-brand hover:scale-110 transition-transform"><X size={16} /></button>
+                                                        <span className="text-[10px] font-black w-16 text-right">{(item.unitPrice * item.quantity).toFixed(0)} DA</span>
+                                                        <button onClick={() => removeItem(idx)} className="text-rouge-brand hover:scale-110 transition-transform"><X size={14} /></button>
                                                     </div>
                                                 </div>
                                             ))}
                                         </div>
-                                        <div className="pt-4 border-t border-creme2 flex justify-between items-center text-encre">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-encre3">Sous-total</span>
-                                            <span className="text-lg font-black">{subtotal.toFixed(0)} DA</span>
-                                        </div>
                                     </div>
                                 ) : (
-                                    <p className="text-[10px] text-center italic text-encre3 py-4">Le panier est vide</p>
+                                    <p className="text-[9px] text-center italic text-encre3 py-4 border border-dashed border-creme2">Le panier est vide</p>
                                 )}
                             </div>
 
                             {/* Section 3: Delivery Details */}
                             <div className="bg-white p-6 rounded-sm border border-creme2 shadow-sm">
                                 <h3 className="text-xs font-black uppercase tracking-[0.2em] text-encre mb-6 flex items-center gap-2">
-                                    <span className="w-6 h-6 bg-or text-white rounded-full flex items-center justify-center text-[10px]">3</span>
-                                    Logistique & Client
+                                    <span className="w-5 h-5 bg-or text-white rounded-full flex items-center justify-center text-[9px]">3</span>
+                                    Fiche Client & Logistique
                                 </h3>
 
-                                <div className="space-y-6">
+                                <div className="space-y-4">
                                     {/* Multi-Channel Icons */}
-                                    <div className="grid grid-cols-5 gap-2">
+                                    <div className="grid grid-cols-5 gap-1.5 p-1 bg-creme2/10 rounded-sm border border-creme2">
                                         {sources.map(s => {
                                             const Icon = s.icon;
                                             return (
@@ -331,51 +335,53 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                                     key={s.id}
                                                     onClick={() => setFormData(p => ({ ...p, source: s.id }))}
                                                     className={cn(
-                                                        "flex flex-col items-center gap-2 p-3 rounded-sm border transition-all",
-                                                        formData.source === s.id ? "border-encre bg-encre text-white" : "border-creme2 bg-white text-encre3 hover:border-or"
+                                                        "flex flex-col items-center gap-1.5 py-2 px-1 rounded-sm transition-all",
+                                                        formData.source === s.id ? "bg-encre text-white shadow-md" : "text-encre3 hover:bg-white"
                                                     )}
                                                 >
-                                                    <Icon size={16} />
-                                                    <span className="text-[8px] font-black uppercase">{s.name.split(' ')[0]}</span>
+                                                    <Icon size={14} />
+                                                    <span className="text-[7px] font-black uppercase">{s.name.split(' ')[0]}</span>
                                                 </button>
                                             );
                                         })}
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-2 gap-3">
                                         <div className="space-y-1">
-                                            <label className="text-[9px] font-black uppercase tracking-widest text-encre3 ml-1">Prénom</label>
+                                            <label className="text-[8px] font-black uppercase tracking-widest text-encre3 ml-1">Prénom *</label>
                                             <input 
-                                                className="w-full h-10 px-4 bg-creme/5 border border-creme2 rounded-sm text-xs focus:border-or outline-none"
+                                                className="w-full h-9 px-3 bg-white border border-creme2 rounded-sm text-[11px] font-bold focus:border-or outline-none"
                                                 value={formData.customer.firstName}
                                                 onChange={e => setFormData(p => ({ ...p, customer: { ...p.customer, firstName: e.target.value }}))}
                                             />
                                         </div>
                                         <div className="space-y-1">
-                                            <label className="text-[9px] font-black uppercase tracking-widest text-encre3 ml-1">Nom</label>
+                                            <label className="text-[8px] font-black uppercase tracking-widest text-encre3 ml-1">Nom</label>
                                             <input 
-                                                className="w-full h-10 px-4 bg-creme/5 border border-creme2 rounded-sm text-xs focus:border-or outline-none"
+                                                className="w-full h-9 px-3 bg-white border border-creme2 rounded-sm text-[11px] font-bold focus:border-or outline-none"
                                                 value={formData.customer.lastName}
                                                 onChange={e => setFormData(p => ({ ...p, customer: { ...p.customer, lastName: e.target.value }}))}
                                             />
                                         </div>
                                     </div>
 
-                                    <div className="space-y-1">
-                                        <label className="text-[9px] font-black uppercase tracking-widest text-encre3 ml-1">Téléphone</label>
-                                        <input 
-                                            className="w-full h-10 px-4 bg-creme/5 border border-creme2 rounded-sm text-xs focus:border-or outline-none font-mono"
-                                            value={formData.customer.phone}
-                                            placeholder="0X XX XX XX XX"
-                                            onChange={e => setFormData(p => ({ ...p, customer: { ...p.customer, phone: e.target.value }}))}
-                                        />
+                                    <div className="grid grid-cols-12 gap-3">
+                                        <div className="col-span-12 space-y-1">
+                                            <label className="text-[8px] font-black uppercase tracking-widest text-encre3 ml-1">Téléphone *</label>
+                                            <input 
+                                                className="w-full h-9 px-3 bg-white border border-creme2 rounded-sm text-[11px] font-black focus:border-or outline-none font-mono"
+                                                value={formData.customer.phone}
+                                                placeholder="0X XX XX XX XX"
+                                                onChange={e => setFormData(p => ({ ...p, customer: { ...p.customer, phone: e.target.value }}))}
+                                            />
+                                        </div>
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-2 gap-3">
                                         <div className="space-y-1">
-                                            <label className="text-[9px] font-black uppercase tracking-widest text-encre3 ml-1">Wilaya</label>
+                                            <label className="text-[8px] font-black uppercase tracking-widest text-encre3 ml-1">Wilaya</label>
                                             <select 
-                                                className="w-full h-10 px-4 bg-creme/5 border border-creme2 rounded-sm text-xs focus:border-or outline-none"
+                                                className="w-full h-10 px-3 bg-white border border-creme2 rounded-sm text-[11px] font-bold focus:border-or outline-none"
                                                 value={formData.customer.wilaya}
                                                 onChange={e => setFormData(p => ({ ...p, customer: { ...p.customer, wilaya: e.target.value }}))}
                                             >
@@ -384,46 +390,70 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                             </select>
                                         </div>
                                         <div className="space-y-1">
-                                            <label className="text-[9px] font-black uppercase tracking-widest text-encre3 ml-1">Livraison</label>
+                                            <label className="text-[8px] font-black uppercase tracking-widest text-encre3 ml-1">Type Livraison</label>
                                             <div className="flex h-10 bg-creme2/20 rounded-sm border border-creme2 p-0.5">
                                                 <button 
                                                     onClick={() => setFormData(p => ({ ...p, deliveryType: 'office' }))}
-                                                    className={cn("flex-1 rounded-[2px] transition-all", formData.deliveryType === 'office' ? "bg-white text-encre shadow-sm" : "text-encre3")}
+                                                    className={cn("flex-1 rounded-[2px] transition-all flex items-center justify-center", formData.deliveryType === 'office' ? "bg-white text-encre shadow-sm" : "text-encre3")}
                                                 >
-                                                    <Building2 size={12} className="mx-auto" />
+                                                    <Building2 size={12} />
                                                 </button>
                                                 <button 
                                                     onClick={() => setFormData(p => ({ ...p, deliveryType: 'home' }))}
-                                                    className={cn("flex-1 rounded-[2px] transition-all", formData.deliveryType === 'home' ? "bg-white text-encre shadow-sm" : "text-encre3")}
+                                                    className={cn("flex-1 rounded-[2px] transition-all flex items-center justify-center", formData.deliveryType === 'home' ? "bg-white text-encre shadow-sm" : "text-encre3")}
                                                 >
-                                                    <Truck size={12} className="mx-auto" />
+                                                    <Truck size={12} />
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="space-y-1">
-                                        <label className="text-[9px] font-black uppercase tracking-widest text-encre3 ml-1">Adresse</label>
+                                        <label className="text-[8px] font-black uppercase tracking-widest text-encre3 ml-1">Adresse</label>
                                         <input 
-                                            className="w-full h-10 px-4 bg-creme/5 border border-creme2 rounded-sm text-xs focus:border-or outline-none"
+                                            className="w-full h-9 px-3 bg-white border border-creme2 rounded-sm text-[11px] focus:border-or outline-none"
                                             value={formData.customer.address}
                                             onChange={e => setFormData(p => ({ ...p, customer: { ...p.customer, address: e.target.value }}))}
                                         />
                                     </div>
 
                                     {/* Totals & Submit */}
-                                    <div className="pt-6 border-t border-creme2 space-y-4">
-                                        <div className="flex justify-between items-center bg-[#FAF9F6] p-4 border border-creme2 rounded-sm">
+                                    <div className="pt-4 border-t border-creme2 space-y-3">
+                                        <div className="flex justify-between items-center text-[10px]">
+                                            <span className="font-black uppercase tracking-widest text-encre3">Sous-total</span>
+                                            <span className="font-black">{subtotal.toFixed(0)} DA</span>
+                                        </div>
+                                        <div className="flex justify-between items-center text-[10px]">
+                                            <span className="font-black uppercase tracking-widest text-encre3">Livraison</span>
+                                            <input 
+                                                type="number"
+                                                className="w-20 h-7 text-right bg-white border border-creme2 rounded-sm text-[10px] font-black outline-none focus:border-or"
+                                                value={formData.shippingCost}
+                                                onChange={e => setFormData(p => ({ ...p, shippingCost: Number(e.target.value) }))}
+                                            />
+                                        </div>
+                                        <div className="flex justify-between items-center text-[10px]">
+                                            <span className="font-black uppercase tracking-widest text-rouge-brand">Réduction (Remise)</span>
+                                            <input 
+                                                type="number"
+                                                className="w-20 h-7 text-right bg-rouge-brand/5 border border-rouge-brand/20 rounded-sm text-[10px] font-black text-rouge-brand outline-none focus:border-rouge-brand"
+                                                value={formData.discount}
+                                                onChange={e => setFormData(p => ({ ...p, discount: Number(e.target.value) }))}
+                                            />
+                                        </div>
+                                        
+                                        <div className="flex items-center justify-between bg-encre p-4 rounded-sm shadow-lg mt-4">
                                             <div>
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-or">Total à encaisser</p>
-                                                <p className="text-3xl font-black text-encre">{(subtotal + formData.shippingCost).toFixed(0)} <span className="text-sm">DA</span></p>
+                                                <p className="text-[8px] font-black uppercase tracking-widest text-or/60">À Encaisser</p>
+                                                <p className="text-2xl font-black text-white">{(subtotal + formData.shippingCost - formData.discount).toFixed(0)} DA</p>
                                             </div>
                                             <button
                                                 onClick={handleSubmit}
                                                 disabled={loading || formData.items.length === 0}
-                                                className="h-14 px-8 bg-encre text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-sm hover:bg-or transition-all shadow-xl active:scale-95 flex items-center gap-3"
+                                                className="h-12 px-6 bg-or text-white text-[9px] font-black uppercase tracking-[0.2em] rounded-sm hover:bg-white hover:text-encre transition-all active:scale-95 flex items-center gap-2"
                                             >
-                                                {loading ? <Loader className="animate-spin" size={16} /> : "VALIDER VENTE"}
+                                                {loading ? <Loader className="animate-spin" size={12} /> : null}
+                                                CRÉER COMMANDE
                                             </button>
                                         </div>
                                     </div>
