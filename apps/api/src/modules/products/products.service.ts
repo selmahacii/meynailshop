@@ -79,32 +79,32 @@ export class ProductsService {
       .where('product.isActive = :isActive', { isActive: true });
 
     if (query.search) {
-      const search = `%${query.search}%`;
+      const searchTerm = `%${query.search}%`;
+      const priceValue = parseFloat(query.search);
+      
       queryBuilder.andWhere(new Brackets(qb => {
-        qb.where('product.name ILIKE :search', { search })
-          .orWhere('product.sku ILIKE :search', { search })
-          .orWhere('product.description ILIKE :search', { search })
-          .orWhere('product.tags::text ILIKE :search', { search })
-          .orWhere('category.name ILIKE :search', { search })
-          .orWhere('subCategory.name ILIKE :search', { search });
+        qb.where('product.name ILIKE :searchTerm')
+          .orWhere('product.sku ILIKE :searchTerm')
+          .orWhere('product.description ILIKE :searchTerm')
+          .orWhere('product.tags ILIKE :searchTerm')
+          .orWhere('category.name ILIKE :searchTerm')
+          .orWhere('subCategory.name ILIKE :searchTerm');
         
-        // Complex JSONB Search for variant SKUs: 
+        // Complex JSONB Search for variant SKUs 
         qb.orWhere(`EXISTS (
           SELECT 1 FROM jsonb_array_elements(CASE WHEN product.variants IS NULL THEN '[]'::jsonb ELSE product.variants END) v 
-          WHERE v->>'sku' ILIKE :search
-        )`, { search });
-        
+          WHERE v->>'sku' ILIKE :searchTerm
+        )`);
+
         // Price search if input is numeric
-        const priceValue = parseFloat(query.search);
         if (!isNaN(priceValue)) {
-            qb.orWhere('product.price = :exactPrice', { exactPrice: priceValue });
-            // Or allow price range around search (e.g. within 10% or +/- 50 DA)
-            qb.orWhere('product.price BETWEEN :minP AND :maxP', { 
-                minP: priceValue - 100, 
-                maxP: priceValue + 100 
-            });
+            qb.orWhere('product.price = :exactPrice', { exactPrice: priceValue })
+              .orWhere('product.price BETWEEN :minP AND :maxP', { 
+                  minP: priceValue - 100, 
+                  maxP: priceValue + 100 
+              });
         }
-      }));
+      }), { searchTerm });
     }
 
     if (query.category) {
