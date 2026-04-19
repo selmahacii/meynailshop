@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, Search, Plus, Minus, Trash2, ShoppingBag, 
   MapPin, Phone, User, FileText, Truck, Receipt, 
-  CheckCircle, ChevronRight, PackageSearch, ShoppingCart, Home, Store
+  CheckCircle, ChevronRight, PackageSearch, ShoppingCart, Home, Store, RotateCcw
 } from 'lucide-react';
 import { Product } from '@/types/product';
 import { SHIPPING_RATES, WilayaShipping } from '@/lib/constants/shipping';
@@ -54,9 +54,13 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess, initialPr
       const res = await ProductsAPI.getAll(1, 100);
       if (res.success) {
         setProducts(res.data.data || []);
+      } else {
+        console.error("[CreateOrderModal] API Error loading products:", res.error);
+        toast.error(res.error || "Erreur lors du chargement des produits");
       }
     } catch (err) {
-      toast.error("Erreur lors du chargement des produits");
+      console.error("[CreateOrderModal] Critical error loading products:", err);
+      toast.error("Erreur de connexion lors du chargement du catalogue");
     } finally {
       setLoadingProducts(false);
     }
@@ -166,9 +170,11 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess, initialPr
           deliveryType: 'home'
         });
       } else {
+        console.error("[CreateOrderModal] API Error creating order:", res.error);
         toast.error(res.error || "Erreur lors de la création");
       }
     } catch (err) {
+      console.error("[CreateOrderModal] Critical error creating order:", err);
       toast.error("Erreur de connexion au serveur");
     } finally {
       setIsSaving(false);
@@ -366,14 +372,29 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess, initialPr
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-2">
                   {loadingProducts ? (
-                    <div className="h-full flex flex-col items-center justify-center text-slate-400">
-                      <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mb-2"></div>
-                      <p className="text-xs">Chargement du catalogue...</p>
+                    <div className="h-48 flex flex-col items-center justify-center text-slate-400">
+                      <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mb-3"></div>
+                      <p className="text-xs font-medium">Chargement du catalogue...</p>
+                    </div>
+                  ) : products.length === 0 ? (
+                    <div className="h-48 flex flex-col items-center justify-center text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                      <div className="p-3 bg-white rounded-full shadow-sm mb-3">
+                        <PackageSearch size={24} className="text-slate-300" />
+                      </div>
+                      <p className="text-sm">Aucun produit disponible</p>
+                      <button 
+                        onClick={loadProducts}
+                        className="mt-3 text-xs font-bold text-blue-600 hover:text-blue-700 underline flex items-center gap-1"
+                      >
+                        <RotateCcw size={12} /> Réessayer
+                      </button>
                     </div>
                   ) : filteredProducts.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-slate-400">
-                      <PackageSearch size={40} className="mb-2 opacity-50" />
-                      <p className="text-sm">Aucun produit trouvé</p>
+                    <div className="h-48 flex flex-col items-center justify-center text-slate-400">
+                      <div className="p-3 bg-slate-100 rounded-full mb-3">
+                        <Search size={24} className="opacity-40" />
+                      </div>
+                      <p className="text-sm">Aucun résultat pour "{searchQuery}"</p>
                     </div>
                   ) : (
                     filteredProducts.map(product => (
