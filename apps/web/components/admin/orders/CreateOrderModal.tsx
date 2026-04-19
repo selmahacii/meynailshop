@@ -69,6 +69,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                 
                 if (res.success) {
                     const items = res.data?.items || (Array.isArray(res.data) ? res.data : []);
+                    console.log('📦 [CreateOrderModal] Received items:', items.length, items[0]?.name || 'No name');
                     setSearchResults(items);
                 } else {
                     console.error('❌ [CreateOrderModal] Search failed:', res.error);

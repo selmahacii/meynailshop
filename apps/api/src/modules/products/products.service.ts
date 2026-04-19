@@ -152,6 +152,8 @@ export class ProductsService {
         .take(query.limit)
         .getManyAndCount();
 
+      console.log(`✅ [ProductsService] Found ${products.length} products (Total: ${total}) for search: "${query.search || ''}"`);
+
       return {
         items: products,
         total,
