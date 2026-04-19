@@ -307,33 +307,19 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                     )}
                                 </div>
 
-                                <div className="relative mb-6">
-                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-encre3" size={16} />
-                                    <input
-                                        type="text"
-                                        placeholder="Optionnel: Chercher un nom ou SKU dans cette sélection..."
-                                        className="w-full pl-12 pr-4 h-12 bg-creme2/5 border border-creme2 rounded-sm focus:outline-none focus:border-or transition-all text-xs font-medium"
-                                        value={query}
-                                        onChange={(e) => setQuery(e.target.value)}
-                                    />
-                                    {searching && <Loader className="absolute right-4 top-1/2 -translate-y-1/2 animate-spin text-or" size={16} />}
-                                </div>
-
                                 <div className="max-h-[600px] overflow-y-auto pr-2 custom-scrollbar border border-creme2 rounded-sm bg-white">
-                                    {query.length > 0 ? (
-                                        /* SEARCH MODE: Flat list of results ordered by relevance */
+                                    {(selectedCategory || selectedSubCategory) ? (
                                         <div className="divide-y divide-creme2">
-                                            <div className="bg-creme2/10 px-4 py-2 border-b border-creme2/50 sticky top-0 bg-white z-10">
-                                                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-or">
-                                                    Résultats pour "{query}" — {searchResults.length} items trouvés
-                                                </p>
+                                            <div className="bg-creme2/10 px-4 py-2 border-b border-creme2/50 sticky top-0 bg-white z-10 font-black text-[9px] text-or uppercase tracking-widest flex items-center justify-between">
+                                                <span>{selectedSubCategory?.name || selectedCategory?.name}</span>
+                                                <span className="text-[7px] text-encre3 opacity-50">{searchResults.length} articles</span>
                                             </div>
                                             <div className="divide-y divide-creme2">
                                                 {searchResults.map(p => renderProductCard(p))}
                                             </div>
                                             {searchResults.length === 0 && !searching && (
                                                 <div className="py-20 text-center">
-                                                    <p className="text-xs font-serif italic text-encre3">Aucun produit ne correspond à "{query}"</p>
+                                                    <p className="text-xs font-serif italic text-encre3">Aucun produit dans cette sélection</p>
                                                 </div>
                                             )}
                                         </div>
