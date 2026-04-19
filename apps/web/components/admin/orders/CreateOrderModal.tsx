@@ -257,25 +257,46 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                 </div>
 
                                 <div className="max-h-[600px] overflow-y-auto pr-2 custom-scrollbar border border-creme2 rounded-sm bg-white">
-                                    {Object.keys(groupedResults).length > 0 ? (
+                                    {query.length > 0 ? (
+                                        /* SEARCH MODE: Flat list of results ordered by relevance */
                                         <div className="divide-y divide-creme2">
-                                            {Object.entries(groupedResults).map(([catName, products]) => (
-                                                <div key={catName}>
-                                                    <h4 className="text-[9px] font-black uppercase tracking-[0.3em] text-encre3 bg-creme2/20 px-4 py-2 sticky top-0 bg-white z-10 border-b border-creme2/50">
-                                                        {catName}
-                                                    </h4>
-                                                    <div className="divide-y divide-creme2/30">
-                                                        {products.map(p => renderProductCard(p))}
-                                                    </div>
+                                            <div className="bg-creme2/10 px-4 py-2 border-b border-creme2/50 sticky top-0 bg-white z-10">
+                                                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-or">
+                                                    Résultats pour "{query}" — {searchResults.length} items trouvés
+                                                </p>
+                                            </div>
+                                            <div className="divide-y divide-creme2">
+                                                {searchResults.map(p => renderProductCard(p))}
+                                            </div>
+                                            {searchResults.length === 0 && !searching && (
+                                                <div className="py-20 text-center">
+                                                    <p className="text-xs font-serif italic text-encre3">Aucun produit ne correspond à "{query}"</p>
                                                 </div>
-                                            ))}
+                                            )}
                                         </div>
                                     ) : (
-                                        !searching && (
-                                            <div className="py-20 text-center">
-                                                <p className="text-xs font-serif italic text-encre3">Aucun produit trouvé</p>
-                                            </div>
-                                        )
+                                        /* BROWSING MODE: Grouped by Categories (Menu Roulant) */
+                                        <div className="divide-y divide-creme2">
+                                            {Object.keys(groupedResults).length > 0 ? (
+                                                Object.entries(groupedResults).map(([catName, products]) => (
+                                                    <div key={catName}>
+                                                        <h4 className="text-[9px] font-black uppercase tracking-[0.3em] text-encre3 bg-creme2/5 px-4 py-2 sticky top-0 bg-white z-10 border-b border-creme2/50">
+                                                            {catName}
+                                                        </h4>
+                                                        <div className="divide-y divide-creme2/30">
+                                                            {products.map(p => renderProductCard(p))}
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                !searching && (
+                                                    <div className="py-20 text-center">
+                                                        <Loader className="animate-spin mx-auto text-or mb-2" size={20} />
+                                                        <p className="text-xs font-serif italic text-encre3">Chargement du catalogue...</p>
+                                                    </div>
+                                                )
+                                            )}
+                                        </div>
                                     )}
                                 </div>
                             </div>
