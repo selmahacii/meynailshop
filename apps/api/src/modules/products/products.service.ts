@@ -79,32 +79,43 @@ export class ProductsService {
       .where('product.isActive = :isActive', { isActive: true });
 
     if (query.search) {
-      const searchTerm = `%${query.search}%`;
-      const priceValue = parseFloat(query.search);
-      const isNumeric = !isNaN(priceValue);
-      
-      queryBuilder.andWhere(new Brackets(qb => {
-        qb.where('product.name ILIKE :searchTerm')
-          .orWhere('product.sku ILIKE :searchTerm')
-          .orWhere('product.description ILIKE :searchTerm')
-          .orWhere('category.name ILIKE :searchTerm')
-          .orWhere('subCategory.name ILIKE :searchTerm');
+      try {
+        const searchTerm = `%${query.search}%`;
+        const priceValue = parseFloat(query.search);
+        const isNumeric = !isNaN(priceValue);
         
-        // Use a simpler approach for tags and variants to avoid specific function errors
-        // Casting variants to text allows searching within JSON without relying on complex functions
-        qb.orWhere('CAST(product.tags AS TEXT) ILIKE :searchTerm')
-          .orWhere('CAST(product.variants AS TEXT) ILIKE :searchTerm');
+        console.log(`🔍 [ProductsService] Searching with term: "${query.search}"`);
+        
+        queryBuilder.andWhere(new Brackets(qb => {
+          qb.where('product.name ILIKE :searchTerm')
+            .orWhere('product.sku ILIKE :searchTerm')
+            .orWhere('product.description ILIKE :searchTerm')
+            .orWhere('category.name ILIKE :searchTerm')
+            .orWhere('subCategory.name ILIKE :searchTerm');
+          
+          // Safer approach: Use manual OR conditions if CAST is problematic
+          qb.orWhere('product.tags ILIKE :searchTerm');
+          
+          // Debugging JSON search
+          try {
+             qb.orWhere('CAST(product.variants AS TEXT) ILIKE :searchTerm');
+          } catch (e) {
+             console.warn('⚠️ [ProductsService] Variants search failed, skipping JSON part:', e.message);
+          }
 
-        if (isNumeric) {
-            qb.orWhere('product.price = :exactPrice')
-              .orWhere('product.price BETWEEN :minP AND :maxP');
-        }
-      }), { 
-        searchTerm, 
-        exactPrice: isNumeric ? priceValue : 0,
-        minP: isNumeric ? priceValue - 100 : 0,
-        maxP: isNumeric ? priceValue + 100 : 0 
-      });
+          if (isNumeric) {
+              qb.orWhere('product.price = :exactPrice')
+                .orWhere('product.price BETWEEN :minP AND :maxP');
+          }
+        }), { 
+          searchTerm, 
+          exactPrice: isNumeric ? priceValue : 0,
+          minP: isNumeric ? priceValue - 100 : 0,
+          maxP: isNumeric ? priceValue + 100 : 0 
+        });
+      } catch (err) {
+        console.error('❌ [ProductsService] Search logic failed:', err);
+      }
     }
 
     if (query.category) {
@@ -140,20 +151,26 @@ export class ProductsService {
       queryBuilder.orderBy('product.createdAt', 'DESC');
     }
 
-    const [products, total] = await queryBuilder
-      .skip(skip)
-      .take(query.limit)
-      .getManyAndCount();
+    try {
+      const [products, total] = await queryBuilder
+        .skip(skip)
+        .take(query.limit)
+        .getManyAndCount();
 
-    return {
-      items: products,
-      total,
-      page: query.page,
-      limit: query.limit,
-      totalPages: Math.ceil(total / query.limit),
-      hasNext: skip + query.limit < total,
-      hasPrev: query.page > 1,
-    };
+      return {
+        items: products,
+        total,
+        page: query.page,
+        limit: query.limit,
+        totalPages: Math.ceil(total / query.limit),
+        hasNext: skip + query.limit < total,
+        hasPrev: query.page > 1,
+      };
+    } catch (err) {
+      console.error('❌ [ProductsService] Database execution failed:', err.message);
+      console.error('🔗 [ProductsService] Failed Query:', queryBuilder.getSql());
+      throw err; // Re-throw to keep the 500 but now with logs in Render
+    }
   }
 
   async findBySlug(slug: string) {
