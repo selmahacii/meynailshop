@@ -56,6 +56,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
         items: [] as any[],
         shippingCost: 700,
         returnCost: 200,
+        source: 'facebook', // Multi-channel: facebook, instagram, whatsapp, tiktok, phone
         notes: '',
     });
 
@@ -267,26 +268,56 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                     </button>
                 </div>
 
-                <div className="flex-grow overflow-y-auto p-8 custom-scrollbar">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                        {/* Right: Items Selection */}
-                        <div className="lg:col-span-12 mb-8">
-                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-encre mb-6 flex items-center gap-2">
-                                <span className="p-1 px-2.5 bg-or text-white rounded-full">1</span>
-                                Sélection des produits
-                            </h3>
+                <div className="flex-grow overflow-y-auto p-6 lg:p-10 custom-scrollbar">
+                    {/* Channel Selection - The "Multi-Canal" heart */}
+                    <div className="mb-10 p-1 bg-creme2/20 border border-creme2 rounded-sm flex items-center justify-between">
+                        <div className="px-4 py-2 border-r border-creme2">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-encre3">Canal de Vente</span>
+                        </div>
+                        <div className="flex-grow flex items-center justify-center gap-2 p-1">
+                            {[
+                                { id: 'facebook', label: 'Facebook', icon: 'FB' },
+                                { id: 'instagram', label: 'Instagram', icon: 'IG' },
+                                { id: 'whatsapp', label: 'WhatsApp', icon: 'WA' },
+                                { id: 'tiktok', label: 'TikTok', icon: 'TT' },
+                                { id: 'phone', label: 'Appel Direct', icon: '📞' }
+                            ].map(canal => (
+                                <button
+                                    key={canal.id}
+                                    onClick={() => setFormData(prev => ({ ...prev, source: canal.id }))}
+                                    className={`flex-grow h-10 px-4 rounded-sm text-[10px] font-black uppercase tracking-tighter transition-all flex items-center justify-center gap-2 ${
+                                        formData.source === canal.id 
+                                        ? 'bg-encre text-white shadow-lg' 
+                                        : 'bg-white/50 text-encre3 hover:bg-white hover:text-encre border border-transparent hover:border-creme2'
+                                    }`}
+                                >
+                                    <span className="opacity-70">{canal.icon}</span>
+                                    <span className="hidden sm:inline">{canal.label}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
 
-                            <div className="relative mb-6">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-encre3" size={18} />
-                                <input
-                                    type="text"
-                                    placeholder="Chercher par nom, SKU, catégorie, tags..."
-                                    className="w-full pl-12 pr-4 h-14 bg-creme/20 border border-creme2 rounded-sm focus:outline-none focus:border-or transition-all text-sm font-medium"
-                                    value={query}
-                                    onChange={(e) => setQuery(e.target.value)}
-                                />
-                                {searching && <Loader className="absolute right-4 top-1/2 -translate-y-1/2 animate-spin text-or" size={18} />}
-                            </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        {/* Left Side: Product Selection */}
+                        <div className="space-y-8">
+                            <div>
+                                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-encre mb-6 flex items-center gap-2">
+                                    <span className="w-6 h-6 bg-or text-white rounded-full flex items-center justify-center text-[10px]">1</span>
+                                    Sélection des produits
+                                </h3>
+
+                                <div className="relative mb-6">
+                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-encre3" size={18} />
+                                    <input
+                                        type="text"
+                                        placeholder="Chercher par nom, SKU, catégorie..."
+                                        className="w-full pl-12 pr-4 h-14 bg-creme/20 border border-creme2 rounded-sm focus:outline-none focus:border-or transition-all text-sm font-medium shadow-inner"
+                                        value={query}
+                                        onChange={(e) => setQuery(e.target.value)}
+                                    />
+                                    {searching && <Loader className="absolute right-4 top-1/2 -translate-y-1/2 animate-spin text-or" size={18} />}
+                                </div>
 
                             <div className="relative">
                                 {Object.keys(groupedResults).length > 0 ? (
@@ -402,80 +433,92 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
 
                         {/* Mid: Customer Info */}
                         <div className="lg:col-span-12 xl:grid xl:grid-cols-2 gap-10">
-                            <div>
-                                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-encre mb-6 flex items-center gap-2">
-                                    <span className="p-1 px-2.5 bg-encre text-white rounded-full">2</span>
-                                    Informations Client
+
+                            <div className="space-y-8">
+                                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-encre flex items-center gap-2">
+                                    <span className="w-6 h-6 bg-or text-white rounded-full flex items-center justify-center text-[10px]">3</span>
+                                    Détails de Livraison
                                 </h3>
-                                <div className="space-y-4">
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-encre3">Prénom *</label>
-                                            <input
-                                                className="w-full p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm"
-                                                value={formData.customer.firstName}
-                                                onChange={e => setFormData(prev => ({ ...prev, customer: { ...prev.customer, firstName: e.target.value } }))}
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-encre3">Nom</label>
-                                            <input
-                                                className="w-full p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm"
-                                                value={formData.customer.lastName}
-                                                onChange={e => setFormData(prev => ({ ...prev, customer: { ...prev.customer, lastName: e.target.value } }))}
-                                            />
-                                        </div>
-                                    </div>
+
+                                <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-encre3">Téléphone *</label>
-                                        <div className="relative">
-                                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-encre3" size={14} />
-                                            <input
-                                                className="w-full pl-10 p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm"
-                                                placeholder="0X XX XX XX XX"
-                                                value={formData.customer.phone}
-                                                onChange={e => setFormData(prev => ({ ...prev, customer: { ...prev.customer, phone: e.target.value } }))}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-encre3">Wilaya</label>
-                                        <select
-                                            className="w-full p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm font-bold"
-                                            value={formData.customer.wilaya}
-                                            onChange={e => {
-                                                const selected = SHIPPING_RATES.find(r => r.name === e.target.value);
-                                                setFormData(prev => ({ 
-                                                    ...prev, 
-                                                    customer: { 
-                                                        ...prev.customer, 
-                                                        wilaya: e.target.value,
-                                                        wilayaCode: selected?.id,
-                                                        wilayaName: e.target.value
-                                                    } 
-                                                }));
-                                            }}
-                                        >
-                                            <option value="">Sélectionner</option>
-                                            {SHIPPING_RATES.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
-                                        </select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-encre3">Adresse complète</label>
-                                        <textarea
-                                            className="w-full p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm h-20 resize-none"
-                                            value={formData.customer.address}
-                                            onChange={e => setFormData(prev => ({ ...prev, customer: { ...prev.customer, address: e.target.value } }))}
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-encre3 ml-1">Prénom</label>
+                                        <input 
+                                            type="text" 
+                                            className="w-full h-12 px-4 bg-creme2/10 border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all"
+                                            value={formData.customer.firstName}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, customer: { ...prev.customer, firstName: e.target.value }}))}
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-encre3 flex justify-between">
-                                            <span>Notes de livraison / Observations</span>
-                                            {formData.customer.wilaya && (
-                                                <span className="text-or">Délai estimé: {SHIPPING_RATES.find(r => r.name === formData.customer.wilaya)?.delay} jours</span>
-                                            )}
-                                        </label>
-                                        <textarea
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-encre3 ml-1">Nom</label>
+                                        <input 
+                                            type="text" 
+                                            className="w-full h-12 px-4 bg-creme2/10 border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all"
+                                            value={formData.customer.lastName}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, customer: { ...prev.customer, lastName: e.target.value }}))}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-encre3 ml-1">Téléphone</label>
+                                    <div className="relative">
+                                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-encre3" size={16} />
+                                        <input 
+                                            type="tel" 
+                                            className="w-full h-12 pl-12 pr-4 bg-creme2/10 border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all font-mono"
+                                            placeholder="0X XX XX XX XX"
+                                            value={formData.customer.phone}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, customer: { ...prev.customer, phone: e.target.value }}))}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-encre3 ml-1">Wilaya</label>
+                                        <select 
+                                            className="w-full h-12 px-4 bg-creme2/10 border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all appearance-none cursor-pointer"
+                                            value={formData.customer.wilaya}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, customer: { ...prev.customer, wilaya: e.target.value }}))}
+                                        >
+                                            <option value="">Sélectionner</option>
+                                            {SHIPPING_RATES.map(r => (
+                                                <option key={r.name} value={r.name}>{r.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-encre3 ml-1">Type de livraison</label>
+                                        <div className="flex h-12 p-1 bg-creme2/20 rounded-sm border border-creme2">
+                                            {[
+                                                { id: 'office', label: 'Point Retrait', icon: <Building2 size={14} /> },
+                                                { id: 'home', label: 'À Domicile', icon: <Truck size={14} /> }
+                                            ].map(type => (
+                                                <button
+                                                    key={type.id}
+                                                    onClick={() => setFormData(prev => ({ ...prev, deliveryType: type.id }))}
+                                                    className={`flex-grow flex items-center justify-center gap-2 rounded-[2px] text-[9px] font-black uppercase tracking-wider transition-all ${
+                                                        formData.deliveryType === type.id ? 'bg-white text-encre shadow-sm' : 'text-encre3 hover:bg-white/50'
+                                                    }`}
+                                                >
+                                                    {type.icon}
+                                                    <span>{type.label}</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-encre3 ml-1">Adresse</label>
+                                    <div className="relative">
+                                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-encre3" size={16} />
+                                        <input 
+                                            type="text" 
+                                            className="w-full h-12 pl-12 pr-4 bg-creme2/10 border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all"
+                                            value={formData.customer.address}
                                             placeholder="Ex: Appeler avant livraison, livraison après 16h..."
                                             className="w-full p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm h-20 resize-none italic"
                                             value={formData.notes}
