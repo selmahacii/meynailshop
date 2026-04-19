@@ -63,8 +63,8 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
         const fetchInitialOrSearch = async () => {
             setSearching(true);
             try {
-                // Search as user types (min 1 char) or get initial products if empty
-                const res = await StoreAPI.getProducts(1, 15, { search: query });
+                // Fetch up to 100 products initially to show a "menu roulant" of all categories
+                const res = await StoreAPI.getProducts(1, query ? 100 : 100, { search: query });
                 if (res.success) {
                     const items = res.data?.items || (Array.isArray(res.data) ? res.data : []);
                     setSearchResults(items);
@@ -77,6 +77,14 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
         const timer = setTimeout(fetchInitialOrSearch, query.length > 0 ? 300 : 0);
         return () => clearTimeout(timer);
     }, [query]);
+
+    // Grouping results by category for a "Menu Roulant" effect
+    const groupedResults = searchResults.reduce((acc: Record<string, any[]>, p) => {
+        const catName = p.category?.name || 'Sans Catégorie';
+        if (!acc[catName]) acc[catName] = [];
+        acc[catName].push(p);
+        return acc;
+    }, {});
 
     useEffect(() => {
         if (!formData.customer.wilaya) return;
@@ -186,7 +194,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-encre3" size={18} />
                                 <input
                                     type="text"
-                                    placeholder="Rechercher un produit (min 3 lettres)..."
+                                    placeholder="Chercher par nom, SKU, catégorie, tags..."
                                     className="w-full pl-12 pr-4 h-14 bg-creme/20 border border-creme2 rounded-sm focus:outline-none focus:border-or transition-all text-sm font-medium"
                                     value={query}
                                     onChange={(e) => setQuery(e.target.value)}
@@ -194,80 +202,101 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                 {searching && <Loader className="absolute right-4 top-1/2 -translate-y-1/2 animate-spin text-or" size={18} />}
                             </div>
 
-                            {searchResults.length > 0 && (
-                                <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-[#FAF9F6] border border-creme2 rounded-sm animate-in slide-in-from-top-2">
-                                    {searchResults.map(p => (
-                                        <div key={p.id} className="bg-white border border-creme2 rounded-sm overflow-hidden flex flex-col">
-                                            <div className="flex items-center justify-between p-3 border-b border-creme2/50 hover:bg-creme/10 transition-colors group">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-12 h-12 bg-creme2 overflow-hidden flex-shrink-0">
-                                                        <img src={p.images?.[0]} alt="" className="w-full h-full object-cover" />
-                                                    </div>
-                                                    <div className="min-w-0">
-                                                        <p className="text-xs font-bold text-encre truncate">{p.name}</p>
-                                                        <p className="text-[10px] font-black text-or">{p.price} DA</p>
-                                                    </div>
-                                                </div>
-                                                {!p.references?.length ? (
-                                                    <div className="flex items-center gap-2">
-                                                        <input 
-                                                            type="number" 
-                                                            defaultValue="1" 
-                                                            min="1" 
-                                                            className="w-10 p-1 text-[10px] text-center border border-creme2 rounded-sm focus:border-or outline-none font-bold"
-                                                            id={`qty-${p.id}`}
-                                                        />
-                                                        <button
-                                                            onClick={() => {
-                                                                const qty = parseInt((document.getElementById(`qty-${p.id}`) as HTMLInputElement).value) || 1;
-                                                                addItem(p, null, qty);
-                                                            }}
-                                                            className="p-2 bg-encre text-white hover:bg-rouge-deep transition-colors rounded-sm"
-                                                        >
-                                                            <Plus size={14} />
-                                                        </button>
-                                                    </div>
-                                                ) : (
-                                                    <span className="text-[8px] font-black uppercase tracking-widest text-encre3 bg-creme2 px-2 py-1 rounded-sm">Voir Refs</span>
-                                                )}
-                                            </div>
-
-                                            {p.references?.length > 0 && (
-                                                <div className="p-2 bg-creme/5 space-y-2">
-                                                    {p.references.map((ref: any, idx: number) => (
-                                                        <div key={ref.sku || idx} className="flex items-center justify-between p-2 bg-white/50 border border-dotted border-creme2 rounded-sm">
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="w-8 h-8 rounded-full overflow-hidden border border-creme2">
-                                                                    <img src={ref.image} alt="" className="w-full h-full object-cover" />
+                            <div className="relative">
+                                {Object.keys(groupedResults).length > 0 ? (
+                                    <div className="mb-8 grid grid-cols-1 gap-6 p-4 bg-[#FAF9F6] border border-creme2 rounded-sm animate-in slide-in-from-top-2 max-h-[400px] overflow-y-auto custom-scrollbar">
+                                        {Object.entries(groupedResults).map(([catName, products]) => (
+                                            <div key={catName} className="space-y-3">
+                                                <h4 className="text-[9px] font-black uppercase tracking-[0.3em] text-encre3 bg-creme2/30 px-3 py-2 rounded-sm flex items-center justify-between">
+                                                    <span>{catName}</span>
+                                                    <span className="text-[8px] bg-white px-2 py-0.5 rounded-full border border-creme2/50 text-encre">{products.length} produits</span>
+                                                </h4>
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                    {products.map(p => (
+                                                        <div key={p.id} className="bg-white border border-creme2 rounded-sm overflow-hidden flex flex-col hover:border-or transition-all shadow-sm">
+                                                            <div className="flex items-center justify-between p-3 border-b border-creme2/50 hover:bg-creme/10 transition-colors group">
+                                                                <div className="flex items-center gap-3 w-full cursor-pointer">
+                                                                    <div className="w-12 h-12 bg-creme2 overflow-hidden flex-shrink-0 rounded-sm">
+                                                                        <img src={p.images?.[0]} alt="" className="w-full h-full object-cover" />
+                                                                    </div>
+                                                                    <div className="min-w-0 flex-grow">
+                                                                        <div className="flex items-center gap-2">
+                                                                            <p className="text-xs font-bold text-encre truncate">{p.name}</p>
+                                                                            {p.badge && (
+                                                                                <span className="text-[7px] font-black uppercase tracking-tighter bg-rouge-brand text-creme px-1 rounded-sm">{p.badge}</span>
+                                                                            )}
+                                                                        </div>
+                                                                        <p className="text-[10px] font-black text-or">{p.price} DA</p>
+                                                                    </div>
                                                                 </div>
-                                                                <span className="text-[10px] font-bold text-encre3 font-mono">{ref.sku}</span>
+                                                                {!p.references?.length ? (
+                                                                    <div className="flex items-center gap-2">
+                                                                        <input 
+                                                                            type="number" 
+                                                                            defaultValue="1" 
+                                                                            min="1" 
+                                                                            className="w-10 p-1 text-[10px] text-center border border-creme2 rounded-sm focus:border-or outline-none font-bold"
+                                                                            id={`qty-${p.id}`}
+                                                                        />
+                                                                        <button
+                                                                            onClick={() => {
+                                                                                const qty = parseInt((document.getElementById(`qty-${p.id}`) as HTMLInputElement).value) || 1;
+                                                                                addItem(p, null, qty);
+                                                                            }}
+                                                                            className="p-2 bg-encre text-white hover:bg-rouge-deep transition-colors rounded-sm"
+                                                                        >
+                                                                            <Plus size={14} />
+                                                                        </button>
+                                                                    </div>
+                                                                ) : null}
                                                             </div>
-                                                            <div className="flex items-center gap-2">
-                                                                <input 
-                                                                    type="number" 
-                                                                    defaultValue="1" 
-                                                                    min="1" 
-                                                                    className="w-10 p-1 text-[10px] text-center border border-creme2 rounded-sm focus:border-or outline-none font-bold"
-                                                                    id={`qty-${p.id}-${ref.sku || idx}`}
-                                                                />
-                                                                <button 
-                                                                    onClick={() => {
-                                                                        const qty = parseInt((document.getElementById(`qty-${p.id}-${ref.sku || idx}`) as HTMLInputElement).value) || 1;
-                                                                        addItem(p, ref, qty);
-                                                                    }}
-                                                                    className="p-1.5 bg-or text-white rounded-sm hover:bg-encre transition-colors shadow-sm"
-                                                                >
-                                                                    <Plus size={12} />
-                                                                </button>
-                                                            </div>
+
+                                                            {p.references?.length > 0 && (
+                                                                <div className="p-2 bg-creme/5 space-y-2">
+                                                                    {p.references.map((ref: any, idx: number) => (
+                                                                        <div key={ref.sku || idx} className="flex items-center justify-between p-2 bg-white/50 border border-dotted border-creme2 rounded-sm">
+                                                                            <div className="flex items-center gap-3">
+                                                                                <div className="w-8 h-8 rounded-full overflow-hidden border border-creme2">
+                                                                                    <img src={ref.image} alt="" className="w-full h-full object-cover" />
+                                                                                </div>
+                                                                                <span className="text-[10px] font-bold text-encre3 font-mono">{ref.sku}</span>
+                                                                            </div>
+                                                                            <div className="flex items-center gap-2">
+                                                                                <input 
+                                                                                    type="number" 
+                                                                                    defaultValue="1" 
+                                                                                    min="1" 
+                                                                                    className="w-10 p-1 text-[10px] text-center border border-creme2 rounded-sm focus:border-or outline-none font-bold"
+                                                                                    id={`qty-${p.id}-${ref.sku || idx}`}
+                                                                                />
+                                                                                <button 
+                                                                                    onClick={() => {
+                                                                                        const qty = parseInt((document.getElementById(`qty-${p.id}-${ref.sku || idx}`) as HTMLInputElement).value) || 1;
+                                                                                        addItem(p, ref, qty);
+                                                                                    }}
+                                                                                    className="p-1.5 bg-or text-white rounded-sm hover:bg-encre transition-colors shadow-sm"
+                                                                                >
+                                                                                    <Plus size={12} />
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     ))}
                                                 </div>
-                                            )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    !searching && query.length > 0 && (
+                                        <div className="mb-8 p-12 text-center border border-dashed border-creme2 rounded-sm">
+                                            <p className="text-xs font-serif italic text-encre3">Aucun produit ne correspond à votre recherche</p>
                                         </div>
-                                    ))}
-                                </div>
-                            )}
+                                    )
+                                )}
+                            </div>
 
                             {formData.items.length > 0 ? (
                                 <div className="border border-creme2 rounded-sm overflow-hidden mb-12">

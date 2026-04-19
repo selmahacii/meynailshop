@@ -83,11 +83,12 @@ export class ProductsService {
       queryBuilder.andWhere(new Brackets(qb => {
         qb.where('product.name ILIKE :search', { search })
           .orWhere('product.sku ILIKE :search', { search })
+          .orWhere('product.description ILIKE :search', { search })
+          .orWhere('product.tags::text ILIKE :search', { search })
           .orWhere('category.name ILIKE :search', { search })
           .orWhere('subCategory.name ILIKE :search', { search });
         
         // Complex JSONB Search for variant SKUs: 
-        // We check if any element in the 'variants' array has a 'sku' field matching the search
         qb.orWhere(`EXISTS (
           SELECT 1 FROM jsonb_array_elements(CASE WHEN product.variants IS NULL THEN '[]'::jsonb ELSE product.variants END) v 
           WHERE v->>'sku' ILIKE :search
