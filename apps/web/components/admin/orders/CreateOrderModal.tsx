@@ -261,19 +261,19 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                             <div className="bg-white p-6 rounded-sm border border-creme2 shadow-sm">
                                 <h3 className="text-xs font-black uppercase tracking-[0.2em] text-encre mb-6 flex items-center gap-2">
                                     <span className="w-6 h-6 bg-or text-white rounded-full flex items-center justify-center text-[10px]">1</span>
-                                    Filtre par Catégorie
+                                    Drill-down: Catégorie & Sous-Catégorie
                                 </h3>
 
                                 {/* Categories Selection */}
                                 <div className="space-y-4 mb-8">
                                     <div className="flex flex-wrap gap-2">
                                         <button 
-                                            onClick={() => { setSelectedCategory(null); setSelectedSubCategory(null); }}
+                                            onClick={() => { setSelectedCategory(null); setSelectedSubCategory(null); setQuery(''); }}
                                             className={cn("px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-sm border transition-all", !selectedCategory ? "bg-encre text-white border-encre" : "bg-white text-encre3 border-creme2 hover:border-or")}
                                         >
-                                            Tout
+                                            Tout le catalogue
                                         </button>
-                                        {categories.filter(c => !c.parentId).map(cat => (
+                                        {categories.map(cat => (
                                             <button 
                                                 key={cat.id}
                                                 onClick={() => { setSelectedCategory(cat); setSelectedSubCategory(null); }}
@@ -285,7 +285,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                     </div>
 
                                     {/* Sub-categories Selection */}
-                                    {selectedCategory && (
+                                    {selectedCategory && selectedCategory.subCategories && selectedCategory.subCategories.length > 0 && (
                                         <div className="flex flex-wrap gap-2 p-3 bg-creme2/10 border border-dashed border-creme2 rounded-sm animate-in fade-in slide-in-from-top-1">
                                             <span className="w-full text-[8px] font-black uppercase text-encre3 mb-1">Sous-catégories de {selectedCategory.name} :</span>
                                             <button 
@@ -294,7 +294,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                             >
                                                 Tout Voir
                                             </button>
-                                            {categories.filter(c => c.parentId === selectedCategory.id).map(sub => (
+                                            {selectedCategory.subCategories.map((sub: any) => (
                                                 <button 
                                                     key={sub.id}
                                                     onClick={() => setSelectedSubCategory(sub)}

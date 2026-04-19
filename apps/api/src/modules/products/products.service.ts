@@ -92,7 +92,8 @@ export class ProductsService {
               const searchTerm = `%${term}%`;
               params[paramName] = searchTerm;
               
-              const sql = `(product.name ILIKE :${paramName} OR product.sku ILIKE :${paramName} OR category.name ILIKE :${paramName} OR product.description ILIKE :${paramName})`;
+              // Strict search for admins: Only Name and SKU to avoid false positives (like VERNID matching Vernis)
+              const sql = `(product.name ILIKE :${paramName} OR product.sku ILIKE :${paramName})`;
               
               if (index === 0) {
                 qb.where(sql, params);
