@@ -80,41 +80,36 @@ export class ProductsService {
 
     if (query.search) {
       try {
-        const searchTerm = `%${query.search}%`;
+        const searchTerm = `%${query.search.toLowerCase()}%`;
         const priceValue = parseFloat(query.search);
         const isNumeric = !isNaN(priceValue);
         
-        console.log(`🔍 [ProductsService] Searching with term: "${query.search}"`);
+        console.log(`🔍 [ProductsService] Search triggered: "${query.search}"`);
         
         queryBuilder.andWhere(new Brackets(qb => {
-          qb.where('product.name ILIKE :searchTerm')
-            .orWhere('product.sku ILIKE :searchTerm')
-            .orWhere('product.description ILIKE :searchTerm')
-            .orWhere('category.name ILIKE :searchTerm')
-            .orWhere('subCategory.name ILIKE :searchTerm');
-          
-          // Safer approach: Use manual OR conditions if CAST is problematic
-          qb.orWhere('product.tags ILIKE :searchTerm');
-          
-          // Debugging JSON search
-          try {
-             qb.orWhere('CAST(product.variants AS TEXT) ILIKE :searchTerm');
-          } catch (e) {
-             console.warn('⚠️ [ProductsService] Variants search failed, skipping JSON part:', e.message);
-          }
+          // Standard text search on primary fields
+          qb.where('LOWER(product.name) LIKE :searchTerm', { searchTerm })
+            .orWhere('LOWER(product.sku) LIKE :searchTerm', { searchTerm })
+            .orWhere('LOWER(product.description) LIKE :searchTerm', { searchTerm });
 
+          // Search in categories if joined
+          qb.orWhere('LOWER(category.name) LIKE :searchTerm', { searchTerm })
+            .orWhere('LOWER(subCategory.name) LIKE :searchTerm', { searchTerm });
+          
+          // Search in tags (safely)
+          qb.orWhere('LOWER(product.tags) LIKE :searchTerm', { searchTerm });
+
+          // Numeric search if applicable
           if (isNumeric) {
-              qb.orWhere('product.price = :exactPrice')
-                .orWhere('product.price BETWEEN :minP AND :maxP');
+              qb.orWhere('product.price = :exactPrice', { exactPrice: priceValue })
+                .orWhere('product.price BETWEEN :minP AND :maxP', { 
+                  minP: priceValue - 50, 
+                  maxP: priceValue + 50 
+                });
           }
-        }), { 
-          searchTerm, 
-          exactPrice: isNumeric ? priceValue : 0,
-          minP: isNumeric ? priceValue - 100 : 0,
-          maxP: isNumeric ? priceValue + 100 : 0 
-        });
+        }));
       } catch (err) {
-        console.error('❌ [ProductsService] Search logic failed:', err);
+        console.error('❌ [ProductsService] Search construction failed:', err);
       }
     }
 

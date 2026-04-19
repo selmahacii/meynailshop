@@ -63,12 +63,21 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
         const fetchInitialOrSearch = async () => {
             setSearching(true);
             try {
-                // Fetch up to 100 products initially to show a "menu roulant" of all categories
-                const res = await StoreAPI.getProducts(1, query ? 100 : 100, { search: query });
+                // Fetch products for selection (limit 100 to show as menu roulant)
+                console.log('📡 [CreateOrderModal] Fetching products for:', query || 'Initial load');
+                const res = await StoreAPI.getProducts(1, 100, { search: query });
+                
                 if (res.success) {
                     const items = res.data?.items || (Array.isArray(res.data) ? res.data : []);
                     setSearchResults(items);
+                } else {
+                    console.error('❌ [CreateOrderModal] Search failed:', res.error);
+                    toast.error("Erreur lors de la recherche des produits");
+                    setSearchResults([]);
                 }
+            } catch (error) {
+                console.error('❌ [CreateOrderModal] Request error:', error);
+                setSearchResults([]);
             } finally {
                 setSearching(false);
             }
