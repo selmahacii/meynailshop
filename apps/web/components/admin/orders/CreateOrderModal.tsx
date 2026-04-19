@@ -43,6 +43,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess, initialPr
 
   // Fetch products if not provided
   React.useEffect(() => {
+    console.log("[CreateOrderModal] Opened, products length:", products.length);
     if (isOpen && products.length === 0) {
       loadProducts();
     }
@@ -51,9 +52,16 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess, initialPr
   const loadProducts = async () => {
     try {
       setLoadingProducts(true);
+      console.log("[CreateOrderModal] Fetching products...");
       const res = await ProductsAPI.getAll(1, 100);
+      
+      console.log("[CreateOrderModal] API Response:", res);
+
       if (res.success) {
-        setProducts(res.data.data || []);
+        // Handle different possible response structures
+        const productList = res.data?.items || res.data?.data || (Array.isArray(res.data) ? res.data : []);
+        console.log("[CreateOrderModal] Product list extracted:", productList.length, "items");
+        setProducts(productList);
       } else {
         console.error("[CreateOrderModal] API Error loading products:", res.error);
         toast.error(res.error || "Erreur lors du chargement des produits");
