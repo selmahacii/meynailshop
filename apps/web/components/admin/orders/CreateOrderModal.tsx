@@ -87,7 +87,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
         }
     }, [formData.customer.wilaya, formData.deliveryType]);
 
-    const addItem = (product: any, variant?: any) => {
+    const addItem = (product: any, variant?: any, quantity: number = 1) => {
         const itemKey = variant ? `${product.id}-${variant.sku}` : product.id;
         const existing = formData.items.find(i => (i.variantSku === variant?.sku && i.productId === product.id) || (i.productId === product.id && !variant && !i.variantSku));
         
@@ -96,7 +96,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                 ...prev,
                 items: prev.items.map(i => {
                     const match = variant ? (i.productId === product.id && i.variantSku === variant.sku) : (i.productId === product.id && !i.variantSku);
-                    return match ? { ...i, quantity: i.quantity + 1 } : i;
+                    return match ? { ...i, quantity: i.quantity + quantity } : i;
                 })
             }));
         } else {
@@ -106,7 +106,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                     productId: product.id,
                     name: product.name,
                     unitPrice: product.price,
-                    quantity: 1,
+                    quantity: quantity,
                     productSku: product.sku,
                     variantSku: variant?.sku,
                     variantImage: variant?.image,
@@ -114,7 +114,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                 }]
             }));
         }
-        toast.info(`${product.name} ${variant ? `(${variant.sku})` : ''} ajouté`);
+        toast.info(`${quantity}x ${product.name} ${variant ? `(${variant.sku})` : ''} ajouté`);
     };
 
     const removeItem = (productId: string, variantSku?: string) => {
@@ -205,12 +205,24 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                                     </div>
                                                 </div>
                                                 {!p.references?.length ? (
-                                                    <button
-                                                        onClick={() => addItem(p)}
-                                                        className="p-2 bg-encre text-white hover:bg-rouge-deep transition-colors"
-                                                    >
-                                                        <Plus size={14} />
-                                                    </button>
+                                                    <div className="flex items-center gap-2">
+                                                        <input 
+                                                            type="number" 
+                                                            defaultValue="1" 
+                                                            min="1" 
+                                                            className="w-10 p-1 text-[10px] text-center border border-creme2 rounded-sm focus:border-or outline-none font-bold"
+                                                            id={`qty-${p.id}`}
+                                                        />
+                                                        <button
+                                                            onClick={() => {
+                                                                const qty = parseInt((document.getElementById(`qty-${p.id}`) as HTMLInputElement).value) || 1;
+                                                                addItem(p, null, qty);
+                                                            }}
+                                                            className="p-2 bg-encre text-white hover:bg-rouge-deep transition-colors rounded-sm"
+                                                        >
+                                                            <Plus size={14} />
+                                                        </button>
+                                                    </div>
                                                 ) : (
                                                     <span className="text-[8px] font-black uppercase tracking-widest text-encre3 bg-creme2 px-2 py-1 rounded-sm">Voir Refs</span>
                                                 )}
@@ -226,12 +238,24 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                                                 </div>
                                                                 <span className="text-[10px] font-bold text-encre3 font-mono">{ref.sku}</span>
                                                             </div>
-                                                            <button 
-                                                                onClick={() => addItem(p, ref)}
-                                                                className="p-1.5 bg-or text-white rounded-sm hover:bg-encre transition-colors shadow-sm"
-                                                            >
-                                                                <Plus size={12} />
-                                                            </button>
+                                                            <div className="flex items-center gap-2">
+                                                                <input 
+                                                                    type="number" 
+                                                                    defaultValue="1" 
+                                                                    min="1" 
+                                                                    className="w-10 p-1 text-[10px] text-center border border-creme2 rounded-sm focus:border-or outline-none font-bold"
+                                                                    id={`qty-${p.id}-${ref.sku || idx}`}
+                                                                />
+                                                                <button 
+                                                                    onClick={() => {
+                                                                        const qty = parseInt((document.getElementById(`qty-${p.id}-${ref.sku || idx}`) as HTMLInputElement).value) || 1;
+                                                                        addItem(p, ref, qty);
+                                                                    }}
+                                                                    className="p-1.5 bg-or text-white rounded-sm hover:bg-encre transition-colors shadow-sm"
+                                                                >
+                                                                    <Plus size={12} />
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     ))}
                                                 </div>
@@ -365,9 +389,23 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-encre3">Adresse complète</label>
                                         <textarea
-                                            className="w-full p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm h-24 resize-none"
+                                            className="w-full p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm h-20 resize-none"
                                             value={formData.customer.address}
                                             onChange={e => setFormData(prev => ({ ...prev, customer: { ...prev.customer, address: e.target.value } }))}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-encre3 flex justify-between">
+                                            <span>Notes de livraison / Observations</span>
+                                            {formData.customer.wilaya && (
+                                                <span className="text-or">Délai estimé: {SHIPPING_RATES.find(r => r.name === formData.customer.wilaya)?.delay} jours</span>
+                                            )}
+                                        </label>
+                                        <textarea
+                                            placeholder="Ex: Appeler avant livraison, livraison après 16h..."
+                                            className="w-full p-3 bg-creme2/20 border border-creme2 rounded-sm focus:border-or outline-none text-sm h-20 resize-none italic"
+                                            value={formData.notes}
+                                            onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                                         />
                                     </div>
                                 </div>
