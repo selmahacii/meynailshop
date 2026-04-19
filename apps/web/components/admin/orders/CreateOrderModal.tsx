@@ -478,15 +478,17 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
                                             <div className="flex h-10 bg-creme2/20 rounded-sm border border-creme2 p-0.5">
                                                 <button 
                                                     onClick={() => setFormData(p => ({ ...p, deliveryType: 'office' }))}
-                                                    className={cn("flex-1 rounded-[2px] transition-all flex items-center justify-center", formData.deliveryType === 'office' ? "bg-white text-encre shadow-sm" : "text-encre3")}
+                                                    className={cn("flex-1 rounded-[2px] transition-all flex items-center justify-center gap-2", formData.deliveryType === 'office' ? "bg-white text-encre shadow-sm" : "text-encre3 hover:bg-white/50")}
                                                 >
                                                     <Building2 size={12} />
+                                                    <span className="text-[8px] font-black uppercase">Stopdesk</span>
                                                 </button>
                                                 <button 
                                                     onClick={() => setFormData(p => ({ ...p, deliveryType: 'home' }))}
-                                                    className={cn("flex-1 rounded-[2px] transition-all flex items-center justify-center", formData.deliveryType === 'home' ? "bg-white text-encre shadow-sm" : "text-encre3")}
+                                                    className={cn("flex-1 rounded-[2px] transition-all flex items-center justify-center gap-2", formData.deliveryType === 'home' ? "bg-white text-encre shadow-sm" : "text-encre3 hover:bg-white/50")}
                                                 >
                                                     <Truck size={12} />
+                                                    <span className="text-[8px] font-black uppercase">Domicile</span>
                                                 </button>
                                             </div>
                                         </div>
