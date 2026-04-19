@@ -59,6 +59,82 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
         notes: '',
     });
 
+    const renderProductCard = (p: any) => (
+        <div key={p.id} className="bg-white border border-creme2 rounded-sm overflow-hidden flex flex-col hover:border-or transition-all shadow-sm">
+            <div className="flex items-center justify-between p-3 border-b border-creme2/50 hover:bg-creme/10 transition-colors group">
+                <div className="flex items-center gap-3 w-full cursor-pointer">
+                    <div className="w-12 h-12 bg-creme2 overflow-hidden flex-shrink-0 rounded-sm">
+                        <img src={p.images?.[0]} alt="" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="min-w-0 flex-grow">
+                        <div className="flex items-center gap-2">
+                            <p className="text-xs font-bold text-encre truncate">{p.name}</p>
+                            {p.badge && (
+                                <span className="text-[7px] font-black uppercase tracking-tighter bg-rouge-brand text-creme px-1 rounded-sm">{p.badge}</span>
+                            )}
+                        </div>
+                        <p className="text-[10px] font-black text-or">{p.price} DA</p>
+                    </div>
+                </div>
+                {!p.variants?.length ? (
+                    <div className="flex items-center gap-2">
+                        <input 
+                            type="number" 
+                            defaultValue="1" 
+                            min="1" 
+                            className="w-10 p-1 text-[10px] text-center border border-creme2 rounded-sm focus:border-or outline-none font-bold"
+                            id={`qty-${p.id}`}
+                        />
+                        <button
+                            onClick={() => {
+                                const qty = parseInt((document.getElementById(`qty-${p.id}`) as HTMLInputElement).value) || 1;
+                                addItem(p, null, qty);
+                            }}
+                            className="p-2 bg-encre text-white hover:bg-rouge-deep transition-colors rounded-sm"
+                        >
+                            <Plus size={14} />
+                        </button>
+                    </div>
+                ) : null}
+            </div>
+
+            {p.variants && p.variants.length > 0 && (
+                <div className="p-2 bg-creme/10 space-y-2 border-t border-creme2/30">
+                    {p.variants.map((ref: any, idx: number) => (
+                        <div key={ref.sku || idx} className="flex items-center justify-between p-2 bg-white/50 border border-dotted border-creme2 rounded-sm">
+                            <div className="flex items-center gap-3">
+                                {ref.image && (
+                                    <div className="w-8 h-8 rounded-full overflow-hidden border border-creme2">
+                                        <img src={ref.image} alt="" className="w-full h-full object-cover" />
+                                    </div>
+                                )}
+                                <span className="text-[10px] font-bold text-encre3 font-mono">{ref.sku}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <input 
+                                    type="number" 
+                                    defaultValue="1" 
+                                    min="1" 
+                                    className="w-10 p-1 text-[10px] text-center border border-creme2 rounded-sm focus:border-or outline-none font-bold"
+                                    id={`qty-${p.id}-${ref.sku || idx}`}
+                                />
+                                <button 
+                                    onClick={() => {
+                                        const qty = parseInt((document.getElementById(`qty-${p.id}-${ref.sku || idx}`) as HTMLInputElement).value) || 1;
+                                        addItem(p, ref, qty);
+                                    }}
+                                    className="p-1.5 bg-or text-white rounded-sm hover:bg-encre transition-colors shadow-sm"
+                                >
+                                    <Plus size={12} />
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+
     useEffect(() => {
         const fetchInitialOrSearch = async () => {
             setSearching(true);
@@ -214,94 +290,38 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess }: CreateO
 
                             <div className="relative">
                                 {Object.keys(groupedResults).length > 0 ? (
-                                    <div className="mb-8 grid grid-cols-1 gap-6 p-4 bg-[#FAF9F6] border border-creme2 rounded-sm animate-in slide-in-from-top-2 max-h-[400px] overflow-y-auto custom-scrollbar">
-                                        {Object.entries(groupedResults).map(([catName, products]) => (
-                                            <div key={catName} className="space-y-3">
-                                                <h4 className="text-[9px] font-black uppercase tracking-[0.3em] text-encre3 bg-creme2/30 px-3 py-2 rounded-sm flex items-center justify-between">
-                                                    <span>{catName}</span>
-                                                    <span className="text-[8px] bg-white px-2 py-0.5 rounded-full border border-creme2/50 text-encre">{products.length} produits</span>
-                                                </h4>
-                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                                    {products.map(p => (
-                                                        <div key={p.id} className="bg-white border border-creme2 rounded-sm overflow-hidden flex flex-col hover:border-or transition-all shadow-sm">
-                                                            <div className="flex items-center justify-between p-3 border-b border-creme2/50 hover:bg-creme/10 transition-colors group">
-                                                                <div className="flex items-center gap-3 w-full cursor-pointer">
-                                                                    <div className="w-12 h-12 bg-creme2 overflow-hidden flex-shrink-0 rounded-sm">
-                                                                        <img src={p.images?.[0]} alt="" className="w-full h-full object-cover" />
-                                                                    </div>
-                                                                    <div className="min-w-0 flex-grow">
-                                                                        <div className="flex items-center gap-2">
-                                                                            <p className="text-xs font-bold text-encre truncate">{p.name}</p>
-                                                                            {p.badge && (
-                                                                                <span className="text-[7px] font-black uppercase tracking-tighter bg-rouge-brand text-creme px-1 rounded-sm">{p.badge}</span>
-                                                                            )}
-                                                                        </div>
-                                                                        <p className="text-[10px] font-black text-or">{p.price} DA</p>
-                                                                    </div>
-                                                                </div>
-                                                                {!p.references?.length ? (
-                                                                    <div className="flex items-center gap-2">
-                                                                        <input 
-                                                                            type="number" 
-                                                                            defaultValue="1" 
-                                                                            min="1" 
-                                                                            className="w-10 p-1 text-[10px] text-center border border-creme2 rounded-sm focus:border-or outline-none font-bold"
-                                                                            id={`qty-${p.id}`}
-                                                                        />
-                                                                        <button
-                                                                            onClick={() => {
-                                                                                const qty = parseInt((document.getElementById(`qty-${p.id}`) as HTMLInputElement).value) || 1;
-                                                                                addItem(p, null, qty);
-                                                                            }}
-                                                                            className="p-2 bg-encre text-white hover:bg-rouge-deep transition-colors rounded-sm"
-                                                                        >
-                                                                            <Plus size={14} />
-                                                                        </button>
-                                                                    </div>
-                                                                ) : null}
-                                                            </div>
-
-                                                            {p.references?.length > 0 && (
-                                                                <div className="p-2 bg-creme/5 space-y-2">
-                                                                    {p.references.map((ref: any, idx: number) => (
-                                                                        <div key={ref.sku || idx} className="flex items-center justify-between p-2 bg-white/50 border border-dotted border-creme2 rounded-sm">
-                                                                            <div className="flex items-center gap-3">
-                                                                                <div className="w-8 h-8 rounded-full overflow-hidden border border-creme2">
-                                                                                    <img src={ref.image} alt="" className="w-full h-full object-cover" />
-                                                                                </div>
-                                                                                <span className="text-[10px] font-bold text-encre3 font-mono">{ref.sku}</span>
-                                                                            </div>
-                                                                            <div className="flex items-center gap-2">
-                                                                                <input 
-                                                                                    type="number" 
-                                                                                    defaultValue="1" 
-                                                                                    min="1" 
-                                                                                    className="w-10 p-1 text-[10px] text-center border border-creme2 rounded-sm focus:border-or outline-none font-bold"
-                                                                                    id={`qty-${p.id}-${ref.sku || idx}`}
-                                                                                />
-                                                                                <button 
-                                                                                    onClick={() => {
-                                                                                        const qty = parseInt((document.getElementById(`qty-${p.id}-${ref.sku || idx}`) as HTMLInputElement).value) || 1;
-                                                                                        addItem(p, ref, qty);
-                                                                                    }}
-                                                                                    className="p-1.5 bg-or text-white rounded-sm hover:bg-encre transition-colors shadow-sm"
-                                                                                >
-                                                                                    <Plus size={12} />
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    ))}
+                                    <div className="mb-8 grid grid-cols-1 gap-6 p-4 bg-[#FAF9F6] border border-creme2 rounded-sm animate-in fade-in duration-500 max-h-[500px] overflow-y-auto custom-scrollbar">
+                                        {query.length > 3 ? (
+                                            /* Clean Results View: Only matched items in a flat list when searching */
+                                            <div className="space-y-4">
+                                                <div className="flex items-center justify-between border-b border-creme2 pb-2">
+                                                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-or">
+                                                        Résultats pour "{query}"
+                                                    </h4>
+                                                    <span className="text-[9px] font-bold text-encre3 uppercase">{searchResults.length} correspondances</span>
+                                                </div>
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                    {searchResults.map(p => renderProductCard(p))}
                                                 </div>
                                             </div>
-                                        ))}
+                                        ) : (
+                                            /* Menu Roulant View: Grouped by Category */
+                                            Object.entries(groupedResults).map(([catName, products]) => (
+                                                <div key={catName} className="space-y-3">
+                                                    <h4 className="text-[9px] font-black uppercase tracking-[0.3em] text-encre3 bg-creme2/30 px-3 py-2 rounded-sm flex items-center justify-between">
+                                                        <span>{catName}</span>
+                                                        <span className="text-[8px] bg-white px-2 py-0.5 rounded-full border border-creme2/50 text-encre">{products.length} produits</span>
+                                                    </h4>
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                        {products.map(p => renderProductCard(p))}
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
                                     </div>
                                 ) : (
                                     !searching && query.length > 0 && (
-                                        <div className="mb-8 p-12 text-center border border-dashed border-creme2 rounded-sm">
+                                        <div className="mb-8 p-12 text-center border border-dashed border-creme2 rounded-sm bg-white/50">
                                             <p className="text-xs font-serif italic text-encre3">Aucun produit ne correspond à votre recherche</p>
                                         </div>
                                     )
