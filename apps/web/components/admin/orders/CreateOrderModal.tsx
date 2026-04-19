@@ -230,11 +230,11 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess, initialPr
             </button>
           </div>
 
-          {/* Body */}
-          <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
+          {/* Middle Content - Scrollable on mobile, split on desktop */}
+          <div className="flex flex-col lg:flex-row flex-1 overflow-y-auto lg:overflow-hidden bg-white">
             
             {/* LEFT COLUMN: Customer Info */}
-            <div className="w-full lg:w-5/12 border-r border-gold-brand/10 p-6 overflow-y-auto bg-white custom-scrollbar">
+            <div className="w-full lg:w-5/12 border-b lg:border-b-0 lg:border-r border-gold-brand/10 p-6 lg:overflow-y-auto bg-white custom-scrollbar shrink-0">
               <h3 className="text-xs font-black uppercase tracking-[0.2em] text-rouge-brand mb-6 flex items-center gap-2">
                 <User size={14} />
                 Profil Client
@@ -392,7 +392,7 @@ export default function CreateOrderModal({ isOpen, onClose, onSuccess, initialPr
             </div>
 
             {/* RIGHT COLUMN: Products, Cart & Calc */}
-            <div className="w-full lg:w-7/12 flex flex-col bg-creme/50">
+            <div className="w-full lg:w-7/12 flex flex-col bg-creme/50 min-h-[600px] lg:min-h-0">
               
               {/* Product Search & Selection list */}
               <div className="p-6 pb-2 border-b border-gold-brand/10 flex-1 overflow-hidden flex flex-col">
