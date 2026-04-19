@@ -81,30 +81,30 @@ export class ProductsService {
     if (query.search) {
       const searchTerm = `%${query.search}%`;
       const priceValue = parseFloat(query.search);
+      const isNumeric = !isNaN(priceValue);
       
       queryBuilder.andWhere(new Brackets(qb => {
         qb.where('product.name ILIKE :searchTerm')
           .orWhere('product.sku ILIKE :searchTerm')
           .orWhere('product.description ILIKE :searchTerm')
-          .orWhere('product.tags ILIKE :searchTerm')
           .orWhere('category.name ILIKE :searchTerm')
           .orWhere('subCategory.name ILIKE :searchTerm');
         
-        // Complex JSONB Search for variant SKUs 
-        qb.orWhere(`EXISTS (
-          SELECT 1 FROM jsonb_array_elements(CASE WHEN product.variants IS NULL THEN '[]'::jsonb ELSE product.variants END) v 
-          WHERE v->>'sku' ILIKE :searchTerm
-        )`);
+        // Use a simpler approach for tags and variants to avoid specific function errors
+        // Casting variants to text allows searching within JSON without relying on complex functions
+        qb.orWhere('CAST(product.tags AS TEXT) ILIKE :searchTerm')
+          .orWhere('CAST(product.variants AS TEXT) ILIKE :searchTerm');
 
-        // Price search if input is numeric
-        if (!isNaN(priceValue)) {
-            qb.orWhere('product.price = :exactPrice', { exactPrice: priceValue })
-              .orWhere('product.price BETWEEN :minP AND :maxP', { 
-                  minP: priceValue - 100, 
-                  maxP: priceValue + 100 
-              });
+        if (isNumeric) {
+            qb.orWhere('product.price = :exactPrice')
+              .orWhere('product.price BETWEEN :minP AND :maxP');
         }
-      }), { searchTerm });
+      }), { 
+        searchTerm, 
+        exactPrice: isNumeric ? priceValue : 0,
+        minP: isNumeric ? priceValue - 100 : 0,
+        maxP: isNumeric ? priceValue + 100 : 0 
+      });
     }
 
     if (query.category) {
