@@ -45,6 +45,14 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
     console.error(`[API Proxy] Login error: ${errorMsg}`);
-    return NextResponse.json({ statusCode: 500, message: 'Le serveur est temporairement indisponible. Veuillez réessayer plus tard.' }, { status: 500 });
+    return NextResponse.json({
+      statusCode: 500,
+      message: 'Le serveur est temporairement indisponible. Veuillez réessayer plus tard.',
+      debugError: errorMsg,
+      debugBackend: BACKEND,
+      debugEnvUrl: process.env.NEXT_PUBLIC_API_URL || null,
+      debugNodeEnv: process.env.NODE_ENV || null,
+      debugVercel: process.env.VERCEL || null
+    }, { status: 500 });
   }
 }
