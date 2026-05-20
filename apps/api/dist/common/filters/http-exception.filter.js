@@ -71,13 +71,14 @@ let AllExceptionsFilter = class AllExceptionsFilter {
             message = mappings[rawMessage] || rawMessage;
         }
         else if (exception instanceof Error) {
-            message = process.env.NODE_ENV === 'development' ? exception.message : 'Une erreur inattendue est survenue au cœur du système.';
+            message = exception.message;
         }
         console.error('🔥 [AllExceptionsFilter] Exception caught:', exception);
         response.status(statusCode).json({
             statusCode: statusCode,
             message: message,
-            error: process.env.NODE_ENV === 'development' ? (exception instanceof Error ? exception.name : 'Error') : undefined,
+            error: exception instanceof Error ? exception.name : 'Error',
+            stack: exception instanceof Error ? exception.stack : undefined,
         });
     }
 };

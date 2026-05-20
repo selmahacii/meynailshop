@@ -74,8 +74,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
       message = mappings[rawMessage] || rawMessage;
     } else if (exception instanceof Error) {
-      // Don't leak raw database errors in production
-      message = process.env.NODE_ENV === 'development' ? exception.message : 'Une erreur inattendue est survenue au cœur du système.';
+      // Include exception message temporarily for production debugging
+      message = exception.message;
     }
 
     console.error('🔥 [AllExceptionsFilter] Exception caught:', exception);
@@ -83,7 +83,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
     response.status(statusCode).json({
       statusCode: statusCode,
       message: message,
-      error: process.env.NODE_ENV === 'development' ? (exception instanceof Error ? exception.name : 'Error') : undefined,
+      error: exception instanceof Error ? exception.name : 'Error',
+      stack: exception instanceof Error ? exception.stack : undefined,
     });
   }
 }
