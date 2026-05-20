@@ -67,9 +67,9 @@ export default function Navbar() {
                 </button>
 
                 <Link href="/" className="flex items-center space-x-3 group lg:mr-0 pl-2 lg:pl-0 transition-transform duration-300 hover:scale-[1.02]">
-                    <div className={`relative transition-all duration-500 ${isScrolled ? 'w-[45px] h-[45px] md:w-[55px] md:h-[55px]' : 'w-[55px] h-[55px] md:w-[65px] md:h-[65px]'}`}>
+                    <div className={`relative transition-all duration-500 ${isScrolled ? 'w-[32px] h-[32px] md:w-[38px] md:h-[38px]' : 'w-[38px] h-[38px] md:w-[48px] md:h-[48px]'}`}>
                         <Image
-                            src="/icon.png"
+                            src="/images/logo2.png"
                             alt="MEEY Emblem"
                             fill
                             className="object-contain"
@@ -244,13 +244,21 @@ export default function Navbar() {
                         >
                             <div className="p-8 border-b border-gold-brand/10 flex justify-between items-center bg-rouge-brand/50 backdrop-blur-md">
                                 <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center space-x-3">
-                                    <div className="relative w-[80px] h-[80px] rounded-full overflow-hidden">
+                                    <div className="relative w-[40px] h-[40px] overflow-hidden">
                                         <Image
-                                            src="/icon.png"
+                                            src="/images/logo2.png"
                                             alt="MEEY"
                                             fill
                                             className="object-contain"
                                         />
+                                    </div>
+                                    <div className="flex flex-col text-left">
+                                        <span className="font-italiana text-xl font-light leading-none text-gold-brand tracking-[0.1em] uppercase">
+                                            MEEY
+                                        </span>
+                                        <span className="font-playfair text-[8px] font-light italic tracking-[0.3em] uppercase text-creme/60 leading-none mt-1">
+                                            Nail Shop
+                                        </span>
                                     </div>
                                 </Link>
                                 <button onClick={() => setIsMobileMenuOpen(false)} className="text-gold-brand/60 hover:text-gold-brand p-2 bg-white/5 rounded-full transition-colors">

@@ -48,9 +48,9 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
                     {/* Brand Info */}
                     <div className="space-y-6 flex flex-col items-center md:items-start text-center md:text-left">
-                        <Link href="/" className="relative w-[110px] h-[110px] block transition-transform hover:scale-105">
+                        <Link href="/" className="relative w-[70px] h-[70px] block transition-transform hover:scale-105">
                             <Image
-                                src="/icon.png"
+                                src="/images/logo2.png"
                                 alt="MEEY"
                                 fill
                                 className="object-contain"

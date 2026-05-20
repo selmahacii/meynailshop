@@ -35,18 +35,18 @@ export default function HeroSection() {
 
             <div className="container mx-auto px-6 sm:px-12 md:px-16 z-10">
                 <div className="max-w-4xl text-center md:text-left flex flex-col items-center md:items-start mx-auto md:mx-0">
-                    <span className="text-gold-brand/80 text-[9px] md:text-xs font-normal uppercase tracking-[0.45em] mb-6 block">
+                    <span className="text-gold-brand/70 text-[9px] md:text-xs font-normal uppercase tracking-[0.45em] mb-6 block">
                         Maison de Haute Onglerie
                     </span>
 
-                    <h1 className="font-italiana font-light text-5xl md:text-7xl lg:text-9xl text-creme mb-8 leading-[1.1] tracking-[0.07em] drop-shadow-2xl">
+                    <h1 className="font-italiana font-normal text-5xl md:text-7xl lg:text-9xl text-creme/95 mb-8 leading-[1.1] tracking-[0.07em] drop-shadow-2xl">
                         La Signature <br />
-                        <span className="font-playfair italic font-light text-gold-brand">
+                        <span className="font-playfair italic font-light text-gold-brand/90">
                             du Sublime
                         </span>
                     </h1>
 
-                    <p className="text-sm sm:text-base md:text-lg text-creme/80 mb-12 max-w-xl font-playfair font-extralight italic tracking-wide leading-relaxed border-l border-gold-brand/35 pl-6 md:pl-8">
+                    <p className="text-sm sm:text-base md:text-lg text-creme/70 mb-12 max-w-xl font-playfair font-light italic tracking-wide leading-relaxed border-l border-gold-brand/20 pl-6 md:pl-8">
                         L'alliance de la haute précision et du geste artistique. Des formules d'exception conçues pour révéler la singularité de chaque création.
                     </p>
 
