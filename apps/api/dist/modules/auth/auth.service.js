@@ -62,7 +62,10 @@ let AuthService = class AuthService {
     async validateUser(email, password) {
         const normalizedEmail = email.toLowerCase().trim();
         console.log(`[AUTH] Login attempt for: ${normalizedEmail}`);
-        const user = await this.userRepository.findOne({ where: { email: normalizedEmail } });
+        const user = await this.userRepository.createQueryBuilder('user')
+            .addSelect('user.password')
+            .where('user.email = :email', { email: normalizedEmail })
+            .getOne();
         if (!user) {
             console.warn(`[AUTH] User not found: ${normalizedEmail}`);
             throw new common_1.UnauthorizedException('Identifiants invalides');
