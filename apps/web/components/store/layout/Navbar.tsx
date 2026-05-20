@@ -58,15 +58,16 @@ export default function Navbar() {
     const isNavbarLight = isLight && !isCatalogue;
 
     return (
-        <nav
-            className={`fixed top-0 w-full z-[1000] transition-all duration-500 ${
-                isCatalogue
-                    ? 'bg-rouge-brand/95 backdrop-blur-xl border-b border-gold-brand/15 py-1.5 shadow-md'
-                    : isNavbarLight 
-                        ? 'bg-creme/95 backdrop-blur-xl border-b border-gold-brand/15 py-1.5 shadow-md' 
-                        : 'bg-transparent py-4 border-b border-white/5'
-            }`}
-        >
+        <>
+            <nav
+                className={`fixed top-0 w-full z-[1000] transition-all duration-500 ${
+                    isCatalogue
+                        ? 'bg-rouge-brand/95 backdrop-blur-xl border-b border-gold-brand/15 py-1.5 shadow-md'
+                        : isNavbarLight 
+                            ? 'bg-creme/95 backdrop-blur-xl border-b border-gold-brand/15 py-1.5 shadow-md' 
+                            : 'bg-transparent py-4 border-b border-white/5'
+                }`}
+            >
             <div className="w-full px-6 sm:px-10 md:px-12 lg:px-16 flex items-center justify-between">
                 {/* Mobile Menu Toggle */}
                 <button
@@ -259,118 +260,119 @@ export default function Navbar() {
                     </Link>
                 </div>
             </div>
+        </nav>
 
-            {/* Mobile Menu Overlay */}
-            <AnimatePresence>
-                {isMobileMenuOpen && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                            className="fixed inset-0 bg-encre/80 backdrop-blur-md z-[1001]"
-                        />
-                        <motion.div
-                            initial={{ x: '-100%' }}
-                            animate={{ x: 0 }}
-                            exit={{ x: '-100%' }}
-                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed top-0 left-0 h-full w-[80%] max-w-sm bg-rouge-brand z-[1002] flex flex-col shadow-[10px_0_30px_rgba(0,0,0,0.5)] overflow-hidden"
-                        >
-                            <div className="p-8 border-b border-gold-brand/10 flex justify-between items-center bg-rouge-brand/50 backdrop-blur-md">
-                                <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center space-x-3">
-                                    <div className="flex flex-col text-left pl-2">
-                                        <span className="font-italiana text-2xl font-normal leading-none text-gold-brand tracking-[0.15em] uppercase">
-                                            MEEY
-                                        </span>
-                                        <span className="font-playfair text-[9px] font-normal italic tracking-[0.25em] uppercase text-creme/60 leading-none mt-1.5">
-                                            Nail Shop
-                                        </span>
-                                    </div>
-                                </Link>
-                                <button onClick={() => setIsMobileMenuOpen(false)} className="text-gold-brand/60 hover:text-gold-brand p-2 bg-white/5 rounded-full transition-colors">
-                                    <X size={20} />
-                                </button>
-                            </div>
-                            <div className="flex-1 overflow-y-auto px-8 py-10 space-y-2">
-                                <p className="text-[10px] uppercase tracking-[0.3em] text-gold-brand font-black mb-6">Menu de Navigation</p>
-                                {navLinks.map((link: any) => (
-                                    <div key={link.name} className="border-b border-gold-brand/5">
-                                        <div className="flex items-center justify-between">
-                                            <Link
-                                                href={link.href}
-                                                onClick={() => setIsMobileMenuOpen(false)}
-                                                className={`flex-grow py-4 text-lg font-serif transition-colors ${pathname === link.href ? 'text-gold-brand font-bold' : 'text-gold-brand/80 hover:text-gold-brand'
-                                                    }`}
-                                            >
-                                                {link.name}
-                                            </Link>
-                                            {link.subCategories?.length > 0 && (
-                                                <button
-                                                    onClick={() => setExpandedCategory(expandedCategory === link.name ? null : link.name)}
-                                                    className="p-4 text-gold-brand"
-                                                >
-                                                    <motion.div
-                                                        animate={{ rotate: expandedCategory === link.name ? 180 : 0 }}
-                                                    >
-                                                        ▼
-                                                    </motion.div>
-                                                </button>
-                                            )}
-                                        </div>
-
+        {/* Mobile Menu Overlay */}
+        <AnimatePresence>
+            {isMobileMenuOpen && (
+                <>
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="fixed inset-0 bg-encre/80 backdrop-blur-md z-[1001]"
+                    />
+                    <motion.div
+                        initial={{ x: '-100%' }}
+                        animate={{ x: 0 }}
+                        exit={{ x: '-100%' }}
+                        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                        className="fixed inset-y-0 left-0 w-[80%] max-w-sm bg-rouge-brand z-[1002] flex flex-col shadow-[10px_0_30px_rgba(0,0,0,0.5)] overflow-hidden"
+                    >
+                        <div className="p-8 border-b border-gold-brand/10 flex justify-between items-center bg-rouge-brand/50 backdrop-blur-md">
+                            <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center space-x-3">
+                                <div className="flex flex-col text-left pl-2">
+                                    <span className="font-italiana text-2xl font-normal leading-none text-gold-brand tracking-[0.15em] uppercase">
+                                        MEEY
+                                    </span>
+                                    <span className="font-playfair text-[9px] font-normal italic tracking-[0.25em] uppercase text-creme/60 leading-none mt-1.5">
+                                        Nail Shop
+                                    </span>
+                                </div>
+                            </Link>
+                            <button onClick={() => setIsMobileMenuOpen(false)} className="text-gold-brand/60 hover:text-gold-brand p-2 bg-white/5 rounded-full transition-colors">
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto px-8 py-10 space-y-2">
+                            <p className="text-[10px] uppercase tracking-[0.3em] text-gold-brand font-black mb-6">Menu de Navigation</p>
+                            {navLinks.map((link: any) => (
+                                <div key={link.name} className="border-b border-gold-brand/5">
+                                    <div className="flex items-center justify-between">
+                                        <Link
+                                            href={link.href}
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className={`flex-grow py-4 text-lg font-serif transition-colors ${pathname === link.href ? 'text-gold-brand font-bold' : 'text-gold-brand/80 hover:text-gold-brand'
+                                                }`}
+                                        >
+                                            {link.name}
+                                        </Link>
                                         {link.subCategories?.length > 0 && (
-                                            <AnimatePresence>
-                                                {expandedCategory === link.name && (
-                                                    <motion.div
-                                                        initial={{ height: 0, opacity: 0 }}
-                                                        animate={{ height: 'auto', opacity: 1 }}
-                                                        exit={{ height: 0, opacity: 0 }}
-                                                        className="pl-6 pb-4 flex flex-col space-y-3 overflow-hidden"
-                                                    >
-                                                        {link.subCategories.map((sub: any) => (
-                                                            <Link
-                                                                key={sub.id}
-                                                                href={`/categories/${link.href.split('/').pop()}/${sub.slug}`}
-                                                                onClick={() => setIsMobileMenuOpen(false)}
-                                                                className="py-2 text-sm text-gold-brand/60 hover:text-gold-brand transition-colors font-serif border-l border-gold-brand/10 pl-4"
-                                                            >
-                                                                — {sub.name}
-                                                            </Link>
-                                                        ))}
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
+                                            <button
+                                                onClick={() => setExpandedCategory(expandedCategory === link.name ? null : link.name)}
+                                                className="p-4 text-gold-brand"
+                                            >
+                                                <motion.div
+                                                    animate={{ rotate: expandedCategory === link.name ? 180 : 0 }}
+                                                >
+                                                    ▼
+                                                </motion.div>
+                                            </button>
                                         )}
                                     </div>
-                                ))}
-                                <Link
-                                    href="/favoris"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="flex items-center justify-between py-4 text-lg font-serif text-gold-brand/80 hover:text-gold-brand transition-all duration-300 border-b border-gold-brand/5"
-                                >
-                                    <span>Mes Favoris</span>
-                                    {wishlistItemsCount > 0 && (
-                                        <span className="bg-gold-brand text-rouge-brand text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm">
-                                            {wishlistItemsCount}
-                                        </span>
+
+                                    {link.subCategories?.length > 0 && (
+                                        <AnimatePresence>
+                                            {expandedCategory === link.name && (
+                                                <motion.div
+                                                    initial={{ height: 0, opacity: 0 }}
+                                                    animate={{ height: 'auto', opacity: 1 }}
+                                                    exit={{ height: 0, opacity: 0 }}
+                                                    className="pl-6 pb-4 flex flex-col space-y-3 overflow-hidden"
+                                                >
+                                                    {link.subCategories.map((sub: any) => (
+                                                        <Link
+                                                            key={sub.id}
+                                                            href={`/categories/${link.href.split('/').pop()}/${sub.slug}`}
+                                                            onClick={() => setIsMobileMenuOpen(false)}
+                                                            className="py-2 text-sm text-gold-brand/60 hover:text-gold-brand transition-colors font-serif border-l border-gold-brand/10 pl-4"
+                                                        >
+                                                            — {sub.name}
+                                                        </Link>
+                                                    ))}
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
                                     )}
-                                </Link>
-                            </div>
+                                </div>
+                            ))}
+                            <Link
+                                href="/favoris"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="flex items-center justify-between py-4 text-lg font-serif text-gold-brand/80 hover:text-gold-brand transition-all duration-300 border-b border-gold-brand/5"
+                            >
+                                <span>Mes Favoris</span>
+                                {wishlistItemsCount > 0 && (
+                                    <span className="bg-gold-brand text-rouge-brand text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm">
+                                        {wishlistItemsCount}
+                                    </span>
+                                )}
+                            </Link>
+                        </div>
 
 
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
+                    </motion.div>
+                </>
+            )}
+        </AnimatePresence>
 
-            {/* Search Overlay */}
-            <SearchOverlay 
-                isOpen={isSearchOpen} 
-                onClose={() => setIsSearchOpen(false)} 
-                allCategories={categories}
-            />
-        </nav>
-    );
+        {/* Search Overlay */}
+        <SearchOverlay 
+            isOpen={isSearchOpen} 
+            onClose={() => setIsSearchOpen(false)} 
+            allCategories={categories}
+        />
+    </>
+);
 }
