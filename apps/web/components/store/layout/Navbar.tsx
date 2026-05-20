@@ -69,7 +69,7 @@ export default function Navbar() {
                 <Link href="/" className="flex items-center group lg:mr-0 pl-2 lg:pl-0">
                     <div className={`relative transition-all duration-500 hover:scale-105 ${isScrolled ? 'w-[75px] h-[75px] md:w-[95px] md:h-[95px]' : 'w-[85px] h-[85px] md:w-[115px] md:h-[115px]'}`}>
                         <Image
-                            src="/logo2.png"
+                            src="/icon.png"
                             alt="MEEY"
                             fill
                             className="object-contain drop-shadow-[0_0_20px_rgba(0,0,0,0.3)]"
@@ -238,7 +238,7 @@ export default function Navbar() {
                                 <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center space-x-3">
                                     <div className="relative w-[80px] h-[80px] rounded-full overflow-hidden">
                                         <Image
-                                            src="/logo2.png"
+                                            src="/icon.png"
                                             alt="MEEY"
                                             fill
                                             className="object-contain"

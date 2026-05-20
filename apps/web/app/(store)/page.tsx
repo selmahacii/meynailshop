@@ -46,11 +46,19 @@ export default function HomePage() {
             <HeroSection />
 
             {/* Nos Catégories */}
-            <section className="py-16 md:py-28 container mx-auto px-6 sm:px-12 md:px-16">
-                <div className="flex flex-col items-center mb-12 md:mb-20 text-center">
-                    <span className="text-gold-brand/80 text-[10px] font-bold uppercase tracking-[0.3em] mb-3">L'excellence au bout des doigts</span>
-                    <h2 className="font-italiana text-4xl md:text-5xl lg:text-6xl text-encre tracking-[0.05em] uppercase">Nos Collections</h2>
-                    <div className="w-12 h-[1px] bg-gold-brand/50 mt-4"></div>
+            <section className="py-20 md:py-32 container mx-auto px-6 sm:px-12 md:px-16">
+                <div className="flex flex-col items-center mb-16 md:mb-24 text-center">
+                    <div className="flex items-center gap-3 mb-4">
+                        <span className="text-[10px] font-bold tracking-[0.4em] text-gold-brand">01</span>
+                        <div className="w-8 h-[1px] bg-gold-brand/30"></div>
+                        <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold-brand">LES COLLECTIONS</span>
+                    </div>
+                    <h2 className="font-italiana text-4xl md:text-6xl text-[#390102] tracking-[0.08em] uppercase">
+                        Nos Univers <span className="font-playfair italic lowercase text-gold-brand">de</span> Beauté
+                    </h2>
+                    <p className="font-playfair italic font-light text-sm md:text-base text-encre3 mt-4 max-w-md mx-auto leading-relaxed">
+                        Chaque gamme incarne notre quête absolue d'excellence et d'innovation pour vos créations d'exception.
+                    </p>
                 </div>
 
                 {loading && categories.length === 0 ? (
@@ -115,13 +123,21 @@ export default function HomePage() {
             </section>
 
             {/* Meilleures Ventes */}
-            <section className="py-16 md:py-28 bg-gradient-to-b from-creme2/50 to-creme border-t border-gold-brand/5">
+            <section className="py-20 md:py-32 bg-gradient-to-b from-creme2/40 via-white to-creme border-t border-gold-brand/5">
                 <div className="container mx-auto px-6 sm:px-12 md:px-16">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 md:mb-16 gap-6">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
                         <div>
-                            <span className="text-gold-brand/80 text-[10px] font-bold uppercase tracking-[0.3em] mb-2 block">Vos coups de cœur</span>
-                            <h2 className="font-italiana text-4xl md:text-5xl text-encre tracking-[0.05em] uppercase leading-tight">Meilleures Ventes</h2>
-                            <p className="font-playfair italic font-light text-sm text-encre3 mt-2">Les indispensables plébiscités par nos artistes</p>
+                            <div className="flex items-center gap-3 mb-4">
+                                <span className="text-[10px] font-bold tracking-[0.4em] text-gold-brand">02</span>
+                                <div className="w-8 h-[1px] bg-gold-brand/30"></div>
+                                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold-brand">ICÔNES DE LA MAISON</span>
+                            </div>
+                            <h2 className="font-italiana text-4xl md:text-5xl text-[#390102] tracking-[0.08em] uppercase leading-tight">
+                                Les Meilleures <span className="font-playfair italic lowercase text-gold-brand">ventes</span>
+                            </h2>
+                            <p className="font-playfair italic font-light text-sm text-encre3 mt-3">
+                                Les indispensables et favoris plébiscités par nos artistes les plus exigeants.
+                            </p>
                         </div>
                         <Link href="/catalogue?badge=top" className="group/btn text-rouge-mid font-black uppercase tracking-[0.2em] text-xs hover:text-rouge transition-all flex items-center gap-1.5 py-1">
                             <span className="relative">
@@ -133,25 +149,28 @@ export default function HomePage() {
                         </Link>
                     </div>
 
-                    {loading && featuredProducts.length === 0 ? (
-                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
-                            {[...Array(4)].map((_, i) => (
-                                <ProductCardSkeleton key={i} />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
-                            {featuredProducts.length > 0 ? (
-                                featuredProducts.slice(0, 4).map((product) => (
-                                    <ProductCard key={product.id} product={product} />
-                                ))
-                            ) : (
-                                <div className="col-span-full text-center py-12 text-encre3 italic">
-                                    Aucun produit disponible pour le moment.
-                                </div>
-                            )}
-                        </div>
-                    )}
+                    {/* Luxurious Product Showcase Container */}
+                    <div className="relative p-6 sm:p-10 rounded-[32px] bg-white/60 backdrop-blur-md border border-gold-brand/10 shadow-2xl shadow-gold-brand/5 overflow-hidden">
+                        {loading && featuredProducts.length === 0 ? (
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                                {[...Array(4)].map((_, i) => (
+                                    <ProductCardSkeleton key={i} />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 relative z-10">
+                                {featuredProducts.length > 0 ? (
+                                    featuredProducts.slice(0, 4).map((product) => (
+                                        <ProductCard key={product.id} product={product} />
+                                    ))
+                                ) : (
+                                    <div className="col-span-full text-center py-16 text-encre3 italic font-playfair">
+                                        Aucun produit d'exception disponible pour le moment.
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </section>
         </div>

@@ -29,12 +29,28 @@ export default function Footer() {
     return (
         <footer className="bg-rouge-brand text-gold-brand pt-20 pb-10 border-t border-gold-brand/10">
             <div className="container mx-auto px-6 sm:px-12 md:px-16">
+                {/* Brand Promises Banner */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-8 mb-16 border-b border-gold-brand/10 text-center relative z-10">
+                    <div className="flex flex-col items-center space-y-2">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold-brand">Livraison Privilège</span>
+                        <p className="text-[11px] text-gold-brand/60 font-playfair italic">Gratuite dès 8000 DA en Algérie</p>
+                    </div>
+                    <div className="flex flex-col items-center space-y-2 border-y md:border-y-0 md:border-x border-gold-brand/10 py-6 md:py-0">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold-brand">Service Clientèle</span>
+                        <p className="text-[11px] text-gold-brand/60 font-playfair italic">Conseils d'experts & assistance personnalisée</p>
+                    </div>
+                    <div className="flex flex-col items-center space-y-2">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold-brand">Art & Savoir-Faire</span>
+                        <p className="text-[11px] text-gold-brand/60 font-playfair italic">Produits premium testés par nos nail artistes</p>
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
                     {/* Brand Info */}
                     <div className="space-y-6 flex flex-col items-center md:items-start text-center md:text-left">
                         <Link href="/" className="relative w-[110px] h-[110px] block transition-transform hover:scale-105">
                             <Image
-                                src="/logo2.png"
+                                src="/icon.png"
                                 alt="MEEY"
                                 fill
                                 className="object-contain"
