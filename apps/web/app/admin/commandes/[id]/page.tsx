@@ -110,11 +110,11 @@ export default function OrderDetailsPage() {
 
     if (error || !order) {
         return (
-            <div className="p-8 text-center bg-rouge-deep/5 rounded-sm border border-rouge-deep/10">
+            <div className="p-8 text-center bg-rouge-deep/5 rounded-xl border border-rouge-deep/10">
                 <XCircle className="w-12 h-12 text-rouge-deep mx-auto mb-4" />
                 <h2 className="text-xl font-serif text-encre mb-2">Oups !</h2>
                 <p className="text-encre3 mb-6">{error || 'Cette commande semble avoir disparu.'}</p>
-                <Link href="/admin/commandes" className="px-6 py-2 bg-encre text-creme rounded-sm text-xs font-bold uppercase tracking-widest">
+                <Link href="/admin/commandes" className="px-6 py-2 bg-encre text-creme rounded-xl text-xs font-bold uppercase tracking-widest">
                     Retour aux commandes
                 </Link>
             </div>
@@ -139,12 +139,12 @@ export default function OrderDetailsPage() {
                         <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-2">
                             <h1 className="text-2xl md:text-3xl font-serif text-encre">#{order.orderNumber}</h1>
                             <div className="flex flex-wrap gap-2">
-                                <span className={cn("px-3 py-1 rounded-sm text-[9px] md:text-[10px] font-black uppercase tracking-widest shadow-sm flex items-center space-x-2", statusInfo.color)}>
+                                <span className={cn("px-3 py-1 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest shadow-sm flex items-center space-x-2", statusInfo.color)}>
                                     <StatusIcon size={12} />
                                     <span>{statusInfo.label}</span>
                                 </span>
                                 <span className={cn(
-                                    "px-3 py-1 rounded-sm text-[9px] md:text-[10px] font-black uppercase tracking-widest shadow-sm flex items-center space-x-2",
+                                    "px-3 py-1 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest shadow-sm flex items-center space-x-2",
                                     order.deliveryType === 'home' ? "bg-blue-50 text-blue-600" : "bg-orange-50 text-orange-600"
                                 )}>
                                     {order.deliveryType === 'office' ? <Briefcase size={12} /> : <Home size={12} />}
@@ -166,7 +166,7 @@ export default function OrderDetailsPage() {
                              <button
                                 onClick={() => updateStatus('delivered')}
                                 disabled={updating}
-                                className="flex items-center space-x-2 px-5 md:px-8 py-2.5 md:py-3 bg-green-700 text-white rounded-sm text-[10px] md:text-sm font-black uppercase tracking-widest hover:bg-green-800 transition-all shadow-xl border border-green-900 group/btn"
+                                className="flex items-center space-x-2 px-5 md:px-8 py-2.5 md:py-3 bg-green-700 text-white rounded-xl text-[10px] md:text-sm font-black uppercase tracking-widest hover:bg-green-800 transition-all shadow-xl border border-green-900 group/btn"
                             >
                                 <CheckCircle2 size={16} className="group-hover/btn:scale-110 transition-transform" />
                                 <span>{updating ? '...' : (window.innerWidth < 640 ? 'LIVRÉE' : 'Marquer comme Livrée')}</span>
@@ -174,7 +174,7 @@ export default function OrderDetailsPage() {
                              <button
                                 onClick={() => updateStatus('returned')}
                                 disabled={updating}
-                                className="flex items-center space-x-2 px-5 md:px-8 py-2.5 md:py-3 bg-rouge-deep text-white rounded-sm text-[10px] md:text-sm font-black uppercase tracking-widest hover:bg-black transition-all shadow-xl border border-rouge-deep group/btn"
+                                className="flex items-center space-x-2 px-5 md:px-8 py-2.5 md:py-3 bg-rouge-deep text-white rounded-xl text-[10px] md:text-sm font-black uppercase tracking-widest hover:bg-black transition-all shadow-xl border border-rouge-deep group/btn"
                             >
                                 <RotateCcw size={16} className="group-hover/btn:rotate-[-45deg] transition-transform" />
                                 <span>{updating ? '...' : (window.innerWidth < 640 ? 'RETOUR' : 'Signaler Retour')}</span>
@@ -185,7 +185,7 @@ export default function OrderDetailsPage() {
                     <div className="relative">
                         <button 
                             onClick={() => setIsStatusOpen(!isStatusOpen)}
-                            className="flex items-center space-x-2 px-5 md:px-6 py-2.5 bg-encre text-creme rounded-sm text-[10px] md:text-sm font-bold uppercase tracking-widest hover:bg-black transition-all shadow-md"
+                            className="flex items-center space-x-2 px-5 md:px-6 py-2.5 bg-encre text-creme rounded-xl text-[10px] md:text-sm font-bold uppercase tracking-widest hover:bg-black transition-all shadow-md"
                         >
                             <span>Changer Statut</span>
                             <ChevronDown size={14} className={cn("transition-transform duration-200", isStatusOpen && "rotate-180")} />
@@ -199,7 +199,7 @@ export default function OrderDetailsPage() {
                                     onClick={() => setIsStatusOpen(false)}
                                 />
                                 
-                                <div className="absolute right-0 md:left-auto top-full mt-2 w-56 bg-white border border-creme2 shadow-2xl rounded-sm z-[70] animate-in fade-in slide-in-from-top-2 duration-200 overflow-hidden">
+                                <div className="absolute right-0 md:left-auto top-full mt-2 w-56 bg-white border border-creme2 shadow-2xl rounded-xl z-[70] animate-in fade-in slide-in-from-top-2 duration-200 overflow-hidden">
                                     {['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'returned', 'cancelled'].map((s) => (
                                         <button
                                             key={s}
@@ -227,7 +227,7 @@ export default function OrderDetailsPage() {
                 {/* Left Column - Product Details */}
                 <div className="lg:col-span-2 space-y-8">
                     {/* Products Table */}
-                    <div className="bg-white border border-creme2 rounded-sm shadow-lg overflow-hidden">
+                    <div className="bg-white border border-creme2 rounded-xl shadow-lg overflow-hidden">
                         <div className="p-6 border-b border-creme2 bg-creme/5">
                             <h3 className="text-sm font-black uppercase tracking-widest text-encre flex items-center space-x-2">
                                 <Package size={16} className="text-or" />
@@ -249,7 +249,7 @@ export default function OrderDetailsPage() {
                                         <tr key={item.id} className="group hover:bg-creme/5 transition-colors">
                                             <td className="px-6 py-6">
                                                 <div className="flex items-center space-x-4">
-                                                    <div className="w-16 h-16 bg-creme rounded-sm overflow-hidden flex-shrink-0 border border-creme2">
+                                                    <div className="w-16 h-16 bg-creme rounded-xl overflow-hidden flex-shrink-0 border border-creme2">
                                                         <img 
                                                             src={item.productImage} 
                                                             alt={item.productName} 
@@ -262,9 +262,9 @@ export default function OrderDetailsPage() {
                                                     <div>
                                                         <p className="text-sm font-bold text-encre line-clamp-1">{item.productName}</p>
                                                         <div className="flex flex-wrap items-center gap-2 mt-1">
-                                                            <p className="text-[10px] text-encre3 font-mono uppercase tracking-widest border border-creme2 px-2 py-0.5 rounded-sm bg-creme/20">SKU: {item.productSku}</p>
+                                                            <p className="text-[10px] text-encre3 font-mono uppercase tracking-widest border border-creme2 px-2 py-0.5 rounded-xl bg-creme/20">SKU: {item.productSku}</p>
                                                             {item.variantSku && item.variantSku !== item.productSku && (
-                                                                <p className="text-[9px] font-black text-rouge-deep uppercase bg-rouge-deep/5 px-2 py-0.5 rounded-sm animate-pulse tracking-widest">Référence: {item.variantSku}</p>
+                                                                <p className="text-[9px] font-black text-rouge-deep uppercase bg-rouge-deep/5 px-2 py-0.5 rounded-xl animate-pulse tracking-widest">Référence: {item.variantSku}</p>
                                                             )}
                                                         </div>
                                                     </div>
@@ -274,7 +274,7 @@ export default function OrderDetailsPage() {
                                                 {Number(item.unitPrice).toLocaleString()} DA
                                             </td>
                                             <td className="px-6 py-6 text-center">
-                                                <span className="inline-flex items-center justify-center w-8 h-8 bg-creme border border-creme2 rounded-sm text-sm font-black text-encre">
+                                                <span className="inline-flex items-center justify-center w-8 h-8 bg-creme border border-creme2 rounded-xl text-sm font-black text-encre">
                                                     {item.quantity}
                                                 </span>
                                             </td>
@@ -291,7 +291,7 @@ export default function OrderDetailsPage() {
                         <div className="md:hidden divide-y divide-creme2">
                             {order.items?.map((item: any) => (
                                 <div key={item.id} className="p-4 flex space-x-4">
-                                    <div className="w-20 h-24 bg-creme rounded-sm overflow-hidden flex-shrink-0 border border-creme2">
+                                    <div className="w-20 h-24 bg-creme rounded-xl overflow-hidden flex-shrink-0 border border-creme2">
                                         <img 
                                             src={item.productImage} 
                                             alt={item.productName} 
@@ -356,12 +356,12 @@ export default function OrderDetailsPage() {
 
                     {/* Order Notes / Timeline (Optional) */}
                     {order.notes && (
-                        <div className="bg-white p-8 border border-creme2 rounded-sm shadow-lg">
+                        <div className="bg-white p-8 border border-creme2 rounded-xl shadow-lg">
                             <h3 className="text-xs font-black uppercase tracking-widest text-encre mb-4 flex items-center space-x-2">
                                 <FileText size={16} className="text-or" />
                                 <span>Note du client</span>
                             </h3>
-                            <p className="text-sm text-encre3 italic leading-relaxed bg-creme/20 p-4 rounded-sm border border-creme2">
+                            <p className="text-sm text-encre3 italic leading-relaxed bg-creme/20 p-4 rounded-xl border border-creme2">
                                 "{order.notes}"
                             </p>
                         </div>
@@ -371,7 +371,7 @@ export default function OrderDetailsPage() {
                 {/* Right Column - Customer & Info */}
                 <div className="space-y-8">
                     {/* Customer Info */}
-                    <div className="bg-white border border-creme2 rounded-sm shadow-lg overflow-hidden">
+                    <div className="bg-white border border-creme2 rounded-xl shadow-lg overflow-hidden">
                         <div className="p-6 border-b border-creme2 bg-[#1A0A0A] text-creme">
                             <h3 className="text-[10px] font-black uppercase tracking-widest flex items-center space-x-2">
                                 <User size={14} className="text-or" />
@@ -407,7 +407,7 @@ export default function OrderDetailsPage() {
                     </div>
 
                     {/* Shipping Address */}
-                    <div className="bg-white border border-creme2 rounded-sm shadow-lg overflow-hidden">
+                    <div className="bg-white border border-creme2 rounded-xl shadow-lg overflow-hidden">
                         <div className="p-6 border-b border-creme2 bg-[#1A0A0A] text-creme">
                             <h3 className="text-[10px] font-black uppercase tracking-widest flex items-center space-x-2">
                                 <MapPin size={14} className="text-or" />
@@ -437,7 +437,7 @@ export default function OrderDetailsPage() {
                     </div>
 
                     {/* Payment Info */}
-                    <div className="bg-white border border-creme2 rounded-sm shadow-lg overflow-hidden">
+                    <div className="bg-white border border-creme2 rounded-xl shadow-lg overflow-hidden">
                         <div className="p-6 border-b border-creme2 bg-[#1A0A0A] text-creme">
                             <h3 className="text-[10px] font-black uppercase tracking-widest flex items-center space-x-2">
                                 <CreditCard size={14} className="text-or" />
@@ -454,7 +454,7 @@ export default function OrderDetailsPage() {
                             <div className="flex items-center justify-between">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-encre3">Statut</span>
                                 <span className={cn(
-                                    "px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-sm",
+                                    "px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm",
                                     order.paymentStatus === 'paid' ? "bg-green-100 text-green-700" : "bg-rouge-deep/10 text-rouge-mid"
                                 )}>
                                     {order.paymentStatus === 'paid' ? 'Payé' : 'En attente'}

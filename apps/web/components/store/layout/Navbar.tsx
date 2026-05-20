@@ -54,20 +54,24 @@ export default function Navbar() {
     ];
 
     const isLight = pathname !== '/' || isScrolled;
+    const isCatalogue = pathname === '/catalogue';
+    const isNavbarLight = isLight && !isCatalogue;
 
     return (
         <nav
             className={`fixed top-0 w-full z-[1000] transition-all duration-500 ${
-                isLight 
-                    ? 'bg-creme/95 backdrop-blur-xl border-b border-gold-brand/15 py-1.5 shadow-md' 
-                    : 'bg-transparent py-4 border-b border-white/5'
+                isCatalogue
+                    ? 'bg-rouge-brand/95 backdrop-blur-xl border-b border-gold-brand/15 py-1.5 shadow-md'
+                    : isNavbarLight 
+                        ? 'bg-creme/95 backdrop-blur-xl border-b border-gold-brand/15 py-1.5 shadow-md' 
+                        : 'bg-transparent py-4 border-b border-white/5'
             }`}
         >
             <div className="w-full px-6 sm:px-10 md:px-12 lg:px-16 flex items-center justify-between">
                 {/* Mobile Menu Toggle */}
                 <button
                     className={`lg:hidden p-2.5 -ml-2 rounded-full transition-all active:scale-95 ${
-                        isLight ? 'text-encre hover:bg-encre/5' : 'text-gold-brand hover:bg-white/5'
+                        isNavbarLight ? 'text-encre hover:bg-encre/5' : 'text-gold-brand hover:bg-white/5'
                     }`}
                     onClick={() => setIsMobileMenuOpen(true)}
                 >
@@ -77,12 +81,12 @@ export default function Navbar() {
                 <Link href="/" className="flex items-center group lg:mr-0 pl-2 lg:pl-0 transition-transform duration-300 hover:scale-[1.02]">
                     <div className="flex flex-col text-left">
                         <span className={`font-italiana text-2xl md:text-3xl font-normal leading-none tracking-[0.15em] uppercase transition-colors duration-300 ${
-                            isLight ? 'text-rouge-brand' : 'text-gold-brand'
+                            isNavbarLight ? 'text-rouge-brand' : 'text-gold-brand'
                         }`}>
                             MEEY
                         </span>
                         <span className={`font-playfair text-[9px] md:text-[10px] font-normal italic tracking-[0.25em] uppercase leading-none mt-1 transition-colors duration-300 ${
-                            isLight ? 'text-encre2' : 'text-creme/60'
+                            isNavbarLight ? 'text-encre2' : 'text-creme/60'
                         }`}>
                             Nail Shop
                         </span>
@@ -101,7 +105,7 @@ export default function Navbar() {
                             <Link
                                 href={link.href}
                                 className={`relative text-[11px] md:text-[12px] font-bold uppercase tracking-[0.22em] transition-colors duration-300 py-2.5 flex items-center gap-1.5 ${
-                                    isLight 
+                                    isNavbarLight 
                                         ? (pathname === link.href ? 'text-rouge-brand' : 'text-encre/70 hover:text-rouge-brand') 
                                         : (pathname === link.href ? 'text-white' : 'text-gold-brand hover:text-white')
                                 }`}
@@ -119,14 +123,14 @@ export default function Navbar() {
                                     <motion.div
                                         layoutId="activeNavIndicator"
                                         className={`absolute bottom-0 left-0 right-0 h-[2px] rounded-full ${
-                                            isLight ? 'bg-rouge-brand' : 'bg-gold-brand'
+                                            isNavbarLight ? 'bg-rouge-brand' : 'bg-gold-brand'
                                         }`}
                                         transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                                     />
                                 )}
                                 {pathname !== link.href && (
                                     <span className={`absolute bottom-0 left-0 right-0 h-[2px] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full ${
-                                        isLight ? 'bg-rouge-brand' : 'bg-gold-brand'
+                                        isNavbarLight ? 'bg-rouge-brand' : 'bg-gold-brand'
                                     }`} />
                                 )}
                             </Link>
@@ -164,7 +168,7 @@ export default function Navbar() {
                     <button
                         onClick={() => setIsSearchOpen(true)}
                         className={`relative p-2.5 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 ${
-                            isLight 
+                            isNavbarLight 
                                 ? 'text-encre hover:text-rouge-brand hover:bg-rouge-brand/5' 
                                 : 'text-gold-brand hover:text-white hover:bg-white/5'
                         }`}
@@ -176,7 +180,7 @@ export default function Navbar() {
                     <Link 
                         href="/favoris" 
                         className={`relative p-2.5 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 ${
-                            isLight 
+                            isNavbarLight 
                                 ? 'text-encre hover:text-rouge-brand hover:bg-rouge-brand/5' 
                                 : 'text-gold-brand hover:text-white hover:bg-white/5'
                         }`}
@@ -184,7 +188,7 @@ export default function Navbar() {
                         <Heart size={20} strokeWidth={1.5} />
                         {wishlistItemsCount > 0 && (
                             <span className={`absolute top-1.5 right-1.5 text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-lg border ${
-                                isLight 
+                                isNavbarLight 
                                     ? 'bg-rouge-brand text-creme border-creme2/20' 
                                     : 'bg-gold-brand text-rouge-brand border-[#390102]/20'
                             }`}>
@@ -225,7 +229,7 @@ export default function Navbar() {
                             }
                         }}
                         className={`relative p-2.5 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 ${
-                            isLight 
+                            isNavbarLight 
                                 ? 'text-encre hover:text-rouge-brand hover:bg-rouge-brand/5' 
                                 : 'text-gold-brand hover:text-white hover:bg-white/5'
                         }`}
@@ -237,7 +241,7 @@ export default function Navbar() {
                     <Link 
                         href="/panier" 
                         className={`relative p-2.5 rounded-full transition-all duration-300 hover:scale-110 active:scale-95 ${
-                            isLight 
+                            isNavbarLight 
                                 ? 'text-encre hover:text-rouge-brand hover:bg-rouge-brand/5' 
                                 : 'text-gold-brand hover:text-white hover:bg-white/5'
                         }`}
@@ -245,7 +249,7 @@ export default function Navbar() {
                         <ShoppingBag size={20} strokeWidth={1.5} />
                         {cartItemsCount > 0 && (
                             <span className={`absolute top-1.5 right-1.5 text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-lg border ${
-                                isLight 
+                                isNavbarLight 
                                     ? 'bg-rouge-brand text-creme border-creme2/20' 
                                     : 'bg-gold-brand text-rouge-brand border-[#390102]/20'
                             }`}>

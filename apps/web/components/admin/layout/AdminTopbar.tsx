@@ -25,7 +25,7 @@ export default function AdminTopbar({ onMenuClick }: { onMenuClick?: () => void 
     };
 
     return (
-        <header className="h-16 bg-white border-b border-creme2 sticky top-0 z-40 px-4 md:px-8 flex items-center justify-between">
+        <header className="h-16 bg-white/95 backdrop-blur-xl border-b border-gold-brand/10 sticky top-0 z-40 px-4 md:px-8 flex items-center justify-between shadow-sm">
             <div className="flex items-center flex-grow max-w-md">
                 <button 
                     onClick={onMenuClick}
@@ -39,7 +39,7 @@ export default function AdminTopbar({ onMenuClick }: { onMenuClick?: () => void 
                     </div>
                     <input
                         type="text"
-                        className="block w-full pl-10 pr-3 py-2 border border-creme2 rounded-sm text-sm placeholder-encre3/40 focus:outline-none focus:ring-1 focus:ring-or focus:border-or transition-all"
+                        className="block w-full pl-10 pr-3 py-2 border border-gold-brand/20 bg-[#FAF9F6]/50 rounded-xl text-sm placeholder-encre3/40 focus:outline-none focus:ring-1 focus:ring-or focus:border-or focus:bg-white transition-all duration-300 shadow-sm"
                         placeholder="Rechercher..."
                     />
                 </div>
@@ -49,18 +49,18 @@ export default function AdminTopbar({ onMenuClick }: { onMenuClick?: () => void 
                 <Link
                     href="/"
                     target="_blank"
-                    className="flex items-center text-[10px] md:text-sm font-black uppercase tracking-widest text-encre2 hover:text-rouge-brand transition-all border border-creme2 bg-creme2/20 px-3 py-2 rounded-full md:border-0 md:bg-transparent md:px-0 md:py-0"
+                    className="flex items-center text-[10px] md:text-xs font-bold uppercase tracking-widest text-encre2 hover:text-rouge-brand transition-all border border-gold-brand/25 bg-[#FAF9F6] px-4 py-2 rounded-full hover:shadow-sm"
                 >
                     <Globe size={16} className="mr-2 text-or" />
                     <span className="hidden xs:inline md:inline">Boutique</span>
                 </Link>
 
-                <div className="h-8 w-[1px] bg-creme2 hidden md:block"></div>
+                <div className="h-8 w-[1px] bg-gold-brand/15 hidden md:block"></div>
 
                 {/* Notifications Center */}
                 <AdminNotifications />
 
-                <div className="h-8 w-[1px] bg-creme2 hidden sm:block"></div>
+                <div className="h-8 w-[1px] bg-gold-brand/15 hidden sm:block"></div>
 
                 <div className="relative">
                     <button

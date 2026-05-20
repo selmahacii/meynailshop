@@ -211,7 +211,7 @@ export default function ProductCreatePage() {
                     <button 
                         type="submit"
                         disabled={saving || loadingCategories}
-                        className="w-full md:w-auto px-6 md:px-8 py-3 bg-[#1A0A0A] text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-black transition-all shadow-xl flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full md:w-auto px-6 md:px-8 py-3 bg-[#1A0A0A] text-creme rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-black transition-all shadow-xl flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {saving ? <Loader size={16} className="animate-spin mr-2" /> : <Save size={16} className="mr-2 text-or" />}
                         <span>{saving ? 'Création...' : loadingCategories ? 'Chargement...' : 'Créer'}</span>
@@ -222,7 +222,7 @@ export default function ProductCreatePage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-8">
                     {/* General Info */}
-                    <div className="bg-white border border-creme2 rounded-sm shadow-xl overflow-hidden">
+                    <div className="bg-white border border-creme2 rounded-xl shadow-xl overflow-hidden">
                         <div className="p-6 border-b border-creme2 bg-creme/5 flex items-center space-x-3">
                             <Package size={18} className="text-or" />
                             <h2 className="text-xs font-black uppercase tracking-widest text-encre">Informations Générales</h2>
@@ -237,7 +237,7 @@ export default function ProductCreatePage() {
                                         placeholder="Ex: Vernis OPI Red"
                                         value={product.name}
                                         onChange={(e) => setProduct({...product, name: e.target.value})}
-                                        className="w-full p-4 bg-creme2/20 border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all font-medium"
+                                        className="w-full p-4 bg-creme2/20 border border-creme2 rounded-xl text-sm focus:border-or outline-none transition-all font-medium"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -247,7 +247,7 @@ export default function ProductCreatePage() {
                                         readOnly
                                         placeholder="Généré automatiquement (ex: MEEY-001)"
                                         onClick={() => toast.info("L'identifiant SKU MEEY est généré automatiquement lors de la création et ne peut pas être modifié.")}
-                                        className="w-full p-4 bg-creme2/10 border border-creme2 border-dashed rounded-sm text-sm text-encre3 font-mono italic cursor-pointer outline-none"
+                                        className="w-full p-4 bg-creme2/10 border border-creme2 border-dashed rounded-xl text-sm text-encre3 font-mono italic cursor-pointer outline-none"
                                     />
                                 </div>
                             </div>
@@ -258,7 +258,7 @@ export default function ProductCreatePage() {
                                     placeholder="Résumé accrocheur pour la boutique (ex: Vernis rouge passion tenue longue durée...)"
                                     value={product.shortDescription}
                                     onChange={(e) => setProduct({...product, shortDescription: e.target.value})}
-                                    className="w-full p-4 bg-creme2/20 border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all"
+                                    className="w-full p-4 bg-creme2/20 border border-creme2 rounded-xl text-sm focus:border-or outline-none transition-all"
                                 />
                             </div>
                             <div className="space-y-2">
@@ -268,14 +268,14 @@ export default function ProductCreatePage() {
                                     placeholder="Détails techniques, conseils d'application, ingrédients..."
                                     value={product.description}
                                     onChange={(e) => setProduct({...product, description: e.target.value})}
-                                    className="w-full p-4 bg-creme2/20 border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all"
+                                    className="w-full p-4 bg-creme2/20 border border-creme2 rounded-xl text-sm focus:border-or outline-none transition-all"
                                 />
                             </div>
                         </div>
                     </div>
 
                     {/* Images Section */}
-                    <div className="bg-white border border-creme2 rounded-sm shadow-xl overflow-hidden">
+                    <div className="bg-white border border-creme2 rounded-xl shadow-xl overflow-hidden">
                         <div className="p-6 border-b border-creme2 bg-creme/5 flex items-center justify-between">
                             <div className="flex items-center space-x-3">
                                 <ImageIcon size={18} className="text-or" />
@@ -291,7 +291,7 @@ export default function ProductCreatePage() {
                         <div className="p-8 space-y-8">
                             {/* Upload Buttons */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-creme2 rounded-sm hover:border-or hover:bg-creme/30 transition-all cursor-pointer group">
+                                <label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-creme2 rounded-xl hover:border-or hover:bg-creme/30 transition-all cursor-pointer group">
                                     <div className="w-12 h-12 rounded-full bg-creme flex items-center justify-center mb-3 group-hover:bg-or/10">
                                         <Plus size={24} className="text-encre3 group-hover:text-or" />
                                     </div>
@@ -312,7 +312,7 @@ export default function ProductCreatePage() {
                                         <input 
                                             type="text" 
                                             placeholder="https://..."
-                                            className="flex-grow p-4 bg-creme2/20 border border-creme2 rounded-sm text-sm focus:border-or outline-none"
+                                            className="flex-grow p-4 bg-creme2/20 border border-creme2 rounded-xl text-sm focus:border-or outline-none"
                                             onKeyDown={(e) => {
                                                 if (e.key === 'Enter') {
                                                     e.preventDefault();
@@ -333,7 +333,7 @@ export default function ProductCreatePage() {
                                                     input.value = '';
                                                 }
                                             }}
-                                            className="px-4 bg-encre text-creme text-[10px] font-bold uppercase tracking-widest rounded-sm"
+                                            className="px-4 bg-encre text-creme text-[10px] font-bold uppercase tracking-widest rounded-xl"
                                         >
                                             OK
                                         </button>
@@ -343,7 +343,7 @@ export default function ProductCreatePage() {
                             
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {product.images.map((img: string, i: number) => (
-                                    <div key={i} className="aspect-square bg-creme rounded-sm relative group overflow-hidden border border-creme2 shadow-sm">
+                                    <div key={i} className="aspect-square bg-creme rounded-xl relative group overflow-hidden border border-creme2 shadow-sm">
                                         <Image src={img} fill className="object-cover" alt="" />
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                             <button 
@@ -365,7 +365,7 @@ export default function ProductCreatePage() {
                     </div>
 
                     {/* Multi-References / Variants Section */}
-                    <div className="bg-white border border-creme2 rounded-sm shadow-xl overflow-hidden">
+                    <div className="bg-white border border-creme2 rounded-xl shadow-xl overflow-hidden">
                         <div className="p-6 border-b border-creme2 bg-creme/5 flex items-center justify-between">
                             <div className="flex items-center space-x-3">
                                 <Layers size={18} className="text-or" />
@@ -396,7 +396,7 @@ export default function ProductCreatePage() {
                             {product.hasVariants && (
                                 <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
                                     {product.variants.map((variant: any, index: number) => (
-                                        <div key={index} className="relative p-5 bg-creme/30 border border-creme2 rounded-sm space-y-4 hover:border-or transition-all">
+                                        <div key={index} className="relative p-5 bg-creme/30 border border-creme2 rounded-xl space-y-4 hover:border-or transition-all">
                                             <div className="flex items-center justify-between mb-2">
                                                 <span className="text-[10px] font-black uppercase tracking-widest text-or">Variante #{index + 1}</span>
                                                 <button
@@ -415,7 +415,7 @@ export default function ProductCreatePage() {
                                                         placeholder="MEY-001-RED"
                                                         value={variant.sku}
                                                         onChange={(e) => updateVariant(index, 'sku', e.target.value)}
-                                                        className="w-full p-3 bg-white border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all font-mono"
+                                                        className="w-full p-3 bg-white border border-creme2 rounded-xl text-sm focus:border-or outline-none transition-all font-mono"
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
@@ -425,7 +425,7 @@ export default function ProductCreatePage() {
                                                         placeholder="0"
                                                         value={variant.stock || 0}
                                                         onChange={(e) => updateVariant(index, 'stock', parseInt(e.target.value) || 0)}
-                                                        className="w-full p-3 bg-white border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all font-bold"
+                                                        className="w-full p-3 bg-white border border-creme2 rounded-xl text-sm focus:border-or outline-none transition-all font-bold"
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
@@ -435,7 +435,7 @@ export default function ProductCreatePage() {
                                                         placeholder="5"
                                                         value={variant.stockAlert || 5}
                                                         onChange={(e) => updateVariant(index, 'stockAlert', parseInt(e.target.value) || 0)}
-                                                        className="w-full p-3 bg-white border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all font-bold text-or"
+                                                        className="w-full p-3 bg-white border border-creme2 rounded-xl text-sm focus:border-or outline-none transition-all font-bold text-or"
                                                     />
                                                 </div>
                                             </div>
@@ -444,7 +444,7 @@ export default function ProductCreatePage() {
                                                 <label className="text-[9px] uppercase font-black tracking-widest text-encre3">Photo de la variante</label>
                                                 <div className="flex items-center gap-3">
                                                     {variant.image ? (
-                                                        <div className="relative w-16 h-16 rounded-sm border border-creme2 overflow-hidden shrink-0">
+                                                        <div className="relative w-16 h-16 rounded-xl border border-creme2 overflow-hidden shrink-0">
                                                             <Image src={variant.image} fill className="object-cover" alt="Variante" />
                                                             <button
                                                                 type="button"
@@ -455,7 +455,7 @@ export default function ProductCreatePage() {
                                                             </button>
                                                         </div>
                                                     ) : null}
-                                                    <label className="flex-grow flex items-center justify-center p-3 border-2 border-dashed border-creme2 rounded-sm hover:border-or hover:bg-creme/30 transition-all cursor-pointer">
+                                                    <label className="flex-grow flex items-center justify-center p-3 border-2 border-dashed border-creme2 rounded-xl hover:border-or hover:bg-creme/30 transition-all cursor-pointer">
                                                         <Plus size={16} className="text-encre3 mr-2" />
                                                         <span className="text-[10px] font-bold uppercase tracking-widest text-encre3">{variant.image ? 'Changer' : 'Ajouter photo'}</span>
                                                         <input
@@ -474,7 +474,7 @@ export default function ProductCreatePage() {
                                     <button
                                         type="button"
                                         onClick={addVariant}
-                                        className="w-full p-4 border-2 border-dashed border-creme2 rounded-sm text-encre3 hover:border-or hover:text-or hover:bg-or/5 transition-all flex items-center justify-center space-x-2"
+                                        className="w-full p-4 border-2 border-dashed border-creme2 rounded-xl text-encre3 hover:border-or hover:text-or hover:bg-or/5 transition-all flex items-center justify-center space-x-2"
                                     >
                                         <Plus size={16} />
                                         <span className="text-[10px] font-black uppercase tracking-widest">Ajouter une variante</span>
@@ -487,7 +487,7 @@ export default function ProductCreatePage() {
 
                 <div className="space-y-8">
                     {/* Pricing */}
-                    <div className="bg-[#1A0A0A] text-creme rounded-sm shadow-2xl overflow-hidden border border-white/5">
+                    <div className="bg-[#1A0A0A] text-creme rounded-xl shadow-2xl overflow-hidden border border-white/5">
                         <div className="p-6 border-b border-white/10 flex items-center space-x-3 bg-black/20">
                             <BarChart3 size={18} className="text-or" />
                             <h2 className="text-[10px] font-black uppercase tracking-widest text-creme/80">Gestion Financière & Tarifs</h2>
@@ -503,7 +503,7 @@ export default function ProductCreatePage() {
                                         placeholder="0"
                                         value={product.costPrice || ''}
                                         onChange={(e) => setProduct({...product, costPrice: e.target.value})}
-                                        className="w-full p-5 bg-white/5 border border-white/10 rounded-sm text-2xl font-bold text-creme/40 outline-none focus:border-white/20 appearance-none"
+                                        className="w-full p-5 bg-white/5 border border-white/10 rounded-xl text-2xl font-bold text-creme/40 outline-none focus:border-white/20 appearance-none"
                                     />
                                     <span className="absolute right-5 top-1/2 -translate-y-1/2 text-creme/10 font-bold mult-sm">DA</span>
                                 </div>
@@ -519,7 +519,7 @@ export default function ProductCreatePage() {
                                         placeholder="0"
                                         value={product.comparePrice || ''}
                                         onChange={(e) => setProduct({...product, comparePrice: e.target.value})}
-                                        className="w-full p-5 bg-white/5 border border-white/10 rounded-sm text-2xl font-bold text-creme/80 outline-none focus:border-creme/40 appearance-none transition-all"
+                                        className="w-full p-5 bg-white/5 border border-white/10 rounded-xl text-2xl font-bold text-creme/80 outline-none focus:border-creme/40 appearance-none transition-all"
                                     />
                                     <span className="absolute right-5 top-1/2 -translate-y-1/2 text-creme/20 font-black text-sm">DA</span>
                                 </div>
@@ -534,7 +534,7 @@ export default function ProductCreatePage() {
                                         placeholder="Laissez vide si pas de promotion"
                                         value={product.price || ''}
                                         onChange={(e) => setProduct({...product, price: e.target.value})}
-                                        className="w-full p-5 bg-white/5 border border-white/10 rounded-sm text-2xl font-bold text-or outline-none focus:border-or appearance-none"
+                                        className="w-full p-5 bg-white/5 border border-white/10 rounded-xl text-2xl font-bold text-or outline-none focus:border-or appearance-none"
                                     />
                                     <span className="absolute right-5 top-1/2 -translate-y-1/2 text-or/20 font-black text-sm">DA</span>
                                 </div>
@@ -542,7 +542,7 @@ export default function ProductCreatePage() {
                                 {/* PROFITABILITY INDICATORS */}
                                 {(product.price || product.comparePrice) && product.costPrice && (
                                     <div className={cn(
-                                        "p-4 rounded-sm border flex items-center justify-between animate-in fade-in zoom-in-95 duration-500",
+                                        "p-4 rounded-xl border flex items-center justify-between animate-in fade-in zoom-in-95 duration-500",
                                         (product.price ? Number(product.price) : Number(product.comparePrice)) > Number(product.costPrice) 
                                             ? "bg-green-500/10 border-green-500/20" 
                                             : "bg-rouge/10 border-rouge/20"
@@ -583,14 +583,14 @@ export default function ProductCreatePage() {
                                     placeholder="0"
                                     value={product.stock}
                                     onChange={(e) => setProduct({...product, stock: e.target.value})}
-                                    className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-sm font-bold outline-none focus:border-or appearance-none"
+                                    className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-sm font-bold outline-none focus:border-or appearance-none"
                                 />
                             </div>
                         </div>
                     </div>
 
                     {/* Classification */}
-                    <div className="bg-white border border-creme2 rounded-sm shadow-xl overflow-hidden">
+                    <div className="bg-white border border-creme2 rounded-xl shadow-xl overflow-hidden">
                         <div className="p-6 border-b border-creme2 bg-creme/5 flex items-center space-x-3">
                             <Tag size={18} className="text-or" />
                             <h2 className="text-xs font-black uppercase tracking-widest text-encre">Catégorie</h2>
@@ -603,7 +603,7 @@ export default function ProductCreatePage() {
                                     value={product.categoryId}
                                     onChange={(e) => setProduct({...product, categoryId: e.target.value, subCategoryId: ''})}
                                     disabled={loadingCategories}
-                                    className="w-full p-4 bg-creme2/20 border border-creme2 rounded-sm text-sm font-bold outline-none focus:border-or transition-all disabled:opacity-60"
+                                    className="w-full p-4 bg-creme2/20 border border-creme2 rounded-xl text-sm font-bold outline-none focus:border-or transition-all disabled:opacity-60"
                                 >
                                     {loadingCategories ? (
                                         <option value="">Chargement...</option>
@@ -623,7 +623,7 @@ export default function ProductCreatePage() {
                                     value={product.subCategoryId}
                                     onChange={(e) => setProduct({...product, subCategoryId: e.target.value})}
                                     disabled={loadingCategories || !product.categoryId}
-                                    className="w-full p-4 bg-creme2/20 border border-creme2 rounded-sm text-sm font-bold outline-none focus:border-or transition-all disabled:opacity-60"
+                                    className="w-full p-4 bg-creme2/20 border border-creme2 rounded-xl text-sm font-bold outline-none focus:border-or transition-all disabled:opacity-60"
                                 >
                                     <option value="">Aucune sous-catégorie</option>
                                     {categories.find(c => c.id === product.categoryId)?.subCategories?.map(sub => (
@@ -635,7 +635,7 @@ export default function ProductCreatePage() {
                     </div>
 
                     {/* Badge Selection */}
-                    <div className="bg-white border border-creme2 rounded-sm shadow-xl overflow-hidden">
+                    <div className="bg-white border border-creme2 rounded-xl shadow-xl overflow-hidden">
                         <div className="p-6 border-b border-creme2 bg-creme/5 flex items-center space-x-3">
                             <Tag size={18} className="text-or" />
                             <h2 className="text-xs font-black uppercase tracking-widest text-encre">Badge</h2>
@@ -653,7 +653,7 @@ export default function ProductCreatePage() {
                                         type="button"
                                         onClick={() => setProduct({...product, badge: badge.value})}
                                         className={cn(
-                                            "py-2 px-3 text-[10px] font-bold uppercase tracking-widest rounded-sm border transition-all",
+                                            "py-2 px-3 text-[10px] font-bold uppercase tracking-widest rounded-xl border transition-all",
                                             product.badge === badge.value
                                                 ? "bg-encre text-or border-encre"
                                                 : "bg-creme/30 text-encre3 border-creme2 hover:border-or"
@@ -667,7 +667,7 @@ export default function ProductCreatePage() {
                     </div>
 
                     {/* Tip */}
-                    <div className="p-6 bg-or/5 border border-or/10 rounded-sm">
+                    <div className="p-6 bg-or/5 border border-or/10 rounded-xl">
                         <p className="text-[10px] text-encre3 leading-relaxed">
                             <span className="font-black text-or uppercase">CONSEIL :</span> Utilisez des noms clairs et des SKUs logiques pour faciliter la gestion de votre inventaire et vos futures recherches.
                         </p>

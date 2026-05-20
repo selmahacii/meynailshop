@@ -79,7 +79,7 @@ export default function AdminClientDetailsPage() {
                 <p className="text-encre3 mb-8 max-w-md mx-auto">{error || 'Le client est introuvable ou a été supprimé'}</p>
                 <button 
                     onClick={() => router.back()}
-                    className="px-8 py-3 bg-encre text-creme rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-rouge-deep transition-all"
+                    className="px-8 py-3 bg-encre text-creme rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rouge-deep transition-all"
                 >
                     Retour à la liste
                 </button>
@@ -103,7 +103,7 @@ export default function AdminClientDetailsPage() {
                 <div className="flex-1">
                     <h1 className="text-2xl md:text-3xl font-serif text-encre leading-tight">{client.firstName} {client.lastName}</h1>
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
-                        <span className="text-encre3 text-[10px] uppercase font-black tracking-widest bg-creme2/40 px-2 py-0.5 rounded-sm">Profil Client</span>
+                        <span className="text-encre3 text-[10px] uppercase font-black tracking-widest bg-creme2/40 px-2 py-0.5 rounded-xl">Profil Client</span>
                         <div className="flex items-center gap-2">
                             <Calendar size={12} className="text-or" />
                             <span className="text-[10px] text-or font-black uppercase tracking-widest">Membre depuis {new Date(client.createdAt).getFullYear()}</span>
@@ -116,7 +116,7 @@ export default function AdminClientDetailsPage() {
                 {/* Left Column: Infos & Stats */}
                 <div className="space-y-6 md:space-y-8 h-fit">
                     {/* Basic Info Card */}
-                    <div className="bg-white rounded-sm border border-creme2 shadow-lg overflow-hidden">
+                    <div className="bg-white rounded-xl border border-creme2 shadow-lg overflow-hidden">
                         <div className="p-8 pb-6 flex flex-col items-center border-b border-creme2/50 bg-creme/10">
                             <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-[#390102] to-rouge-brand flex items-center justify-center text-creme text-3xl font-bold shadow-2xl mb-6 ring-4 ring-white">
                                 {client.firstName.charAt(0)}{client.lastName.charAt(0)}
@@ -127,7 +127,7 @@ export default function AdminClientDetailsPage() {
                         
                         <div className="p-6 md:p-8 space-y-6">
                             <div className="flex items-center space-x-4 group">
-                                <div className="w-10 h-10 rounded-sm bg-creme flex items-center justify-center text-or/60 border border-creme2 group-hover:bg-or/10 group-hover:text-or transition-colors shrink-0">
+                                <div className="w-10 h-10 rounded-xl bg-creme flex items-center justify-center text-or/60 border border-creme2 group-hover:bg-or/10 group-hover:text-or transition-colors shrink-0">
                                     <Phone size={18} />
                                 </div>
                                 <div className="overflow-hidden">
@@ -137,7 +137,7 @@ export default function AdminClientDetailsPage() {
                             </div>
 
                             <div className="flex items-center space-x-4 group">
-                                <div className="w-10 h-10 rounded-sm bg-creme flex items-center justify-center text-or/60 border border-creme2 group-hover:bg-or/10 group-hover:text-or transition-colors shrink-0">
+                                <div className="w-10 h-10 rounded-xl bg-creme flex items-center justify-center text-or/60 border border-creme2 group-hover:bg-or/10 group-hover:text-or transition-colors shrink-0">
                                     <MapPin size={18} />
                                 </div>
                                 <div className="overflow-hidden">
@@ -152,7 +152,7 @@ export default function AdminClientDetailsPage() {
 
                     {/* Stats Boxes with improved responsive grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-4">
-                        <div className="bg-white rounded-sm border border-creme2 p-6 flex items-center space-x-4 shadow-xl hover:border-or/40 transition-all group">
+                        <div className="bg-white rounded-xl border border-creme2 p-6 flex items-center space-x-4 shadow-xl hover:border-or/40 transition-all group">
                             <div className="w-12 h-12 rounded-full bg-rouge-brand/10 flex items-center justify-center text-rouge-brand group-hover:scale-110 transition-transform">
                                 <ShoppingBag size={22} />
                             </div>
@@ -161,7 +161,7 @@ export default function AdminClientDetailsPage() {
                                 <p className="text-2xl font-black text-encre">{totalOrders}</p>
                             </div>
                         </div>
-                        <div className="bg-[#1A0A0A] rounded-sm border border-black p-6 flex items-center space-x-4 shadow-xl hover:bg-black transition-all group">
+                        <div className="bg-[#1A0A0A] rounded-xl border border-black p-6 flex items-center space-x-4 shadow-xl hover:bg-black transition-all group">
                             <div className="w-12 h-12 rounded-full bg-gold-brand/10 flex items-center justify-center text-gold-brand group-hover:scale-110 transition-transform">
                                 <TrendingUp size={22} />
                             </div>
@@ -175,7 +175,7 @@ export default function AdminClientDetailsPage() {
 
                 {/* Right Column: Order History */}
                 <div className="xl:col-span-2 space-y-6 md:space-y-8">
-                    <div className="bg-white rounded-sm border border-creme2 shadow-2xl overflow-hidden">
+                    <div className="bg-white rounded-xl border border-creme2 shadow-2xl overflow-hidden">
                         <div className="p-6 border-b border-creme2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <h2 className="font-serif text-xl text-encre">Historique d'achat</h2>
                             <div className="flex items-center text-encre3 space-x-2 bg-creme/40 px-4 py-1.5 rounded-full border border-creme2/50 w-fit">
@@ -209,7 +209,7 @@ export default function AdminClientDetailsPage() {
                                                     </p>
                                                 </td>
                                                 <td className="px-6 py-5 text-center">
-                                                    <span className="text-xs font-bold text-encre3 px-2 py-0.5 bg-creme2/30 rounded-sm">
+                                                    <span className="text-xs font-bold text-encre3 px-2 py-0.5 bg-creme2/30 rounded-xl">
                                                         {order.itemCount || order.items?.length || 1}
                                                     </span>
                                                 </td>
@@ -218,7 +218,7 @@ export default function AdminClientDetailsPage() {
                                                 </td>
                                                 <td className="px-6 py-5 text-center">
                                                     <span className={cn(
-                                                        "text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm border shadow-sm",
+                                                        "text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-xl border shadow-sm",
                                                         getStatusColor(order.status)
                                                     )}>
                                                         {order.status}
@@ -227,7 +227,7 @@ export default function AdminClientDetailsPage() {
                                                 <td className="px-6 py-5 text-right">
                                                     <Link 
                                                         href={`/admin/commandes/${order.id}`}
-                                                        className="inline-flex items-center justify-center p-2.5 text-encre3 hover:text-white hover:bg-[#390102] border border-creme2 rounded-sm transition-all shadow-sm"
+                                                        className="inline-flex items-center justify-center p-2.5 text-encre3 hover:text-white hover:bg-[#390102] border border-creme2 rounded-xl transition-all shadow-sm"
                                                         title="Voir la commande"
                                                     >
                                                         <ExternalLink size={16} />
@@ -250,12 +250,12 @@ export default function AdminClientDetailsPage() {
 
                     {/* Placeholder for future features */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                         <div className="bg-white rounded-sm border border-creme2 p-8 flex flex-col items-center justify-center text-encre3 text-center shadow-lg">
+                         <div className="bg-white rounded-xl border border-creme2 p-8 flex flex-col items-center justify-center text-encre3 text-center shadow-lg">
                             <Star size={32} className="text-or/30 mb-4" strokeWidth={1.5} />
                             <p className="text-[10px] uppercase font-black tracking-[0.2em] text-encre">Derniers Avis</p>
                             <p className="text-[10px] mt-2 font-medium italic opacity-50">Aucun avis publié pour le moment.</p>
                         </div>
-                        <div className="bg-creme/20 rounded-sm border border-dashed border-creme2 p-8 flex flex-col items-center justify-center text-encre3 text-center">
+                        <div className="bg-creme/20 rounded-xl border border-dashed border-creme2 p-8 flex flex-col items-center justify-center text-encre3 text-center">
                             <Calendar size={32} className="text-encre3/20 mb-4" strokeWidth={1.5} />
                             <p className="text-[10px] uppercase font-black tracking-[0.2em]">Fidélité & Points</p>
                             <p className="text-[10px] mt-2 font-medium opacity-50">Activation prochaine du programme.</p>

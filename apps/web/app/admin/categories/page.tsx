@@ -242,7 +242,7 @@ export default function AdminCategoriesPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-center space-x-4">
-                    <Link href="/admin/produits" className="p-2 bg-white border border-creme2 rounded-sm hover:border-or transition-colors group">
+                    <Link href="/admin/produits" className="p-2 bg-white border border-creme2 rounded-xl hover:border-or transition-colors group">
                         <ArrowLeft size={18} className="text-encre3 group-hover:text-or" />
                     </Link>
                     <div>
@@ -253,7 +253,7 @@ export default function AdminCategoriesPage() {
 
                 <button 
                     onClick={() => handleOpenModal()}
-                    className="flex items-center justify-center space-x-2 px-6 py-3 bg-[#390102] text-[#BFA893] rounded-sm text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all shadow-xl group border border-[#BFA893]/20"
+                    className="flex items-center justify-center space-x-2 px-6 py-3 bg-[#390102] text-[#BFA893] rounded-xl text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all shadow-xl hover:shadow-[#390102]/20 group border border-[#BFA893]/20"
                 >
                     <Plus size={16} className="text-[#BFA893] group-hover:rotate-90 transition-transform duration-300" />
                     <span>Nouvelle Catégorie</span>
@@ -267,14 +267,14 @@ export default function AdminCategoriesPage() {
                     <p className="text-encre3 text-[10px] uppercase tracking-[0.2em] font-black">Chargement des collections...</p>
                 </div>
             ) : error ? (
-                <div className="bg-rouge/5 border border-rouge/20 p-8 text-center rounded-sm">
+                <div className="bg-rouge/5 border border-rouge/20 p-8 text-center rounded-xl">
                     <AlertCircle className="w-12 h-12 text-rouge mx-auto mb-4" />
                     <p className="text-rouge font-bold">{error}</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {categories.map((category) => (
-                        <div key={category.id} className="bg-white border border-creme2 rounded-sm overflow-hidden group hover:border-or transition-all duration-500 shadow-sm hover:shadow-xl relative">
+                        <div key={category.id} className="bg-white border border-creme2 rounded-[2rem] overflow-hidden group hover:border-gold-brand/40 transition-all duration-500 shadow-sm hover:shadow-2xl hover:shadow-black/[0.03] relative">
                             <div className="aspect-[16/10] relative overflow-hidden bg-creme/20">
                                 {(() => {
                                     const displayImg = category.imageUrl?.includes('via.placeholder.com') 
@@ -304,25 +304,25 @@ export default function AdminCategoriesPage() {
                                     <h3 className="text-xl font-serif text-creme">{category.name}</h3>
                                     <div className="flex items-center gap-2 mt-1">
                                         <p className="text-creme/60 text-[10px] uppercase tracking-widest font-bold truncate max-w-[150px]">{category.description}</p>
-                                        <span className="text-[10px] font-black text-or uppercase tracking-widest bg-or/10 px-1.5 py-0.5 rounded-sm">
+                                        <span className="text-[10px] font-black text-or uppercase tracking-widest bg-or/10 px-2.5 py-0.5 rounded-full">
                                             {category.subCategories?.length || 0} Sous-cat.
                                         </span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="p-4 flex items-center justify-between bg-white">
-                                <span className="text-[10px] font-black text-encre3 uppercase tracking-widest">Ordre: {category.displayOrder}</span>
+                            <div className="p-4 flex items-center justify-between bg-white border-t border-creme2/55">
+                                <span className="text-[10px] font-black text-encre3 uppercase tracking-widest ml-2">Ordre: {category.displayOrder}</span>
                                 <div className="flex items-center space-x-2">
                                     <button 
                                         onClick={() => handleOpenModal(category)}
-                                        className="p-2 text-encre3 hover:text-or hover:bg-or/5 transition-all rounded-sm border border-transparent hover:border-or/20"
+                                        className="p-2 text-encre3 hover:text-or hover:bg-or/5 transition-all rounded-xl border border-transparent hover:border-or/20"
                                     >
                                         <Edit2 size={16} />
                                     </button>
                                     <button 
                                         onClick={() => handleDelete(category.id)}
-                                        className="p-2 text-encre3 hover:text-rouge-mid hover:bg-rouge/5 transition-all rounded-sm border border-transparent hover:border-rouge/20"
+                                        className="p-2 text-encre3 hover:text-rouge-mid hover:bg-rouge/5 transition-all rounded-xl border border-transparent hover:border-rouge/20"
                                     >
                                         <Trash2 size={16} />
                                     </button>
@@ -333,7 +333,7 @@ export default function AdminCategoriesPage() {
 
                     <button 
                         onClick={() => handleOpenModal()}
-                        className="bg-creme/5 border-2 border-dashed border-creme2 rounded-sm flex flex-col items-center justify-center p-8 space-y-4 hover:border-or hover:bg-creme/10 transition-all group min-h-[250px]"
+                        className="bg-creme/5 border-2 border-dashed border-creme2 rounded-[2rem] flex flex-col items-center justify-center p-8 space-y-4 hover:border-or hover:bg-creme/10 transition-all group min-h-[250px]"
                     >
                         <div className="w-16 h-16 rounded-full bg-creme2 flex items-center justify-center group-hover:bg-or/10 transition-colors">
                             <Plus size={32} className="text-encre3 group-hover:text-or transition-colors" />
@@ -347,7 +347,7 @@ export default function AdminCategoriesPage() {
             {isModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !submitting && setIsModalOpen(false)} />
-                    <div className="bg-white rounded-sm w-full max-w-xl relative z-10 shadow-2xl animate-in zoom-in-95 duration-200 border border-or/20 max-h-[90vh] flex flex-col">
+                    <div className="bg-white rounded-[2rem] w-full max-w-xl relative z-10 shadow-2xl animate-in zoom-in-95 duration-200 border border-or/20 max-h-[90vh] flex flex-col overflow-hidden">
                         {/* Modal Header */}
                         <div className="p-4 md:p-6 border-b border-creme2 bg-creme/10 flex justify-between items-center shrink-0">
                             <h2 className="text-xl md:text-2xl font-serif text-encre">
@@ -371,7 +371,7 @@ export default function AdminCategoriesPage() {
                                         type="text"
                                         value={formData.name}
                                         onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                                        className="w-full p-3 bg-creme/20 border border-creme2 rounded-sm focus:outline-none focus:border-or transition-all text-sm"
+                                        className="w-full p-3 bg-creme/20 border border-creme2 rounded-xl focus:outline-none focus:border-or transition-all text-sm"
                                         placeholder="Ex: Vernis Gel Premium"
                                         required
                                     />
@@ -382,7 +382,7 @@ export default function AdminCategoriesPage() {
                                     <textarea
                                         value={formData.description}
                                         onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                                        className="w-full p-3 bg-creme/20 border border-creme2 rounded-sm focus:outline-none focus:border-or transition-all h-20 text-sm resize-none"
+                                        className="w-full p-3 bg-creme/20 border border-creme2 rounded-xl focus:outline-none focus:border-or transition-all h-20 text-sm resize-none"
                                         placeholder="Description pour le SEO et l'affichage..."
                                     />
                                 </div>
@@ -396,7 +396,7 @@ export default function AdminCategoriesPage() {
                                             const val = parseInt(e.target.value);
                                             setFormData(prev => ({ ...prev, displayOrder: isNaN(val) ? 0 : val }));
                                         }}
-                                        className="w-full p-3 bg-creme/20 border border-creme2 rounded-sm focus:outline-none focus:border-or transition-all text-sm"
+                                        className="w-full p-3 bg-creme/20 border border-creme2 rounded-xl focus:outline-none focus:border-or transition-all text-sm"
                                         min={0}
                                     />
                                 </div>
@@ -411,7 +411,7 @@ export default function AdminCategoriesPage() {
                                                 type="text"
                                                 value={newSubCategoryName}
                                                 onChange={(e) => setNewSubCategoryName(e.target.value)}
-                                                className="flex-grow p-3 bg-creme/20 border border-creme2 rounded-sm text-sm focus:border-or focus:outline-none"
+                                                className="flex-grow p-3 bg-creme/20 border border-creme2 rounded-xl text-sm focus:border-or focus:outline-none"
                                                 placeholder="Nom de la sous-catégorie..."
                                                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSubCategory())}
                                             />
@@ -419,7 +419,7 @@ export default function AdminCategoriesPage() {
                                                 type="button"
                                                 onClick={handleAddSubCategory}
                                                 disabled={submitting || !newSubCategoryName}
-                                                className="px-4 bg-encre text-creme text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-black disabled:opacity-50"
+                                                className="px-4 bg-encre text-creme text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-black disabled:opacity-50"
                                             >
                                                 Ajouter
                                             </button>
@@ -428,7 +428,7 @@ export default function AdminCategoriesPage() {
                                         <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
                                             {editingCategory.subCategories && editingCategory.subCategories.length > 0 ? (
                                                 editingCategory.subCategories.map((sub) => (
-                                                    <div key={sub.id} className="flex flex-col p-4 bg-creme/20 border border-creme2 rounded-sm group space-y-3">
+                                                    <div key={sub.id} className="flex flex-col p-4 bg-creme/20 border border-creme2 rounded-xl group space-y-3">
                                                         <div className="flex items-center justify-between">
                                                             {editingSubId === sub.id ? (
                                                                 <div className="flex-grow flex gap-2 pr-4">
@@ -436,7 +436,7 @@ export default function AdminCategoriesPage() {
                                                                         type="text"
                                                                         value={editingSubName}
                                                                         onChange={(e) => setEditingSubName(e.target.value)}
-                                                                        className="flex-grow p-1.5 bg-white border border-or rounded-sm text-sm focus:outline-none"
+                                                                        className="flex-grow p-1.5 bg-white border border-or rounded-xl text-sm focus:outline-none"
                                                                         autoFocus
                                                                         onKeyDown={(e) => {
                                                                             if (e.key === 'Enter') handleUpdateSubName(sub.id);
@@ -446,7 +446,7 @@ export default function AdminCategoriesPage() {
                                                                     <button
                                                                         type="button"
                                                                         onClick={() => handleUpdateSubName(sub.id)}
-                                                                        className="p-1.5 text-green-600 hover:bg-green-50 rounded-sm"
+                                                                        className="p-1.5 text-green-600 hover:bg-green-50 rounded-xl"
                                                                     >
                                                                         <CheckCircle2 size={16} />
                                                                     </button>
@@ -483,15 +483,15 @@ export default function AdminCategoriesPage() {
                                                         {/* Subcategory Image */}
                                                         <div className="flex items-center gap-3">
                                                             {sub.imageUrl ? (
-                                                                <div className="relative w-12 h-12 rounded-sm border border-creme2 overflow-hidden shrink-0">
+                                                                <div className="relative w-12 h-12 rounded-xl border border-creme2 overflow-hidden shrink-0">
                                                                     <Image src={sub.imageUrl} fill className="object-cover" alt={sub.name} />
                                                                 </div>
                                                             ) : (
-                                                                <div className="w-12 h-12 rounded-sm border border-dashed border-creme2 flex items-center justify-center text-encre3 shrink-0">
+                                                                <div className="w-12 h-12 rounded-xl border border-dashed border-creme2 flex items-center justify-center text-encre3 shrink-0">
                                                                     <ImageIcon size={16} />
                                                                 </div>
                                                             )}
-                                                            <label className="flex-grow flex items-center justify-center p-2 border border-dashed border-creme2 rounded-sm hover:border-or hover:bg-creme/30 transition-all cursor-pointer">
+                                                            <label className="flex-grow flex items-center justify-center p-2 border border-dashed border-creme2 rounded-xl hover:border-or hover:bg-creme/30 transition-all cursor-pointer">
                                                                 <span className="text-[9px] font-bold uppercase tracking-widest text-encre3">
                                                                     {sub.imageUrl ? 'Changer l\'image' : 'Ajouter une photo'}
                                                                 </span>
@@ -506,8 +506,6 @@ export default function AdminCategoriesPage() {
                                                                             setSubmitting(true);
                                                                             const result = await UploadAPI.uploadProductImage(file);
                                                                             if (result.success) {
-                                                                                // We need an endpoint to update subcategory or re-save
-                                                                                // For simplicity, let's assume we can PATCH sub-categories/ID
                                                                                 const res = await apiFetch(`/api/categories/sub-categories/${sub.id}`, {
                                                                                     method: 'PATCH',
                                                                                     body: JSON.stringify({ imageUrl: result.data.url }),
@@ -538,7 +536,7 @@ export default function AdminCategoriesPage() {
                                                     </div>
                                                 ))
                                             ) : (
-                                                <p className="text-[10px] text-encre3 italic text-center py-4 bg-creme/10 rounded-sm">Aucune sous-catégorie définie.</p>
+                                                <p className="text-[10px] text-encre3 italic text-center py-4 bg-creme/10 rounded-xl">Aucune sous-catégorie définie.</p>
                                             )}
                                         </div>
                                     </div>
@@ -550,7 +548,7 @@ export default function AdminCategoriesPage() {
 
                                     {/* Upload button */}
                                     <label className={cn(
-                                        "flex items-center justify-center gap-3 p-4 border-2 border-dashed rounded-sm cursor-pointer transition-all group",
+                                        "flex items-center justify-center gap-3 p-4 border-2 border-dashed rounded-xl cursor-pointer transition-all group",
                                         submitting
                                             ? "border-or/40 bg-or/5 cursor-wait"
                                             : "border-creme2 hover:border-or hover:bg-or/5"
@@ -584,14 +582,14 @@ export default function AdminCategoriesPage() {
                                             type="text"
                                             value={formData.imageUrl}
                                             onChange={(e) => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
-                                            className="w-full p-3 bg-creme/20 border border-creme2 rounded-sm focus:outline-none focus:border-or transition-all text-xs"
+                                            className="w-full p-3 bg-creme/20 border border-creme2 rounded-xl focus:outline-none focus:border-or transition-all text-xs"
                                             placeholder="https://..."
                                         />
                                     </div>
 
                                     {/* Preview */}
                                     {formData.imageUrl && (
-                                        <div className="relative aspect-video rounded-sm overflow-hidden border border-creme2 shadow-sm">
+                                        <div className="relative aspect-video rounded-xl overflow-hidden border border-creme2 shadow-sm">
                                             <Image
                                                 src={formData.imageUrl}
                                                 alt="Aperçu"
@@ -619,14 +617,14 @@ export default function AdminCategoriesPage() {
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
                                     disabled={submitting}
-                                    className="flex-1 py-3 text-[10px] font-black uppercase tracking-widest border border-creme2 hover:bg-creme/20 transition-all rounded-sm disabled:opacity-50"
+                                    className="flex-1 py-3 text-[10px] font-black uppercase tracking-widest border border-creme2 hover:bg-creme/20 transition-all rounded-xl disabled:opacity-50"
                                 >
                                     Annuler
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={submitting || !formData.name}
-                                    className="flex-[2] py-3 bg-[#390102] text-[#BFA893] text-[10px] font-black uppercase tracking-widest rounded-sm hover:opacity-90 transition-all shadow-xl disabled:opacity-50 border border-[#BFA893]/20 flex items-center justify-center gap-2"
+                                    className="flex-[2] py-3 bg-[#390102] text-[#BFA893] text-[10px] font-black uppercase tracking-widest rounded-xl hover:opacity-90 transition-all shadow-xl disabled:opacity-50 border border-[#BFA893]/20 flex items-center justify-center gap-2"
                                 >
                                     {submitting && <Loader size={14} className="animate-spin" />}
                                     {submitting ? 'Traitement...' : (editingCategory ? 'Mettre à jour' : 'Créer la catégorie')}

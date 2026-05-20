@@ -110,11 +110,11 @@ export default function AdminProductsPage() {
 
     const getActionButton = (product: AdminProduct) => {
         if (product.stock === 0) {
-            return { text: 'Gérer', style: 'bg-rouge text-creme hover:bg-rouge-deep' };
+            return { text: 'Gérer', style: 'bg-rose-50 text-rouge-mid border border-rose-100 hover:bg-rouge-mid hover:text-white rounded-xl' };
         } else if (product.stock <= product.alertThreshold) {
-            return { text: 'Gérer', style: 'bg-or text-encre hover:bg-encre hover:text-creme' };
+            return { text: 'Gérer', style: 'bg-amber-50 text-or border border-amber-100 hover:bg-or hover:text-rouge-brand rounded-xl' };
         } else {
-            return { text: 'Éditer', style: 'bg-[#1A0A0A] text-creme hover:bg-rouge-deep' };
+            return { text: 'Éditer', style: 'bg-rouge-brand text-creme hover:bg-or hover:text-rouge-brand rounded-xl' };
         }
     };
 
@@ -138,31 +138,25 @@ export default function AdminProductsPage() {
                                 setSearch(e.target.value);
                                 setPage(1); // Reset to first page on search
                             }}
-                            className="pl-10 pr-4 py-2 bg-white border border-creme2 rounded-sm text-sm focus:outline-none focus:border-or focus:ring-1 focus:ring-or w-full sm:w-48 xl:w-64 shadow-sm transition-all"
+                            className="pl-10 pr-4 py-2 bg-white border border-gold-brand/20 rounded-xl text-sm focus:outline-none focus:border-or focus:ring-1 focus:ring-or w-full sm:w-48 xl:w-64 shadow-sm transition-all"
                         />
                     </div>
                     <div className="flex items-center gap-2">
                         <Link 
                             href="/admin/categories"
-                            className="p-2 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm flex items-center space-x-2"
+                            className="p-2.5 bg-white border border-gold-brand/20 rounded-xl text-encre3 hover:text-or hover:border-or transition-all shadow-sm flex items-center space-x-2"
                             title="Gérer les catégories"
                         >
-                            <Tag size={18} />
-                            <span className="hidden lg:inline text-[10px] uppercase font-bold tracking-widest">Catégories</span>
+                            <Tag size={18} className="text-or" />
+                            <span className="hidden lg:inline text-[9px] uppercase font-black tracking-widest">Catégories</span>
                         </Link>
-                        <button className="p-2 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
-                            <Bell size={18} />
-                        </button>
                     </div>
                     <Link 
                         href="/admin/produits/nouveau"
-                        className="flex items-center justify-center space-x-2 px-4 py-2 bg-rouge-deep text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md flex-grow sm:flex-grow-0"
+                        className="flex items-center justify-center space-x-2 px-6 py-2.5 bg-rouge-brand text-creme rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-or hover:text-rouge-brand hover:shadow-xl hover:shadow-rouge-brand/10 transition-all shadow-md flex-grow sm:flex-grow-0"
                     >
                         <Plus size={16} />
                         <span>Nouveau</span>
-                    </Link>
-                    <Link href="/" className="px-4 py-2 border border-encre text-encre rounded-sm text-xs font-bold hover:bg-encre hover:text-creme transition-all text-center flex-grow sm:flex-grow-0">
-                        Boutique
                     </Link>
                 </div>
             </div>
@@ -172,10 +166,10 @@ export default function AdminProductsPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     {[
                         { label: 'Stock faible', value: stats.lowStockProducts.toString(), icon: AlertCircle, color: 'text-or', bg: 'bg-or/10' },
-                        { label: 'Total produits', value: stats.totalProducts.toString(), icon: ShoppingBag, color: 'text-encre3', bg: 'bg-creme' },
+                        { label: 'Total produits', value: stats.totalProducts.toString(), icon: ShoppingBag, color: 'text-encre3', bg: 'bg-creme2/20' },
                         { label: 'Ruptures totales', value: products.filter((p: AdminProduct) => p.status === 'out_of_stock').length.toString(), icon: AlertCircle, color: 'text-rouge', bg: 'bg-rouge/10' },
                     ].map((stat, i) => (
-                        <div key={i} className="bg-white rounded-sm border border-creme2 p-4 md:p-6 flex items-center space-x-4 shadow-sm hover:border-or transition-all">
+                        <div key={i} className="bg-white rounded-[2rem] border border-gold-brand/10 p-4 md:p-6 flex items-center space-x-4 shadow-sm hover:shadow-2xl hover:shadow-black/[0.02] hover:border-gold-brand/35 transition-all">
                             <div className={cn("w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center shrink-0", stat.bg)}>
                                 <stat.icon size={20} className={stat.color} />
                             </div>
@@ -190,15 +184,15 @@ export default function AdminProductsPage() {
 
             {/* Content Filters */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-                <div className="flex items-center bg-white p-1 rounded-sm border border-creme2 overflow-x-auto custom-scrollbar">
+                <div className="flex items-center bg-white p-1.5 rounded-2xl border border-gold-brand/10 shadow-sm overflow-x-auto custom-scrollbar">
                     {tabs.map((tab) => (
                         <button
                             key={tab.key}
                             onClick={() => setActiveTab(tab.key)}
                             className={cn(
-                                "px-4 md:px-6 py-2 text-[9px] md:text-[10px] font-black uppercase tracking-widest rounded-sm transition-all whitespace-nowrap",
+                                "px-4 md:px-6 py-2 text-[9px] md:text-[10px] font-black uppercase tracking-widest rounded-xl transition-all whitespace-nowrap",
                                 activeTab === tab.key
-                                    ? "bg-[#1A0A0A] text-creme shadow-lg sm:scale-105"
+                                    ? "bg-rouge-brand text-creme shadow-md shadow-black/10 sm:scale-105"
                                     : "text-encre3 hover:bg-creme/50"
                             )}
                         >
@@ -229,9 +223,9 @@ export default function AdminProductsPage() {
                         const actionButton = getActionButton(product);
 
                         return (
-                            <div key={product.id} className="bg-white rounded-sm border border-creme2 shadow-lg overflow-hidden group hover:border-or transition-all duration-500">
+                            <div key={product.id} className="bg-white rounded-[2rem] border border-gold-brand/10 hover:shadow-2xl hover:shadow-black/[0.02] overflow-hidden group hover:border-gold-brand/40 transition-all duration-500 shadow-sm">
                                 {/* Image / Color Preview */}
-                                <div className="relative aspect-[4/3] p-12 bg-creme/20 flex items-center justify-center overflow-hidden">
+                                <div className="relative aspect-[4/3] p-6 bg-creme/10 flex items-center justify-center overflow-hidden">
                                     <div className="w-full h-full relative group-hover:scale-110 transition-transform duration-700">
                                         <Image
                                             src={product.images?.[0] || '/images/placeholder-product.png'} 
@@ -243,16 +237,16 @@ export default function AdminProductsPage() {
 
                                     {/* Badges */}
                                     <div className="absolute top-4 right-4 flex flex-col items-end space-y-2">
-                                        <span className="bg-white/90 backdrop-blur-sm text-encre px-2 py-1 rounded-sm text-[10px] font-black uppercase border border-creme2 shadow-sm">
+                                        <span className="bg-white/90 backdrop-blur-sm text-encre px-2 py-1 rounded-xl text-[10px] font-black uppercase border border-creme2 shadow-sm">
                                             {product.stock} u.
                                         </span>
                                         {product.status === 'low_stock' && (
-                                            <span className="bg-or text-encre px-2 py-1 rounded-sm text-[8px] font-black uppercase shadow-sm">
+                                            <span className="bg-or text-encre px-2 py-1 rounded-xl text-[8px] font-black uppercase shadow-sm">
                                                 Stock faible
                                             </span>
                                         )}
                                         {product.status === 'out_of_stock' && (
-                                            <span className="bg-rouge text-creme px-2 py-1 rounded-sm text-[8px] font-black uppercase shadow-sm">
+                                            <span className="bg-rouge text-creme px-2 py-1 rounded-xl text-[8px] font-black uppercase shadow-sm">
                                                 Épuisé
                                             </span>
                                         )}
@@ -267,7 +261,7 @@ export default function AdminProductsPage() {
                                                 <p className="text-[10px] uppercase font-bold text-or tracking-[0.2em]">{product.category}</p>
                                                 {product.badge && (
                                                     <span className={cn(
-                                                        "text-[7px] font-black uppercase px-1.5 py-0.5 rounded-sm",
+                                                        "text-[7px] font-black uppercase px-1.5 py-0.5 rounded-xl",
                                                         product.badge === 'promo' ? "bg-rouge text-creme" : "bg-encre text-or"
                                                     )}>
                                                         {product.badge}
@@ -289,14 +283,14 @@ export default function AdminProductsPage() {
                                         
                                         <div className="flex items-center justify-between mt-4">
                                             {product.comparePrice && product.comparePrice > product.price && (
-                                                <span className="text-[9px] font-bold text-rouge-mid bg-rouge/10 px-2 py-1 rounded-sm">
+                                                <span className="text-[9px] font-bold text-rouge-mid bg-rouge/10 px-2 py-1 rounded-xl">
                                                     -{Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)}%
                                                 </span>
                                             )}
                                             <div className="flex space-x-2 ml-auto">
                                                 <Link 
                                                     href={`/admin/produits/${product.id}`}
-                                                    className={cn("px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-sm transition-all", actionButton.style)}
+                                                    className={cn("px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all", actionButton.style)}
                                                 >
                                                     {actionButton.text}
                                                 </Link>
@@ -316,7 +310,7 @@ export default function AdminProductsPage() {
                     <button
                         onClick={() => setPage(p => Math.max(1, p - 1))}
                         disabled={page === 1}
-                        className="p-2 border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or disabled:opacity-30 disabled:hover:text-encre3 disabled:hover:border-creme2 transition-all"
+                        className="p-2 border border-creme2 rounded-xl text-encre3 hover:text-or hover:border-or disabled:opacity-30 disabled:hover:text-encre3 disabled:hover:border-creme2 transition-all"
                     >
                         <ChevronLeft size={20} />
                     </button>
@@ -331,7 +325,7 @@ export default function AdminProductsPage() {
                                         key={p}
                                         onClick={() => setPage(p)}
                                         className={cn(
-                                            "w-10 h-10 flex items-center justify-center text-xs font-bold rounded-sm transition-all",
+                                            "w-10 h-10 flex items-center justify-center text-xs font-bold rounded-xl transition-all",
                                             page === p 
                                                 ? "bg-encre text-creme shadow-md" 
                                                 : "bg-white border border-creme2 text-encre3 hover:border-or hover:text-or"
@@ -350,7 +344,7 @@ export default function AdminProductsPage() {
                     <button
                         onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                         disabled={page === totalPages}
-                        className="p-2 border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or disabled:opacity-30 disabled:hover:text-encre3 disabled:hover:border-creme2 transition-all"
+                        className="p-2 border border-creme2 rounded-xl text-encre3 hover:text-or hover:border-or disabled:opacity-30 disabled:hover:text-encre3 disabled:hover:border-creme2 transition-all"
                     >
                         <ChevronRight size={20} />
                     </button>
@@ -359,11 +353,11 @@ export default function AdminProductsPage() {
 
             {/* Empty States / Loading Scaffolding */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 opacity-40">
-                <div className="border border-dashed border-creme2 rounded-sm p-12 flex flex-col items-center justify-center text-encre3 space-y-4">
+                <div className="border border-dashed border-creme2 rounded-xl p-12 flex flex-col items-center justify-center text-encre3 space-y-4">
                     <ShoppingBag size={48} strokeWidth={1} />
                     <p className="font-serif text-lg">Ajouter une nouvelle variante</p>
                 </div>
-                <div className="border border-dashed border-creme2 rounded-sm p-12 flex flex-col items-center justify-center text-encre3 space-y-4">
+                <div className="border border-dashed border-creme2 rounded-xl p-12 flex flex-col items-center justify-center text-encre3 space-y-4">
                     <AlertCircle size={48} strokeWidth={1} />
                     <p className="font-serif text-lg">Gérer les alertes globales</p>
                 </div>

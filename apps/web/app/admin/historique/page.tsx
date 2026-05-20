@@ -141,19 +141,19 @@ export default function AdminHistoryPage() {
                 <div className="flex items-center space-x-3">
                     <div className="relative group">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-encre3 group-focus-within:text-or transition-colors" size={16} />
-                        <input type="text" placeholder="Rechercher..." className="pl-10 pr-4 py-2.5 bg-white border border-creme2 rounded-sm text-sm focus:outline-none focus:border-or focus:ring-1 focus:ring-or w-64 shadow-sm" />
+                        <input type="text" placeholder="Rechercher..." className="pl-10 pr-4 py-2.5 bg-white border border-creme2 rounded-xl text-sm focus:outline-none focus:border-or focus:ring-1 focus:ring-or w-64 shadow-sm" />
                     </div>
-                    <button className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm"><Bell size={18} /></button>
-                    <button className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm"><Download size={18} /></button>
-                    <Link href="/" className="px-5 py-2.5 border border-encre text-encre rounded-sm text-sm font-bold hover:bg-encre hover:text-creme transition-all">Voir la boutique</Link>
+                    <button className="p-2.5 bg-white border border-creme2 rounded-xl text-encre3 hover:text-or hover:border-or transition-all shadow-sm"><Bell size={18} /></button>
+                    <button className="p-2.5 bg-white border border-creme2 rounded-xl text-encre3 hover:text-or hover:border-or transition-all shadow-sm"><Download size={18} /></button>
+                    <Link href="/" className="px-5 py-2.5 border border-encre text-encre rounded-xl text-sm font-bold hover:bg-encre hover:text-creme transition-all">Voir la boutique</Link>
                 </div>
             </div>
 
             {/* Filter Bar */}
-            <div className="flex items-center bg-white p-1 rounded-sm border border-creme2 w-fit">
+            <div className="flex items-center bg-white p-1 rounded-xl border border-creme2 w-fit">
                 {typeFilters.map(tab => (
                     <button key={tab.key} onClick={() => setFilter(tab.key)}
-                        className={cn("px-5 py-2 text-[10px] font-black uppercase tracking-widest rounded-sm transition-all",
+                        className={cn("px-5 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all",
                             filter === tab.key ? "bg-[#1A0A0A] text-creme shadow-lg" : "text-encre3 hover:bg-creme/50"
                         )}>
                         {tab.label}
@@ -162,7 +162,7 @@ export default function AdminHistoryPage() {
             </div>
 
             {/* Timeline */}
-            <div className="bg-white rounded-sm border border-creme2 shadow-lg overflow-hidden">
+            <div className="bg-white rounded-xl border border-creme2 shadow-lg overflow-hidden">
                 {loading ? (
                     <div className="flex items-center justify-center py-16">
                         <Loader className="w-8 h-8 text-or animate-spin" />
@@ -172,7 +172,7 @@ export default function AdminHistoryPage() {
                     <div className="text-center py-16">
                         <AlertCircle className="w-12 h-12 text-rouge mx-auto mb-4" />
                         <p className="text-rouge mb-4">{error}</p>
-                        <button onClick={fetchActivityLog} className="px-4 py-2 bg-encre text-creme text-xs font-bold rounded-sm hover:bg-rouge-deep transition-all">
+                        <button onClick={fetchActivityLog} className="px-4 py-2 bg-encre text-creme text-xs font-bold rounded-xl hover:bg-rouge-deep transition-all">
                             Réessayer
                         </button>
                     </div>
@@ -204,7 +204,7 @@ export default function AdminHistoryPage() {
                                                 <p className="text-sm font-bold text-encre group-hover:text-rouge-deep transition-colors">{event.title}</p>
                                                 <p className="text-xs text-encre3 mt-1">{event.detail}</p>
                                             </div>
-                                            <span className="text-[9px] font-black uppercase tracking-widest bg-creme border border-creme2 px-2 py-1 rounded-sm text-encre3 ml-4 shrink-0">
+                                            <span className="text-[9px] font-black uppercase tracking-widest bg-creme border border-creme2 px-2 py-1 rounded-xl text-encre3 ml-4 shrink-0">
                                                 {event.user}
                                             </span>
                                         </div>

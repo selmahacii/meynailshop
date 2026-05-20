@@ -143,7 +143,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                 <div className="flex items-center space-x-3">
                     <div className="relative w-10 h-10 border border-gold-brand/20 rounded-full p-0.5 group-hover:border-gold-brand/40 transition-all duration-300 shadow-lg shadow-black/20 overflow-hidden">
                         <Image
-                            src="/logo2.png"
+                            src="/images/logo2.png"
                             alt="MEEY Logo"
                             fill
                             className="object-contain rounded-full"

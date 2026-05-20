@@ -190,22 +190,22 @@ export default function AdminOrdersPage() {
                         <input
                             type="text"
                             placeholder="Rechercher..."
-                            className="pl-10 pr-4 py-2 bg-white border border-creme2 rounded-sm text-sm focus:outline-none focus:border-or focus:ring-1 focus:ring-or w-full sm:w-48 xl:w-64 shadow-sm transition-all"
+                            className="pl-10 pr-4 py-2 bg-white border border-creme2 rounded-xl text-sm focus:outline-none focus:border-or focus:ring-1 focus:ring-or w-full sm:w-48 xl:w-64 shadow-sm transition-all"
                         />
                     </div>
                     <div className="flex items-center gap-2">
-                        <button className="p-2 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
+                        <button className="p-2 bg-white border border-creme2 rounded-xl text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
                             <Bell size={18} />
                         </button>
                     </div>
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="flex items-center justify-center space-x-2 px-4 py-2 bg-rouge-deep text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md flex-grow sm:flex-grow-0"
+                        className="flex items-center justify-center space-x-2 px-4 py-2 bg-rouge-deep text-creme rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md flex-grow sm:flex-grow-0"
                     >
                         <Plus size={16} />
                         <span>Nouveau</span>
                     </button>
-                    <Link href="/" className="px-4 py-2 border border-encre text-encre rounded-sm text-xs font-bold hover:bg-encre hover:text-creme transition-all text-center flex-grow sm:flex-grow-0">
+                    <Link href="/" className="px-4 py-2 border border-encre text-encre rounded-xl text-xs font-bold hover:bg-encre hover:text-creme transition-all text-center flex-grow sm:flex-grow-0">
                         Boutique
                     </Link>
                 </div>
@@ -213,7 +213,7 @@ export default function AdminOrdersPage() {
 
             {/* Error Message */}
             {error && (
-                <div className="bg-red-50 border-l-4 border-red-500 p-4 flex justify-between items-center rounded-sm animate-in fade-in slide-in-from-top-4 duration-300">
+                <div className="bg-red-50 border-l-4 border-red-500 p-4 flex justify-between items-center rounded-xl animate-in fade-in slide-in-from-top-4 duration-300">
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
                             <span className="text-red-500 text-lg">⚠️</span>
@@ -229,10 +229,10 @@ export default function AdminOrdersPage() {
             )}
 
             {/* Content Section */}
-            <div className="bg-white rounded-sm border border-creme2 shadow-lg overflow-hidden">
+            <div className="bg-white rounded-xl border border-creme2 shadow-lg overflow-hidden">
                 {/* Tabs & Toolbar */}
                 <div className="p-4 md:p-6 border-b border-creme2 bg-creme/10 flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div className="flex items-center bg-white p-1 rounded-sm border border-creme2 overflow-x-auto w-full md:w-auto custom-scrollbar no-scrollbar">
+                    <div className="flex items-center bg-white p-1 rounded-xl border border-creme2 overflow-x-auto w-full md:w-auto custom-scrollbar no-scrollbar">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.key}
@@ -241,7 +241,7 @@ export default function AdminOrdersPage() {
                                     fetchOrders(tab.key);
                                 }}
                                 className={cn(
-                                    "px-4 md:px-5 py-2.5 text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-sm transition-all flex items-center space-x-2 whitespace-nowrap",
+                                    "px-4 md:px-5 py-2.5 text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-xl transition-all flex items-center space-x-2 whitespace-nowrap",
                                     activeTab === tab.key
                                         ? "bg-encre text-creme shadow-md transition-all scale-[1.02]"
                                         : "text-encre3 hover:bg-creme/5 group"
@@ -260,7 +260,7 @@ export default function AdminOrdersPage() {
 
                         <button
                             onClick={() => setIsModalOpen(true)}
-                            className="flex-1 md:flex-none flex items-center justify-center space-x-2 px-6 py-2.5 bg-[#1A0A0A] text-creme text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all shadow-lg group"
+                            className="flex-1 md:flex-none flex items-center justify-center space-x-2 px-6 py-2.5 bg-[#1A0A0A] text-creme text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-rouge-deep transition-all shadow-lg group"
                         >
                             <Plus size={14} className="text-or" />
                             <span>Créer</span>
@@ -270,14 +270,14 @@ export default function AdminOrdersPage() {
 
                 {/* Status Summary Bar */}
                 <div className="grid grid-cols-2 gap-4 p-4 bg-white border-b border-creme2">
-                    <div className="bg-blue-50/50 p-4 rounded-sm border border-blue-100 flex items-center justify-between">
+                    <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 flex items-center justify-between">
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-blue-600 mb-1">En Livraison</p>
                             <p className="text-xl font-serif text-encre">{stats?.shipped || 0}</p>
                         </div>
                         <Truck className="text-blue-200" size={32} />
                     </div>
-                    <div className="bg-rouge-deep/5 p-4 rounded-sm border border-rouge-deep/10 flex items-center justify-between">
+                    <div className="bg-rouge-deep/5 p-4 rounded-xl border border-rouge-deep/10 flex items-center justify-between">
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-rouge-mid mb-1">Retours</p>
                             <p className="text-xl font-serif text-encre">{stats?.returned || 0}</p>
@@ -341,7 +341,7 @@ export default function AdminOrdersPage() {
                                     </td>
                                     <td className="px-8 py-6">
                                         <span className={cn(
-                                            "text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm shadow-sm inline-block",
+                                            "text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-xl shadow-sm inline-block",
                                             getStatusColor(order.status)
                                         )}>
                                             {getStatusText(order.status)}
@@ -353,7 +353,7 @@ export default function AdminOrdersPage() {
                                             <button
                                                 onClick={() => updateOrderStatus(order.id, 'confirmed')}
                                                 disabled={updatingOrder === order.id}
-                                                className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-indigo-700 text-white border-indigo-800 hover:bg-indigo-800 disabled:opacity-50"
+                                                className="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border bg-indigo-700 text-white border-indigo-800 hover:bg-indigo-800 disabled:opacity-50"
                                             >
                                                 {updatingOrder === order.id ? '...' : 'Confirmer'}
                                             </button>
@@ -362,7 +362,7 @@ export default function AdminOrdersPage() {
                                             <button
                                                 onClick={() => updateOrderStatus(order.id, 'shipped')}
                                                 disabled={updatingOrder === order.id}
-                                                className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-blue-700 text-white border-blue-800 hover:bg-blue-800 disabled:opacity-50"
+                                                className="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border bg-blue-700 text-white border-blue-800 hover:bg-blue-800 disabled:opacity-50"
                                             >
                                                 {updatingOrder === order.id ? '...' : 'Expédier'}
                                             </button>
@@ -372,7 +372,7 @@ export default function AdminOrdersPage() {
                                                 <button
                                                     onClick={() => updateOrderStatus(order.id, 'delivered')}
                                                     disabled={updatingOrder === order.id}
-                                                    className="px-3 py-1.5 bg-green-700 text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-green-800 transition-all flex items-center space-x-1 shadow-sm border border-green-800"
+                                                    className="px-3 py-1.5 bg-green-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-green-800 transition-all flex items-center space-x-1 shadow-sm border border-green-800"
                                                 >
                                                     <CheckCircle2 size={12} />
                                                     <span>{updatingOrder === order.id ? '...' : 'Livrée'}</span>
@@ -380,7 +380,7 @@ export default function AdminOrdersPage() {
                                                 <button
                                                     onClick={() => updateOrderStatus(order.id, 'returned')}
                                                     disabled={updatingOrder === order.id}
-                                                    className="px-3 py-1.5 bg-rouge-deep text-white rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center space-x-1 shadow-sm border border-rouge-deep"
+                                                    className="px-3 py-1.5 bg-rouge-deep text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center space-x-1 shadow-sm border border-rouge-deep"
                                                 >
                                                     <RotateCcw size={12} />
                                                     <span>{updatingOrder === order.id ? '...' : 'Retour'}</span>
@@ -391,7 +391,7 @@ export default function AdminOrdersPage() {
                                             <button
                                                 onClick={() => updateOrderStatus(order.id, 'returned')}
                                                 disabled={updatingOrder === order.id}
-                                                className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-rouge-deep text-white border-rouge-deep hover:bg-[#1A0A0A] disabled:opacity-50"
+                                                className="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border bg-rouge-deep text-white border-rouge-deep hover:bg-[#1A0A0A] disabled:opacity-50"
                                             >
                                                 {updatingOrder === order.id ? '...' : 'Retour'}
                                             </button>
@@ -399,7 +399,7 @@ export default function AdminOrdersPage() {
 
                                         <Link
                                             href={`/admin/commandes/${order.id}`}
-                                            className="px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all border bg-[#1A0A0A] text-white border-[#2A1A1A] hover:bg-rouge-deep"
+                                            className="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border bg-[#1A0A0A] text-white border-[#2A1A1A] hover:bg-rouge-deep"
                                         >
                                             Détail
                                         </Link>
@@ -431,7 +431,7 @@ export default function AdminOrdersPage() {
                                         </span>
                                     </div>
                                     <span className={cn(
-                                        "text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-sm shadow-sm",
+                                        "text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-xl shadow-sm",
                                         getStatusColor(order.status)
                                     )}>
                                         {getStatusText(order.status)}
@@ -470,7 +470,7 @@ export default function AdminOrdersPage() {
                                 <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-creme2/50">
                                     <div className="relative flex-1">
                                         <select
-                                            className="w-full px-4 py-2 bg-creme2/40 border border-creme2 rounded-sm text-[10px] font-black uppercase tracking-widest outline-none focus:border-or transition-all appearance-none text-encre cursor-pointer pr-10"
+                                            className="w-full px-4 py-2 bg-creme2/40 border border-creme2 rounded-xl text-[10px] font-black uppercase tracking-widest outline-none focus:border-or transition-all appearance-none text-encre cursor-pointer pr-10"
                                             value={order.status}
                                             onChange={(e) => updateOrderStatus(order.id, e.target.value)}
                                             disabled={updatingOrder === order.id}
@@ -496,7 +496,7 @@ export default function AdminOrdersPage() {
                                     </div>
                                     <Link
                                         href={`/admin/commandes/${order.id}`}
-                                        className="flex-1 px-3 py-2 bg-[#1A0A0A] text-white rounded-sm text-[9px] font-black uppercase tracking-widest text-center"
+                                        className="flex-1 px-3 py-2 bg-[#1A0A0A] text-white rounded-xl text-[9px] font-black uppercase tracking-widest text-center"
                                     >
                                         Détail
                                     </Link>
@@ -517,7 +517,7 @@ export default function AdminOrdersPage() {
                                 key={p}
                                 onClick={() => fetchOrders(activeTab, p)}
                                 className={cn(
-                                    "w-8 h-8 flex items-center justify-center text-[10px] font-bold border transition-all rounded-sm",
+                                    "w-8 h-8 flex items-center justify-center text-[10px] font-bold border transition-all rounded-xl",
                                     p === pagination.page ? "bg-encre text-creme border-encre" : "bg-white text-encre3 border-creme2 hover:border-or"
                                 )}
                             >

@@ -66,7 +66,7 @@ export default function AdminAnalyticsPage() {
 
     if (error) {
         return (
-            <div className="p-8 bg-red-50 border border-red-100 rounded-sm text-red-600 flex items-center gap-3">
+            <div className="p-8 bg-red-50 border border-red-100 rounded-xl text-red-600 flex items-center gap-3">
                 <AlertTriangle size={20} />
                 <p className="font-bold text-sm">{error}</p>
             </div>
@@ -104,11 +104,11 @@ export default function AdminAnalyticsPage() {
                     </p>
                 </div>
                 <div className="flex items-center space-x-3">
-                    <button className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm"><Download size={18} /></button>
-                    <button className="flex items-center space-x-2 px-5 py-2.5 bg-rouge-deep text-creme rounded-sm text-sm font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md">
+                    <button className="p-2.5 bg-white border border-creme2 rounded-xl text-encre3 hover:text-or hover:border-or transition-all shadow-sm"><Download size={18} /></button>
+                    <button className="flex items-center space-x-2 px-5 py-2.5 bg-rouge-deep text-creme rounded-xl text-sm font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md">
                         <Plus size={16} /><span>Générer Rapport</span>
                     </button>
-                    <Link href="/" className="px-5 py-2.5 border border-encre text-encre rounded-sm text-sm font-bold hover:bg-encre hover:text-creme transition-all">Voir Boutique</Link>
+                    <Link href="/" className="px-5 py-2.5 border border-encre text-encre rounded-xl text-sm font-bold hover:bg-encre hover:text-creme transition-all">Voir Boutique</Link>
                 </div>
             </div>
 
@@ -120,13 +120,13 @@ export default function AdminAnalyticsPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1 }}
-                        className="bg-white rounded-sm border border-creme2 p-8 shadow-sm hover:shadow-xl hover:border-or transition-all group"
+                        className="bg-white rounded-xl border border-creme2 p-8 shadow-sm hover:shadow-xl hover:border-or transition-all group"
                     >
                         <div className="flex justify-between items-start mb-6">
-                            <div className="p-2.5 bg-creme rounded-sm border border-creme2 group-hover:bg-or/10 group-hover:border-or/30 transition-colors">
+                            <div className="p-2.5 bg-creme rounded-xl border border-creme2 group-hover:bg-or/10 group-hover:border-or/30 transition-colors">
                                 <kpi.icon size={22} className="text-encre" strokeWidth={1.5} />
                             </div>
-                            <span className={cn("text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-sm", kpi.positive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600")}>
+                            <span className={cn("text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-xl", kpi.positive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600")}>
                                 {kpi.delta}
                             </span>
                         </div>
@@ -138,7 +138,7 @@ export default function AdminAnalyticsPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Revenue Chart */}
-                <div className="lg:col-span-8 bg-white rounded-sm border border-creme2 shadow-sm p-8">
+                <div className="lg:col-span-8 bg-white rounded-xl border border-creme2 shadow-sm p-8">
                     <div className="flex justify-between items-center mb-10">
                         <div>
                             <h3 className="font-serif text-xl text-encre">Croissance du CA</h3>
@@ -172,7 +172,7 @@ export default function AdminAnalyticsPage() {
                 </div>
 
                 {/* Top Products */}
-                <div className="lg:col-span-4 bg-white rounded-sm border border-creme2 shadow-sm overflow-hidden">
+                <div className="lg:col-span-4 bg-white rounded-xl border border-creme2 shadow-sm overflow-hidden">
                     <div className="p-6 border-b border-creme2 bg-creme/10">
                         <h3 className="font-serif text-lg text-encre">Top Ventes</h3>
                         <p className="text-[10px] text-encre3 uppercase tracking-widest font-bold mt-1">Produits les plus populaires</p>
@@ -181,7 +181,7 @@ export default function AdminAnalyticsPage() {
                         {charts.productSales && charts.productSales.length > 0 ? charts.productSales.map((p: any, i: number) => (
                             <div key={i} className="flex items-center space-x-4 group">
                                 <span className="text-[10px] font-black text-encre3 w-4">{i + 1}</span>
-                                <div className="w-10 h-10 rounded-sm bg-creme border border-creme2 flex items-center justify-center flex-shrink-0 text-or font-serif font-black">
+                                <div className="w-10 h-10 rounded-xl bg-creme border border-creme2 flex items-center justify-center flex-shrink-0 text-or font-serif font-black">
                                     {p.name.charAt(0)}
                                 </div>
                                 <div className="flex-grow min-w-0">
@@ -206,7 +206,7 @@ export default function AdminAnalyticsPage() {
 
             {/* Geographical Split */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="bg-white rounded-sm border border-creme2 shadow-sm p-8">
+                <div className="bg-white rounded-xl border border-creme2 shadow-sm p-8">
                     <div className="flex items-center gap-3 mb-8">
                         <MapPin size={22} className="text-or" />
                         <h3 className="font-serif text-xl text-encre">Répartition par Wilaya</h3>
@@ -231,7 +231,7 @@ export default function AdminAnalyticsPage() {
                     </div>
                 </div>
 
-                <div className="bg-white rounded-sm border border-creme2 shadow-sm p-8">
+                <div className="bg-white rounded-xl border border-creme2 shadow-sm p-8">
                     <div className="flex items-center gap-3 mb-8">
                         <CreditCard size={22} className="text-or" />
                         <h3 className="font-serif text-xl text-encre">Mode de Paiement</h3>

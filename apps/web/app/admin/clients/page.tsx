@@ -77,21 +77,21 @@ export default function AdminClientsPage() {
                 <div className="flex items-center space-x-3">
                     <div className="relative group">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-encre3 group-focus-within:text-or transition-colors" size={16} />
-                        <input type="text" placeholder="Rechercher un client..." className="pl-10 pr-4 py-2.5 bg-white border border-creme2 rounded-sm text-sm focus:outline-none focus:border-or focus:ring-1 focus:ring-or w-64 shadow-sm" />
+                        <input type="text" placeholder="Rechercher un client..." className="pl-10 pr-4 py-2.5 bg-white border border-creme2 rounded-xl text-sm focus:outline-none focus:border-or focus:ring-1 focus:ring-or w-64 shadow-sm" />
                     </div>
                     <button 
                         onClick={() => toast.info('Aucune notification pour les clients')}
-                        className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-[#BFA893] hover:border-[#BFA893] transition-all shadow-sm"
+                        className="p-2.5 bg-white border border-creme2 rounded-xl text-encre3 hover:text-[#BFA893] hover:border-[#BFA893] transition-all shadow-sm"
                     >
                         <Bell size={18} />
                     </button>
                     <button 
                         onClick={() => toast.success('Extraction des données client lancée')}
-                        className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-[#BFA893] hover:border-[#BFA893] transition-all shadow-sm"
+                        className="p-2.5 bg-white border border-creme2 rounded-xl text-encre3 hover:text-[#BFA893] hover:border-[#BFA893] transition-all shadow-sm"
                     >
                         <Download size={18} />
                     </button>
-                    <Link href="/" className="px-5 py-2.5 border border-encre text-encre rounded-sm text-sm font-bold hover:bg-encre hover:text-creme transition-all">Voir la boutique</Link>
+                    <Link href="/" className="px-5 py-2.5 border border-encre text-encre rounded-xl text-sm font-bold hover:bg-encre hover:text-creme transition-all">Voir la boutique</Link>
                 </div>
             </div>
 
@@ -102,7 +102,7 @@ export default function AdminClientsPage() {
                     { label: 'Clients VIP', value: vipClients.toString(), icon: Star, color: 'text-or', bg: 'bg-or/10' },
                     { label: 'Nouveaux (30j)', value: newClients.toString(), icon: TrendingUp, color: 'text-green-600', bg: 'bg-green-50' },
                 ].map((stat, i) => (
-                    <div key={i} className="bg-white rounded-sm border border-creme2 p-6 flex items-center space-x-4 shadow-sm hover:border-or transition-all">
+                    <div key={i} className="bg-white rounded-xl border border-creme2 p-6 flex items-center space-x-4 shadow-sm hover:border-or transition-all">
                         <div className={cn("w-12 h-12 rounded-full flex items-center justify-center", stat.bg)}>
                             <stat.icon size={22} className={stat.color} />
                         </div>
@@ -115,7 +115,7 @@ export default function AdminClientsPage() {
             </div>
 
             {/* Clients Table */}
-            <div className="bg-white rounded-sm border border-creme2 shadow-lg overflow-hidden">
+            <div className="bg-white rounded-xl border border-creme2 shadow-lg overflow-hidden">
                 <div className="p-6 border-b border-creme2 bg-creme/10">
                     <h2 className="font-serif text-xl text-encre">Liste des clients</h2>
                 </div>
@@ -128,7 +128,7 @@ export default function AdminClientsPage() {
                     <div className="text-center py-12">
                         <AlertCircle className="w-12 h-12 text-rouge mx-auto mb-4" />
                         <p className="text-rouge">{error}</p>
-                        <button onClick={fetchClients} className="mt-4 px-4 py-2 bg-encre text-creme text-xs font-bold rounded-sm hover:bg-rouge-deep transition-all">
+                        <button onClick={fetchClients} className="mt-4 px-4 py-2 bg-encre text-creme text-xs font-bold rounded-xl hover:bg-rouge-deep transition-all">
                             Réessayer
                         </button>
                     </div>
@@ -174,14 +174,14 @@ export default function AdminClientsPage() {
                                             {new Date(client.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
                                         </td>
                                         <td className="px-8 py-5 text-center">
-                                            <span className={cn("text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm shadow-sm", statusConfig[status]?.color || 'bg-gray-100 text-gray-600')}>
+                                            <span className={cn("text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-xl shadow-sm", statusConfig[status]?.color || 'bg-gray-100 text-gray-600')}>
                                                 {statusConfig[status]?.label || status}
                                             </span>
                                         </td>
                                         <td className="px-8 py-5 text-right">
                                             <Link 
                                                 href={`/admin/clients/${client.id}`}
-                                                className="inline-block px-4 py-1.5 bg-[#390102] text-[#BFA893] text-[10px] font-black uppercase tracking-widest rounded-sm hover:opacity-90 transition-all border border-[#BFA893]/20 shadow-md"
+                                                className="inline-block px-4 py-1.5 bg-[#390102] text-[#BFA893] text-[10px] font-black uppercase tracking-widest rounded-xl hover:opacity-90 transition-all border border-[#BFA893]/20 shadow-md"
                                             >
                                                 Voir Profil
                                             </Link>

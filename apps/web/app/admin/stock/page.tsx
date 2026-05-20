@@ -160,7 +160,7 @@ export default function AdminStockPage() {
                         <input
                             type="text" placeholder="Rechercher produit ou SKU..."
                             value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
-                            className="pl-9 pr-4 py-2 bg-white border border-creme2 rounded-sm text-sm focus:outline-none focus:border-or focus:ring-1 focus:ring-or w-full sm:w-52 xl:w-64 shadow-sm transition-all"
+                            className="pl-9 pr-4 py-2 bg-white border border-creme2 rounded-xl text-sm focus:outline-none focus:border-or focus:ring-1 focus:ring-or w-full sm:w-52 xl:w-64 shadow-sm transition-all"
                         />
                         {search && (
                             <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-encre3 hover:text-rouge">
@@ -169,14 +169,14 @@ export default function AdminStockPage() {
                         )}
                     </div>
                     <div className="flex items-center gap-2">
-                        <button onClick={fetchProducts} title="Rafraîchir" className="p-2 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
+                        <button onClick={fetchProducts} title="Rafraîchir" className="p-2 bg-white border border-creme2 rounded-xl text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
                             <RefreshCw size={17} className={loading ? 'animate-spin' : ''} />
                         </button>
-                        <button className="p-2 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
+                        <button className="p-2 bg-white border border-creme2 rounded-xl text-encre3 hover:text-or hover:border-or transition-all shadow-sm">
                             <Download size={17} />
                         </button>
                     </div>
-                    <Link href="/admin/produits/nouveau" className="flex items-center justify-center gap-2 px-4 py-2 bg-rouge-deep text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md flex-grow sm:flex-grow-0">
+                    <Link href="/admin/produits/nouveau" className="flex items-center justify-center gap-2 px-4 py-2 bg-rouge-deep text-creme rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-rouge-mid transition-all shadow-md flex-grow sm:flex-grow-0">
                         <Plus size={15} /><span>Nouveau produit</span>
                     </Link>
                 </div>
@@ -190,7 +190,7 @@ export default function AdminStockPage() {
                     { key: 'all',  icon: Package,       label: 'Total produits', val: stockItems.length, bg: 'bg-white border-creme2', text: 'text-encre', iconBg: 'bg-creme text-encre3' },
                 ].map(({ key, icon: Icon, label, val, bg, text, iconBg }) => (
                     <button key={key} onClick={() => setFilter(filter === key ? 'all' : key)}
-                        className={cn('border rounded-sm p-4 md:p-6 flex items-center gap-4 shadow-sm text-left transition-all hover:shadow-md w-full',
+                        className={cn('border rounded-xl p-4 md:p-6 flex items-center gap-4 shadow-sm text-left transition-all hover:shadow-md w-full',
                             bg, filter === key ? 'ring-2 ring-or' : ''
                         )}
                     >
@@ -206,11 +206,11 @@ export default function AdminStockPage() {
             </div>
 
             {/* ── Table wrapper ── */}
-            <div className="bg-white rounded-sm border border-creme2 shadow-lg overflow-hidden">
+            <div className="bg-white rounded-xl border border-creme2 shadow-lg overflow-hidden">
 
                 {/* Tabs bar */}
                 <div className="p-3 md:p-5 border-b border-creme2 bg-creme/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div className="flex items-center bg-white p-1 rounded-sm border border-creme2 overflow-x-auto w-full sm:w-auto">
+                    <div className="flex items-center bg-white p-1 rounded-xl border border-creme2 overflow-x-auto w-full sm:w-auto">
                         {[
                             { key: 'all', label: 'Tous', count: stockItems.length },
                             { key: 'ok',  label: 'En stock', count: counts.ok },
@@ -218,7 +218,7 @@ export default function AdminStockPage() {
                             { key: 'out', label: 'Rupture',  count: counts.out },
                         ].map(tab => (
                             <button key={tab.key} onClick={() => setFilter(tab.key)}
-                                className={cn('px-3 md:px-4 py-2 text-[9px] md:text-[10px] font-black uppercase tracking-widest rounded-sm transition-all flex items-center gap-1.5 whitespace-nowrap',
+                                className={cn('px-3 md:px-4 py-2 text-[9px] md:text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center gap-1.5 whitespace-nowrap',
                                     filter === tab.key ? 'bg-[#1A0A0A] text-creme shadow-md' : 'text-encre3 hover:bg-creme/50'
                                 )}
                             >
@@ -242,7 +242,7 @@ export default function AdminStockPage() {
                     <div className="text-center py-16 px-4">
                         <AlertCircle className="w-12 h-12 text-rouge mx-auto mb-4" />
                         <p className="text-rouge mb-4 text-sm">{error}</p>
-                        <button onClick={fetchProducts} className="px-5 py-2 bg-encre text-creme text-xs font-bold rounded-sm hover:bg-rouge-deep transition-all">
+                        <button onClick={fetchProducts} className="px-5 py-2 bg-encre text-creme text-xs font-bold rounded-xl hover:bg-rouge-deep transition-all">
                             Réessayer
                         </button>
                     </div>
@@ -289,7 +289,7 @@ export default function AdminStockPage() {
                                                             value={inlineEdits[item.id]}
                                                             onChange={e => setInlineEdits(p => ({ ...p, [item.id]: e.target.value }))}
                                                             onKeyDown={e => { if (e.key === 'Enter') commitInline(item); if (e.key === 'Escape') cancelInline(item.id); }}
-                                                            className="w-16 text-center py-1 px-1 border border-or rounded-sm text-sm font-bold outline-none focus:ring-1 focus:ring-or appearance-none"
+                                                            className="w-16 text-center py-1 px-1 border border-or rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-or appearance-none"
                                                             autoFocus
                                                         />
                                                         <button onClick={() => setInlineEdits(p => ({ ...p, [item.id]: String(parseInt(p[item.id] || '0') + 1) }))}
@@ -318,7 +318,7 @@ export default function AdminStockPage() {
 
                                             <td className="px-6 py-4 text-center text-sm font-bold text-encre3">{item.threshold}</td>
                                             <td className="px-6 py-4 text-center">
-                                                <span className={cn('inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-sm border', statusConfig[item.status].color)}>
+                                                <span className={cn('inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-xl border', statusConfig[item.status].color)}>
                                                     <span className={cn('w-1.5 h-1.5 rounded-full', statusConfig[item.status].dot)} />
                                                     {statusConfig[item.status].label}
                                                 </span>
@@ -326,15 +326,15 @@ export default function AdminStockPage() {
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex items-center justify-end gap-1.5">
                                                     <button onClick={() => openModal(item, 'add')} title="Ajouter du stock"
-                                                        className="p-1.5 bg-green-50 border border-green-200 text-green-700 rounded-sm hover:bg-green-600 hover:text-white hover:border-green-600 transition-all">
+                                                        className="p-1.5 bg-green-50 border border-green-200 text-green-700 rounded-xl hover:bg-green-600 hover:text-white hover:border-green-600 transition-all">
                                                         <ArrowUpCircle size={14} />
                                                     </button>
                                                     <button onClick={() => openModal(item, 'subtract')} title="Retirer du stock"
-                                                        className="p-1.5 bg-red-50 border border-red-200 text-red-600 rounded-sm hover:bg-red-600 hover:text-white hover:border-red-600 transition-all">
+                                                        className="p-1.5 bg-red-50 border border-red-200 text-red-600 rounded-xl hover:bg-red-600 hover:text-white hover:border-red-600 transition-all">
                                                         <ArrowDownCircle size={14} />
                                                     </button>
                                                     <button onClick={() => openModal(item, 'set')} title="Définir le stock"
-                                                        className="px-3 py-1.5 bg-[#1A0A0A] text-creme text-[9px] font-black uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all">
+                                                        className="px-3 py-1.5 bg-[#1A0A0A] text-creme text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-rouge-deep transition-all">
                                                         Définir
                                                     </button>
                                                 </div>
@@ -355,13 +355,13 @@ export default function AdminStockPage() {
                                             <p className="text-[9px] uppercase font-bold text-or tracking-widest mt-0.5">{item.category}</p>
                                             <p className="text-[9px] font-mono text-encre3 mt-0.5">{item.ref}</p>
                                         </div>
-                                        <span className={cn('shrink-0 inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-sm border', statusConfig[item.status].color)}>
+                                        <span className={cn('shrink-0 inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-xl border', statusConfig[item.status].color)}>
                                             <span className={cn('w-1.5 h-1.5 rounded-full', statusConfig[item.status].dot)} />
                                             {statusConfig[item.status].label}
                                         </span>
                                     </div>
 
-                                    <div className="flex items-center justify-between bg-creme/30 rounded-sm p-3">
+                                    <div className="flex items-center justify-between bg-creme/30 rounded-xl p-3">
                                         <div className="text-center">
                                             <p className="text-[9px] uppercase font-black text-encre3 tracking-widest">Stock actuel</p>
                                             <p className={cn('text-2xl font-black', item.status === 'out' ? 'text-red-600' : item.status === 'low' ? 'text-yellow-700' : 'text-encre')}>
@@ -380,15 +380,15 @@ export default function AdminStockPage() {
 
                                     <div className="flex items-center gap-2">
                                         <button onClick={() => openModal(item, 'add')}
-                                            className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-green-50 border border-green-200 text-green-700 text-[10px] font-bold uppercase rounded-sm hover:bg-green-600 hover:text-white hover:border-green-600 transition-all">
+                                            className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-green-50 border border-green-200 text-green-700 text-[10px] font-bold uppercase rounded-xl hover:bg-green-600 hover:text-white hover:border-green-600 transition-all">
                                             <ArrowUpCircle size={13} /><span>Ajouter</span>
                                         </button>
                                         <button onClick={() => openModal(item, 'subtract')}
-                                            className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-red-50 border border-red-200 text-red-600 text-[10px] font-bold uppercase rounded-sm hover:bg-red-600 hover:text-white hover:border-red-600 transition-all">
+                                            className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-red-50 border border-red-200 text-red-600 text-[10px] font-bold uppercase rounded-xl hover:bg-red-600 hover:text-white hover:border-red-600 transition-all">
                                             <ArrowDownCircle size={13} /><span>Retirer</span>
                                         </button>
                                         <button onClick={() => openModal(item, 'set')}
-                                            className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-[#1A0A0A] text-creme text-[10px] font-bold uppercase rounded-sm hover:bg-rouge-deep transition-all">
+                                            className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-[#1A0A0A] text-creme text-[10px] font-bold uppercase rounded-xl hover:bg-rouge-deep transition-all">
                                             <Edit3 size={13} /><span>Définir</span>
                                         </button>
                                     </div>
@@ -402,7 +402,7 @@ export default function AdminStockPage() {
                                 <button
                                     onClick={() => setPage(p => Math.max(1, p - 1))}
                                     disabled={page === 1}
-                                    className="p-2 border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or disabled:opacity-30 disabled:hover:text-encre3 disabled:hover:border-creme2 transition-all bg-white"
+                                    className="p-2 border border-creme2 rounded-xl text-encre3 hover:text-or hover:border-or disabled:opacity-30 disabled:hover:text-encre3 disabled:hover:border-creme2 transition-all bg-white"
                                 >
                                     <ChevronLeft size={18} />
                                 </button>
@@ -416,7 +416,7 @@ export default function AdminStockPage() {
                                                     key={p}
                                                     onClick={() => setPage(p)}
                                                     className={cn(
-                                                        "w-8 h-8 flex items-center justify-center text-[10px] font-bold rounded-sm transition-all",
+                                                        "w-8 h-8 flex items-center justify-center text-[10px] font-bold rounded-xl transition-all",
                                                         page === p 
                                                             ? "bg-encre text-creme shadow-md" 
                                                             : "bg-white border border-creme2 text-encre3 hover:border-or hover:text-or"
@@ -435,7 +435,7 @@ export default function AdminStockPage() {
                                 <button
                                     onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                                     disabled={page === totalPages}
-                                    className="p-2 border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or disabled:opacity-30 disabled:hover:text-encre3 disabled:hover:border-creme2 transition-all bg-white"
+                                    className="p-2 border border-creme2 rounded-xl text-encre3 hover:text-or hover:border-or disabled:opacity-30 disabled:hover:text-encre3 disabled:hover:border-creme2 transition-all bg-white"
                                 >
                                     <ChevronRight size={18} />
                                 </button>
@@ -449,7 +449,7 @@ export default function AdminStockPage() {
             {modal.open && modal.item && (
                 <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
                     onClick={e => { if (e.target === e.currentTarget) setModal(m => ({ ...m, open: false })); }}>
-                    <div className="bg-white rounded-sm shadow-2xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                         {/* Modal header */}
                         <div className="p-5 border-b border-creme2 bg-[#1A0A0A] flex items-center justify-between">
                             <div>
@@ -504,7 +504,7 @@ export default function AdminStockPage() {
                                     { mode: 'set'      as const, label: '= Définir',   color: 'bg-white border-creme2 text-encre',             active: 'bg-[#1A0A0A] border-[#1A0A0A] text-creme' },
                                 ]).map(btn => (
                                     <button key={btn.mode} onClick={() => setModal(m => ({ ...m, mode: btn.mode, value: btn.mode === 'set' ? String(m.item?.stock || 0) : '0' }))}
-                                        className={cn('py-2 border rounded-sm text-[9px] font-black uppercase tracking-widest transition-all',
+                                        className={cn('py-2 border rounded-xl text-[9px] font-black uppercase tracking-widest transition-all',
                                             modal.mode === btn.mode ? btn.active : btn.color
                                         )}>
                                         {btn.label}
@@ -520,7 +520,7 @@ export default function AdminStockPage() {
                             </label>
                             <div className="flex items-center gap-2">
                                 <button onClick={() => setModal(m => ({ ...m, value: String(Math.max(0, parseInt(m.value || '0') - 1)) }))}
-                                    className="w-10 h-12 flex items-center justify-center bg-creme border border-creme2 rounded-sm text-encre hover:bg-rouge hover:text-creme hover:border-rouge transition-all text-lg font-bold shrink-0">
+                                    className="w-10 h-12 flex items-center justify-center bg-creme border border-creme2 rounded-xl text-encre hover:bg-rouge hover:text-creme hover:border-rouge transition-all text-lg font-bold shrink-0">
                                     −
                                 </button>
                                 <input
@@ -528,11 +528,11 @@ export default function AdminStockPage() {
                                     value={modal.value}
                                     onChange={e => setModal(m => ({ ...m, value: e.target.value }))}
                                     onKeyDown={e => e.key === 'Enter' && submitModal()}
-                                    className="flex-grow py-3 px-4 border-2 border-or rounded-sm text-2xl font-black text-center outline-none focus:ring-2 focus:ring-or appearance-none"
+                                    className="flex-grow py-3 px-4 border-2 border-or rounded-xl text-2xl font-black text-center outline-none focus:ring-2 focus:ring-or appearance-none"
                                     autoFocus
                                 />
                                 <button onClick={() => setModal(m => ({ ...m, value: String(parseInt(m.value || '0') + 1) }))}
-                                    className="w-10 h-12 flex items-center justify-center bg-creme border border-creme2 rounded-sm text-encre hover:bg-green-600 hover:text-white hover:border-green-600 transition-all text-lg font-bold shrink-0">
+                                    className="w-10 h-12 flex items-center justify-center bg-creme border border-creme2 rounded-xl text-encre hover:bg-green-600 hover:text-white hover:border-green-600 transition-all text-lg font-bold shrink-0">
                                     +
                                 </button>
                             </div>
@@ -541,11 +541,11 @@ export default function AdminStockPage() {
                         {/* Actions */}
                         <div className="flex items-center gap-3 px-5 pb-5">
                             <button onClick={() => setModal(m => ({ ...m, open: false }))}
-                                className="flex-1 py-3 border border-creme2 text-encre text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-creme transition-all">
+                                className="flex-1 py-3 border border-creme2 text-encre text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-creme transition-all">
                                 Annuler
                             </button>
                             <button onClick={submitModal} disabled={saving === modal.item.id}
-                                className="flex-1 py-3 bg-[#1A0A0A] text-creme text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-rouge-deep transition-all flex items-center justify-center gap-2 shadow-lg">
+                                className="flex-1 py-3 bg-[#1A0A0A] text-creme text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-rouge-deep transition-all flex items-center justify-center gap-2 shadow-lg">
                                 {saving === modal.item.id ? <Loader size={14} className="animate-spin" /> : null}
                                 <span>Confirmer</span>
                             </button>

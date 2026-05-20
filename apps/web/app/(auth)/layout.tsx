@@ -14,13 +14,17 @@ export default function AuthLayout({
 
             <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 text-center">
                 <Link href="/" className="inline-flex flex-col items-center mb-8 group">
-                    <div className="relative w-[72px] h-[72px]mb-4 transform transition-all duration-500 group-hover:scale-110">
+                    <div className="relative w-[72px] h-[72px] mb-2 transform transition-all duration-500 group-hover:scale-110">
                         <Image
-                            src="/logo2.png"
+                            src="/images/logo2.png"
                             alt="MEEY"
                             fill
                             className="object-contain"
                         />
+                    </div>
+                    <div className="flex flex-col items-center mt-2">
+                        <span className="font-italiana text-2xl font-normal leading-none text-rouge-brand tracking-[0.2em] uppercase">MEEY</span>
+                        <span className="font-playfair text-[8px] font-normal italic tracking-[0.3em] uppercase text-or leading-none mt-1">Nail Shop</span>
                     </div>
                 </Link>
                 {children}

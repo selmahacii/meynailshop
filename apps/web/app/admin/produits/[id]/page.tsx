@@ -242,11 +242,11 @@ export default function ProductEditPage() {
 
     if (error || !product) {
         return (
-            <div className="p-12 text-center bg-white border border-creme2 rounded-sm shadow-xl max-w-2xl mx-auto mt-12">
+            <div className="p-12 text-center bg-white border border-creme2 rounded-xl shadow-xl max-w-2xl mx-auto mt-12">
                 <AlertCircle className="w-16 h-16 text-rouge mx-auto mb-4" />
                 <h2 className="text-2xl font-serif text-encre mb-4">Produit non trouvé</h2>
                 <p className="text-encre3 mb-8">Le produit que vous essayez de modifier n'existe pas ou a été supprimé.</p>
-                <Link href="/admin/produits" className="inline-block px-8 py-3 bg-encre text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-black transition-all">
+                <Link href="/admin/produits" className="inline-block px-8 py-3 bg-encre text-creme rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-black transition-all">
                     Retour à la liste
                 </Link>
             </div>
@@ -271,7 +271,7 @@ export default function ProductEditPage() {
                     <button 
                         type="button"
                         onClick={handleDelete}
-                        className="flex-1 md:flex-none px-4 md:px-6 py-3 border border-rouge text-rouge rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-rouge hover:text-creme transition-all"
+                        className="flex-1 md:flex-none px-4 md:px-6 py-3 border border-rouge text-rouge rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-rouge hover:text-creme transition-all"
                     >
                         <Trash2 size={16} className="inline md:mr-2" />
                         <span className="hidden md:inline">Supprimer</span>
@@ -279,7 +279,7 @@ export default function ProductEditPage() {
                     <button 
                         type="submit"
                         disabled={saving}
-                        className="flex-1 md:flex-none px-6 md:px-8 py-3 bg-[#1A0A0A] text-creme rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-black transition-all shadow-xl flex items-center justify-center"
+                        className="flex-1 md:flex-none px-6 md:px-8 py-3 bg-[#1A0A0A] text-creme rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-black transition-all shadow-xl flex items-center justify-center"
                     >
                         {saving ? (
                             <Loader size={16} className="animate-spin mr-2" />
@@ -295,7 +295,7 @@ export default function ProductEditPage() {
                 {/* Main Content */}
                 <div className="lg:col-span-2 space-y-8">
                     {/* General Info */}
-                    <div className="bg-white border border-creme2 rounded-sm shadow-xl overflow-hidden">
+                    <div className="bg-white border border-creme2 rounded-xl shadow-xl overflow-hidden">
                         <div className="p-6 border-b border-creme2 bg-creme/5 flex items-center space-x-3">
                             <Package size={18} className="text-or" />
                             <h2 className="text-xs font-black uppercase tracking-widest text-encre">Informations Générales</h2>
@@ -309,7 +309,7 @@ export default function ProductEditPage() {
                                         required
                                         value={product.name}
                                         onChange={(e) => setProduct({...product, name: e.target.value})}
-                                        className="w-full p-4 bg-creme2/50 border border-creme rounded-sm text-sm focus:border-or focus:ring-1 focus:ring-or outline-none transition-all font-medium"
+                                        className="w-full p-4 bg-creme2/50 border border-creme rounded-xl text-sm focus:border-or focus:ring-1 focus:ring-or outline-none transition-all font-medium"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -319,7 +319,7 @@ export default function ProductEditPage() {
                                         readOnly
                                         value={product.sku}
                                         onClick={() => toast.info("L'identifiant SKU MEEY ne peut pas être modifié une fois généré.")}
-                                        className="w-full p-4 bg-creme2/20 border border-creme2 rounded-sm text-sm text-encre3 opacity-80 outline-none transition-all font-mono cursor-pointer"
+                                        className="w-full p-4 bg-creme2/20 border border-creme2 rounded-xl text-sm text-encre3 opacity-80 outline-none transition-all font-mono cursor-pointer"
                                         title="L'identifiant SKU MEEY ne peut pas être modifié"
                                     />
                                 </div>
@@ -330,7 +330,7 @@ export default function ProductEditPage() {
                                     rows={2}
                                     value={product.shortDescription || ''}
                                     onChange={(e) => setProduct({...product, shortDescription: e.target.value})}
-                                    className="w-full p-4 bg-creme2/50 border border-creme rounded-sm text-sm focus:border-or focus:ring-1 focus:ring-or outline-none transition-all"
+                                    className="w-full p-4 bg-creme2/50 border border-creme rounded-xl text-sm focus:border-or focus:ring-1 focus:ring-or outline-none transition-all"
                                 />
                             </div>
                             <div className="space-y-2">
@@ -339,14 +339,14 @@ export default function ProductEditPage() {
                                     rows={6}
                                     value={product.description || ''}
                                     onChange={(e) => setProduct({...product, description: e.target.value})}
-                                    className="w-full p-4 bg-creme2/50 border border-creme rounded-sm text-sm focus:border-or focus:ring-1 focus:ring-or outline-none transition-all"
+                                    className="w-full p-4 bg-creme2/50 border border-creme rounded-xl text-sm focus:border-or focus:ring-1 focus:ring-or outline-none transition-all"
                                 />
                             </div>
                         </div>
                     </div>
 
                     {/* Media */}
-                    <div className="bg-white border border-creme2 rounded-sm shadow-xl overflow-hidden">
+                    <div className="bg-white border border-creme2 rounded-xl shadow-xl overflow-hidden">
                         <div className="p-6 border-b border-creme2 bg-creme/5 flex items-center justify-between">
                             <div className="flex items-center space-x-3">
                                 <ImageIcon size={18} className="text-or" />
@@ -361,7 +361,7 @@ export default function ProductEditPage() {
                         </div>
                         <div className="p-8">
                             <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-creme2 rounded-sm hover:border-or hover:bg-creme/30 transition-all cursor-pointer group">
+                                <label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-creme2 rounded-xl hover:border-or hover:bg-creme/30 transition-all cursor-pointer group">
                                     <div className="w-12 h-12 rounded-full bg-creme flex items-center justify-center mb-3 group-hover:bg-or/10">
                                         <Plus size={24} className="text-encre3 group-hover:text-or" />
                                     </div>
@@ -382,7 +382,7 @@ export default function ProductEditPage() {
                                         <input 
                                             type="text" 
                                             placeholder="https://..."
-                                            className="flex-grow p-4 bg-creme2/20 border border-creme2 rounded-sm text-sm focus:border-or outline-none"
+                                            className="flex-grow p-4 bg-creme2/20 border border-creme2 rounded-xl text-sm focus:border-or outline-none"
                                             onKeyDown={(e) => {
                                                 if (e.key === 'Enter') {
                                                     e.preventDefault();
@@ -403,7 +403,7 @@ export default function ProductEditPage() {
                                                     input.value = '';
                                                 }
                                             }}
-                                            className="px-4 bg-encre text-creme text-[10px] font-bold uppercase tracking-widest rounded-sm"
+                                            className="px-4 bg-encre text-creme text-[10px] font-bold uppercase tracking-widest rounded-xl"
                                         >
                                             OK
                                         </button>
@@ -413,7 +413,7 @@ export default function ProductEditPage() {
 
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {product.images?.map((img: string, i: number) => (
-                                    <div key={i} className="relative aspect-square rounded-sm border border-creme2 overflow-hidden group shadow-md">
+                                    <div key={i} className="relative aspect-square rounded-xl border border-creme2 overflow-hidden group shadow-md">
                                         <Image 
                                             src={img} 
                                             alt="" 
@@ -440,7 +440,7 @@ export default function ProductEditPage() {
                     </div>
 
                     {/* Multi-References / Variants Section */}
-                    <div className="bg-white border border-creme2 rounded-sm shadow-xl overflow-hidden">
+                    <div className="bg-white border border-creme2 rounded-xl shadow-xl overflow-hidden">
                         <div className="p-6 border-b border-creme2 bg-creme/5 flex items-center justify-between">
                             <div className="flex items-center space-x-3">
                                 <Layers size={18} className="text-or" />
@@ -475,7 +475,7 @@ export default function ProductEditPage() {
                                             key={index} 
                                             id={`variant-${variant.sku}`}
                                             className={cn(
-                                                "relative p-5 bg-creme/30 border border-creme2 rounded-sm space-y-4 hover:border-or transition-all",
+                                                "relative p-5 bg-creme/30 border border-creme2 rounded-xl space-y-4 hover:border-or transition-all",
                                                 targetedVariant === variant.sku && "border-or bg-or/5 ring-2 ring-or ring-offset-2"
                                             )}
                                         >
@@ -497,7 +497,7 @@ export default function ProductEditPage() {
                                                         placeholder="MEY-001-RED"
                                                         value={variant.sku}
                                                         onChange={(e) => updateVariant(index, 'sku', e.target.value)}
-                                                        className="w-full p-3 bg-white border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all font-mono"
+                                                        className="w-full p-3 bg-white border border-creme2 rounded-xl text-sm focus:border-or outline-none transition-all font-mono"
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
@@ -506,7 +506,7 @@ export default function ProductEditPage() {
                                                         type="number"
                                                         value={variant.stock || 0}
                                                         onChange={(e) => updateVariant(index, 'stock', parseInt(e.target.value) || 0)}
-                                                        className="w-full p-3 bg-white border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all font-bold"
+                                                        className="w-full p-3 bg-white border border-creme2 rounded-xl text-sm focus:border-or outline-none transition-all font-bold"
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
@@ -515,7 +515,7 @@ export default function ProductEditPage() {
                                                         type="number"
                                                         value={variant.stockAlert || 5}
                                                         onChange={(e) => updateVariant(index, 'stockAlert', parseInt(e.target.value) || 0)}
-                                                        className="w-full p-3 bg-white border border-creme2 rounded-sm text-sm focus:border-or outline-none transition-all font-bold text-or"
+                                                        className="w-full p-3 bg-white border border-creme2 rounded-xl text-sm focus:border-or outline-none transition-all font-bold text-or"
                                                     />
                                                 </div>
                                             </div>
@@ -524,7 +524,7 @@ export default function ProductEditPage() {
                                                 <label className="text-[9px] uppercase font-black tracking-widest text-encre3">Photo de la variante</label>
                                                 <div className="flex items-center gap-3">
                                                     {variant.image ? (
-                                                        <div className="relative w-16 h-16 rounded-sm border border-creme2 overflow-hidden shrink-0">
+                                                        <div className="relative w-16 h-16 rounded-xl border border-creme2 overflow-hidden shrink-0">
                                                             <Image src={variant.image} fill className="object-cover" alt="Variante" />
                                                             <button
                                                                 type="button"
@@ -535,7 +535,7 @@ export default function ProductEditPage() {
                                                             </button>
                                                         </div>
                                                     ) : null}
-                                                    <label className="flex-grow flex items-center justify-center p-3 border-2 border-dashed border-creme2 rounded-sm hover:border-or hover:bg-creme/30 transition-all cursor-pointer">
+                                                    <label className="flex-grow flex items-center justify-center p-3 border-2 border-dashed border-creme2 rounded-xl hover:border-or hover:bg-creme/30 transition-all cursor-pointer">
                                                         <Plus size={16} className="text-encre3 mr-2" />
                                                         <span className="text-[10px] font-bold uppercase tracking-widest text-encre3">{variant.image ? 'Changer' : 'Ajouter photo'}</span>
                                                         <input
@@ -554,7 +554,7 @@ export default function ProductEditPage() {
                                     <button
                                         type="button"
                                         onClick={addVariant}
-                                        className="w-full p-4 border-2 border-dashed border-creme2 rounded-sm text-encre3 hover:border-or hover:text-or hover:bg-or/5 transition-all flex items-center justify-center space-x-2"
+                                        className="w-full p-4 border-2 border-dashed border-creme2 rounded-xl text-encre3 hover:border-or hover:text-or hover:bg-or/5 transition-all flex items-center justify-center space-x-2"
                                     >
                                         <Plus size={16} />
                                         <span className="text-[10px] font-black uppercase tracking-widest">Ajouter une variante</span>
@@ -568,7 +568,7 @@ export default function ProductEditPage() {
                 {/* Sidebar Info */}
                 <div className="space-y-8">
                     {/* Inventory & Pricing */}
-                    <div className="bg-[#1A0A0A] text-creme rounded-sm shadow-2xl overflow-hidden border border-white/5">
+                    <div className="bg-[#1A0A0A] text-creme rounded-xl shadow-2xl overflow-hidden border border-white/5">
                         <div className="p-6 border-b border-white/10 flex items-center space-x-3 bg-black/20">
                             <BarChart3 size={18} className="text-or" />
                             <h2 className="text-[11px] font-black uppercase tracking-widest text-creme/80">Analyses Financières</h2>
@@ -583,7 +583,7 @@ export default function ProductEditPage() {
                                         required
                                         value={product.costPrice || ''}
                                         onChange={(e) => setProduct({...product, costPrice: e.target.value ? parseFloat(e.target.value) : null})}
-                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-lg font-bold text-creme/30 outline-none focus:border-white/20 appearance-none transition-all"
+                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-lg font-bold text-creme/30 outline-none focus:border-white/20 appearance-none transition-all"
                                     />
                                     <span className="absolute right-5 top-1/2 -translate-y-1/2 text-creme/10 font-bold text-xs">DA</span>
                                 </div>
@@ -598,7 +598,7 @@ export default function ProductEditPage() {
                                         required
                                         value={product.comparePrice || ''}
                                         onChange={(e) => setProduct({...product, comparePrice: e.target.value ? parseFloat(e.target.value) : null})}
-                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-lg font-bold text-creme/80 outline-none focus:border-creme/40 appearance-none transition-all"
+                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-lg font-bold text-creme/80 outline-none focus:border-creme/40 appearance-none transition-all"
                                     />
                                     <span className="absolute right-5 top-1/2 -translate-y-1/2 text-creme/20 font-black text-sm">DA</span>
                                 </div>
@@ -613,7 +613,7 @@ export default function ProductEditPage() {
                                         value={product.price || ''}
                                         onChange={(e) => setProduct({...product, price: e.target.value ? parseFloat(e.target.value) : null})}
                                         placeholder="Garder vide si pas de promo"
-                                        className="w-full p-5 bg-white/5 border border-white/10 rounded-sm text-2xl font-bold text-or outline-none focus:border-or transition-all appearance-none"
+                                        className="w-full p-5 bg-white/5 border border-white/10 rounded-xl text-2xl font-bold text-or outline-none focus:border-or transition-all appearance-none"
                                     />
                                     <span className="absolute right-5 top-1/2 -translate-y-1/2 text-or/20 font-black text-sm">DA</span>
                                 </div>
@@ -621,7 +621,7 @@ export default function ProductEditPage() {
                                 {/* PROFITABILITY INDICATORS */}
                                 {(product.price || product.comparePrice) && product.costPrice && (
                                     <div className={cn(
-                                        "p-4 rounded-sm border flex items-center justify-between animate-in fade-in zoom-in-95 duration-500",
+                                        "p-4 rounded-xl border flex items-center justify-between animate-in fade-in zoom-in-95 duration-500",
                                         (product.price ? Number(product.price) : Number(product.comparePrice)) > Number(product.costPrice) 
                                             ? "bg-green-500/10 border-green-500/20" 
                                             : "bg-rouge/10 border-rouge/20"
@@ -661,7 +661,7 @@ export default function ProductEditPage() {
                                         value={product.stock}
                                         onChange={(e) => setProduct({...product, stock: parseInt(e.target.value)})}
                                         className={cn(
-                                            "w-full p-4 bg-white/5 border border-white/10 rounded-sm text-sm font-bold outline-none focus:border-or transition-all appearance-none text-creme",
+                                            "w-full p-4 bg-white/5 border border-white/10 rounded-xl text-sm font-bold outline-none focus:border-or transition-all appearance-none text-creme",
                                             highlight === 'stock' && "border-or ring-2 ring-or ring-offset-2 bg-or/10"
                                         )}
                                     />
@@ -673,7 +673,7 @@ export default function ProductEditPage() {
                                         required
                                         value={product.stockAlert || 5}
                                         onChange={(e) => setProduct({...product, stockAlert: parseInt(e.target.value)})}
-                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-sm font-bold outline-none focus:border-or transition-all appearance-none text-creme"
+                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-sm font-bold outline-none focus:border-or transition-all appearance-none text-creme"
                                     />
                                 </div>
                             </div>
@@ -681,7 +681,7 @@ export default function ProductEditPage() {
                     </div>
 
                     {/* Classification */}
-                    <div className="bg-white border border-creme2 rounded-sm shadow-xl overflow-hidden">
+                    <div className="bg-white border border-creme2 rounded-xl shadow-xl overflow-hidden">
                         <div className="p-6 border-b border-creme2 bg-creme/5 flex items-center space-x-3">
                             <Tag size={18} className="text-or" />
                             <h2 className="text-xs font-black uppercase tracking-widest text-encre">Classification</h2>
@@ -692,7 +692,7 @@ export default function ProductEditPage() {
                                 <select 
                                     value={product.categoryId}
                                     onChange={(e) => setProduct({...product, categoryId: e.target.value, subCategoryId: ''})}
-                                    className="w-full p-4 bg-creme2/50 border border-creme rounded-sm text-sm font-bold outline-none focus:border-or appearance-none transition-all"
+                                    className="w-full p-4 bg-creme2/50 border border-creme rounded-xl text-sm font-bold outline-none focus:border-or appearance-none transition-all"
                                 >
                                     {categories.length > 0 ? (
                                         (categories as any[]).map(cat => (
@@ -708,7 +708,7 @@ export default function ProductEditPage() {
                                 <select 
                                     value={product.subCategoryId || ''}
                                     onChange={(e) => setProduct({...product, subCategoryId: e.target.value})}
-                                    className="w-full p-4 bg-creme2/50 border border-creme rounded-sm text-sm font-bold outline-none focus:border-or appearance-none transition-all"
+                                    className="w-full p-4 bg-creme2/50 border border-creme rounded-xl text-sm font-bold outline-none focus:border-or appearance-none transition-all"
                                 >
                                     <option value="">Aucune sous-catégorie</option>
                                     {(categories as any[]).find(c => c.id === product.categoryId)?.subCategories?.map((sub: any) => (
@@ -717,7 +717,7 @@ export default function ProductEditPage() {
                                 </select>
                             </div>
                             <div className="pt-6 border-t border-creme2">
-                                <div className="flex items-center justify-between p-4 bg-creme/50 rounded-sm border border-creme2">
+                                <div className="flex items-center justify-between p-4 bg-creme/50 rounded-xl border border-creme2">
                                     <div className="flex flex-col">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-encre">Statut catalogue</span>
                                         <span className="text-[9px] text-encre3 uppercase mt-1">Actif / Inactif</span>
@@ -752,7 +752,7 @@ export default function ProductEditPage() {
                                             type="button"
                                             onClick={() => setProduct({...product, badge: badge.value})}
                                             className={cn(
-                                                "py-2 px-3 text-[10px] font-bold uppercase tracking-widest rounded-sm border transition-all",
+                                                "py-2 px-3 text-[10px] font-bold uppercase tracking-widest rounded-xl border transition-all",
                                                 product.badge === badge.value
                                                     ? "bg-encre text-or border-encre"
                                                     : "bg-creme/30 text-encre3 border-creme2 hover:border-or"

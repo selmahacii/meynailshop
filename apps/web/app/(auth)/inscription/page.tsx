@@ -87,8 +87,19 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="bg-white py-10 px-4 shadow-xl border border-creme2 sm:rounded-lg sm:px-10">
-            <h2 className="text-center text-2xl font-serif text-encre mb-8">Rejoignez l'univers MEEY</h2>
+        <div className="bg-white py-12 px-6 sm:px-10 shadow-2xl border border-gold-brand/10 sm:rounded-2xl bg-gradient-to-b from-white to-creme/25 relative overflow-hidden">
+            <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-or via-gold-brand to-rouge-brand" />
+            <div className="text-center mb-8">
+                <span className="font-italiana text-3xl font-normal leading-none text-rouge-brand tracking-[0.2em] block">
+                    MEEY
+                </span>
+                <span className="font-playfair text-[9px] font-normal italic tracking-[0.3em] uppercase text-or leading-none mt-2 block">
+                    Nail Shop
+                </span>
+                <p className="font-playfair italic text-[11px] text-encre3/60 mt-2 mb-6">Maison de Beauté Ongulaire</p>
+                <div className="w-16 h-[1px] bg-gold-brand/20 mx-auto mb-6"></div>
+                <h2 className="font-italiana text-xl text-encre font-bold tracking-[0.05em] uppercase">Rejoignez l'univers MEEY</h2>
+            </div>
 
             <form className="space-y-5" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-2 gap-4">
@@ -103,8 +114,8 @@ export default function RegisterPage() {
                             value={formData.firstName}
                             onChange={handleChange}
                             required
-                            className={`appearance-none block w-full px-3 py-3 border text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or sm:text-sm transition-all ${
-                                errors.firstName ? 'border-rouge' : 'border-creme2 focus:border-or'
+                            className={`appearance-none block w-full px-3.5 py-3 border rounded-lg text-encre bg-creme/10 placeholder-encre3/35 focus:bg-white focus:outline-none focus:ring-1 focus:ring-or focus:border-or sm:text-sm transition-all duration-300 shadow-sm ${
+                                errors.firstName ? 'border-rouge' : 'border-gold-brand/15'
                             }`}
                             placeholder="Sarah"
                         />
@@ -121,8 +132,8 @@ export default function RegisterPage() {
                             value={formData.lastName}
                             onChange={handleChange}
                             required
-                            className={`appearance-none block w-full px-3 py-3 border text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or sm:text-sm transition-all ${
-                                errors.lastName ? 'border-rouge' : 'border-creme2 focus:border-or'
+                            className={`appearance-none block w-full px-3.5 py-3 border rounded-lg text-encre bg-creme/10 placeholder-encre3/35 focus:bg-white focus:outline-none focus:ring-1 focus:ring-or focus:border-or sm:text-sm transition-all duration-300 shadow-sm ${
+                                errors.lastName ? 'border-rouge' : 'border-gold-brand/15'
                             }`}
                             placeholder="Naili"
                         />
@@ -135,7 +146,7 @@ export default function RegisterPage() {
                         Adresse Email
                     </label>
                     <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-encre3">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-encre3/60">
                             <Mail size={18} strokeWidth={1.5} />
                         </div>
                         <input
@@ -145,8 +156,8 @@ export default function RegisterPage() {
                             value={formData.email}
                             onChange={handleChange}
                             required
-                            className={`appearance-none block w-full pl-10 pr-3 py-3 border text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or sm:text-sm transition-all ${
-                                errors.email ? 'border-rouge' : 'border-creme2 focus:border-or'
+                            className={`appearance-none block w-full pl-10 pr-3 py-3 border rounded-lg text-encre bg-creme/10 placeholder-encre3/35 focus:bg-white focus:outline-none focus:ring-1 focus:ring-or focus:border-or sm:text-sm transition-all duration-300 shadow-sm ${
+                                errors.email ? 'border-rouge' : 'border-gold-brand/15'
                             }`}
                             placeholder="votre@email.com"
                         />
@@ -159,7 +170,7 @@ export default function RegisterPage() {
                         Téléphone
                     </label>
                     <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-encre3">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-encre3/60">
                             <Phone size={18} strokeWidth={1.5} />
                         </div>
                         <input
@@ -169,8 +180,8 @@ export default function RegisterPage() {
                             value={formData.phone}
                             onChange={handleChange}
                             required
-                            className={`appearance-none block w-full pl-10 pr-3 py-3 border text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or sm:text-sm transition-all ${
-                                errors.phone ? 'border-rouge' : 'border-creme2 focus:border-or'
+                            className={`appearance-none block w-full pl-10 pr-3 py-3 border rounded-lg text-encre bg-creme/10 placeholder-encre3/35 focus:bg-white focus:outline-none focus:ring-1 focus:ring-or focus:border-or sm:text-sm transition-all duration-300 shadow-sm ${
+                                errors.phone ? 'border-rouge' : 'border-gold-brand/15'
                             }`}
                             placeholder="05 XX XX XX XX"
                         />
@@ -183,7 +194,7 @@ export default function RegisterPage() {
                         Mot de passe
                     </label>
                     <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-encre3">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-encre3/60">
                             <Lock size={18} strokeWidth={1.5} />
                         </div>
                         <input
@@ -193,13 +204,13 @@ export default function RegisterPage() {
                             value={formData.password}
                             onChange={handleChange}
                             required
-                            className={`appearance-none block w-full pl-10 pr-3 py-3 border text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or sm:text-sm transition-all ${
-                                errors.password ? 'border-rouge' : 'border-creme2 focus:border-or'
+                            className={`appearance-none block w-full pl-10 pr-3 py-3 border rounded-lg text-encre bg-creme/10 placeholder-encre3/35 focus:bg-white focus:outline-none focus:ring-1 focus:ring-or focus:border-or sm:text-sm transition-all duration-300 shadow-sm ${
+                                errors.password ? 'border-rouge' : 'border-gold-brand/15'
                             }`}
                             placeholder="••••••••"
                         />
                     </div>
-                    <p className="mt-1 text-[10px] text-encre3/60 italic">8 caractères minimum, une majuscule et un chiffre.</p>
+                    <p className="mt-1.5 text-[10px] text-encre3/60 italic">8 caractères minimum, une majuscule et un chiffre.</p>
                     {errors.password && <p className="text-rouge text-xs mt-1">{errors.password}</p>}
                 </div>
 
@@ -210,10 +221,10 @@ export default function RegisterPage() {
                         type="checkbox"
                         checked={formData.terms}
                         onChange={handleChange}
-                        className="h-4 w-4 text-or focus:ring-or border-creme2 rounded cursor-pointer"
+                        className="h-4 w-4 text-or focus:ring-or border-gold-brand/20 rounded cursor-pointer"
                     />
-                    <label htmlFor="terms" className="ml-2 block text-xs text-encre3">
-                        J'accepte les <Link href="/cgv" className="text-rouge-mid hover:underline">conditions générales</Link> et la politique de confidentialité.
+                    <label htmlFor="terms" className="ml-2 block text-xs text-encre3 cursor-pointer">
+                        J'accepte les <Link href="/cgv" className="text-rouge-mid hover:underline font-semibold">conditions générales</Link> et la politique de confidentialité.
                     </label>
                 </div>
                 {errors.terms && <p className="text-rouge text-xs">{errors.terms}</p>}
@@ -222,7 +233,7 @@ export default function RegisterPage() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className={`w-full flex justify-center py-4 px-4 border border-transparent rounded-sm shadow-sm text-sm font-semibold uppercase tracking-widest text-creme bg-rouge-deep hover:bg-rouge-mid transition-all ${loading ? 'opacity-70 cursor-not-allowed' : ''
+                        className={`w-full flex justify-center py-4 px-4 border border-transparent rounded-lg shadow-md text-xs font-semibold uppercase tracking-widest text-creme bg-rouge-brand hover:bg-or hover:text-rouge-brand transition-all duration-300 active:scale-[0.98] ${loading ? 'opacity-70 cursor-not-allowed' : ''
                             }`}
                     >
                         {loading ? 'Création...' : 'Créer mon compte'}
@@ -233,7 +244,7 @@ export default function RegisterPage() {
             <div className="mt-8 text-center">
                 <Link
                     href="/connexion"
-                    className="inline-flex items-center text-sm font-medium text-encre3 hover:text-or transition-colors group"
+                    className="inline-flex items-center text-xs font-semibold text-encre3 hover:text-or transition-colors uppercase tracking-widest group"
                 >
                     <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" size={16} />
                     Retour à la connexion

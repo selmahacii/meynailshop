@@ -107,11 +107,22 @@ function LoginForm() {
     };
 
     return (
-        <div className="bg-white py-10 px-4 shadow-xl border border-creme2 sm:rounded-lg sm:px-10">
-            <h2 className="text-center text-2xl font-serif text-encre mb-8">Bonjour, ravie de vous revoir</h2>
+        <div className="bg-white py-12 px-6 sm:px-10 shadow-2xl border border-gold-brand/10 sm:rounded-2xl bg-gradient-to-b from-white to-creme/25 relative overflow-hidden">
+            <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-or via-gold-brand to-rouge-brand" />
+            <div className="text-center mb-8">
+                <span className="font-italiana text-3xl font-normal leading-none text-rouge-brand tracking-[0.2em] block">
+                    MEEY
+                </span>
+                <span className="font-playfair text-[9px] font-normal italic tracking-[0.3em] uppercase text-or leading-none mt-2 block">
+                    Nail Shop
+                </span>
+                <p className="font-playfair italic text-[11px] text-encre3/60 mt-2 mb-6">Maison de Beauté Ongulaire</p>
+                <div className="w-16 h-[1px] bg-gold-brand/20 mx-auto mb-6"></div>
+                <h2 className="font-italiana text-xl text-encre font-bold tracking-[0.05em] uppercase">Ravi de vous revoir</h2>
+            </div>
 
             {errorMsg && (
-                <div className="mb-6 p-4 bg-red-50/50 border-l-4 border-red-500 rounded-r-sm flex items-center space-x-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="mb-6 p-4 bg-red-50/50 border-l-4 border-red-500 rounded-r-lg flex items-center space-x-3 animate-in fade-in slide-in-from-top-2 duration-300">
                     <AlertCircle size={18} className="text-red-500 shrink-0" />
                     <p className="text-[11px] font-bold uppercase tracking-tight text-red-900">{errorMsg}</p>
                 </div>
@@ -123,7 +134,7 @@ function LoginForm() {
                         Adresse Email
                     </label>
                     <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-encre3">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-encre3/60">
                             <Mail size={18} strokeWidth={1.5} />
                         </div>
                         <input
@@ -134,7 +145,7 @@ function LoginForm() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="appearance-none block w-full pl-10 pr-3 py-3 border border-creme2 text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or focus:border-or sm:text-sm transition-all"
+                            className="appearance-none block w-full pl-10 pr-3 py-3.5 border border-gold-brand/15 rounded-lg text-encre bg-creme/10 placeholder-encre3/35 focus:bg-white focus:outline-none focus:ring-1 focus:ring-or focus:border-or sm:text-sm transition-all duration-300 shadow-sm"
                             placeholder="votre@email.com"
                         />
                     </div>
@@ -145,7 +156,7 @@ function LoginForm() {
                         Mot de passe
                     </label>
                     <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-encre3">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-encre3/60">
                             <Lock size={18} strokeWidth={1.5} />
                         </div>
                         <input
@@ -156,12 +167,12 @@ function LoginForm() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            className="appearance-none block w-full pl-10 pr-10 py-3 border border-creme2 text-encre placeholder-encre3/50 focus:outline-none focus:ring-1 focus:ring-or focus:border-or sm:text-sm transition-all"
+                            className="appearance-none block w-full pl-10 pr-10 py-3.5 border border-gold-brand/15 rounded-lg text-encre bg-creme/10 placeholder-encre3/35 focus:bg-white focus:outline-none focus:ring-1 focus:ring-or focus:border-or sm:text-sm transition-all duration-300 shadow-sm"
                             placeholder="••••••••"
                         />
                         <button
                             type="button"
-                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-encre3 hover:text-or transition-colors"
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-encre3/60 hover:text-or transition-colors"
                             onClick={() => setShowPassword(!showPassword)}
                         >
                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -175,15 +186,15 @@ function LoginForm() {
                             id="remember-me"
                             name="remember-me"
                             type="checkbox"
-                            className="h-4 w-4 text-or focus:ring-or border-creme2 rounded cursor-pointer"
+                            className="h-4 w-4 text-or focus:ring-or border-gold-brand/20 rounded cursor-pointer"
                         />
-                        <label htmlFor="remember-me" className="ml-2 block text-sm text-encre3 cursor-pointer">
+                        <label htmlFor="remember-me" className="ml-2 block text-xs text-encre3 cursor-pointer">
                             Se souvenir de moi
                         </label>
                     </div>
 
-                    <div className="text-sm">
-                        <Link href="/mot-de-passe-oublie" className="font-medium text-rouge-mid hover:text-rouge transition-colors">
+                    <div className="text-xs">
+                        <Link href="/mot-de-passe-oublie" className="font-semibold text-rouge-mid hover:text-rouge transition-colors">
                             Oublié ?
                         </Link>
                     </div>
@@ -193,7 +204,7 @@ function LoginForm() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className={`w-full flex justify-center py-4 px-4 border border-transparent rounded-sm shadow-sm text-sm font-semibold uppercase tracking-widest text-creme bg-rouge-deep hover:bg-rouge-mid focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-or transition-all ${loading ? 'opacity-70 cursor-not-allowed' : ''
+                        className={`w-full flex justify-center py-4 px-4 border border-transparent rounded-lg shadow-md text-xs font-semibold uppercase tracking-widest text-creme bg-rouge-brand hover:bg-or hover:text-rouge-brand transition-all duration-300 active:scale-[0.98] ${loading ? 'opacity-70 cursor-not-allowed' : ''
                             }`}
                     >
                         {loading ? (
@@ -214,20 +225,20 @@ function LoginForm() {
             <div className="mt-8">
                 <div className="relative">
                     <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-creme2"></div>
+                        <div className="w-full border-t border-gold-brand/10"></div>
                     </div>
-                    <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-white text-encre3">Pas encore de compte ?</span>
+                    <div className="relative flex justify-center text-xs">
+                        <span className="px-3 bg-white text-encre3/60 font-medium">Pas encore de compte ?</span>
                     </div>
                 </div>
 
                 <div className="mt-6 flex flex-col space-y-3">
                     <Link
                         href="/inscription"
-                        className="w-full flex justify-center py-3 px-4 border border-rouge-deep text-rouge-deep text-sm font-semibold uppercase tracking-widest hover:bg-rouge-deep hover:text-creme transition-all duration-300 group"
+                        className="w-full flex justify-center py-3.5 px-4 border border-rouge-brand text-rouge-brand rounded-lg text-xs font-semibold uppercase tracking-widest hover:bg-rouge-brand hover:text-creme transition-all duration-300 group"
                     >
                         Créer un compte
-                        <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />
+                        <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={16} />
                     </Link>
                 </div>
             </div>

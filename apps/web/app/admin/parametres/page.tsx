@@ -115,26 +115,26 @@ export default function AdminSettingsPage() {
                 </div>
                 <div className="flex items-center space-x-3">
                     {successMessage && (
-                        <div className="flex items-center gap-2 text-green-600 bg-green-50 px-4 py-2 rounded-sm border border-green-100 animate-fade-in">
+                        <div className="flex items-center gap-2 text-green-600 bg-green-50 px-4 py-2 rounded-xl border border-green-100 animate-fade-in">
                             <CheckCircle size={16} />
                             <span className="text-xs font-bold uppercase tracking-widest">{successMessage}</span>
                         </div>
                     )}
-                    <button className="p-2.5 bg-white border border-creme2 rounded-sm text-encre3 hover:text-or hover:border-or transition-all shadow-sm"><Bell size={18} /></button>
+                    <button className="p-2.5 bg-white border border-creme2 rounded-xl text-encre3 hover:text-or hover:border-or transition-all shadow-sm"><Bell size={18} /></button>
                     <button 
                         onClick={handleSave}
                         disabled={saving}
-                        className="flex items-center space-x-2 px-6 py-2.5 bg-[#1A0A0A] text-creme rounded-sm text-sm font-bold uppercase tracking-widest hover:bg-rouge-deep transition-all shadow-md disabled:opacity-50"
+                        className="flex items-center space-x-2 px-6 py-2.5 bg-[#1A0A0A] text-creme rounded-xl text-sm font-bold uppercase tracking-widest hover:bg-rouge-deep transition-all shadow-md disabled:opacity-50"
                     >
                         {saving ? <Loader size={16} className="animate-spin text-or" /> : <Save size={16} className="text-or" />}
                         <span>{saving ? 'Sauvegarde...' : 'Sauvegarder'}</span>
                     </button>
-                    <Link href="/" className="px-5 py-2.5 border border-encre text-encre rounded-sm text-sm font-bold hover:bg-encre hover:text-creme transition-all">Voir la boutique</Link>
+                    <Link href="/" className="px-5 py-2.5 border border-encre text-encre rounded-xl text-sm font-bold hover:bg-encre hover:text-creme transition-all">Voir la boutique</Link>
                 </div>
             </div>
 
             {error && (
-                <div className="p-4 bg-red-50 border border-red-100 rounded-sm text-red-600 flex items-center gap-3">
+                <div className="p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 flex items-center gap-3">
                     <AlertTriangle size={20} />
                     <p className="font-bold text-sm">{error}</p>
                 </div>
@@ -143,7 +143,7 @@ export default function AdminSettingsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Sidebar Tabs */}
                 <div className="lg:col-span-3">
-                    <div className="bg-white rounded-sm border border-creme2 shadow-lg overflow-hidden">
+                    <div className="bg-white rounded-xl border border-creme2 shadow-lg overflow-hidden">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.key}
@@ -166,7 +166,7 @@ export default function AdminSettingsPage() {
                 <div className="lg:col-span-9 space-y-6">
                     {activeTab === 'boutique' && (
                         <>
-                            <div className="bg-white rounded-sm border border-creme2 shadow-lg p-8">
+                            <div className="bg-white rounded-xl border border-creme2 shadow-lg p-8">
                                 <h2 className="font-serif text-xl text-encre mb-8 pb-4 border-b border-creme2">Informations générales</h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {[
@@ -181,14 +181,14 @@ export default function AdminSettingsPage() {
                                                 type={field.type}
                                                 value={settings?.[field.key] || ''}
                                                 onChange={(e) => handleChange(field.key, e.target.value)}
-                                                className="w-full px-4 py-3 bg-creme border border-creme2 rounded-sm text-sm text-encre focus:outline-none focus:border-or focus:ring-1 focus:ring-or transition-all"
+                                                className="w-full px-4 py-3 bg-creme border border-creme2 rounded-xl text-sm text-encre focus:outline-none focus:border-or focus:ring-1 focus:ring-or transition-all"
                                             />
                                         </div>
                                     ))}
                                 </div>
                             </div>
 
-                            <div className="bg-white rounded-sm border border-creme2 shadow-lg p-8">
+                            <div className="bg-white rounded-xl border border-creme2 shadow-lg p-8">
                                 <h2 className="font-serif text-xl text-encre mb-8 pb-4 border-b border-creme2">Gestion du stock & livraison</h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
@@ -197,7 +197,7 @@ export default function AdminSettingsPage() {
                                             type="number" 
                                             value={settings?.stockAlertDefault || 5} 
                                             onChange={(e) => handleChange('stockAlertDefault', parseInt(e.target.value))}
-                                            className="w-full px-4 py-3 bg-creme border border-creme2 rounded-sm text-sm text-encre focus:outline-none focus:border-or focus:ring-1 focus:ring-or transition-all" 
+                                            className="w-full px-4 py-3 bg-creme border border-creme2 rounded-xl text-sm text-encre focus:outline-none focus:border-or focus:ring-1 focus:ring-or transition-all" 
                                         />
                                     </div>
                                     <div>
@@ -206,7 +206,7 @@ export default function AdminSettingsPage() {
                                             type="number" 
                                             value={settings?.shippingCostDefault || 600} 
                                             onChange={(e) => handleChange('shippingCostDefault', parseInt(e.target.value))}
-                                            className="w-full px-4 py-3 bg-creme border border-creme2 rounded-sm text-sm text-encre focus:outline-none focus:border-or focus:ring-1 focus:ring-or transition-all" 
+                                            className="w-full px-4 py-3 bg-creme border border-creme2 rounded-xl text-sm text-encre focus:outline-none focus:border-or focus:ring-1 focus:ring-or transition-all" 
                                         />
                                     </div>
                                     <div>
@@ -215,13 +215,13 @@ export default function AdminSettingsPage() {
                                             type="number" 
                                             value={settings?.freeShippingThreshold || 10000} 
                                             onChange={(e) => handleChange('freeShippingThreshold', parseInt(e.target.value))}
-                                            className="w-full px-4 py-3 bg-creme border border-creme2 rounded-sm text-sm text-encre focus:outline-none focus:border-or focus:ring-1 focus:ring-or transition-all" 
+                                            className="w-full px-4 py-3 bg-creme border border-creme2 rounded-xl text-sm text-encre focus:outline-none focus:border-or focus:ring-1 focus:ring-or transition-all" 
                                         />
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="bg-yellow-50 border border-yellow-200 rounded-sm p-6 flex items-start space-x-4 shadow-sm">
+                            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 flex items-start space-x-4 shadow-sm">
                                 <AlertTriangle size={20} className="text-yellow-600 shrink-0 mt-0.5" />
                                 <div>
                                     <p className="text-sm font-bold text-yellow-800 uppercase tracking-widest">Zone de danger</p>
@@ -229,7 +229,7 @@ export default function AdminSettingsPage() {
                                     <div className="flex space-x-3 mt-4">
                                         <button 
                                             onClick={() => alert('Fonctionnalité bientôt disponible')}
-                                            className="px-4 py-2 bg-white border border-yellow-300 text-yellow-700 text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-yellow-100 transition-all"
+                                            className="px-4 py-2 bg-white border border-yellow-300 text-yellow-700 text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-yellow-100 transition-all"
                                         >
                                             Vider les données de test
                                         </button>
@@ -240,7 +240,7 @@ export default function AdminSettingsPage() {
                                                 }
                                             }}
                                             disabled={saving}
-                                            className="px-4 py-2 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-red-700 transition-all shadow-md disabled:opacity-50"
+                                            className="px-4 py-2 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-red-700 transition-all shadow-md disabled:opacity-50"
                                         >
                                             {saving ? 'Réinitialisation...' : 'Réinitialiser la boutique'}
                                         </button>
@@ -251,7 +251,7 @@ export default function AdminSettingsPage() {
                     )}
 
                     {activeTab === 'seo' && (
-                        <div className="bg-white rounded-sm border border-creme2 shadow-lg p-20 flex flex-col items-center justify-center text-center relative overflow-hidden">
+                        <div className="bg-white rounded-xl border border-creme2 shadow-lg p-20 flex flex-col items-center justify-center text-center relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-or/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
                             <div className="absolute bottom-0 left-0 w-64 h-64 bg-rouge-brand/5 rounded-full blur-3xl -ml-32 -mb-32"></div>
                             
@@ -275,7 +275,7 @@ export default function AdminSettingsPage() {
                     )}
 
                     {!['boutique', 'seo'].includes(activeTab) && (
-                        <div className="bg-white rounded-sm border border-creme2 shadow-lg p-16 flex flex-col items-center justify-center text-center">
+                        <div className="bg-white rounded-xl border border-creme2 shadow-lg p-16 flex flex-col items-center justify-center text-center">
                             <div className="w-16 h-16 bg-creme rounded-full flex items-center justify-center mb-6 border border-creme2">
                                 {(() => {
                                     const t = tabs.find(t => t.key === activeTab);
