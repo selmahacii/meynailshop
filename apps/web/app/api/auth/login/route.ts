@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001';
+const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+const defaultBackend = isProduction ? 'https://meeynailshop-api.onrender.com' : 'http://127.0.0.1:3001';
+const BACKEND = process.env.NEXT_PUBLIC_API_URL || defaultBackend;
 
 export async function POST(request: NextRequest) {
   try {

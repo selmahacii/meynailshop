@@ -31,7 +31,9 @@ const nextConfig = {
     ],
   },
   async rewrites() {
-    const apiUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001')
+    const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+    const defaultBackend = isProduction ? 'https://meeynailshop-api.onrender.com' : 'http://localhost:3001';
+    const apiUrl = (process.env.NEXT_PUBLIC_API_URL || defaultBackend)
       .replace(/\/api\/?$/, '')
       .replace(/\/$/, '');
       

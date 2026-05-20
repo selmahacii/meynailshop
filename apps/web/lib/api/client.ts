@@ -7,7 +7,9 @@
 // Logic for BASE_URL: Use relative path on client (for Next.js proxy)
 // and absolute path on server (SSR needs full URL).
 const isServer = typeof window === 'undefined';
-const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001')
+const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+const defaultBackend = isProduction ? 'https://meeynailshop-api.onrender.com' : 'http://127.0.0.1:3001';
+const BASE_URL = (isServer ? (process.env.NEXT_PUBLIC_API_URL || defaultBackend) : '')
   .replace(/\/api\/?$/, '') // Remove trailing /api or / if present
   .replace(/\/$/, '');      // Remove trailing slash if present
 const API_VERSION = 'v1';
