@@ -8,18 +8,24 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DashboardController = void 0;
 const common_1 = require("@nestjs/common");
 const dashboard_service_1 = require("./dashboard.service");
+const jwt_auth_guard_1 = require("../../../modules/auth/guards/jwt-auth.guard");
+const roles_guard_1 = require("../../../modules/auth/guards/roles.guard");
+const roles_decorator_1 = require("../../../common/decorators/roles.decorator");
 let DashboardController = class DashboardController {
     constructor(dashboardService) {
         this.dashboardService = dashboardService;
     }
-    async getMetrics() {
+    async getMetrics(range) {
         try {
-            console.log('📊 [DashboardController] Fetching metrics...');
-            const data = await this.dashboardService.getMetrics();
+            console.log(`📊 [DashboardController] Fetching metrics for range: ${range || 'all'}...`);
+            const data = await this.dashboardService.getMetrics(range);
             console.log('✅ [DashboardController] Metrics fetched successfully');
             return {
                 success: true,
@@ -38,12 +44,15 @@ let DashboardController = class DashboardController {
 exports.DashboardController = DashboardController;
 __decorate([
     (0, common_1.Get)('metrics'),
+    __param(0, (0, common_1.Query)('range')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], DashboardController.prototype, "getMetrics", null);
 exports.DashboardController = DashboardController = __decorate([
     (0, common_1.Controller)('v1/admin/dashboard'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('admin'),
     __metadata("design:paramtypes", [dashboard_service_1.DashboardService])
 ], DashboardController);
 //# sourceMappingURL=dashboard.controller.js.map

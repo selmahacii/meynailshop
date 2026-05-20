@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Outfit, Libre_Baskerville, Montserrat } from 'next/font/google'
+import { Outfit, Libre_Baskerville, Montserrat, Italiana, Playfair_Display } from 'next/font/google'
 import './globals.css'
 import Providers from '@/components/providers/Providers'
 
@@ -19,6 +19,18 @@ const libreBaskerville = Libre_Baskerville({
   subsets: ['latin'],
   variable: '--font-libre-baskerville',
   weight: ['400', '700'],
+})
+
+const italiana = Italiana({
+  subsets: ['latin'],
+  variable: '--font-italiana',
+  weight: ['400'],
+})
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  weight: ['400', '500', '600', '700'],
 })
 
 export const metadata: Metadata = {
@@ -46,7 +58,7 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${outfit.variable} ${libreBaskerville.variable} ${montserrat.variable}`}
+      className={`${outfit.variable} ${libreBaskerville.variable} ${montserrat.variable} ${italiana.variable} ${playfair.variable}`}
       data-scroll-behavior="smooth"
     >
       <body className="bg-creme text-encre font-sans">

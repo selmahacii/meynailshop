@@ -2,7 +2,7 @@ import { DashboardService } from './dashboard.service';
 export declare class DashboardController {
     private readonly dashboardService;
     constructor(dashboardService: DashboardService);
-    getMetrics(): Promise<{
+    getMetrics(range?: string): Promise<{
         success: boolean;
         data: {
             kpis: {
@@ -14,18 +14,14 @@ export declare class DashboardController {
                 totalOrders: number;
                 prevOrders: number;
                 activeClients: number;
-                prevClients: number;
                 averageCart: number;
-                completedOrders: number;
                 healthStatus: string;
             };
             charts: {
                 monthlyRevenue: any[];
                 productSales: any[];
                 orderStatusBreakdown: any[];
-                customerGrowth: any[];
                 wilayaDistribution: any[];
-                paymentMethodDistribution: any[];
             };
             alerts: {
                 lowStockProducts: any[];

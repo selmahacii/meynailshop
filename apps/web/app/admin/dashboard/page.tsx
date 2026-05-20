@@ -73,6 +73,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 export default function AdminDashboard() {
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [timeRange, setTimeRange] = useState<'7d' | '30d' | 'all'>('30d');
     const { user } = useAuthStore();
 

@@ -49,19 +49,32 @@ export default function HeroSection() {
 
             <div className="container mx-auto px-6 sm:px-12 md:px-16 z-10">
                 <div className="max-w-4xl text-center md:text-left flex flex-col items-center md:items-start mx-auto md:mx-0">
+                    <motion.span
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                        className="text-gold-brand/80 text-[10px] md:text-xs font-black uppercase tracking-[0.4em] mb-6 block"
+                    >
+                        Maison de Beauté Ongulaire
+                    </motion.span>
+
                     <motion.h1
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.1 }}
-                        className="font-montserrat font-light text-4xl md:text-6xl lg:text-8xl text-gold-brand mb-8 leading-tight tracking-[0.15em] uppercase drop-shadow-md"
+                        className="font-italiana text-5xl md:text-7xl lg:text-9xl text-creme mb-8 leading-[1.1] tracking-[0.05em] drop-shadow-2xl"
                     >
-                        L'Art de <br className="hidden md:block" /> l'Excellence
+                        L'Art de <br />
+                        <span className="font-playfair italic font-medium text-gold-brand">
+                            l'Excellence
+                        </span>
                     </motion.h1>
+
                     <motion.p
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-sm sm:text-base md:text-lg text-creme/80 mb-12 max-w-lg font-montserrat font-light tracking-[0.05em] leading-relaxed border-l-2 border-gold-brand/50 pl-8"
+                        className="text-base sm:text-lg md:text-xl text-creme/90 mb-12 max-w-xl font-playfair font-light italic tracking-wide leading-relaxed border-l-[3px] border-gold-brand pl-6 md:pl-8"
                     >
                         Sublimez votre talent avec notre collection exclusive de produits premium, pensée pour les artistes de l'onglerie.
                     </motion.p>
@@ -74,15 +87,15 @@ export default function HeroSection() {
                     >
                         <Link
                             href="/catalogue?isNew=true"
-                            className="bg-gold-brand hover:bg-[#D4C3AC] text-rouge-brand px-10 py-5 rounded-sm font-bold uppercase tracking-widest text-xs transition-all duration-300 flex items-center justify-center group shadow-2xl w-full sm:w-auto"
+                            className="bg-gold-brand hover:bg-creme text-rouge-brand px-10 py-5 rounded-[4px] font-bold uppercase tracking-[0.2em] text-[10px] sm:text-xs transition-all duration-300 flex items-center justify-center group shadow-xl hover:shadow-gold-brand/20 active:scale-95 w-full sm:w-auto"
                         >
                             Découvrir la collection
-                            <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
+                            <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={16} />
                         </Link>
 
                         <Link
                             href="/catalogue?badge=top"
-                            className="border-2 border-gold-brand/60 hover:border-gold-brand hover:text-rouge-brand hover:bg-gold-brand text-gold-brand px-10 py-5 rounded-sm font-bold uppercase tracking-widest text-xs transition-all duration-300 flex items-center justify-center backdrop-blur-sm bg-white/5 w-full sm:w-auto"
+                            className="border border-gold-brand/50 hover:border-gold-brand text-gold-brand px-10 py-5 rounded-[4px] font-bold uppercase tracking-[0.2em] text-[10px] sm:text-xs transition-all duration-300 flex items-center justify-center backdrop-blur-md bg-black/20 hover:bg-gold-brand hover:text-rouge-brand active:scale-95 w-full sm:w-auto"
                         >
                             Meilleures ventes
                         </Link>

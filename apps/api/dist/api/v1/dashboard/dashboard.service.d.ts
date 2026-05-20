@@ -6,7 +6,7 @@ export declare class DashboardService {
     private productRepository;
     private orderItemRepository;
     constructor(userRepository: Repository<User>, orderRepository: Repository<Order>, productRepository: Repository<Product>, orderItemRepository: Repository<OrderItem>);
-    getMetrics(): Promise<{
+    getMetrics(range?: string): Promise<{
         kpis: {
             totalRevenue: number;
             totalProfit: number;
@@ -16,18 +16,14 @@ export declare class DashboardService {
             totalOrders: number;
             prevOrders: number;
             activeClients: number;
-            prevClients: number;
             averageCart: number;
-            completedOrders: number;
             healthStatus: string;
         };
         charts: {
             monthlyRevenue: any[];
             productSales: any[];
             orderStatusBreakdown: any[];
-            customerGrowth: any[];
             wilayaDistribution: any[];
-            paymentMethodDistribution: any[];
         };
         alerts: {
             lowStockProducts: any[];
@@ -39,7 +35,7 @@ export declare class DashboardService {
         charts?: undefined;
         alerts?: undefined;
     }>;
-    private _getMonthlyTrendOptimized;
+    private _getTrend;
     private _getOrderStatusBreakdownOptimized;
     private _getProductSales;
     private _getCustomerGrowth;

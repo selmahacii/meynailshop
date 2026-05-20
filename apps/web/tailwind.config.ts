@@ -25,6 +25,8 @@ const config: Config = {
         serif: ['var(--font-libre-baskerville)', 'serif'],
         sans: ['var(--font-outfit)', 'sans-serif'],
         montserrat: ['var(--font-montserrat)', 'sans-serif'],
+        italiana: ['var(--font-italiana)', 'serif'],
+        playfair: ['var(--font-playfair)', 'serif'],
       },
     },
   },

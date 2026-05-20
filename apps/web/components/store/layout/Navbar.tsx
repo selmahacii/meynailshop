@@ -55,24 +55,24 @@ export default function Navbar() {
 
     return (
         <nav
-            className={`fixed top-0 w-full z-[1000] transition-all duration-300 ${isScrolled ? 'bg-rouge-brand py-2 shadow-xl' : 'bg-gradient-to-b from-black/40 via-black/10 to-transparent py-4'}`}
+            className={`fixed top-0 w-full z-[1000] transition-all duration-500 ${isScrolled ? 'bg-[#390102]/90 backdrop-blur-xl border-b border-gold-brand/10 py-1 shadow-2xl' : 'bg-transparent py-4 border-b border-white/5'}`}
         >
             <div className="w-full px-6 sm:px-10 md:px-12 lg:px-16 flex items-center justify-between">
                 {/* Mobile Menu Toggle */}
                 <button
-                    className="lg:hidden text-gold-brand p-2 -ml-2 hover:opacity-80 transition-opacity"
+                    className="lg:hidden text-gold-brand p-2.5 -ml-2 rounded-full hover:bg-white/5 transition-all active:scale-95"
                     onClick={() => setIsMobileMenuOpen(true)}
                 >
-                    <Menu size={24} />
+                    <Menu size={22} />
                 </button>
 
                 <Link href="/" className="flex items-center group lg:mr-0 pl-2 lg:pl-0">
-                    <div className="relative w-[85px] h-[85px] md:w-[125px] md:h-[125px] transition-all duration-500 hover:scale-[1.15]">
+                    <div className={`relative transition-all duration-500 hover:scale-105 ${isScrolled ? 'w-[75px] h-[75px] md:w-[95px] md:h-[95px]' : 'w-[85px] h-[85px] md:w-[115px] md:h-[115px]'}`}>
                         <Image
                             src="/logo2.png"
                             alt="MEEY"
                             fill
-                            className="object-contain drop-shadow-[0_0_20px_rgba(0,0,0,0.4)]"
+                            className="object-contain drop-shadow-[0_0_20px_rgba(0,0,0,0.3)]"
                             priority
                         />
                     </div>
@@ -89,10 +89,11 @@ export default function Navbar() {
                         >
                             <Link
                                 href={link.href}
-                                className={`text-[10px] md:text-[11px] font-bold uppercase tracking-[0.25em] transition-all hover:text-white hover:scale-105 drop-shadow-lg flex items-center gap-1 ${pathname === link.href ? 'text-gold-brand border-b-2 border-gold-brand pb-1.5' : 'text-gold-brand'
-                                    }`}
+                                className={`relative text-[10px] md:text-[11px] font-bold uppercase tracking-[0.25em] transition-colors duration-300 py-2.5 flex items-center gap-1.5 ${
+                                    pathname === link.href ? 'text-white' : 'text-gold-brand hover:text-white'
+                                }`}
                             >
-                                {link.name}
+                                <span>{link.name}</span>
                                 {link.subCategories?.length > 0 && (
                                     <motion.span
                                         animate={{ rotate: activeCategory === link.name ? 180 : 0 }}
@@ -101,6 +102,16 @@ export default function Navbar() {
                                         ▼
                                     </motion.span>
                                 )}
+                                {pathname === link.href && (
+                                    <motion.div
+                                        layoutId="activeNavIndicator"
+                                        className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gold-brand rounded-full"
+                                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                                    />
+                                )}
+                                {pathname !== link.href && (
+                                    <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gold-brand scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full" />
+                                )}
                             </Link>
 
                             {/* Dropdown for Subcategories */}
@@ -108,18 +119,20 @@ export default function Navbar() {
                                 <AnimatePresence>
                                     {activeCategory === link.name && (
                                         <motion.div
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: 10 }}
-                                            className="absolute top-full left-0 mt-4 w-48 bg-rouge-brand border border-gold-brand/20 shadow-2xl py-2 z-[1001] backdrop-blur-md"
+                                            initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            transition={{ duration: 0.2 }}
+                                            className="absolute top-full left-0 mt-2 w-52 bg-[#390102]/95 backdrop-blur-xl border border-gold-brand/20 shadow-2xl rounded-2xl py-3 z-[1001] overflow-hidden"
                                         >
                                             {link.subCategories.map((sub: any) => (
                                                 <Link
                                                     key={sub.id}
                                                     href={`/categories/${link.href.split('/').pop()}/${sub.slug}`}
-                                                    className="block px-6 py-3.5 text-[9px] uppercase tracking-[0.2em] text-gold-brand hover:bg-gold-brand/10 hover:text-white transition-all font-black"
+                                                    className="block px-6 py-3.5 text-[9px] uppercase tracking-[0.2em] text-gold-brand hover:text-white transition-all font-bold relative group/item"
                                                 >
-                                                    {sub.name}
+                                                    <span className="relative z-10">{sub.name}</span>
+                                                    <span className="absolute inset-0 bg-gold-brand/10 scale-x-0 group-hover/item:scale-x-100 origin-left transition-transform duration-300" />
                                                 </Link>
                                             ))}
                                         </motion.div>
@@ -131,18 +144,22 @@ export default function Navbar() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center space-x-3 sm:space-x-5 md:space-x-6">
+                <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3">
                     <button
                         onClick={() => setIsSearchOpen(true)}
-                        className="text-gold-brand hover:opacity-80 transition-all hover:scale-110"
+                        className="relative p-2.5 text-gold-brand hover:text-white hover:bg-white/5 rounded-full transition-all duration-300 hover:scale-110 active:scale-95"
+                        aria-label="Recherche"
                     >
-                        <Search size={21} strokeWidth={1.5} />
+                        <Search size={20} strokeWidth={1.5} />
                     </button>
 
-                    <Link href="/favoris" className="relative text-gold-brand hover:opacity-80 transition-all hover:scale-110">
-                        <Heart size={21} strokeWidth={1.5} />
+                    <Link 
+                        href="/favoris" 
+                        className="relative p-2.5 text-gold-brand hover:text-white hover:bg-white/5 rounded-full transition-all duration-300 hover:scale-110 active:scale-95"
+                    >
+                        <Heart size={20} strokeWidth={1.5} />
                         {wishlistItemsCount > 0 && (
-                            <span className="absolute -top-1.5 -right-1.5 bg-gold-brand text-rouge-brand text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-md">
+                            <span className="absolute top-1.5 right-1.5 bg-gold-brand text-rouge-brand text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-lg border border-[#390102]/20">
                                 {wishlistItemsCount}
                             </span>
                         )}
@@ -150,7 +167,6 @@ export default function Navbar() {
 
                     <button
                         onClick={() => {
-
                             if (!mounted) return;
 
                             // Security Check: Is the cookie still there?
@@ -159,12 +175,10 @@ export default function Navbar() {
 
                             // Self-healing: If cookie is gone but local exists, re-sync!
                             if (isAuthenticated && !hasCookieToken && localToken) {
-
                                 document.cookie = `accessToken=${localToken}; path=/; max-age=86400; SameSite=Lax`;
                             }
                             // Only clean up if BOTH are gone while we think we're auth
                             else if (isAuthenticated && !hasCookieToken && !localToken) {
-
                                 useAuthStore.getState().logout();
                                 router.push('/connexion');
                                 return;
@@ -172,29 +186,29 @@ export default function Navbar() {
 
                             if (isAuthenticated) {
                                 if (user?.role === 'admin') {
-
                                     router.push('/admin/dashboard');
                                 } else {
                                     const isAlreadyInAccount = pathname.startsWith('/compte');
                                     const target = isAlreadyInAccount && pathname !== '/compte' ? '/compte' : '/compte/commandes';
-
                                     router.push(target);
                                 }
                             } else {
-
                                 router.push('/connexion');
                             }
                         }}
-                        className="text-gold-brand hover:opacity-80 transition-all hover:scale-110"
+                        className="relative p-2.5 text-gold-brand hover:text-white hover:bg-white/5 rounded-full transition-all duration-300 hover:scale-110 active:scale-95"
                         aria-label="Compte / Connexion"
                     >
-                        <User size={21} strokeWidth={1.5} />
+                        <User size={20} strokeWidth={1.5} />
                     </button>
 
-                    <Link href="/panier" className="relative text-gold-brand hover:opacity-80 transition-all hover:scale-110">
-                        <ShoppingBag size={21} strokeWidth={1.5} />
+                    <Link 
+                        href="/panier" 
+                        className="relative p-2.5 text-gold-brand hover:text-white hover:bg-white/5 rounded-full transition-all duration-300 hover:scale-110 active:scale-95"
+                    >
+                        <ShoppingBag size={20} strokeWidth={1.5} />
                         {cartItemsCount > 0 && (
-                            <span className="absolute -top-1.5 -right-1.5 bg-gold-brand text-rouge-brand text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-md">
+                            <span className="absolute top-1.5 right-1.5 bg-gold-brand text-rouge-brand text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-lg border border-[#390102]/20">
                                 {cartItemsCount}
                             </span>
                         )}

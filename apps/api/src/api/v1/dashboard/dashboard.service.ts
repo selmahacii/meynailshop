@@ -315,18 +315,18 @@ export class DashboardService {
 
   private async _getWilayaDistribution(startDate?: Date | null): Promise<any[]> {
     try {
-      const dateFilter = startDate ? `WHERE "createdAt" >= '${startDate.toISOString()}'` : '';
-      const rawData = await this.orderRepository.query(`
+      const query = `
         SELECT 
           COALESCE("shippingAddressSnapshot"->>'wilayaCode', "shippingAddressSnapshot"->>'wilaya') as "wilayaCode",
           COALESCE("shippingAddressSnapshot"->>'wilayaName', "shippingAddressSnapshot"->>'wilaya') as "wilayaName",
           COUNT(*) as "count"
         FROM "orders"
-        ${dateFilter}
+        WHERE "createdAt" >= $1 OR $1 IS NULL
         GROUP BY 1, 2
         ORDER BY "count" DESC
         LIMIT 5
-      `);
+      `;
+      const rawData = await this.orderRepository.query(query, [startDate?.toISOString() || null]);
 
       if (!rawData || !Array.isArray(rawData)) return [];
 

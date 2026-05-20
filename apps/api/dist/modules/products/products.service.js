@@ -74,25 +74,30 @@ let ProductsService = class ProductsService {
             .leftJoinAndSelect('product.subCategory', 'subCategory')
             .where('product.isActive = :isActive', { isActive: true });
         if (query.search) {
-            const search = `%${query.search}%`;
-            queryBuilder.andWhere(new typeorm_2.Brackets(qb => {
-                qb.where('product.name ILIKE :search', { search })
-                    .orWhere('product.sku ILIKE :search', { search })
-                    .orWhere('category.name ILIKE :search', { search })
-                    .orWhere('subCategory.name ILIKE :search', { search });
-                qb.orWhere(`EXISTS (
-          SELECT 1 FROM jsonb_array_elements(CASE WHEN product.variants IS NULL THEN '[]'::jsonb ELSE product.variants END) v 
-          WHERE v->>'sku' ILIKE :search
-        )`, { search });
-                const priceValue = parseFloat(query.search);
-                if (!isNaN(priceValue)) {
-                    qb.orWhere('product.price = :exactPrice', { exactPrice: priceValue });
-                    qb.orWhere('product.price BETWEEN :minP AND :maxP', {
-                        minP: priceValue - 100,
-                        maxP: priceValue + 100
-                    });
+            try {
+                const searchInput = query.search.trim();
+                const terms = searchInput.split(/\s+/).filter(t => t.length > 0);
+                if (terms.length > 0) {
+                    queryBuilder.andWhere(new typeorm_2.Brackets(qb => {
+                        const params = {};
+                        terms.forEach((term, index) => {
+                            const paramName = `t${index}`;
+                            const searchTerm = `%${term}%`;
+                            params[paramName] = searchTerm;
+                            const sql = `(product.name ILIKE :${paramName} OR product.sku ILIKE :${paramName})`;
+                            if (index === 0) {
+                                qb.where(sql, params);
+                            }
+                            else {
+                                qb.andWhere(sql, params);
+                            }
+                        });
+                    }));
                 }
-            }));
+            }
+            catch (err) {
+                console.error('❌ [ProductsService] Search construction failed:', err);
+            }
         }
         if (query.category) {
             queryBuilder.andWhere('category.slug = :category', { category: query.category });
@@ -119,19 +124,31 @@ let ProductsService = class ProductsService {
         else {
             queryBuilder.orderBy('product.createdAt', 'DESC');
         }
-        const [products, total] = await queryBuilder
-            .skip(skip)
-            .take(query.limit)
-            .getManyAndCount();
-        return {
-            items: products,
-            total,
-            page: query.page,
-            limit: query.limit,
-            totalPages: Math.ceil(total / query.limit),
-            hasNext: skip + query.limit < total,
-            hasPrev: query.page > 1,
-        };
+        try {
+            if (query.search) {
+                console.log(`🔍 [ProductsService] SQL: ${queryBuilder.getSql()}`);
+                console.log(`🔍 [ProductsService] Params:`, queryBuilder.getParameters());
+            }
+            const [products, total] = await queryBuilder
+                .skip(skip)
+                .take(query.limit)
+                .getManyAndCount();
+            console.log(`✅ [ProductsService] Found ${products.length} products (Total: ${total}) for search: "${query.search || ''}"`);
+            return {
+                items: products,
+                total,
+                page: query.page,
+                limit: query.limit,
+                totalPages: Math.ceil(total / query.limit),
+                hasNext: skip + query.limit < total,
+                hasPrev: query.page > 1,
+            };
+        }
+        catch (err) {
+            console.error('❌ [ProductsService] Database execution failed:', err.message);
+            console.error('🔗 [ProductsService] Failed Query:', queryBuilder.getSql());
+            throw err;
+        }
     }
     async findBySlug(slug) {
         const product = await this.productRepository.findOne({
