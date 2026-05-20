@@ -73,9 +73,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
       };
 
       message = mappings[rawMessage] || rawMessage;
-    } else if (exception instanceof Error) {
-      // Include exception message temporarily for production debugging
-      message = exception.message;
     }
 
     console.error('🔥 [AllExceptionsFilter] Exception caught:', exception);
@@ -84,7 +81,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
       statusCode: statusCode,
       message: message,
       error: exception instanceof Error ? exception.name : 'Error',
-      stack: exception instanceof Error ? exception.stack : undefined,
     });
   }
 }

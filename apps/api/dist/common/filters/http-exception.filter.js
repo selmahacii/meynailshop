@@ -70,15 +70,11 @@ let AllExceptionsFilter = class AllExceptionsFilter {
             };
             message = mappings[rawMessage] || rawMessage;
         }
-        else if (exception instanceof Error) {
-            message = exception.message;
-        }
         console.error('🔥 [AllExceptionsFilter] Exception caught:', exception);
         response.status(statusCode).json({
             statusCode: statusCode,
             message: message,
             error: exception instanceof Error ? exception.name : 'Error',
-            stack: exception instanceof Error ? exception.stack : undefined,
         });
     }
 };

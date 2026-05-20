@@ -48,11 +48,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       statusCode: 500,
       message: 'Le serveur est temporairement indisponible. Veuillez réessayer plus tard.',
-      debugError: errorMsg,
-      debugBackend: BACKEND,
-      debugEnvUrl: process.env.NEXT_PUBLIC_API_URL || null,
-      debugNodeEnv: process.env.NODE_ENV || null,
-      debugVercel: process.env.VERCEL || null
     }, { status: 500 });
   }
 }
