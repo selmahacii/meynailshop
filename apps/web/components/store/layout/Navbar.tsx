@@ -66,15 +66,23 @@ export default function Navbar() {
                     <Menu size={22} />
                 </button>
 
-                <Link href="/" className="flex items-center group lg:mr-0 pl-2 lg:pl-0">
-                    <div className={`relative transition-all duration-500 hover:scale-105 ${isScrolled ? 'w-[75px] h-[75px] md:w-[95px] md:h-[95px]' : 'w-[85px] h-[85px] md:w-[115px] md:h-[115px]'}`}>
+                <Link href="/" className="flex items-center space-x-3 group lg:mr-0 pl-2 lg:pl-0 transition-transform duration-300 hover:scale-[1.02]">
+                    <div className={`relative transition-all duration-500 ${isScrolled ? 'w-[45px] h-[45px] md:w-[55px] md:h-[55px]' : 'w-[55px] h-[55px] md:w-[65px] md:h-[65px]'}`}>
                         <Image
                             src="/icon.png"
-                            alt="MEEY"
+                            alt="MEEY Emblem"
                             fill
-                            className="object-contain drop-shadow-[0_0_20px_rgba(0,0,0,0.3)]"
+                            className="object-contain"
                             priority
                         />
+                    </div>
+                    <div className="flex flex-col text-left">
+                        <span className="font-italiana text-2xl md:text-3xl font-light leading-none text-gold-brand tracking-[0.1em] uppercase">
+                            MEEY
+                        </span>
+                        <span className="font-playfair text-[8px] md:text-[9px] font-light italic tracking-[0.3em] uppercase text-creme/60 leading-none mt-1">
+                            Nail Shop
+                        </span>
                     </div>
                 </Link>
 
