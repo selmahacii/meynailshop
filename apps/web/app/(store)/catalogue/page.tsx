@@ -155,10 +155,10 @@ function CatalogueContent() {
                                     ...(filters.category ? [{ label: activeCategoryData?.name || 'Catégorie' }] : [])
                                 ]} 
                             />
-                            <h1 className="font-serif text-3xl md:text-5xl lg:text-7xl text-encre tracking-tight leading-none">
+                             <h1 className="font-italiana font-normal text-4xl md:text-6xl lg:text-[5rem] text-encre tracking-wide leading-none">
                                 {activeCategoryData?.name || "Le Catalogue"}
                             </h1>
-                            <p className="text-encre3 text-[11px] md:text-sm max-w-xl italic leading-relaxed border-l-2 border-or/20 pl-4 py-1">
+                            <p className="text-encre/70 text-[11px] md:text-sm max-w-xl font-playfair font-light italic leading-relaxed border-l border-gold-brand/35 pl-5 py-1">
                                 {activeCategoryData?.description || "Découvrez notre collection méticuleusement sélectionnée de produits d'onglerie et soins de luxe."}
                             </p>
                         </div>

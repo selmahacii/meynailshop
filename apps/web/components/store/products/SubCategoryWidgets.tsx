@@ -68,15 +68,15 @@ export default function SubCategoryWidgets({
                     )}
                 >
                     <div className={cn(
-                        "w-full bg-white shadow-sm hover:shadow-lg rounded-[24px] overflow-hidden flex flex-col border-2",
-                        !activeSubSlug ? "border-or shadow-or/10 ring-4 ring-or/5" : "border-rouge-brand/20 hover:border-rouge-brand/50"
+                        "w-full bg-white shadow-sm hover:shadow-lg rounded-[24px] overflow-hidden flex flex-col border-2 transition-all duration-500",
+                        !activeSubSlug ? "border-or shadow-or/10 ring-4 ring-or/5" : "border-gold-brand/10 hover:border-gold-brand/30"
                     )}>
-                        <div className="relative aspect-[4/5] w-full bg-encre flex items-center justify-center overflow-hidden border-b-2 border-rouge-brand/10">
+                        <div className="relative aspect-[4/5] w-full bg-encre flex items-center justify-center overflow-hidden border-b-2 border-gold-brand/15">
                             <span className="text-creme text-[10px] md:text-xs font-black uppercase tracking-widest text-center px-4">TOUT VOIR</span>
                         </div>
                         <div className="p-3 md:p-4 text-center flex-grow flex flex-col justify-center">
                             <p className={cn(
-                                "font-serif text-[12px] md:text-lg transition-colors line-clamp-2 md:line-clamp-1 leading-tight",
+                                "font-italiana text-[13px] md:text-xl font-bold tracking-wide transition-colors line-clamp-2 md:line-clamp-1 leading-tight",
                                 !activeSubSlug ? "text-or font-bold" : "text-encre group-hover:text-rouge-mid"
                             )}>
                                 Général
@@ -95,16 +95,16 @@ export default function SubCategoryWidgets({
                                 "cursor-pointer group transition-all duration-500",
                                 !activeSubSlug
                                     ? "w-full flex flex-col md:max-w-[200px] md:flex-shrink-0 md:snap-start mb-6"
-                                    : "flex flex-col flex-shrink-0 snap-start w-[140px] md:max-w-[200px]" // Use reasonable width in horizontal scroll
+                                    : "flex flex-col flex-shrink-0 snap-start w-[140px] md:max-w-[200px]"
                             )}
                         >
                             <div className={cn(
                                 "w-full bg-white shadow-sm hover:shadow-2xl rounded-[24px] overflow-hidden flex flex-col transition-all duration-500 border-2",
                                 isActive 
                                     ? "border-or scale-[1.02] md:scale-105 shadow-xl shadow-or/10 ring-4 ring-or/10" 
-                                    : "border-rouge-brand hover:border-rouge-brand/50"
+                                    : "border-gold-brand/15 hover:border-gold-brand/35"
                             )}>
-                                <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden border-b-2 border-rouge-brand/10">
+                                <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden border-b-2 border-gold-brand/15">
                                     {sub.imageUrl ? (
                                         <img 
                                             src={sub.imageUrl} 
@@ -137,12 +137,11 @@ export default function SubCategoryWidgets({
                                 </div>
                                 <div className="p-2 md:p-4 text-center flex-grow flex flex-col justify-center">
                                     <p className={cn(
-                                        "font-serif text-[12px] md:text-lg transition-colors line-clamp-2 md:line-clamp-1 mb-0.5 md:mb-1 leading-tight",
+                                        "font-italiana text-[13px] md:text-xl font-bold tracking-wide transition-colors line-clamp-2 md:line-clamp-1 mb-0.5 md:mb-1 leading-tight",
                                         isActive ? "text-or font-bold" : "text-encre group-hover:text-rouge-mid"
                                     )}>
                                         {sub.name}
                                     </p>
-
                                 </div>
                             </div>
                         </div>

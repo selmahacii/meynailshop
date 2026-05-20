@@ -69,7 +69,7 @@ export default function ProductFilters({ onClose, currentFilters, onFilterChange
         <div className="space-y-10">
             {/* Availability & Newness */}
             <div className="bg-white p-6 md:p-8 rounded-2xl border border-creme2 shadow-sm space-y-8">
-                <h4 className="font-serif text-lg text-encre border-b border-creme2 pb-4 mb-2">Disponibilité</h4>
+                <h4 className="font-italiana text-xl text-encre border-b border-creme2 pb-4 mb-2 tracking-wide font-normal">Disponibilité</h4>
                 
                 <label className="flex items-center justify-between group cursor-pointer">
                     <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-encre3 group-hover:text-encre transition-colors">En Stock</span>
@@ -80,7 +80,7 @@ export default function ProductFilters({ onClose, currentFilters, onFilterChange
                             onChange={toggleStock}
                             className="peer sr-only" 
                         />
-                        <div className="w-12 h-6 bg-creme2 rounded-full transition-colors peer-checked:bg-rouge-brand"></div>
+                        <div className="w-12 h-6 bg-creme2 rounded-full transition-colors peer-checked:bg-or"></div>
                         <div className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-6 shadow-sm"></div>
                     </div>
                 </label>
@@ -94,7 +94,7 @@ export default function ProductFilters({ onClose, currentFilters, onFilterChange
                             onChange={toggleNew}
                             className="peer sr-only" 
                         />
-                        <div className="w-12 h-6 bg-creme2 rounded-full transition-colors peer-checked:bg-rouge-brand"></div>
+                        <div className="w-12 h-6 bg-creme2 rounded-full transition-colors peer-checked:bg-or"></div>
                         <div className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-6 shadow-sm"></div>
                     </div>
                 </label>
@@ -102,7 +102,7 @@ export default function ProductFilters({ onClose, currentFilters, onFilterChange
 
             {/* Price */}
             <div className="bg-white p-6 md:p-8 rounded-2xl border border-creme2 shadow-sm">
-                <h4 className="font-serif text-lg text-encre mb-8 flex items-center justify-between border-b border-creme2 pb-4">
+                <h4 className="font-italiana text-xl text-encre mb-8 flex items-center justify-between border-b border-creme2 pb-4 tracking-wide font-normal">
                     Prix
                     <ChevronDown size={14} className="text-encre3" />
                 </h4>
@@ -114,9 +114,9 @@ export default function ProductFilters({ onClose, currentFilters, onFilterChange
                                     type="checkbox" 
                                     checked={currentFilters.priceRanges.includes(range.value)}
                                     onChange={() => togglePriceRange(range.value)}
-                                    className="peer appearance-none w-6 h-6 border border-creme2 rounded-sm checked:bg-rouge-brand checked:border-rouge-brand transition-all bg-white" 
+                                    className="peer appearance-none w-5 h-5 border border-gold-brand/25 rounded-[4px] checked:bg-or checked:border-or transition-all bg-white" 
                                 />
-                                <Check size={14} className="absolute text-creme opacity-0 peer-checked:opacity-100 transition-opacity" />
+                                <Check size={12} className="absolute text-creme opacity-0 peer-checked:opacity-100 transition-opacity" />
                             </div>
                             <span className="ml-4 text-xs md:text-sm text-encre3 group-hover:text-encre transition-colors font-medium">{range.label}</span>
                         </label>
@@ -126,7 +126,7 @@ export default function ProductFilters({ onClose, currentFilters, onFilterChange
 
             <button 
                 onClick={resetFilters}
-                className="w-full bg-rouge-brand text-creme py-5 text-[10px] font-black uppercase tracking-[0.3em] rounded-xl hover:bg-black transition-all shadow-xl border border-gold-brand/20 active:scale-95 leading-none"
+                className="w-full bg-encre hover:bg-or text-creme hover:text-encre py-5 text-[10px] font-black uppercase tracking-[0.3em] rounded-xl transition-all shadow-xl border border-gold-brand/10 active:scale-95 leading-none"
             >
                 Réinitialiser
             </button>

@@ -60,7 +60,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
-            className="group bg-white border border-gold-brand/10 hover:border-gold-brand/35 transition-all duration-500 rounded-[20px] sm:rounded-[24px] overflow-hidden hover:-translate-y-1.5 shadow-sm hover:shadow-2xl hover:shadow-gold-brand/5"
+            className="group bg-white border border-gold-brand/15 hover:border-gold-brand/45 transition-all duration-500 rounded-[20px] sm:rounded-[24px] overflow-hidden hover:-translate-y-1.5 shadow-sm hover:shadow-[0_20px_50px_rgba(191,168,147,0.15)]"
         >
             <Link href={`/catalogue/${product.slug}`} className="block relative aspect-[4/5] overflow-hidden bg-creme2">
                 {/* Badges */}
@@ -90,6 +90,28 @@ export default function ProductCard({ product }: ProductCardProps) {
                     <Heart size={13} strokeWidth={2} className={cn('sm:hidden', inWishlist ? 'fill-rouge-deep' : '')} />
                     <Heart size={15} strokeWidth={2} className={cn('hidden sm:block', inWishlist ? 'fill-rouge-deep' : '')} />
                 </button>
+
+                {/* Mobile Floating Quick Add Button (Permanently visible on mobile/tablet) */}
+                <div className="absolute bottom-2 right-2 z-10 sm:hidden">
+                    {product.hasVariants ? (
+                        <button
+                            onClick={(e) => {
+                                // Nested button inside Link -> click will trigger standard link navigation
+                            }}
+                            className="p-2.5 rounded-full bg-gold-brand text-rouge-brand shadow-lg active:scale-95 transition-all flex items-center justify-center backdrop-blur-md"
+                        >
+                            <ShoppingBag size={14} />
+                        </button>
+                    ) : (
+                        <button
+                            onClick={handleAddToCart}
+                            disabled={product.stock === 0}
+                            className="p-2.5 rounded-full bg-gold-brand text-rouge-brand shadow-lg active:scale-95 transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-md"
+                        >
+                            <ShoppingBag size={14} />
+                        </button>
+                    )}
+                </div>
  
                 {/* Image */}
                 <div className="relative w-full h-full group-hover:scale-105 transition-transform duration-700 ease-out">
@@ -104,8 +126,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                     />
                 </div>
  
-                {/* Quick Add Overlay */}
-                <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-rouge-brand/95 backdrop-blur-md z-20">
+                {/* Quick Add Overlay (Desktop Only) */}
+                <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-rouge-brand/95 backdrop-blur-md z-20 hidden sm:block">
                     {product.hasVariants ? (
                         <Link
                             href={`/catalogue/${product.slug}`}
@@ -135,7 +157,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </div>
  
                 <Link href={`/catalogue/${product.slug}`} className="block mb-2 sm:mb-3">
-                    <h3 className="font-italiana text-[15px] sm:text-xl text-encre hover:text-rouge-mid transition-colors line-clamp-1 font-bold leading-tight">
+                    <h3 className="font-italiana text-[16px] sm:text-2xl text-encre hover:text-rouge-mid transition-colors line-clamp-1 font-normal tracking-wide leading-tight">
                         {product.name}
                     </h3>
                 </Link>
