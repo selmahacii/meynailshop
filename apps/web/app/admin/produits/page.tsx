@@ -217,15 +217,15 @@ export default function AdminProductsPage() {
                     <p className="text-rouge">{error}</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8">
                     {products.map((product) => {
                         const statusBadge = getStatusBadge(product);
                         const actionButton = getActionButton(product);
 
                         return (
-                            <div key={product.id} className="bg-white rounded-[2rem] border border-gold-brand/10 hover:shadow-2xl hover:shadow-black/[0.02] overflow-hidden group hover:border-gold-brand/40 transition-all duration-500 shadow-sm">
+                            <div key={product.id} className="bg-white rounded-2xl sm:rounded-[2rem] border border-gold-brand/10 hover:shadow-2xl hover:shadow-black/[0.02] overflow-hidden group hover:border-gold-brand/40 transition-all duration-500 shadow-sm">
                                 {/* Image / Color Preview */}
-                                <div className="relative aspect-[4/3] p-6 bg-creme/10 flex items-center justify-center overflow-hidden">
+                                <div className="relative aspect-[4/3] p-2.5 sm:p-6 bg-creme/10 flex items-center justify-center overflow-hidden">
                                     <div className="w-full h-full relative group-hover:scale-110 transition-transform duration-700">
                                         <Image
                                             src={product.images?.[0] || '/images/placeholder-product.png'} 
@@ -236,17 +236,17 @@ export default function AdminProductsPage() {
                                     </div>
 
                                     {/* Badges */}
-                                    <div className="absolute top-4 right-4 flex flex-col items-end space-y-2">
-                                        <span className="bg-white/90 backdrop-blur-sm text-encre px-2 py-1 rounded-xl text-[10px] font-black uppercase border border-creme2 shadow-sm">
+                                    <div className="absolute top-2 right-2 sm:top-4 sm:right-4 flex flex-col items-end space-y-1 sm:space-y-2">
+                                        <span className="bg-white/90 backdrop-blur-sm text-encre px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg sm:rounded-xl text-[8px] sm:text-[10px] font-black uppercase border border-creme2 shadow-sm">
                                             {product.stock} u.
                                         </span>
                                         {product.status === 'low_stock' && (
-                                            <span className="bg-or text-encre px-2 py-1 rounded-xl text-[8px] font-black uppercase shadow-sm">
+                                            <span className="bg-or text-encre px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg sm:rounded-xl text-[7px] sm:text-[8px] font-black uppercase shadow-sm">
                                                 Stock faible
                                             </span>
                                         )}
                                         {product.status === 'out_of_stock' && (
-                                            <span className="bg-rouge text-creme px-2 py-1 rounded-xl text-[8px] font-black uppercase shadow-sm">
+                                            <span className="bg-rouge text-creme px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg sm:rounded-xl text-[7px] sm:text-[8px] font-black uppercase shadow-sm">
                                                 Épuisé
                                             </span>
                                         )}
@@ -254,43 +254,43 @@ export default function AdminProductsPage() {
                                 </div>
 
                                 {/* Info Section */}
-                                <div className="p-6 border-t border-creme2">
-                                    <div className="flex justify-between items-start mb-4">
+                                <div className="p-3 sm:p-6 border-t border-creme2">
+                                    <div className="flex justify-between items-start mb-2 sm:mb-4">
                                         <div>
-                                            <div className="flex items-center space-x-2 mb-1">
-                                                <p className="text-[10px] uppercase font-bold text-or tracking-[0.2em]">{product.category}</p>
+                                            <div className="flex items-center space-x-1.5 sm:space-x-2 mb-1">
+                                                <p className="text-[8px] sm:text-[10px] uppercase font-bold text-or tracking-[0.15em] sm:tracking-[0.2em]">{product.category}</p>
                                                 {product.badge && (
                                                     <span className={cn(
-                                                        "text-[7px] font-black uppercase px-1.5 py-0.5 rounded-xl",
+                                                        "text-[6px] sm:text-[7px] font-black uppercase px-1 sm:px-1.5 py-0.5 rounded-lg sm:rounded-xl",
                                                         product.badge === 'promo' ? "bg-rouge text-creme" : "bg-encre text-or"
                                                     )}>
                                                         {product.badge}
                                                     </span>
                                                 )}
                                             </div>
-                                            <h3 className="font-serif text-lg text-encre group-hover:text-rouge-deep transition-colors line-clamp-1">{product.name}</h3>
-                                            <p className="text-[9px] font-mono text-encre3 mt-1 leading-none">{product.sku}</p>
+                                            <h3 className="font-serif text-xs sm:text-lg text-encre group-hover:text-rouge-deep transition-colors line-clamp-1">{product.name}</h3>
+                                            <p className="text-[8px] sm:text-[9px] font-mono text-encre3 mt-0.5 sm:mt-1 leading-none">{product.sku}</p>
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-col mt-6">
-                                        <div className="flex items-baseline space-x-2">
-                                            <span className="text-xl font-black text-encre">{product.price} DA</span>
+                                    <div className="flex flex-col mt-3 sm:mt-6">
+                                        <div className="flex items-baseline space-x-1.5 sm:space-x-2">
+                                            <span className="text-sm sm:text-xl font-black text-encre">{product.price} DA</span>
                                             {product.comparePrice && product.comparePrice > product.price && (
-                                                <span className="text-xs text-encre3 line-through opacity-50">{product.comparePrice} DA</span>
+                                                <span className="text-[10px] sm:text-xs text-encre3 line-through opacity-50">{product.comparePrice} DA</span>
                                             )}
                                         </div>
                                         
-                                        <div className="flex items-center justify-between mt-4">
+                                        <div className="flex items-center justify-between mt-2 sm:mt-4">
                                             {product.comparePrice && product.comparePrice > product.price && (
-                                                <span className="text-[9px] font-bold text-rouge-mid bg-rouge/10 px-2 py-1 rounded-xl">
+                                                <span className="text-[7px] sm:text-[9px] font-bold text-rouge-mid bg-rouge/10 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg sm:rounded-xl">
                                                     -{Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)}%
                                                 </span>
                                             )}
-                                            <div className="flex space-x-2 ml-auto">
+                                            <div className="flex space-x-1 sm:space-x-2 ml-auto">
                                                 <Link 
                                                     href={`/admin/produits/${product.id}`}
-                                                    className={cn("px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all", actionButton.style)}
+                                                    className={cn("px-2 py-1.5 sm:px-4 sm:py-2 text-[8px] sm:text-[10px] font-black uppercase tracking-wider sm:tracking-widest rounded-lg sm:rounded-xl transition-all", actionButton.style)}
                                                 >
                                                     {actionButton.text}
                                                 </Link>
