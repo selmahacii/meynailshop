@@ -10,10 +10,20 @@ interface StickyAddToCartProps {
     product: any;
     onAdd: () => void;
     visible: boolean;
+    selectedVariantIndex?: number | null;
 }
 
-export default function StickyAddToCart({ product, onAdd, visible }: StickyAddToCartProps) {
+export default function StickyAddToCart({ product, onAdd, visible, selectedVariantIndex }: StickyAddToCartProps) {
     if (!product || product.stock === 0) return null;
+
+    const variant = (selectedVariantIndex !== undefined && selectedVariantIndex !== null && product.variants)
+        ? product.variants[selectedVariantIndex]
+        : null;
+
+    const activeImage = variant?.image || product.images?.[0] || '/images/placeholder.png';
+    const activePrice = (variant && variant.price !== undefined && variant.price !== null)
+        ? variant.price
+        : product.price;
 
     return (
         <div className={cn(
@@ -23,7 +33,7 @@ export default function StickyAddToCart({ product, onAdd, visible }: StickyAddTo
             <div className="flex items-center gap-4">
                 <div className="relative w-12 h-12 rounded-sm overflow-hidden bg-creme flex-shrink-0">
                     <Image 
-                        src={product.images?.[0] || '/images/placeholder.png'} 
+                        src={activeImage} 
                         alt={product.name}
                         fill
                         className="object-cover"
@@ -31,8 +41,11 @@ export default function StickyAddToCart({ product, onAdd, visible }: StickyAddTo
                 </div>
                 
                 <div className="flex-grow min-w-0">
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-encre truncate">{product.name}</h4>
-                    <p className="text-sm font-bold text-rouge-deep">{formatPrice(product.price)}</p>
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-encre truncate">
+                        {product.name}
+                        {variant?.sku && <span className="text-rouge-deep font-mono ml-1">({variant.sku})</span>}
+                    </h4>
+                    <p className="text-sm font-bold text-rouge-deep">{formatPrice(activePrice)}</p>
                 </div>
 
                 <button

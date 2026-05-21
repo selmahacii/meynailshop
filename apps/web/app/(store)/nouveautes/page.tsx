@@ -119,7 +119,7 @@ export default function NouveautesPage() {
                         <p className="text-encre3 font-bold uppercase tracking-widest text-xs">Chargement de la collection...</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-10">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 sm:gap-10">
                         <AnimatePresence>
                             {products.map((product, index) => (
                                 <motion.div
@@ -132,7 +132,7 @@ export default function NouveautesPage() {
                                     onMouseLeave={() => setHoveredId(null)}
                                 >
                                     {/* Product Image Container */}
-                                    <div className="relative aspect-[4/5] bg-white rounded-[30px] overflow-hidden shadow-sm group-hover:shadow-2xl transition-all duration-500 border border-gold-brand/10">
+                                    <div className="relative aspect-[4/5] bg-white rounded-[20px] sm:rounded-[30px] overflow-hidden shadow-sm group-hover:shadow-2xl transition-all duration-500 border border-gold-brand/10">
                                         <Image
                                             src={product.image || '/images/products/placeholder.png'}
                                             alt={product.name}
@@ -141,14 +141,14 @@ export default function NouveautesPage() {
                                         />
                                         
                                         {/* Badges */}
-                                        <div className="absolute top-6 left-6 flex flex-col gap-2 z-10">
+                                        <div className="absolute top-3 left-3 sm:top-6 sm:left-6 flex flex-col gap-1.5 sm:gap-2 z-10">
                                             {product.badge && (
-                                                <span className="bg-rouge-brand text-creme px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">
+                                                <span className="bg-rouge-brand text-creme px-2.5 py-1 sm:px-4 sm:py-1.5 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-widest shadow-lg">
                                                     {product.badge}
                                                 </span>
                                             )}
                                             {product.discount && (
-                                                <span className="bg-gold-brand text-encre px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">
+                                                <span className="bg-gold-brand text-encre px-2.5 py-1 sm:px-4 sm:py-1.5 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-widest shadow-lg">
                                                     -{product.discount}%
                                                 </span>
                                             )}
@@ -172,19 +172,19 @@ export default function NouveautesPage() {
                                     </div>
 
                                     {/* Product Details */}
-                                    <div className="mt-8 text-center px-4">
-                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gold-brand mb-2">
+                                    <div className="mt-4 sm:mt-8 text-center px-2 sm:px-4">
+                                        <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-gold-brand mb-1 sm:mb-2">
                                             {product.category || product.category?.name || "Nouveauté"}
                                         </p>
-                                        <h3 className="text-xl md:text-2xl font-serif text-encre mb-3 group-hover:text-rouge-brand transition-colors">
+                                        <h3 className="text-sm sm:text-xl md:text-2xl font-serif text-encre mb-2 sm:mb-3 group-hover:text-rouge-brand transition-colors line-clamp-2 min-h-[2.5rem] sm:min-h-0">
                                             {product.name}
                                         </h3>
-                                        <div className="flex items-center justify-center gap-4">
-                                            <span className="text-2xl font-black text-rouge-brand">
+                                        <div className="flex items-center justify-center gap-2 sm:gap-4">
+                                            <span className="text-base sm:text-2xl font-black text-rouge-brand">
                                                 {formatPrice(product.price)}
                                             </span>
                                             {(product.comparePrice || product.originalPrice) && (
-                                                <span className="text-sm text-encre3/60 line-through font-medium">
+                                                <span className="text-xs sm:text-sm text-encre3/60 line-through font-medium">
                                                     {formatPrice(product.comparePrice || product.originalPrice)}
                                                 </span>
                                             )}

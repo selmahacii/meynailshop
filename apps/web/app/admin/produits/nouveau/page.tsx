@@ -126,7 +126,7 @@ export default function ProductCreatePage() {
             const nextIndex = prev.variants.length + 1;
             return {
                 ...prev,
-                variants: [...prev.variants, { sku: `REF-${nextIndex}`, image: '', stock: 0 }]
+                variants: [...prev.variants, { sku: `REF-${nextIndex}`, image: '', stock: 0, price: '' }]
             };
         });
     };
@@ -407,7 +407,7 @@ export default function ProductCreatePage() {
                                                     <X size={14} />
                                                 </button>
                                             </div>
-                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                                                 <div className="space-y-2">
                                                     <label className="text-[9px] uppercase font-black tracking-widest text-encre3">SKU / Référence</label>
                                                     <input
@@ -437,6 +437,19 @@ export default function ProductCreatePage() {
                                                         onChange={(e) => updateVariant(index, 'stockAlert', parseInt(e.target.value) || 0)}
                                                         className="w-full p-3 bg-white border border-creme2 rounded-xl text-sm focus:border-or outline-none transition-all font-bold text-or"
                                                     />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-[9px] uppercase font-black tracking-widest text-encre3">Prix (Optionnel)</label>
+                                                    <div className="relative">
+                                                        <input
+                                                            type="number"
+                                                            placeholder="De base"
+                                                            value={variant.price !== undefined ? variant.price : ''}
+                                                            onChange={(e) => updateVariant(index, 'price', e.target.value !== '' ? parseFloat(e.target.value) : '')}
+                                                            className="w-full p-3 pr-8 bg-white border border-creme2 rounded-xl text-sm focus:border-or outline-none transition-all font-bold text-encre"
+                                                        />
+                                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-encre3 text-[10px] font-bold">DA</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                             {/* Variant image */}

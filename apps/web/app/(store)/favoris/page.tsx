@@ -136,7 +136,7 @@ export default function FavorisPage() {
                 ) : (
                     <>
                         {/* Product Grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-12">
                             <AnimatePresence>
                                 {items.map((item, idx) => (
                                     <motion.div
@@ -156,7 +156,7 @@ export default function FavorisPage() {
                                                     alt={item.name}
                                                     fill
                                                     className="object-cover group-hover:scale-105 transition-transform duration-700"
-                                                    sizes="(max-width: 768px) 100vw, 25vw"
+                                                    sizes="(max-width: 768px) 50vw, 25vw"
                                                 />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center">
@@ -167,7 +167,7 @@ export default function FavorisPage() {
                                             {/* Out of stock overlay */}
                                             {item.stock === 0 && (
                                                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                                                    <span className="bg-rouge text-creme text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm">
+                                                    <span className="bg-rouge text-creme text-[8px] sm:text-[10px] font-black uppercase tracking-widest px-2 py-1 sm:px-3 sm:py-1.5 rounded-sm">
                                                         Épuisé
                                                     </span>
                                                 </div>
@@ -188,21 +188,21 @@ export default function FavorisPage() {
                                         </Link>
 
                                         {/* Info */}
-                                        <div className="p-4">
+                                        <div className="p-3 sm:p-4">
                                             {item.category && (
-                                                <p className="text-[9px] font-black text-or uppercase tracking-[0.2em] mb-1">{item.category}</p>
+                                                <p className="text-[8px] sm:text-[9px] font-black text-or uppercase tracking-[0.2em] mb-1">{item.category}</p>
                                             )}
                                             <Link href={`/catalogue/${item.slug}`}>
-                                                <h3 className="font-serif text-base text-encre hover:text-rouge-mid transition-colors line-clamp-1 mb-3">
+                                                <h3 className="font-serif text-sm sm:text-base text-encre hover:text-rouge-mid transition-colors line-clamp-1 mb-2 sm:mb-3">
                                                     {item.name}
                                                 </h3>
                                             </Link>
 
                                             <div className="flex items-center justify-between">
-                                                <div className="flex items-baseline gap-2">
-                                                    <span className="text-lg font-bold text-encre">{formatPrice(item.price)}</span>
+                                                <div className="flex items-baseline gap-1.5 sm:gap-2">
+                                                    <span className="text-sm sm:text-lg font-bold text-encre">{formatPrice(item.price)}</span>
                                                     {item.comparePrice && (
-                                                        <span className="text-xs text-encre3 line-through">{formatPrice(item.comparePrice)}</span>
+                                                        <span className="text-[10px] sm:text-xs text-encre3 line-through">{formatPrice(item.comparePrice)}</span>
                                                     )}
                                                 </div>
                                             </div>
@@ -211,13 +211,13 @@ export default function FavorisPage() {
                                                 onClick={() => handleAddToCart(item)}
                                                 disabled={item.stock === 0}
                                                 className={cn(
-                                                    "w-full mt-3 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-sm transition-all flex items-center justify-center gap-2",
+                                                    "w-full mt-3 py-2 sm:py-2.5 px-1 sm:px-2 text-[8px] sm:text-[10px] font-black uppercase tracking-widest rounded-sm transition-all flex items-center justify-center gap-1 sm:gap-2",
                                                     item.stock === 0
                                                         ? "bg-creme2 text-encre3 cursor-not-allowed"
                                                         : "bg-[#1A0A0A] text-creme hover:bg-rouge-deep shadow-sm"
                                                 )}
                                             >
-                                                <ShoppingBag size={13} />
+                                                <ShoppingBag size={12} />
                                                 {item.stock === 0 ? 'Épuisé' : 'Ajouter au panier'}
                                             </button>
                                         </div>

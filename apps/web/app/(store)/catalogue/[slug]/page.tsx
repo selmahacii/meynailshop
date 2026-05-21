@@ -124,10 +124,14 @@ export default function ProductPage() {
             return;
         }
 
+        const activePrice = (variant && variant.price !== undefined && variant.price !== null) 
+            ? variant.price 
+            : product.price;
+
         addItem({
             productId: product.id,
             name: product.name,
-            price: product.price,
+            price: activePrice,
             image: variant?.image || product.images?.[0] || '',
             quantity: quantity,
             stock: variant ? variant.stock : product.stock,
@@ -227,19 +231,30 @@ export default function ProductPage() {
                         )}
 
                         <div className="flex items-center space-x-4 mb-8">
-                            {product && (
-                                <>
-                                    <span className="text-3xl font-bold text-rouge-deep">{formatPrice(product.price)}</span>
-                                    {product.comparePrice && (
-                                        <span className="text-xl text-encre3 line-through">{formatPrice(product.comparePrice)}</span>
-                                    )}
-                                </>
-                            )}
-                            {product && product.comparePrice && (
-                                <span className="bg-rouge-brand text-gold-brand border border-gold-brand/20 text-xs font-black px-3 py-1.5 rounded-sm shadow-md">
-                                    -{Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)}%
-                                </span>
-                            )}
+                            {product && (() => {
+                                const selectedVariantData = selectedVariant !== null ? product.variants[selectedVariant] : null;
+                                const activePrice = (selectedVariantData && selectedVariantData.price !== undefined && selectedVariantData.price !== null)
+                                    ? selectedVariantData.price
+                                    : product.price;
+                                const hasVariantPrice = selectedVariantData && selectedVariantData.price !== undefined && selectedVariantData.price !== null;
+                                return (
+                                    <>
+                                        <span className="text-3xl font-bold text-rouge-deep">{formatPrice(activePrice)}</span>
+                                        {!hasVariantPrice && product.comparePrice && (
+                                            <span className="text-xl text-encre3 line-through">{formatPrice(product.comparePrice)}</span>
+                                        )}
+                                    </>
+                                );
+                            })()}
+                            {product && (() => {
+                                const selectedVariantData = selectedVariant !== null ? product.variants[selectedVariant] : null;
+                                const hasVariantPrice = selectedVariantData && selectedVariantData.price !== undefined && selectedVariantData.price !== null;
+                                return !hasVariantPrice && product.comparePrice ? (
+                                    <span className="bg-rouge-brand text-gold-brand border border-gold-brand/20 text-xs font-black px-3 py-1.5 rounded-sm shadow-md">
+                                        -{Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)}%
+                                    </span>
+                                ) : null;
+                            })()}
                         </div>
 
                         <p className="text-encre3 leading-relaxed mb-8 text-lg font-light">
@@ -415,7 +430,7 @@ export default function ProductPage() {
                         <h2 className="font-serif text-3xl text-encre mb-2">Vous aimerez aussi</h2>
                         <Link href="/catalogue" className="text-sm font-bold text-or hover:text-rouge-mid transition-colors uppercase tracking-[0.2em]">Voir toute la collection</Link>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
                         {loadingSimilar ? (
                             Array(4).fill(0).map((_, i) => <ProductCardSkeleton key={i} />)
                         ) : similarProducts.length > 0 ? (
@@ -431,6 +446,7 @@ export default function ProductPage() {
                 product={product} 
                 onAdd={handleAddToCart}
                 visible={showSticky} 
+                selectedVariantIndex={selectedVariant}
             />
         </div>
     );
