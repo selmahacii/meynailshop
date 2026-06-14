@@ -137,7 +137,7 @@ export default function OrderDetailsPage() {
                     </button>
                     <div>
                         <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-2">
-                            <h1 className="text-2xl md:text-3xl font-serif text-encre">#{order.orderNumber}</h1>
+                            <h1 className="text-2xl md:text-3xl font-serif text-encre">Commande #{order.orderNumber}</h1>
                             <div className="flex flex-wrap gap-2">
                                 <span className={cn("px-3 py-1 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest shadow-sm flex items-center space-x-2", statusInfo.color)}>
                                     <StatusIcon size={12} />
