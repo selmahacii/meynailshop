@@ -153,7 +153,7 @@ export default function OrderDetailsPage() {
                             </div>
                         </div>
                         <p className="text-encre3 text-[9px] md:text-[10px] uppercase tracking-widest font-bold">
-                            Passée le {new Date(order.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                            Passée le {new Date(order.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                         </p>
                     </div>
                 </div>
@@ -411,27 +411,48 @@ export default function OrderDetailsPage() {
                         <div className="p-6 border-b border-creme2 bg-[#1A0A0A] text-creme">
                             <h3 className="text-[10px] font-black uppercase tracking-widest flex items-center space-x-2">
                                 <MapPin size={14} className="text-or" />
-                                <span>Livraison</span>
+                                <span>Livraison & Détails</span>
                             </h3>
                         </div>
-                        <div className="p-8">
-                            <p className="text-xs font-black text-encre uppercase tracking-widest mb-2">
-                                {order.shippingAddressSnapshot?.fullName}
-                            </p>
-                            <div className="space-y-1 text-xs text-encre3 font-medium leading-relaxed uppercase tracking-tighter">
-                                <p>{order.shippingAddressSnapshot?.address}</p>
-                                <p>{order.shippingAddressSnapshot?.commune}</p>
-                                <p className="text-encre font-bold">{order.shippingAddressSnapshot?.wilayaName} ({order.shippingAddressSnapshot?.postalCode})</p>
-                                <div className="mt-4 pt-4 border-t border-creme2">
-                                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#1A0A0A]">
-                                        {order.deliveryType === 'office' ? <Briefcase size={14} className="text-or" /> : <Home size={14} className="text-or" />}
-                                        <span>Livraison {order.deliveryType === 'office' ? 'au Bureau' : 'à Domicile'}</span>
-                                    </div>
-                                    <p className="mt-2 text-[10px] font-bold text-encre3 uppercase tracking-widest">
-                                        À encaisser: <span className="text-rouge-mid font-black">{(Number(order.subtotal || 0) + Number(order.shippingCost || 0) - Number(order.discount || 0)).toLocaleString()} DA</span>
-                                    </p>
+                        <div className="p-8 space-y-4">
+                            <div className="flex flex-col gap-1 text-xs text-encre3 uppercase tracking-widest">
+                                <span className="text-[10px] opacity-70">Nom complet</span>
+                                <span className="font-black text-encre text-sm">{order.shippingAddressSnapshot?.fullName}</span>
+                            </div>
+                            
+                            <div className="flex flex-col gap-1 text-xs text-encre3 uppercase tracking-widest">
+                                <span className="text-[10px] opacity-70">Adresse précise</span>
+                                <span className="font-bold text-encre">{order.shippingAddressSnapshot?.address}</span>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="flex flex-col gap-1 text-xs text-encre3 uppercase tracking-widest">
+                                    <span className="text-[10px] opacity-70">Commune</span>
+                                    <span className="font-bold text-encre">{order.shippingAddressSnapshot?.commune}</span>
                                 </div>
-                                <p className="pt-2 text-[10px] opacity-60">Algérie</p>
+                                <div className="flex flex-col gap-1 text-xs text-encre3 uppercase tracking-widest">
+                                    <span className="text-[10px] opacity-70">Wilaya / Code</span>
+                                    <span className="font-bold text-encre">{order.shippingAddressSnapshot?.wilayaName} ({order.shippingAddressSnapshot?.postalCode})</span>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-creme2">
+                                <div className="flex flex-col gap-1 text-xs text-encre3 uppercase tracking-widest">
+                                    <span className="text-[10px] opacity-70">Type Livraison</span>
+                                    <div className="flex items-center gap-2 font-black text-[#1A0A0A]">
+                                        {order.deliveryType === 'office' ? <Briefcase size={12} className="text-or" /> : <Home size={12} className="text-or" />}
+                                        <span>{order.deliveryType === 'office' ? 'Bureau / Point Relais' : 'À Domicile'}</span>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col gap-1 text-xs text-encre3 uppercase tracking-widest">
+                                    <span className="text-[10px] opacity-70">À Encaisser</span>
+                                    <span className="text-rouge-mid font-black">{(Number(order.subtotal || 0) + Number(order.shippingCost || 0) - Number(order.discount || 0)).toLocaleString()} DA</span>
+                                </div>
+                            </div>
+                            
+                            <div className="flex flex-col gap-1 pt-4 border-t border-creme2 text-xs text-encre3 uppercase tracking-widest">
+                                <span className="text-[10px] opacity-70">Source de commande</span>
+                                <span className="font-bold text-encre">{order.source || 'Site Web'}</span>
                             </div>
                         </div>
                     </div>
