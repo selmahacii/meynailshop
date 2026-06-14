@@ -282,11 +282,7 @@ export default function AdminProductsPage() {
                                         </div>
                                         
                                         <div className="flex items-center justify-between mt-2 sm:mt-4">
-                                            {product.comparePrice && product.comparePrice > product.price && (
-                                                <span className="text-[7px] sm:text-[9px] font-bold text-rouge-mid bg-rouge/10 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg sm:rounded-xl">
-                                                    -{Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)}%
-                                                </span>
-                                            )}
+
                                             <div className="flex space-x-1 sm:space-x-2 ml-auto">
                                                 <Link 
                                                     href={`/admin/produits/${product.id}`}

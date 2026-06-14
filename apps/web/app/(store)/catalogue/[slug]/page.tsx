@@ -247,13 +247,7 @@ export default function ProductPage() {
                                 );
                             })()}
                             {product && (() => {
-                                const selectedVariantData = selectedVariant !== null ? product.variants[selectedVariant] : null;
-                                const hasVariantPrice = selectedVariantData && selectedVariantData.price !== undefined && selectedVariantData.price !== null;
-                                return !hasVariantPrice && product.comparePrice ? (
-                                    <span className="bg-rouge-brand text-gold-brand border border-gold-brand/20 text-xs font-black px-3 py-1.5 rounded-sm shadow-md">
-                                        -{Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)}%
-                                    </span>
-                                ) : null;
+                                return null;
                             })()}
                         </div>
 
