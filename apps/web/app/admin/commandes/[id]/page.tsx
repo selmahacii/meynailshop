@@ -417,12 +417,14 @@ export default function OrderDetailsPage() {
                         <div className="p-8 space-y-4">
                             <div className="flex flex-col gap-1 text-xs text-encre3 uppercase tracking-widest">
                                 <span className="text-[10px] opacity-70">Nom complet</span>
-                                <span className="font-black text-encre text-sm">{order.shippingAddressSnapshot?.fullName}</span>
+                                <span className="font-black text-encre text-sm">
+                                    {order.shippingAddressSnapshot?.fullName || `${order.shippingAddressSnapshot?.firstName || ''} ${order.shippingAddressSnapshot?.lastName || ''}`.trim()}
+                                </span>
                             </div>
                             
                             <div className="flex flex-col gap-1 text-xs text-encre3 uppercase tracking-widest">
                                 <span className="text-[10px] opacity-70">Adresse précise</span>
-                                <span className="font-bold text-encre">{order.shippingAddressSnapshot?.address}</span>
+                                <span className="font-bold text-encre">{order.shippingAddressSnapshot?.address || order.shippingAddressSnapshot?.street}</span>
                             </div>
                             
                             <div className="grid grid-cols-2 gap-4">
@@ -432,7 +434,9 @@ export default function OrderDetailsPage() {
                                 </div>
                                 <div className="flex flex-col gap-1 text-xs text-encre3 uppercase tracking-widest">
                                     <span className="text-[10px] opacity-70">Wilaya / Code</span>
-                                    <span className="font-bold text-encre">{order.shippingAddressSnapshot?.wilayaName} ({order.shippingAddressSnapshot?.postalCode})</span>
+                                    <span className="font-bold text-encre">
+                                        {order.shippingAddressSnapshot?.wilayaName || order.shippingAddressSnapshot?.wilaya} ({order.shippingAddressSnapshot?.postalCode || order.shippingAddressSnapshot?.zipCode || 'N/A'})
+                                    </span>
                                 </div>
                             </div>
 
