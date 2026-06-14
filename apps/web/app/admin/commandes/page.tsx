@@ -26,6 +26,7 @@ import {
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { OrdersAPI } from '@/lib/api/client';
+import { SHIPPING_RATES } from '@/lib/constants/shipping';
 import CreateOrderModal from '@/components/admin/orders/CreateOrderModal';
 
 const tabs = [
@@ -320,7 +321,11 @@ export default function AdminOrdersPage() {
                                             </span>
                                             <div className="flex items-center space-x-2 mt-1">
                                                 <span className="text-[10px] text-encre3 uppercase tracking-wide font-medium">
-                                                    {order.shippingAddressSnapshot?.wilayaName || order.shippingAddressSnapshot?.wilaya || 'Algérie'}
+                                                    {(() => {
+                                                        const rawWilaya = order.shippingAddressSnapshot?.wilayaName || order.shippingAddressSnapshot?.wilaya;
+                                                        const matched = SHIPPING_RATES.find(w => w.id === rawWilaya || w.name === rawWilaya);
+                                                        return matched ? `${matched.id} - ${matched.name}` : (rawWilaya || 'Algérie');
+                                                    })()}
                                                 </span>
                                                 <span className="text-[10px] text-encre3">•</span>
                                                 <span className={cn(
@@ -450,7 +455,11 @@ export default function AdminOrdersPage() {
                                         </span>
                                         <div className="flex items-center space-x-2 mt-0.5">
                                             <span className="text-[10px] text-encre3 uppercase tracking-wide font-medium">
-                                                {order.shippingAddressSnapshot?.wilayaName || order.shippingAddressSnapshot?.wilaya || 'Algérie'}
+                                                {(() => {
+                                                    const rawWilaya = order.shippingAddressSnapshot?.wilayaName || order.shippingAddressSnapshot?.wilaya;
+                                                    const matched = SHIPPING_RATES.find(w => w.id === rawWilaya || w.name === rawWilaya);
+                                                    return matched ? `${matched.id} - ${matched.name}` : (rawWilaya || 'Algérie');
+                                                })()}
                                             </span>
                                             <span className="text-[10px] text-encre3">•</span>
                                             <span className={cn(

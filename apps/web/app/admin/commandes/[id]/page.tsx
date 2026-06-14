@@ -27,6 +27,7 @@ import {
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { OrdersAPI } from '@/lib/api/client';
+import { SHIPPING_RATES } from '@/lib/constants/shipping';
 
 export default function OrderDetailsPage() {
     const { id } = useParams();
@@ -435,7 +436,13 @@ export default function OrderDetailsPage() {
                                 <div className="flex flex-col gap-1 text-xs text-encre3 uppercase tracking-widest">
                                     <span className="text-[10px] opacity-70">Wilaya / Code</span>
                                     <span className="font-bold text-encre">
-                                        {order.shippingAddressSnapshot?.wilayaName || order.shippingAddressSnapshot?.wilaya} ({order.shippingAddressSnapshot?.postalCode || order.shippingAddressSnapshot?.zipCode || 'N/A'})
+                                        {(() => {
+                                            const rawWilaya = order.shippingAddressSnapshot?.wilayaName || order.shippingAddressSnapshot?.wilaya;
+                                            const matched = SHIPPING_RATES.find(w => w.id === rawWilaya || w.name === rawWilaya);
+                                            const displayName = matched ? `${matched.id} - ${matched.name}` : (rawWilaya || 'Algérie');
+                                            const postalCode = order.shippingAddressSnapshot?.postalCode || order.shippingAddressSnapshot?.zipCode;
+                                            return `${displayName}${postalCode ? ` (${postalCode})` : ''}`;
+                                        })()}
                                     </span>
                                 </div>
                             </div>
