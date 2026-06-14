@@ -401,6 +401,14 @@ export const SHIPPING_RATES: WilayaShipping[] = [
     "returnRate": 300
   },
   {
+    "id": "50",
+    "name": "Bordj Badji Mokhtar",
+    "delay": "5-8",
+    "homeRate": 1800,
+    "deskRate": null,
+    "returnRate": 300
+  },
+  {
     "id": "51",
     "name": "Ouled Djellal",
     "delay": "1-3",
@@ -425,10 +433,26 @@ export const SHIPPING_RATES: WilayaShipping[] = [
     "returnRate": 300
   },
   {
+    "id": "54",
+    "name": "In Guezzam",
+    "delay": "5-8",
+    "homeRate": 1900,
+    "deskRate": null,
+    "returnRate": 300
+  },
+  {
     "id": "55",
     "name": "Touggourt",
     "delay": "2-5",
     "homeRate": 1000,
+    "deskRate": null,
+    "returnRate": 300
+  },
+  {
+    "id": "56",
+    "name": "Djanet",
+    "delay": "5-8",
+    "homeRate": 1900,
     "deskRate": null,
     "returnRate": 300
   },
