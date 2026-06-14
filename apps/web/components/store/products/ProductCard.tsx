@@ -65,7 +65,11 @@ export default function ProductCard({ product }: ProductCardProps) {
             <Link href={`/catalogue/${product.slug}`} className="block relative aspect-[4/5] overflow-hidden bg-creme2">
                 {/* Badges */}
                 <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-10 flex flex-col gap-1.5">
-
+                    {Number(product.comparePrice) > Number(product.price) && Number(product.comparePrice) > 0 && (
+                        <span className="text-[7px] sm:text-[9px] font-black uppercase tracking-[0.2em] px-2.5 py-1 rounded-full shadow-lg bg-rouge-brand text-gold-brand border border-gold-brand/20 backdrop-blur-md">
+                            -{Math.round(((Number(product.comparePrice) - Number(product.price)) / Number(product.comparePrice)) * 100)}%
+                        </span>
+                    )}
                     {product.badge && (
                         <span className={cn(
                             "text-[7px] sm:text-[9px] font-black uppercase tracking-[0.2em] px-2.5 py-1 rounded-full shadow-lg bg-rouge-brand text-gold-brand border border-gold-brand/20 backdrop-blur-md",
