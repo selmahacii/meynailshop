@@ -485,9 +485,10 @@ export default function AdminOrdersPage() {
                                             disabled={updatingOrder === order.id}
                                         >
                                             <optgroup label="Traitement">
-                                                {order.status === 'pending' && <option value="pending">⏳ En attente</option>}
-                                                <option value="confirmed"> Confirmé</option>
-                                                <option value="shipped"> Expédié</option>
+                                                <option value="pending">⏳ En attente</option>
+                                                <option value="confirmed">✅ Confirmé</option>
+                                                <option value="processing">⚙️ En préparation</option>
+                                                <option value="shipped">🚚 Expédié</option>
                                             </optgroup>
                                             <optgroup label="Finalisation">
                                                 <option value="delivered">📦 Livrée</option>

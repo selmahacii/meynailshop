@@ -326,24 +326,9 @@ export class OrdersService {
       throw new NotFoundException('Order not found');
     }
 
-    const validTransitions: Record<string, string[]> = {
-      pending: ['confirmed', 'cancelled'],
-      confirmed: ['processing', 'cancelled'],
-      processing: ['shipped', 'cancelled'],
-      shipped: ['delivered'],
-      delivered: [],
-      cancelled: [],
-      refunded: [],
-    };
-
-    if (
-      !validTransitions[order.status].includes(updateOrderStatusDto.status)
-    ) {
-      throw new BadRequestException(
-        `Cannot transition from ${order.status} to ${updateOrderStatusDto.status}`,
-      );
-    }
-
+    // Bypass transition validation to allow superadmin to revert statuses regressively
+    // e.g., from 'delivered' back to 'shipped' or 'pending'
+    
     order.status = updateOrderStatusDto.status;
 
     if (updateOrderStatusDto.trackingNumber) {
