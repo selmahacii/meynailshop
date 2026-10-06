@@ -27,6 +27,9 @@ export const useCartStore = create<CartStoreState>()(
       couponDiscount: 0,
 
       addItem: (newItem) => set((state) => {
+        if (!newItem.stock || newItem.stock <= 0) return state;
+        const quantityToAdd = Math.min(newItem.stock, newItem.quantity || 1);
+        
         const existingItem = state.items.find(i => 
           i.productId === newItem.productId && i.variantSku === newItem.variantSku
         );
@@ -34,12 +37,12 @@ export const useCartStore = create<CartStoreState>()(
           return {
             items: state.items.map(i =>
               i.productId === newItem.productId && i.variantSku === newItem.variantSku
-                ? { ...i, quantity: Math.min(i.stock, i.quantity + newItem.quantity) }
+                ? { ...i, quantity: Math.min(i.stock, i.quantity + quantityToAdd) }
                 : i
             )
           };
         }
-        return { items: [...state.items, newItem] };
+        return { items: [...state.items, { ...newItem, quantity: quantityToAdd }] };
       }),
 
       removeItem: (productId, variantSku) => set((state) => ({

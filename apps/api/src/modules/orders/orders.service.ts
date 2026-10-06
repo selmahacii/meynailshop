@@ -88,13 +88,30 @@ export class OrdersService {
           throw new NotFoundException(`Product ${cartItem.productId} not found`);
         }
 
-        if (product.stock < cartItem.quantity) {
+        let activePrice = Number(product.price);
+        let currentStock = product.stock;
+        let variantIndex = -1;
+
+        if (product.hasVariants && cartItem.variantSku && product.variants) {
+          variantIndex = product.variants.findIndex(v => v.sku === cartItem.variantSku);
+          if (variantIndex !== -1) {
+            const variant = product.variants[variantIndex];
+            currentStock = variant.stock;
+            if (variant.price !== undefined && variant.price !== null) {
+              activePrice = Number(variant.price);
+            }
+          } else {
+            throw new NotFoundException(`Variant ${cartItem.variantSku} not found`);
+          }
+        }
+
+        if (currentStock < cartItem.quantity || currentStock <= 0) {
           throw new BadRequestException(
-            `Insufficient stock for ${product.name}`,
+            `Stock insuffisant pour ${product.name}${cartItem.variantSku ? ' ('+cartItem.variantSku+')' : ''}`,
           );
         }
 
-        const itemSubtotal = Number(product.price) * cartItem.quantity;
+        const itemSubtotal = activePrice * cartItem.quantity;
         subtotal += itemSubtotal;
 
         const orderItem = this.orderItemRepository.create({
@@ -104,7 +121,7 @@ export class OrdersService {
           productImage: cartItem.variantImage || product.images?.[0] || '',
           variantSku: cartItem.variantSku,
           variantImage: cartItem.variantImage,
-          unitPrice: Number(product.price),
+          unitPrice: activePrice,
           quantity: cartItem.quantity,
           subtotal: itemSubtotal,
         });
@@ -112,7 +129,12 @@ export class OrdersService {
         items.push(orderItem);
 
         // Update product stock
-        product.stock -= cartItem.quantity;
+        if (variantIndex !== -1 && product.variants) {
+          product.variants[variantIndex].stock -= cartItem.quantity;
+          product.stock -= cartItem.quantity;
+        } else {
+          product.stock -= cartItem.quantity;
+        }
         await queryRunner.manager.save(Product, product);
       }
 

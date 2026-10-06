@@ -119,7 +119,12 @@ export default function ProductPage() {
             return;
         }
 
-        if (variant && variant.stock <= 0) {
+        if (!product.hasVariants && (!product.stock || product.stock <= 0)) {
+            toast.error("Ce produit est actuellement en rupture de stock");
+            return;
+        }
+
+        if (variant && (!variant.stock || variant.stock <= 0)) {
             toast.error("Cette référence est actuellement en rupture de stock");
             return;
         }
@@ -369,7 +374,7 @@ export default function ProductPage() {
 
                                 <button
                                     onClick={handleAddToCart}
-                                    disabled={!product || product.stock === 0}
+                                    disabled={!product || (!product.hasVariants && (!product.stock || product.stock <= 0))}
                                     className="flex-grow bg-rouge-deep hover:bg-rouge-mid text-creme h-14 rounded-sm font-bold uppercase tracking-widest text-[10px] flex items-center justify-center transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <ShoppingBag className="mr-3" size={18} />

@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   keywords:
     'vernis, gel UV, produits ongles, décoration, boutique en ligne, Algérie',
   icons: {
-    icon: '/logo2.png',
+    icon: '/images/logo2.png',
   },
   openGraph: {
     title: 'MEEY',
