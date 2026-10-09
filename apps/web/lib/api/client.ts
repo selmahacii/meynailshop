@@ -339,7 +339,13 @@ export class UploadAPI {
   static async uploadProductImage(file: File) {
     const formData = new FormData();
     formData.append('image', file);
-    return apiFetch('/api/upload/product-image', {
+    
+    // Bypass Next.js rewrites on Vercel which corrupt multipart/form-data boundaries
+    const isProd = process.env.NODE_ENV === 'production' || process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || (isProd ? 'https://meeynailshop-api.onrender.com' : 'http://127.0.0.1:3001');
+    const cleanBase = backendUrl.replace(/\/api\/?$/, '').replace(/\/$/, '');
+    
+    return apiFetch(`${cleanBase}/api/upload/product-image`, {
       method: 'POST',
       body: formData,
     });
