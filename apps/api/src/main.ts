@@ -113,7 +113,7 @@ async function bootstrap() {
     
     const adminExists = await userRepo.findOne({ where: { email: adminEmail } });
     if (!adminExists) {
-      const hashedPassword = await bcrypt.hash('meey2026', 12);
+      const hashedPassword = await bcrypt.hash('Meey2026', 12);
       const admin = userRepo.create({
         email: adminEmail,
         password: hashedPassword,
@@ -127,7 +127,7 @@ async function bootstrap() {
       console.log('✅ Compte Admin par défaut créé (meeybouabdellah@gmail.com)');
     } else {
       // FORCE update pour s'assurer que le mot de passe est toujours valide si on perd l'accès
-      const hashedPassword = await bcrypt.hash('meey2026', 12);
+      const hashedPassword = await bcrypt.hash('Meey2026', 12);
       adminExists.password = hashedPassword;
       adminExists.role = 'admin';
       await userRepo.save(adminExists);
