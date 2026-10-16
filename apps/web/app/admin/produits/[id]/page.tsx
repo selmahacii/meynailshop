@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { ProductsAPI, UploadAPI, apiFetch, API_ENDPOINTS } from '@/lib/api/client';
 import { toast } from 'sonner';
+import { formatImageUrl } from '@/lib/utils/image';
 
 export default function ProductEditPage() {
     const { id } = useParams();
@@ -415,7 +416,7 @@ export default function ProductEditPage() {
                                 {product.images?.map((img: string, i: number) => (
                                     <div key={i} className="relative aspect-square rounded-xl border border-creme2 overflow-hidden group shadow-md">
                                         <Image 
-                                            src={img} 
+                                            src={formatImageUrl(img)} 
                                             alt="" 
                                             fill
                                             className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -538,7 +539,7 @@ export default function ProductEditPage() {
                                                 <div className="flex items-center gap-3">
                                                     {variant.image ? (
                                                         <div className="relative w-16 h-16 rounded-xl border border-creme2 overflow-hidden shrink-0">
-                                                            <Image src={variant.image} fill className="object-cover" alt="Variante" />
+                                                            <Image src={formatImageUrl(variant.image)} fill className="object-cover" alt="Variante" />
                                                             <button
                                                                 type="button"
                                                                 onClick={() => updateVariant(index, 'image', '')}

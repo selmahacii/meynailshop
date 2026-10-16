@@ -14,6 +14,7 @@ import {
   StockMovement,
   SubCategory,
   SiteSettings,
+  UploadedFileEntity,
 } from './entities';
 
 @Module({
@@ -44,6 +45,7 @@ import {
             StockMovement,
             SubCategory,
             SiteSettings,
+            UploadedFileEntity,
           ],
           synchronize: configService.get('DB_SYNC') === 'true' || configService.get('NODE_ENV') !== 'production',
           logging: configService.get('NODE_ENV') === 'development',

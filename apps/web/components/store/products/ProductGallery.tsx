@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, ZoomIn, X, Expand } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { formatImageUrl } from '@/lib/utils/image';
 
 interface ProductGalleryProps {
     images: string[];
@@ -18,7 +19,7 @@ export default function ProductGallery({ images, productName = 'Produit', select
     const [isAnimating, setIsAnimating] = useState(false);
     const [direction, setDirection] = useState<'left' | 'right'>('right');
 
-    const displayImages = images.length > 0 ? images : ['/images/placeholder-product.png'];
+    const displayImages = images.length > 0 ? images.map(img => formatImageUrl(img)) : ['/images/placeholder-product.png'];
 
     const goTo = useCallback((index: number, dir: 'left' | 'right') => {
         if (isAnimating) return;

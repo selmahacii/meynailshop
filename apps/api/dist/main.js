@@ -20,12 +20,39 @@ async function bootstrap() {
     const path = require('path');
     const fs = require('fs');
     const uploadDir = path.join(process.cwd(), 'uploads');
-    app.use('/uploads', (req, res, next) => {
+    app.use('/uploads', async (req, res, next) => {
         res.header('Access-Control-Allow-Origin', '*');
         res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
         res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
         if (req.method === 'OPTIONS') {
             return res.sendStatus(200);
+        }
+        const filename = path.basename(req.path);
+        const localFilePath = path.join(uploadDir, filename);
+        if (filename && fs.existsSync(localFilePath)) {
+            return next();
+        }
+        if (filename && filename.includes('.')) {
+            try {
+                const { UploadedFileEntity } = require('./database/entities/uploaded-file.entity');
+                const { getRepositoryToken } = require('@nestjs/typeorm');
+                const fileRepo = app.get(getRepositoryToken(UploadedFileEntity));
+                const fileRecord = await fileRepo.findOne({ where: { filename } });
+                if (fileRecord && fileRecord.data) {
+                    try {
+                        fs.writeFileSync(localFilePath, fileRecord.data);
+                    }
+                    catch (writeErr) {
+                        console.warn('Could not cache file to local disk:', writeErr);
+                    }
+                    res.setHeader('Content-Type', fileRecord.mimetype || 'image/webp');
+                    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+                    return res.send(fileRecord.data);
+                }
+            }
+            catch (dbErr) {
+                console.error('Error restoring file from DB:', dbErr);
+            }
         }
         next();
     }, express.static(uploadDir));
@@ -33,7 +60,11 @@ async function bootstrap() {
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     app.enableCors({
         origin: (origin, callback) => {
-            if (!isProd || !origin || origin === frontendUrl || origin.endsWith('.vercel.app')) {
+            if (!isProd ||
+                !origin ||
+                origin === frontendUrl ||
+                origin.endsWith('.vercel.app') ||
+                origin.includes('meeynailshop.com')) {
                 callback(null, true);
             }
             else {
@@ -86,7 +117,7 @@ async function bootstrap() {
         const adminEmail = 'meeybouabdellah@gmail.com';
         const adminExists = await userRepo.findOne({ where: { email: adminEmail } });
         if (!adminExists) {
-            const hashedPassword = await bcrypt.hash('meey2026', 12);
+            const hashedPassword = await bcrypt.hash('Meey2026', 12);
             const admin = userRepo.create({
                 email: adminEmail,
                 password: hashedPassword,
@@ -100,7 +131,7 @@ async function bootstrap() {
             console.log('✅ Compte Admin par défaut créé (meeybouabdellah@gmail.com)');
         }
         else {
-            const hashedPassword = await bcrypt.hash('meey2026', 12);
+            const hashedPassword = await bcrypt.hash('Meey2026', 12);
             adminExists.password = hashedPassword;
             adminExists.role = 'admin';
             await userRepo.save(adminExists);

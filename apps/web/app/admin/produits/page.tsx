@@ -24,6 +24,7 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { ProductsAPI } from '@/lib/api/client';
 import { AdminProduct, AdminStats } from '@/types/admin';
+import { formatImageUrl } from '@/lib/utils/image';
 
 const tabs = [
     { name: 'Tous', key: 'all' },
@@ -228,7 +229,7 @@ export default function AdminProductsPage() {
                                 <div className="relative aspect-[4/3] p-2.5 sm:p-6 bg-creme/10 flex items-center justify-center overflow-hidden">
                                     <div className="w-full h-full relative group-hover:scale-110 transition-transform duration-700">
                                         <Image
-                                            src={product.images?.[0] || '/images/placeholder-product.png'} 
+                                            src={formatImageUrl(product.images?.[0])} 
                                             alt={product.name} 
                                             fill
                                             className="object-cover"

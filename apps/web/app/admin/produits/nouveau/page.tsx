@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { ProductsAPI, UploadAPI, apiFetch, API_ENDPOINTS } from '@/lib/api/client';
 import { toast } from 'sonner';
+import { formatImageUrl } from '@/lib/utils/image';
 
 interface Category {
     id: string;
@@ -344,7 +345,7 @@ export default function ProductCreatePage() {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {product.images.map((img: string, i: number) => (
                                     <div key={i} className="aspect-square bg-creme rounded-xl relative group overflow-hidden border border-creme2 shadow-sm">
-                                        <Image src={img} fill className="object-cover" alt="" />
+                                        <Image src={formatImageUrl(img)} fill className="object-cover" alt="" />
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                             <button 
                                                 type="button"
@@ -458,7 +459,7 @@ export default function ProductCreatePage() {
                                                 <div className="flex items-center gap-3">
                                                     {variant.image ? (
                                                         <div className="relative w-16 h-16 rounded-xl border border-creme2 overflow-hidden shrink-0">
-                                                            <Image src={variant.image} fill className="object-cover" alt="Variante" />
+                                                            <Image src={formatImageUrl(variant.image)} fill className="object-cover" alt="Variante" />
                                                             <button
                                                                 type="button"
                                                                 onClick={() => updateVariant(index, 'image', '')}

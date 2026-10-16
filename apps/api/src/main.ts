@@ -21,13 +21,45 @@ async function bootstrap() {
   const fs = require('fs');
   const uploadDir = path.join(process.cwd(), 'uploads');
   
-  app.use('/uploads', (req, res, next) => {
+  app.use('/uploads', async (req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     if (req.method === 'OPTIONS') {
       return res.sendStatus(200);
     }
+
+    const filename = path.basename(req.path);
+    const localFilePath = path.join(uploadDir, filename);
+
+    // 1. If file already exists on disk, let express.static serve it
+    if (filename && fs.existsSync(localFilePath)) {
+      return next();
+    }
+
+    // 2. If not on disk (e.g. Render restart/redeploy), restore from database
+    if (filename && filename.includes('.')) {
+      try {
+        const { UploadedFileEntity } = require('./database/entities/uploaded-file.entity');
+        const { getRepositoryToken } = require('@nestjs/typeorm');
+        const fileRepo = app.get(getRepositoryToken(UploadedFileEntity));
+
+        const fileRecord = await fileRepo.findOne({ where: { filename } });
+        if (fileRecord && fileRecord.data) {
+          try {
+            fs.writeFileSync(localFilePath, fileRecord.data);
+          } catch (writeErr) {
+            console.warn('Could not cache file to local disk:', writeErr);
+          }
+          res.setHeader('Content-Type', fileRecord.mimetype || 'image/webp');
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+          return res.send(fileRecord.data);
+        }
+      } catch (dbErr) {
+        console.error('Error restoring file from DB:', dbErr);
+      }
+    }
+
     next();
   }, express.static(uploadDir));
 

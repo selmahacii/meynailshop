@@ -75,10 +75,26 @@ let OrdersService = class OrdersService {
                 if (!product) {
                     throw new common_1.NotFoundException(`Product ${cartItem.productId} not found`);
                 }
-                if (product.stock < cartItem.quantity) {
-                    throw new common_1.BadRequestException(`Insufficient stock for ${product.name}`);
+                let activePrice = Number(product.price);
+                let currentStock = product.stock;
+                let variantIndex = -1;
+                if (product.hasVariants && cartItem.variantSku && product.variants) {
+                    variantIndex = product.variants.findIndex(v => v.sku === cartItem.variantSku);
+                    if (variantIndex !== -1) {
+                        const variant = product.variants[variantIndex];
+                        currentStock = variant.stock;
+                        if (variant.price !== undefined && variant.price !== null) {
+                            activePrice = Number(variant.price);
+                        }
+                    }
+                    else {
+                        throw new common_1.NotFoundException(`Variant ${cartItem.variantSku} not found`);
+                    }
                 }
-                const itemSubtotal = Number(product.price) * cartItem.quantity;
+                if (currentStock < cartItem.quantity || currentStock <= 0) {
+                    throw new common_1.BadRequestException(`Stock insuffisant pour ${product.name}${cartItem.variantSku ? ' (' + cartItem.variantSku + ')' : ''}`);
+                }
+                const itemSubtotal = activePrice * cartItem.quantity;
                 subtotal += itemSubtotal;
                 const orderItem = this.orderItemRepository.create({
                     productId: product.id,
@@ -87,12 +103,18 @@ let OrdersService = class OrdersService {
                     productImage: cartItem.variantImage || product.images?.[0] || '',
                     variantSku: cartItem.variantSku,
                     variantImage: cartItem.variantImage,
-                    unitPrice: Number(product.price),
+                    unitPrice: activePrice,
                     quantity: cartItem.quantity,
                     subtotal: itemSubtotal,
                 });
                 items.push(orderItem);
-                product.stock -= cartItem.quantity;
+                if (variantIndex !== -1 && product.variants) {
+                    product.variants[variantIndex].stock -= cartItem.quantity;
+                    product.stock -= cartItem.quantity;
+                }
+                else {
+                    product.stock -= cartItem.quantity;
+                }
                 await queryRunner.manager.save(product_entity_1.Product, product);
             }
             let discount = 0;
@@ -260,18 +282,6 @@ let OrdersService = class OrdersService {
         const order = await this.orderRepository.findOne({ where: { id } });
         if (!order) {
             throw new common_1.NotFoundException('Order not found');
-        }
-        const validTransitions = {
-            pending: ['confirmed', 'cancelled'],
-            confirmed: ['processing', 'cancelled'],
-            processing: ['shipped', 'cancelled'],
-            shipped: ['delivered'],
-            delivered: [],
-            cancelled: [],
-            refunded: [],
-        };
-        if (!validTransitions[order.status].includes(updateOrderStatusDto.status)) {
-            throw new common_1.BadRequestException(`Cannot transition from ${order.status} to ${updateOrderStatusDto.status}`);
         }
         order.status = updateOrderStatusDto.status;
         if (updateOrderStatusDto.trackingNumber) {

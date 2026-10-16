@@ -12,4 +12,5 @@ export { WishlistItem } from './wishlist-item.entity';
 export { StockMovement } from './stock-movement.entity';
 export { SubCategory } from './sub-category.entity';
 export { SiteSettings } from './site-settings.entity';
+export { UploadedFileEntity } from './uploaded-file.entity';
 

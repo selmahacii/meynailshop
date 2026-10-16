@@ -43,6 +43,7 @@ exports.DatabaseModule = DatabaseModule = __decorate([
                             entities_1.StockMovement,
                             entities_1.SubCategory,
                             entities_1.SiteSettings,
+                            entities_1.UploadedFileEntity,
                         ],
                         synchronize: configService.get('DB_SYNC') === 'true' || configService.get('NODE_ENV') !== 'production',
                         logging: configService.get('NODE_ENV') === 'development',

@@ -10,6 +10,7 @@ import { useCartStore } from '@/lib/store/cartStore';
 import { useWishlistStore } from '@/lib/store/wishlistStore';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { formatImageUrl } from '@/lib/utils/image';
 
 interface ProductCardProps {
     product: Product;
@@ -59,7 +60,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         }
     };
 
-    const mainImage = product.images?.[0] || '/images/placeholder-product.png';
+    const mainImage = formatImageUrl(product.images?.[0]);
 
     return (
         <motion.div
@@ -123,13 +124,13 @@ export default function ProductCard({ product }: ProductCardProps) {
                 {/* Image */}
                 <div className="relative w-full h-full group-hover:scale-105 transition-transform duration-700 ease-out">
                     <img
-                        src={mainImage && !mainImage.includes('placeholder') && !mainImage.includes('placehold.co')
-                            ? mainImage 
-                            : 'https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=800&auto=format&fit=crop'
-                        }
+                        src={mainImage}
                         alt={product.name}
                         className="absolute inset-0 w-full h-full object-cover"
                         loading="lazy"
+                        onError={(e) => {
+                            (e.target as HTMLImageElement).src = '/images/placeholder-product.png';
+                        }}
                     />
                 </div>
  

@@ -56,7 +56,8 @@ let ProductsService = class ProductsService {
                 sku: v.sku,
                 image: v.image,
                 stock: v.stock || 0,
-                stockAlert: v.stockAlert || createProductDto.stockAlert || 5
+                stockAlert: v.stockAlert || createProductDto.stockAlert || 5,
+                price: (v.price !== undefined && v.price !== null && v.price !== '') ? Number(v.price) : undefined
             }));
         }
         const product = this.productRepository.create({
@@ -228,7 +229,8 @@ let ProductsService = class ProductsService {
                 sku: v.sku,
                 image: v.image,
                 stock: v.stock || 0,
-                stockAlert: v.stockAlert || updateData.stockAlert || product.stockAlert || 5
+                stockAlert: v.stockAlert || updateData.stockAlert || product.stockAlert || 5,
+                price: (v.price !== undefined && v.price !== null && v.price !== '') ? Number(v.price) : undefined
             }));
         }
         Object.assign(product, updateData);

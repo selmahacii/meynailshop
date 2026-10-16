@@ -35,6 +35,7 @@ export declare class ProductsController {
                     image: string;
                     stock: number;
                     stockAlert: number;
+                    price?: number;
                 }[] | null;
                 createdAt: Date;
                 updatedAt: Date;

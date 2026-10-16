@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SiteSettings = exports.SubCategory = exports.StockMovement = exports.WishlistItem = exports.Coupon = exports.Review = exports.OrderItem = exports.Order = exports.Product = exports.Category = exports.Address = exports.User = void 0;
+exports.UploadedFileEntity = exports.SiteSettings = exports.SubCategory = exports.StockMovement = exports.WishlistItem = exports.Coupon = exports.Review = exports.OrderItem = exports.Order = exports.Product = exports.Category = exports.Address = exports.User = void 0;
 var user_entity_1 = require("./user.entity");
 Object.defineProperty(exports, "User", { enumerable: true, get: function () { return user_entity_1.User; } });
 var address_entity_1 = require("./address.entity");
@@ -25,4 +25,6 @@ var sub_category_entity_1 = require("./sub-category.entity");
 Object.defineProperty(exports, "SubCategory", { enumerable: true, get: function () { return sub_category_entity_1.SubCategory; } });
 var site_settings_entity_1 = require("./site-settings.entity");
 Object.defineProperty(exports, "SiteSettings", { enumerable: true, get: function () { return site_settings_entity_1.SiteSettings; } });
+var uploaded_file_entity_1 = require("./uploaded-file.entity");
+Object.defineProperty(exports, "UploadedFileEntity", { enumerable: true, get: function () { return uploaded_file_entity_1.UploadedFileEntity; } });
 //# sourceMappingURL=index.js.map

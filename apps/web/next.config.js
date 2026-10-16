@@ -28,6 +28,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'meeynailshop-api.onrender.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'hnnsaruuigqchikzdiro.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+      },
     ],
   },
   async rewrites() {
