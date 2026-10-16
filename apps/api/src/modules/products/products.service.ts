@@ -85,24 +85,16 @@ export class ProductsService {
         const terms = searchInput.split(/\s+/).filter(t => t.length > 0);
         
         if (terms.length > 0) {
-          queryBuilder.andWhere(new Brackets(qb => {
-            const params: Record<string, string> = {};
-            
-            terms.forEach((term, index) => {
-              const paramName = `t${index}`;
-              const searchTerm = `%${term}%`;
-              params[paramName] = searchTerm;
-              
-              // Strict search for admins: Only Name and SKU to avoid false positives (like VERNID matching Vernis)
-              const sql = `(product.name ILIKE :${paramName} OR product.sku ILIKE :${paramName})`;
-              
-              if (index === 0) {
-                qb.where(sql, params);
-              } else {
-                qb.andWhere(sql, params);
-              }
-            });
-          }));
+          const conditions: string[] = [];
+          const searchParams: Record<string, string> = {};
+          
+          terms.forEach((term, index) => {
+            const paramName = `t${index}`;
+            searchParams[paramName] = `%${term}%`;
+            conditions.push(`(product.name ILIKE :${paramName} OR product.sku ILIKE :${paramName})`);
+          });
+
+          queryBuilder.andWhere(`(${conditions.join(' AND ')})`, searchParams);
         }
       } catch (err) {
         console.error('❌ [ProductsService] Search construction failed:', err);
@@ -115,16 +107,17 @@ export class ProductsService {
       const doubleDashCat = cleanCat.replace(/-/g, '--');
       const catSlugs = Array.from(new Set([rawCat, cleanCat, doubleDashCat, rawCat.toLowerCase()]));
 
-      queryBuilder.andWhere(
-        new Brackets(qb => {
-          qb.where('category.slug IN (:...catSlugs)', { catSlugs })
-            .orWhere('subCategory.slug IN (:...catSlugs)', { catSlugs });
-          
-          if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawCat)) {
-            qb.orWhere('category.id = :uuidCat', { uuidCat: rawCat });
-          }
-        })
-      );
+      if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawCat)) {
+        queryBuilder.andWhere(
+          '(category.slug IN (:...catSlugs) OR subCategory.slug IN (:...catSlugs) OR category.id = :rawCat)',
+          { catSlugs, rawCat }
+        );
+      } else {
+        queryBuilder.andWhere(
+          '(category.slug IN (:...catSlugs) OR subCategory.slug IN (:...catSlugs))',
+          { catSlugs }
+        );
+      }
     }
 
     if ((query as any).subCategory) {
@@ -133,15 +126,14 @@ export class ProductsService {
       const doubleDashSub = cleanSub.replace(/-/g, '--');
       const subSlugs = Array.from(new Set([rawSub, cleanSub, doubleDashSub, rawSub.toLowerCase()]));
 
-      queryBuilder.andWhere(
-        new Brackets(qb => {
-          qb.where('subCategory.slug IN (:...subSlugs)', { subSlugs });
-
-          if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawSub)) {
-            qb.orWhere('subCategory.id = :uuidSub', { uuidSub: rawSub });
-          }
-        })
-      );
+      if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawSub)) {
+        queryBuilder.andWhere(
+          '(subCategory.slug IN (:...subSlugs) OR subCategory.id = :rawSub)',
+          { subSlugs, rawSub }
+        );
+      } else {
+        queryBuilder.andWhere('subCategory.slug IN (:...subSlugs)', { subSlugs });
+      }
     }
 
     if (query.minPrice !== undefined && query.minPrice !== null) {
@@ -160,11 +152,18 @@ export class ProductsService {
       queryBuilder.andWhere('product.stock > 0');
     }
 
-    // Sort
-    if (query.sortBy) {
-      // Séparer createdAt pour éviter l'ambiguïté si nécessaire
-      const sortField = query.sortBy === 'createdAt' ? 'product.createdAt' : `product.${query.sortBy}`;
-      queryBuilder.orderBy(sortField, query.order === 'asc' ? 'ASC' : 'DESC');
+    // Sort - safely mapped to avoid EntityColumnNotFound on unmapped columns like 'popular'
+    const allowedSortFields: Record<string, string> = {
+      price: 'product.price',
+      createdAt: 'product.createdAt',
+      newest: 'product.createdAt',
+      name: 'product.name',
+    };
+
+    if (query.sortBy === 'popularity' || query.sortBy === 'popular') {
+      queryBuilder.orderBy('product.isFeatured', 'DESC').addOrderBy('product.createdAt', 'DESC');
+    } else if (query.sortBy && allowedSortFields[query.sortBy]) {
+      queryBuilder.orderBy(allowedSortFields[query.sortBy], query.order === 'asc' ? 'ASC' : 'DESC');
     } else {
       queryBuilder.orderBy('product.createdAt', 'DESC');
     }

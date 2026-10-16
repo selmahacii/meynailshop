@@ -29,7 +29,7 @@ export class ProductsQueryDto extends PaginationDto {
 
   @IsOptional()
   @IsString()
-  sortBy?: 'price' | 'createdAt' | 'popularity' | 'rating';
+  sortBy?: 'price' | 'createdAt' | 'popularity' | 'popular' | 'rating' | 'newest';
 
   @IsOptional()
   @IsString()

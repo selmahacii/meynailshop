@@ -5,7 +5,7 @@ export declare class ProductsQueryDto extends PaginationDto {
     minPrice?: number;
     maxPrice?: number;
     badge?: 'top' | 'new' | 'promo';
-    sortBy?: 'price' | 'createdAt' | 'popularity' | 'rating';
+    sortBy?: 'price' | 'createdAt' | 'popularity' | 'popular' | 'rating' | 'newest';
     order?: 'asc' | 'desc';
     inStock?: 'true' | 'false';
     subCategory?: string;
