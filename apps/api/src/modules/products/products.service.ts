@@ -109,12 +109,36 @@ export class ProductsService {
       }
     }
 
-    if (query.category) {
-      queryBuilder.andWhere('category.slug = :category', { category: query.category });
+    if (query.category && query.category !== 'produits-onglerie' && query.category !== 'all') {
+      const cleanCat = query.category.toLowerCase().replace(/--+/g, '-').trim();
+      queryBuilder.andWhere(
+        new Brackets(qb => {
+          qb.where('category.slug = :rawCat', { rawCat: query.category })
+            .orWhere('category.slug = :cleanCat', { cleanCat })
+            .orWhere("REPLACE(category.slug, '--', '-') = :cleanCat", { cleanCat })
+            .orWhere('subCategory.slug = :rawCat', { rawCat: query.category })
+            .orWhere('subCategory.slug = :cleanCat', { cleanCat });
+          
+          if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(query.category)) {
+            qb.orWhere('category.id = :uuidCat', { uuidCat: query.category });
+          }
+        })
+      );
     }
 
     if ((query as any).subCategory) {
-      queryBuilder.andWhere('subCategory.slug = :subCategory', { subCategory: (query as any).subCategory });
+      const cleanSub = ((query as any).subCategory as string).toLowerCase().replace(/--+/g, '-').trim();
+      queryBuilder.andWhere(
+        new Brackets(qb => {
+          qb.where('subCategory.slug = :rawSub', { rawSub: (query as any).subCategory })
+            .orWhere('subCategory.slug = :cleanSub', { cleanSub })
+            .orWhere("REPLACE(subCategory.slug, '--', '-') = :cleanSub", { cleanSub });
+
+          if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test((query as any).subCategory)) {
+            qb.orWhere('subCategory.id = :uuidSub', { uuidSub: (query as any).subCategory });
+          }
+        })
+      );
     }
 
     if (query.minPrice !== undefined && query.minPrice !== null) {

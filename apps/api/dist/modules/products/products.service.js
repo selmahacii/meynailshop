@@ -100,11 +100,29 @@ let ProductsService = class ProductsService {
                 console.error('❌ [ProductsService] Search construction failed:', err);
             }
         }
-        if (query.category) {
-            queryBuilder.andWhere('category.slug = :category', { category: query.category });
+        if (query.category && query.category !== 'produits-onglerie' && query.category !== 'all') {
+            const cleanCat = query.category.toLowerCase().replace(/--+/g, '-').trim();
+            queryBuilder.andWhere(new typeorm_2.Brackets(qb => {
+                qb.where('category.slug = :rawCat', { rawCat: query.category })
+                    .orWhere('category.slug = :cleanCat', { cleanCat })
+                    .orWhere("REPLACE(category.slug, '--', '-') = :cleanCat", { cleanCat })
+                    .orWhere('subCategory.slug = :rawCat', { rawCat: query.category })
+                    .orWhere('subCategory.slug = :cleanCat', { cleanCat });
+                if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(query.category)) {
+                    qb.orWhere('category.id = :uuidCat', { uuidCat: query.category });
+                }
+            }));
         }
         if (query.subCategory) {
-            queryBuilder.andWhere('subCategory.slug = :subCategory', { subCategory: query.subCategory });
+            const cleanSub = query.subCategory.toLowerCase().replace(/--+/g, '-').trim();
+            queryBuilder.andWhere(new typeorm_2.Brackets(qb => {
+                qb.where('subCategory.slug = :rawSub', { rawSub: query.subCategory })
+                    .orWhere('subCategory.slug = :cleanSub', { cleanSub })
+                    .orWhere("REPLACE(subCategory.slug, '--', '-') = :cleanSub", { cleanSub });
+                if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(query.subCategory)) {
+                    qb.orWhere('subCategory.id = :uuidSub', { uuidSub: query.subCategory });
+                }
+            }));
         }
         if (query.minPrice !== undefined && query.minPrice !== null) {
             queryBuilder.andWhere('product.price >= :minPrice', { minPrice: query.minPrice });
