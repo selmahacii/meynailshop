@@ -66,19 +66,45 @@ let CategoriesService = class CategoriesService {
         return await this.subCategoryRepository.save(subCategory);
     }
     async findSubBySlug(slug) {
-        const sub = await this.subCategoryRepository.findOne({
-            where: { slug, isActive: true },
+        const cleanSlug = slug.toLowerCase().replace(/--+/g, '-').trim();
+        let sub = await this.subCategoryRepository.findOne({
+            where: [
+                { slug, isActive: true },
+                { slug: cleanSlug, isActive: true },
+            ],
             relations: ['products', 'category']
         });
+        if (!sub) {
+            sub = await this.subCategoryRepository
+                .createQueryBuilder('sub')
+                .leftJoinAndSelect('sub.products', 'products')
+                .leftJoinAndSelect('sub.category', 'category')
+                .where('sub.isActive = :isActive', { isActive: true })
+                .andWhere("(sub.slug = :slug OR REPLACE(sub.slug, '--', '-') = :cleanSlug)", { slug, cleanSlug })
+                .getOne();
+        }
         if (!sub)
             throw new common_1.NotFoundException('SubCategory not found');
         return sub;
     }
     async findBySlug(slug) {
-        const category = await this.categoryRepository.findOne({
-            where: { slug, isActive: true },
+        const cleanSlug = slug.toLowerCase().replace(/--+/g, '-').trim();
+        let category = await this.categoryRepository.findOne({
+            where: [
+                { slug, isActive: true },
+                { slug: cleanSlug, isActive: true },
+            ],
             relations: ['subCategories', 'subCategories.products'],
         });
+        if (!category) {
+            category = await this.categoryRepository
+                .createQueryBuilder('category')
+                .leftJoinAndSelect('category.subCategories', 'subCategory')
+                .leftJoinAndSelect('subCategory.products', 'product')
+                .where('category.isActive = :isActive', { isActive: true })
+                .andWhere("(category.slug = :slug OR REPLACE(category.slug, '--', '-') = :cleanSlug)", { slug, cleanSlug })
+                .getOne();
+        }
         if (!category) {
             throw new common_1.NotFoundException('Category not found');
         }
