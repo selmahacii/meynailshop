@@ -174,10 +174,7 @@ export default function CategoryPage() {
 
                     {/* Main Content Area */}
                     <section className="flex-grow">
-                        <div className={cn(
-                            "mb-10",
-                            !filters.subCategory && "hidden md:block" // Hide sort/filter on mobile if no sub-category
-                        )}>
+                        <div className="mb-10">
                             <ProductSort 
                                 total={products.length}
                                 currentSort={sortBy}
@@ -199,10 +196,7 @@ export default function CategoryPage() {
                                         variants={container}
                                         initial="hidden"
                                         animate="show"
-                                        className={cn(
-                                            "grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10",
-                                            !filters.subCategory && "hidden md:grid" // Hide on mobile if no sub
-                                        )}
+                                        className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10"
                                     >
                                         {products.map((product) => (
                                             <ProductCard key={product.id} product={product as any} />
@@ -212,10 +206,7 @@ export default function CategoryPage() {
                                     <motion.div 
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        className={cn(
-                                            "bg-white/50 backdrop-blur-sm border border-creme2 border-dashed p-20 text-center rounded-3xl shadow-sm flex flex-col items-center",
-                                            !filters.subCategory && "hidden md:flex"
-                                        )}
+                                        className="bg-white/50 backdrop-blur-sm border border-creme2 border-dashed p-10 md:p-20 text-center rounded-3xl shadow-sm flex flex-col items-center"
                                     >
                                         <div className="w-20 h-20 bg-creme rounded-full flex items-center justify-center mb-8 shadow-inner ring-8 ring-creme/50">
                                             <AlertCircle size={40} className="text-encre3" strokeWidth={1} />
@@ -233,19 +224,9 @@ export default function CategoryPage() {
                                     </motion.div>
                                 )}
 
-                                {/* Mobile Selection Grid if no sub-category - Show nothing else */}
-                                {!filters.subCategory && (
-                                    <div className="md:hidden py-10">
-                                        <p className="text-center text-[10px] font-black uppercase tracking-[0.4em] text-encre3/40 mb-12">Veuillez choisir un univers</p>
-                                    </div>
-                                )}
-
                                 {/* Pagination */}
                                 {products.length >= 12 && (
-                                    <div className={cn(
-                                        "mt-24 flex flex-col items-center space-y-6",
-                                        !filters.subCategory && "hidden md:flex"
-                                    )}>
+                                    <div className="mt-24 flex flex-col items-center space-y-6">
                                         <p className="text-[10px] font-black uppercase tracking-[0.4em] text-encre/30 font-serif italic">Défilement continu de luxe</p>
                                         <div className="flex items-center gap-2 p-1.5 bg-white rounded-full border border-creme2 shadow-sm">
                                             <button className="w-12 h-12 rounded-full bg-encre text-or flex items-center justify-center text-xs font-black shadow-lg">01</button>

@@ -110,32 +110,35 @@ export class ProductsService {
     }
 
     if (query.category && query.category !== 'produits-onglerie' && query.category !== 'all') {
-      const cleanCat = query.category.toLowerCase().replace(/--+/g, '-').trim();
+      const rawCat = query.category.trim();
+      const cleanCat = rawCat.toLowerCase().replace(/--+/g, '-');
+      const doubleDashCat = cleanCat.replace(/-/g, '--');
+      const catSlugs = Array.from(new Set([rawCat, cleanCat, doubleDashCat, rawCat.toLowerCase()]));
+
       queryBuilder.andWhere(
         new Brackets(qb => {
-          qb.where('category.slug = :rawCat', { rawCat: query.category })
-            .orWhere('category.slug = :cleanCat', { cleanCat })
-            .orWhere("REPLACE(category.slug, '--', '-') = :cleanCat", { cleanCat })
-            .orWhere('subCategory.slug = :rawCat', { rawCat: query.category })
-            .orWhere('subCategory.slug = :cleanCat', { cleanCat });
+          qb.where('category.slug IN (:...catSlugs)', { catSlugs })
+            .orWhere('subCategory.slug IN (:...catSlugs)', { catSlugs });
           
-          if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(query.category)) {
-            qb.orWhere('category.id = :uuidCat', { uuidCat: query.category });
+          if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawCat)) {
+            qb.orWhere('category.id = :uuidCat', { uuidCat: rawCat });
           }
         })
       );
     }
 
     if ((query as any).subCategory) {
-      const cleanSub = ((query as any).subCategory as string).toLowerCase().replace(/--+/g, '-').trim();
+      const rawSub = ((query as any).subCategory as string).trim();
+      const cleanSub = rawSub.toLowerCase().replace(/--+/g, '-');
+      const doubleDashSub = cleanSub.replace(/-/g, '--');
+      const subSlugs = Array.from(new Set([rawSub, cleanSub, doubleDashSub, rawSub.toLowerCase()]));
+
       queryBuilder.andWhere(
         new Brackets(qb => {
-          qb.where('subCategory.slug = :rawSub', { rawSub: (query as any).subCategory })
-            .orWhere('subCategory.slug = :cleanSub', { cleanSub })
-            .orWhere("REPLACE(subCategory.slug, '--', '-') = :cleanSub", { cleanSub });
+          qb.where('subCategory.slug IN (:...subSlugs)', { subSlugs });
 
-          if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test((query as any).subCategory)) {
-            qb.orWhere('subCategory.id = :uuidSub', { uuidSub: (query as any).subCategory });
+          if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawSub)) {
+            qb.orWhere('subCategory.id = :uuidSub', { uuidSub: rawSub });
           }
         })
       );

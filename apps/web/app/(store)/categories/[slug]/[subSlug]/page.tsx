@@ -67,9 +67,11 @@ export default function SubCategoryPage() {
                 // Get titles
                 const catRes = await StoreAPI.getCategories();
                 if (catRes.success) {
-                    const cat = catRes.data.find((c: any) => c.slug === slug);
+                    const cleanSlug = (slug as string)?.toLowerCase().replace(/--+/g, '-');
+                    const cleanSubSlug = (subSlug as string)?.toLowerCase().replace(/--+/g, '-');
+                    const cat = catRes.data.find((c: any) => c.slug === slug || c.slug?.toLowerCase().replace(/--+/g, '-') === cleanSlug);
                     if (cat) {
-                        const sub = cat.subCategories?.find((s: any) => s.slug === subSlug);
+                        const sub = cat.subCategories?.find((s: any) => s.slug === subSlug || s.slug?.toLowerCase().replace(/--+/g, '-') === cleanSubSlug);
                         setTitle(`${cat.name} — ${sub?.name || subSlug}`);
                     }
                 }

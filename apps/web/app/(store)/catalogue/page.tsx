@@ -187,10 +187,18 @@ function CatalogueContent() {
                         onSelect={(slug) => {
                             if (activeCategoryData) {
                                 setFilters(prev => ({ ...prev, subCategory: slug }));
-                                router.push(`/catalogue?category=${filters.category}${slug ? `&subCategory=${slug}` : ''}`);
+                                if (slug) {
+                                    router.push(`/catalogue?category=${filters.category}&subCategory=${slug}`);
+                                } else {
+                                    router.push(`/catalogue?category=${filters.category}`);
+                                }
                             } else {
                                 setFilters(prev => ({ ...prev, category: slug, subCategory: null }));
-                                router.push(`/catalogue?category=${slug}`);
+                                if (slug) {
+                                    router.push(`/catalogue?category=${slug}`);
+                                } else {
+                                    router.push('/catalogue');
+                                }
                             }
                         }}
                         title={activeCategoryData ? `Collection ${activeCategoryData.name}` : "Collections Populaires"}
