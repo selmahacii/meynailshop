@@ -174,7 +174,10 @@ export default function CategoryPage() {
 
                     {/* Main Content Area */}
                     <section className="flex-grow">
-                        <div className="mb-10">
+                        <div className={cn(
+                            "mb-10",
+                            !filters.subCategory && "hidden md:block"
+                        )}>
                             <ProductSort 
                                 total={products.length}
                                 currentSort={sortBy}
@@ -184,7 +187,10 @@ export default function CategoryPage() {
                         </div>
 
                         {loading ? (
-                            <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10">
+                            <div className={cn(
+                                "grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10",
+                                !filters.subCategory && "hidden md:grid"
+                            )}>
                                 {[...Array(6)].map((_, i) => (
                                     <ProductCardSkeleton key={i} />
                                 ))}
@@ -196,7 +202,10 @@ export default function CategoryPage() {
                                         variants={container}
                                         initial="hidden"
                                         animate="show"
-                                        className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10"
+                                        className={cn(
+                                            "grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10",
+                                            !filters.subCategory && "hidden md:grid"
+                                        )}
                                     >
                                         {products.map((product) => (
                                             <ProductCard key={product.id} product={product as any} />
@@ -206,7 +215,10 @@ export default function CategoryPage() {
                                     <motion.div 
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        className="bg-white/50 backdrop-blur-sm border border-creme2 border-dashed p-10 md:p-20 text-center rounded-3xl shadow-sm flex flex-col items-center"
+                                        className={cn(
+                                            "bg-white/50 backdrop-blur-sm border border-creme2 border-dashed p-10 md:p-20 text-center rounded-3xl shadow-sm flex flex-col items-center",
+                                            !filters.subCategory && "hidden md:flex"
+                                        )}
                                     >
                                         <div className="w-20 h-20 bg-creme rounded-full flex items-center justify-center mb-8 shadow-inner ring-8 ring-creme/50">
                                             <AlertCircle size={40} className="text-encre3" strokeWidth={1} />

@@ -310,7 +310,10 @@ function CatalogueContent() {
                         </div>
 
                         {loading ? (
-                            <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10">
+                            <div className={cn(
+                                "grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10",
+                                !filters.subCategory && "hidden md:grid"
+                            )}>
                                 {[...Array(6)].map((_, i) => (
                                     <ProductCardSkeleton key={i} />
                                 ))}
@@ -324,7 +327,7 @@ function CatalogueContent() {
                                         animate="show"
                                         className={cn(
                                             "grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10",
-                                            !filters.subCategory && filters.category && "hidden" // Hide products completely if category selected but no sub-selected
+                                            !filters.subCategory && "hidden md:grid"
                                         )}
                                     >
                                         {products.map((product) => (
@@ -354,21 +357,6 @@ function CatalogueContent() {
                                             Réinitialiser la vue
                                         </button>
                                     </motion.div>
-                                )}
-
-                                {/* Selection Message if no sub-category */}
-                                {!filters.subCategory && filters.category && (
-                                    <div className="flex flex-col items-center justify-center p-12 md:p-24 text-center bg-white/30 backdrop-blur-md rounded-[40px] border border-creme2 border-dashed shadow-inner w-full">
-                                        <div className="w-16 h-16 bg-or/10 rounded-full flex items-center justify-center mb-6 ring-8 ring-or/5">
-                                            <ArrowRight size={24} className="text-or animate-bounce-x" />
-                                        </div>
-                                        <h4 className="font-serif text-2xl md:text-4xl text-encre mb-4">
-                                            Découvrez nos collections
-                                        </h4>
-                                        <p className="text-[10px] md:text-sm text-encre3 uppercase tracking-widest font-bold max-w-sm leading-relaxed">
-                                            Sélectionnez une sous-catégorie ci-dessus pour explorer les produits de la collection {activeCategoryData?.name}
-                                        </p>
-                                    </div>
                                 )}
 
                                 {/* Pagination Design */}

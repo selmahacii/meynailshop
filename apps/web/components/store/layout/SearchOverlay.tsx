@@ -9,6 +9,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { formatPrice } from '@/lib/utils/currency';
+import { formatImageUrl } from '@/lib/utils/image';
 
 interface SearchOverlayProps {
     isOpen: boolean;
@@ -155,11 +156,10 @@ export default function SearchOverlay({ isOpen, onClose, allCategories = [] }: S
                                                 className="flex bg-white/5 p-4 rounded-sm border border-white/5 hover:border-or/30 hover:bg-white/10 transition-all group"
                                             >
                                                 <div className="relative w-20 h-20 bg-encre shrink-0 mr-4 overflow-hidden rounded-sm">
-                                                    <Image 
-                                                        src={product.images?.[0] || '/images/placeholder-product.png'} 
+                                                    <img 
+                                                        src={formatImageUrl(product.images?.[0])} 
                                                         alt={product.name} 
-                                                        fill 
-                                                        className="object-cover group-hover:scale-110 transition-transform duration-500" 
+                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
                                                     />
                                                 </div>
                                                 <div className="flex flex-col justify-center">

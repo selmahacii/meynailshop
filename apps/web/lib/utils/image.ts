@@ -3,7 +3,28 @@ export function formatImageUrl(url?: string | null): string {
     return '/images/placeholder-product.png';
   }
 
-  const trimmed = url.trim();
+  let trimmed = url.trim();
+
+  // Handle JSON array or brackets e.g. ["url"] or ["url1", "url2"]
+  if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        trimmed = String(parsed[0]).trim();
+      } else {
+        return '/images/placeholder-product.png';
+      }
+    } catch {
+      trimmed = trimmed.replace(/^\[["']?/, '').replace(/["']?\]$/, '').trim();
+    }
+  }
+
+  // Remove surrounding quotes e.g. "https://..." or 'https://...'
+  trimmed = trimmed.replace(/^["']/, '').replace(/["']$/, '').trim();
+
+  if (!trimmed || trimmed === '' || trimmed === '/images/placeholder-product.png') {
+    return '/images/placeholder-product.png';
+  }
 
   // If already an absolute http/https URL, return it
   if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
@@ -15,8 +36,8 @@ export function formatImageUrl(url?: string | null): string {
     return `/${trimmed}`;
   }
 
-  // If starts with /uploads/
-  if (trimmed.startsWith('/uploads/')) {
+  // If starts with /uploads/ or /images/
+  if (trimmed.startsWith('/uploads/') || trimmed.startsWith('/images/')) {
     return trimmed;
   }
 
