@@ -29,7 +29,7 @@ let AppController = class AppController {
     getHello() {
         return {
             message: `Bienvenue sur l'API Meynailshop`,
-            version: '1.0.0',
+            version: '1.0.1-subcategories-fixed',
             status: 'online',
             storefront: 'http://localhost:3000',
             documentation: '/api/health'
