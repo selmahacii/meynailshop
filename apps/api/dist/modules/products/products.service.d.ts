@@ -10,8 +10,9 @@ export declare class ProductsService {
     private generateNextSku;
     create(createProductDto: any): Promise<Product[]>;
     findAll(query: ProductsQueryDto): Promise<PaginatedResult<Product>>;
-    findBySlug(slug: string): Promise<Product>;
-    findFeatured(limit?: number): Promise<Product[]>;
+    private sanitizeForStore;
+    findBySlug(slug: string): Promise<any>;
+    findFeatured(limit?: number): Promise<any[]>;
     findOne(id: string): Promise<Product>;
     update(id: string, updateProductDto: any): Promise<Product>;
     remove(id: string): Promise<{

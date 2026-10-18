@@ -155,7 +155,7 @@ let ProductsService = class ProductsService {
                 .getManyAndCount();
             console.log(`✅ [ProductsService] Found ${products.length} products (Total: ${total}) for search: "${query.search || ''}"`);
             return {
-                items: products,
+                items: products.map(p => this.sanitizeForStore(p)),
                 total,
                 page: query.page,
                 limit: query.limit,
@@ -170,6 +170,18 @@ let ProductsService = class ProductsService {
             throw err;
         }
     }
+    sanitizeForStore(product) {
+        if (!product)
+            return product;
+        const { costPrice, stockAlert, ...sanitized } = product;
+        if (sanitized.variants && Array.isArray(sanitized.variants)) {
+            sanitized.variants = sanitized.variants.map((v) => {
+                const { costPrice: _c, stockAlert: _s, ...vRest } = v;
+                return vRest;
+            });
+        }
+        return sanitized;
+    }
     async findBySlug(slug) {
         const product = await this.productRepository.findOne({
             where: { slug, isActive: true },
@@ -178,7 +190,7 @@ let ProductsService = class ProductsService {
         if (!product) {
             throw new common_1.NotFoundException('Product not found');
         }
-        return product;
+        return this.sanitizeForStore(product);
     }
     async findFeatured(limit = 6) {
         try {
@@ -199,16 +211,17 @@ let ProductsService = class ProductsService {
                     order: { createdAt: 'DESC' },
                 });
             }
-            return products;
+            return products.map(p => this.sanitizeForStore(p));
         }
         catch (error) {
             console.error('❌ [ProductsService] findFeatured Error:', error);
             try {
-                return await this.productRepository.find({
+                const fallbackProducts = await this.productRepository.find({
                     where: { isActive: true },
                     take: limit,
                     order: { createdAt: 'DESC' },
                 });
+                return fallbackProducts.map(p => this.sanitizeForStore(p));
             }
             catch (innerError) {
                 console.error('❌ [ProductsService] Critical Fallback Error:', innerError);

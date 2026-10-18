@@ -11,11 +11,11 @@ export declare class StoreProductsController {
     }>;
     featured(): Promise<{
         statusCode: number;
-        data: import("../../database/entities").Product[];
+        data: any[];
     }>;
     findBySlug(slug: string): Promise<{
         statusCode: number;
-        data: import("../../database/entities").Product;
+        data: any;
     }>;
     create(createProductDto: any): Promise<{
         statusCode: number;
