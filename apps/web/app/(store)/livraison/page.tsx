@@ -117,7 +117,7 @@ export default function LivraisonPage() {
                                                     {w.homeRate} DA
                                                 </td>
                                                 <td className="px-8 py-5 text-sm font-black text-encre3">
-                                                    {w.deskRate} DA
+                                                    {w.deskRate ? `${w.deskRate} DA` : '—'}
                                                 </td>
                                             </motion.tr>
                                         ))
@@ -138,7 +138,7 @@ export default function LivraisonPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
                     <div className="bg-white p-8 rounded-2xl shadow-sm border border-gold-brand/10 text-center">
                         <MapPin className="text-rouge-brand w-8 h-8 mx-auto mb-6" />
-                        <h3 className="text-lg font-bold text-encre mb-3 tracking-tight">69 Wilayas</h3>
+                        <h3 className="text-lg font-bold text-encre mb-3 tracking-tight">58 Wilayas</h3>
                         <p className="text-encre3 text-sm">Une couverture nationale complete pour ne jamais manquer de vos essentiels.</p>
                     </div>
                     <div className="bg-white p-8 rounded-2xl shadow-sm border border-gold-brand/10 text-center">
