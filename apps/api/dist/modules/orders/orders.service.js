@@ -13,6 +13,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrdersService = void 0;
+exports.calculateOrderShippingRate = calculateOrderShippingRate;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("@nestjs/typeorm");
@@ -24,6 +25,41 @@ const product_entity_1 = require("../../database/entities/product.entity");
 const coupon_entity_1 = require("../../database/entities/coupon.entity");
 const site_settings_entity_1 = require("../../database/entities/site-settings.entity");
 const order_number_util_1 = require("../../common/utils/order-number.util");
+const settings_service_1 = require("../settings/settings.service");
+function calculateOrderShippingRate(snapshot, deliveryType = 'home', fees = settings_service_1.DEFAULT_SHIPPING_FEES) {
+    if (!snapshot)
+        return null;
+    const rawWilaya = (snapshot.wilaya ||
+        snapshot.wilayaName ||
+        snapshot.address?.wilaya ||
+        snapshot.address?.wilayaName ||
+        (typeof snapshot.address === 'string' ? '' : '') ||
+        '').toString().trim();
+    if (!rawWilaya)
+        return null;
+    const q = rawWilaya.toLowerCase().trim();
+    const wilayaRate = fees.find((f) => {
+        const fid = (f.id || '').toString().trim();
+        const fname = (f.name || '').toLowerCase().trim();
+        return (fid === q ||
+            fid === q.padStart(2, '0') ||
+            fname === q ||
+            q.includes(fname) ||
+            (fname && q.startsWith(fid)));
+    });
+    if (!wilayaRate)
+        return null;
+    const isHome = deliveryType === 'home';
+    const shippingCost = isHome
+        ? Number(wilayaRate.homeRate)
+        : Number(wilayaRate.deskRate ?? wilayaRate.homeRate);
+    const returnCost = Number(wilayaRate.returnRate || 0);
+    return {
+        shippingCost,
+        returnCost,
+        wilayaRate,
+    };
+}
 let OrdersService = class OrdersService {
     constructor(orderRepository, orderItemRepository, addressRepository, productRepository, couponRepository, dataSource) {
         this.orderRepository = orderRepository;
@@ -32,6 +68,31 @@ let OrdersService = class OrdersService {
         this.productRepository = productRepository;
         this.couponRepository = couponRepository;
         this.dataSource = dataSource;
+    }
+    async onModuleInit() {
+        await this.repairOrdersWithDefaultShipping();
+    }
+    async repairOrdersWithDefaultShipping() {
+        try {
+            const orders = await this.orderRepository.find();
+            for (const order of orders) {
+                if (Number(order.shippingCost) === 600 && order.shippingAddressSnapshot) {
+                    const calculated = calculateOrderShippingRate(order.shippingAddressSnapshot, order.deliveryType);
+                    if (calculated) {
+                        order.shippingCost = calculated.shippingCost;
+                        order.returnCost = calculated.returnCost;
+                        const subtotal = Number(order.subtotal || 0);
+                        const discount = Number(order.discount || 0);
+                        order.total = subtotal + calculated.shippingCost - discount;
+                        await this.orderRepository.save(order);
+                        console.log(`[OrdersService] Repaired order ${order.orderNumber}: shippingCost set to ${calculated.shippingCost} DA`);
+                    }
+                }
+            }
+        }
+        catch (err) {
+            console.error('[OrdersService] Error repairing orders with default shipping:', err);
+        }
     }
     async create(userId, createOrderDto, cartItems) {
         if (!cartItems || cartItems.length === 0) {
@@ -145,13 +206,16 @@ let OrdersService = class OrdersService {
                 await queryRunner.manager.save(coupon_entity_1.Coupon, coupon);
             }
             const settings = await queryRunner.manager.findOne(site_settings_entity_1.SiteSettings, { where: {} });
-            let shippingCost = settings?.shippingCostDefault || 600;
+            const fees = (settings?.shippingFees && Array.isArray(settings.shippingFees) && settings.shippingFees.length > 0)
+                ? settings.shippingFees
+                : settings_service_1.DEFAULT_SHIPPING_FEES;
+            let shippingCost = Number(settings?.shippingCostDefault) || 600;
             let returnCost = 0;
-            if (shippingAddress && settings?.shippingFees) {
-                const wilayaRate = settings.shippingFees.find((f) => f.id === shippingAddress.wilaya || f.name === shippingAddress.wilaya);
-                if (wilayaRate) {
-                    shippingCost = createOrderDto.deliveryType === 'home' ? wilayaRate.homeRate : (wilayaRate.deskRate ?? wilayaRate.homeRate);
-                    returnCost = wilayaRate.returnRate || 0;
+            if (shippingAddress) {
+                const calculated = calculateOrderShippingRate(shippingAddress, createOrderDto.deliveryType || 'home', fees);
+                if (calculated) {
+                    shippingCost = calculated.shippingCost;
+                    returnCost = calculated.returnCost;
                 }
             }
             if (subtotal >= Number(settings?.freeShippingThreshold || 10000)) {

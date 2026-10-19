@@ -20,6 +20,10 @@ export declare class OrdersService {
         };
     }>;
     findOne(id: string): Promise<Order>;
+    updateShipping(id: string, body: {
+        shippingCost?: number;
+        recalculate?: boolean;
+    }): Promise<Order>;
     updateStatus(id: string, status: string): Promise<Order>;
     getStats(): Promise<{
         total: number;

@@ -5,6 +5,7 @@ import { Order, Review, OrderItem, Product } from '../../../database/entities';
 import { StockService } from '../../../modules/stock/stock.service';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { calculateOrderShippingRate } from '../../../modules/orders/orders.service';
 
 @Injectable()
 export class OrdersService {
@@ -42,6 +43,21 @@ export class OrdersService {
       .take(limit)
       .getManyAndCount();
 
+    // Auto-repair any order with default 600 shipping
+    for (const order of data) {
+      if (Number(order.shippingCost) === 600 && order.shippingAddressSnapshot) {
+        const calculated = calculateOrderShippingRate(order.shippingAddressSnapshot, order.deliveryType);
+        if (calculated) {
+          order.shippingCost = calculated.shippingCost;
+          order.returnCost = calculated.returnCost;
+          const subtotal = Number(order.subtotal || 0);
+          const discount = Number(order.discount || 0);
+          order.total = subtotal + calculated.shippingCost - discount;
+          await this.orderRepository.save(order);
+        }
+      }
+    }
+
     return {
       data,
       pagination: {
@@ -61,7 +77,39 @@ export class OrdersService {
     if (!order) {
       throw new NotFoundException('Commande non trouvée');
     }
+
+    // Auto-repair order with default 600 shipping
+    if (Number(order.shippingCost) === 600 && order.shippingAddressSnapshot) {
+      const calculated = calculateOrderShippingRate(order.shippingAddressSnapshot, order.deliveryType);
+      if (calculated) {
+        order.shippingCost = calculated.shippingCost;
+        order.returnCost = calculated.returnCost;
+        const subtotal = Number(order.subtotal || 0);
+        const discount = Number(order.discount || 0);
+        order.total = subtotal + calculated.shippingCost - discount;
+        await this.orderRepository.save(order);
+      }
+    }
+
     return order;
+  }
+
+  async updateShipping(id: string, body: { shippingCost?: number; recalculate?: boolean }) {
+    const order = await this.findOne(id);
+    if (body.recalculate) {
+      const calculated = calculateOrderShippingRate(order.shippingAddressSnapshot, order.deliveryType);
+      if (calculated) {
+        order.shippingCost = calculated.shippingCost;
+        order.returnCost = calculated.returnCost;
+      }
+    } else if (body.shippingCost !== undefined) {
+      order.shippingCost = Number(body.shippingCost);
+    }
+    const subtotal = Number(order.subtotal || 0);
+    const discount = Number(order.discount || 0);
+    order.total = subtotal + Number(order.shippingCost) - discount;
+    await this.orderRepository.save(order);
+    return await this.findOne(id);
   }
 
   async updateStatus(id: string, status: string) {

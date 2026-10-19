@@ -20,6 +20,7 @@ const entities_1 = require("../../../database/entities");
 const stock_service_1 = require("../../../modules/stock/stock.service");
 const typeorm_3 = require("typeorm");
 const typeorm_4 = require("@nestjs/typeorm");
+const orders_service_1 = require("../../../modules/orders/orders.service");
 let OrdersService = class OrdersService {
     constructor(orderRepository, orderItemRepository, productRepository, reviewRepository, stockService, dataSource) {
         this.orderRepository = orderRepository;
@@ -48,6 +49,19 @@ let OrdersService = class OrdersService {
             .skip((page - 1) * limit)
             .take(limit)
             .getManyAndCount();
+        for (const order of data) {
+            if (Number(order.shippingCost) === 600 && order.shippingAddressSnapshot) {
+                const calculated = (0, orders_service_1.calculateOrderShippingRate)(order.shippingAddressSnapshot, order.deliveryType);
+                if (calculated) {
+                    order.shippingCost = calculated.shippingCost;
+                    order.returnCost = calculated.returnCost;
+                    const subtotal = Number(order.subtotal || 0);
+                    const discount = Number(order.discount || 0);
+                    order.total = subtotal + calculated.shippingCost - discount;
+                    await this.orderRepository.save(order);
+                }
+            }
+        }
         return {
             data,
             pagination: {
@@ -66,7 +80,36 @@ let OrdersService = class OrdersService {
         if (!order) {
             throw new common_1.NotFoundException('Commande non trouvée');
         }
+        if (Number(order.shippingCost) === 600 && order.shippingAddressSnapshot) {
+            const calculated = (0, orders_service_1.calculateOrderShippingRate)(order.shippingAddressSnapshot, order.deliveryType);
+            if (calculated) {
+                order.shippingCost = calculated.shippingCost;
+                order.returnCost = calculated.returnCost;
+                const subtotal = Number(order.subtotal || 0);
+                const discount = Number(order.discount || 0);
+                order.total = subtotal + calculated.shippingCost - discount;
+                await this.orderRepository.save(order);
+            }
+        }
         return order;
+    }
+    async updateShipping(id, body) {
+        const order = await this.findOne(id);
+        if (body.recalculate) {
+            const calculated = (0, orders_service_1.calculateOrderShippingRate)(order.shippingAddressSnapshot, order.deliveryType);
+            if (calculated) {
+                order.shippingCost = calculated.shippingCost;
+                order.returnCost = calculated.returnCost;
+            }
+        }
+        else if (body.shippingCost !== undefined) {
+            order.shippingCost = Number(body.shippingCost);
+        }
+        const subtotal = Number(order.subtotal || 0);
+        const discount = Number(order.discount || 0);
+        order.total = subtotal + Number(order.shippingCost) - discount;
+        await this.orderRepository.save(order);
+        return await this.findOne(id);
     }
     async updateStatus(id, status) {
         const order = await this.findOne(id);

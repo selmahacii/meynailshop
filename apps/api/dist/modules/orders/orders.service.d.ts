@@ -1,3 +1,4 @@
+import { OnModuleInit } from '@nestjs/common';
 import { Repository, DataSource } from 'typeorm';
 import { Order } from '../../database/entities/order.entity';
 import { OrderItem } from '../../database/entities/order-item.entity';
@@ -8,7 +9,12 @@ import { PaginatedResult } from '../../common/pagination/paginated-result.interf
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { OrdersQueryDto } from './dto/orders-query.dto';
-export declare class OrdersService {
+export declare function calculateOrderShippingRate(snapshot: any, deliveryType?: string, fees?: any[]): {
+    shippingCost: number;
+    returnCost: number;
+    wilayaRate: any;
+};
+export declare class OrdersService implements OnModuleInit {
     private orderRepository;
     private orderItemRepository;
     private addressRepository;
@@ -16,6 +22,8 @@ export declare class OrdersService {
     private couponRepository;
     private dataSource;
     constructor(orderRepository: Repository<Order>, orderItemRepository: Repository<OrderItem>, addressRepository: Repository<Address>, productRepository: Repository<Product>, couponRepository: Repository<Coupon>, dataSource: DataSource);
+    onModuleInit(): Promise<void>;
+    repairOrdersWithDefaultShipping(): Promise<void>;
     create(userId: string | null, createOrderDto: CreateOrderDto, cartItems: Array<{
         productId: string;
         quantity: number;

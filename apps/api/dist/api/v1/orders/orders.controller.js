@@ -52,6 +52,12 @@ let OrdersController = class OrdersController {
             data: await this.ordersService.updateStatus(id, status),
         };
     }
+    async updateShipping(id, body) {
+        return {
+            success: true,
+            data: await this.ordersService.updateShipping(id, body),
+        };
+    }
 };
 exports.OrdersController = OrdersController;
 __decorate([
@@ -91,6 +97,14 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "updateStatus", null);
+__decorate([
+    (0, common_1.Patch)(':id/shipping'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "updateShipping", null);
 exports.OrdersController = OrdersController = __decorate([
     (0, common_1.Controller)('v1/admin/orders'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),

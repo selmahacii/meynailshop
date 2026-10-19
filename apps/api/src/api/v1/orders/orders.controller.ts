@@ -57,4 +57,15 @@ export class OrdersController {
       data: await this.ordersService.updateStatus(id, status),
     };
   }
+
+  @Patch(':id/shipping')
+  async updateShipping(
+    @Param('id') id: string,
+    @Body() body: { shippingCost?: number; recalculate?: boolean },
+  ) {
+    return {
+      success: true,
+      data: await this.ordersService.updateShipping(id, body),
+    };
+  }
 }

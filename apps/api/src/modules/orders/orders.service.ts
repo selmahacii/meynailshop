@@ -3,6 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
   InternalServerErrorException,
+  OnModuleInit,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
@@ -18,9 +19,55 @@ import { generateOrderNumber } from '../../common/utils/order-number.util';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { OrdersQueryDto } from './dto/orders-query.dto';
+import { DEFAULT_SHIPPING_FEES } from '../settings/settings.service';
+
+export function calculateOrderShippingRate(
+  snapshot: any,
+  deliveryType: string = 'home',
+  fees: any[] = DEFAULT_SHIPPING_FEES,
+) {
+  if (!snapshot) return null;
+  const rawWilaya = (
+    snapshot.wilaya ||
+    snapshot.wilayaName ||
+    snapshot.address?.wilaya ||
+    snapshot.address?.wilayaName ||
+    (typeof snapshot.address === 'string' ? '' : '') ||
+    ''
+  ).toString().trim();
+
+  if (!rawWilaya) return null;
+
+  const q = rawWilaya.toLowerCase().trim();
+  const wilayaRate = fees.find((f: any) => {
+    const fid = (f.id || '').toString().trim();
+    const fname = (f.name || '').toLowerCase().trim();
+    return (
+      fid === q ||
+      fid === q.padStart(2, '0') ||
+      fname === q ||
+      q.includes(fname) ||
+      (fname && q.startsWith(fid))
+    );
+  });
+
+  if (!wilayaRate) return null;
+
+  const isHome = deliveryType === 'home';
+  const shippingCost = isHome
+    ? Number(wilayaRate.homeRate)
+    : Number(wilayaRate.deskRate ?? wilayaRate.homeRate);
+  const returnCost = Number(wilayaRate.returnRate || 0);
+
+  return {
+    shippingCost,
+    returnCost,
+    wilayaRate,
+  };
+}
 
 @Injectable()
-export class OrdersService {
+export class OrdersService implements OnModuleInit {
   constructor(
     @InjectRepository(Order)
     private orderRepository: Repository<Order>,
@@ -35,6 +82,32 @@ export class OrdersService {
     @InjectDataSource()
     private dataSource: DataSource,
   ) { }
+
+  async onModuleInit() {
+    await this.repairOrdersWithDefaultShipping();
+  }
+
+  async repairOrdersWithDefaultShipping() {
+    try {
+      const orders = await this.orderRepository.find();
+      for (const order of orders) {
+        if (Number(order.shippingCost) === 600 && order.shippingAddressSnapshot) {
+          const calculated = calculateOrderShippingRate(order.shippingAddressSnapshot, order.deliveryType);
+          if (calculated) {
+            order.shippingCost = calculated.shippingCost;
+            order.returnCost = calculated.returnCost;
+            const subtotal = Number(order.subtotal || 0);
+            const discount = Number(order.discount || 0);
+            order.total = subtotal + calculated.shippingCost - discount;
+            await this.orderRepository.save(order);
+            console.log(`[OrdersService] Repaired order ${order.orderNumber}: shippingCost set to ${calculated.shippingCost} DA`);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('[OrdersService] Error repairing orders with default shipping:', err);
+    }
+  }
 
   async create(
     userId: string | null,
@@ -173,14 +246,18 @@ export class OrdersService {
       }
 
       const settings = await queryRunner.manager.findOne(SiteSettings, { where: {} });
-      let shippingCost = settings?.shippingCostDefault || 600;
+      const fees = (settings?.shippingFees && Array.isArray(settings.shippingFees) && settings.shippingFees.length > 0)
+        ? settings.shippingFees
+        : DEFAULT_SHIPPING_FEES;
+
+      let shippingCost = Number(settings?.shippingCostDefault) || 600;
       let returnCost = 0;
 
-      if (shippingAddress && settings?.shippingFees) {
-        const wilayaRate = settings.shippingFees.find((f: any) => f.id === shippingAddress.wilaya || f.name === shippingAddress.wilaya);
-        if (wilayaRate) {
-          shippingCost = createOrderDto.deliveryType === 'home' ? wilayaRate.homeRate : (wilayaRate.deskRate ?? wilayaRate.homeRate);
-          returnCost = wilayaRate.returnRate || 0;
+      if (shippingAddress) {
+        const calculated = calculateOrderShippingRate(shippingAddress, createOrderDto.deliveryType || 'home', fees);
+        if (calculated) {
+          shippingCost = calculated.shippingCost;
+          returnCost = calculated.returnCost;
         }
       }
 

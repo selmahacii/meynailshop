@@ -51,4 +51,11 @@ export declare class OrdersController {
         success: boolean;
         data: import("../../../database/entities").Order;
     }>;
+    updateShipping(id: string, body: {
+        shippingCost?: number;
+        recalculate?: boolean;
+    }): Promise<{
+        success: boolean;
+        data: import("../../../database/entities").Order;
+    }>;
 }

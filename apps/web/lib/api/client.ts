@@ -212,6 +212,10 @@ export class OrdersAPI {
     return apiPatch(API_ENDPOINTS.ORDER_ADMIN_UPDATE_STATUS(id), { status });
   }
 
+  static async updateShipping(id: string, data: { shippingCost?: number; recalculate?: boolean }) {
+    return apiPatch(`/api/${API_VERSION}/admin/orders/${id}/shipping`, data);
+  }
+
   static async createManual(data: any) {
     return apiPost(API_ENDPOINTS.ORDERS_ADMIN_CREATE_MANUAL, data);
   }

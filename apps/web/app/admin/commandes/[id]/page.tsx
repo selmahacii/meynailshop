@@ -84,6 +84,23 @@ export default function OrderDetailsPage() {
         }
     };
 
+    const recalculateShipping = async () => {
+        try {
+            setUpdating(true);
+            const result = await OrdersAPI.updateShipping(id as string, { recalculate: true });
+            if (result.success) {
+                setOrder(result.data);
+                window.dispatchEvent(new Event('orderUpdated'));
+            } else {
+                alert(result.error || 'Erreur lors du recalcul de la livraison');
+            }
+        } catch (err) {
+            alert('Erreur technique');
+        } finally {
+            setUpdating(false);
+        }
+    };
+
     const getStatusInfo = (status: string) => {
         switch (status) {
             case 'pending': return { label: 'En attente', color: 'bg-yellow-100 text-yellow-700', icon: Clock };
@@ -329,7 +346,18 @@ export default function OrderDetailsPage() {
                                     <span className="text-encre">{Number(order.subtotal).toLocaleString()} DA</span>
                                 </div>
                                 <div className="flex justify-between items-center text-[10px] font-bold text-encre3 uppercase tracking-widest">
-                                    <span>Livraison</span>
+                                    <div className="flex items-center gap-1.5">
+                                        <span>Livraison</span>
+                                        <button
+                                            type="button"
+                                            onClick={recalculateShipping}
+                                            disabled={updating}
+                                            title="Recalculer selon la Wilaya"
+                                            className="text-or hover:text-encre text-[9px] font-bold underline uppercase tracking-wider ml-1"
+                                        >
+                                            {updating ? '...' : '(Recalculer)'}
+                                        </button>
+                                    </div>
                                     <span className="text-encre font-black">{Number(order.shippingCost).toLocaleString()} DA</span>
                                 </div>
                                 {Number(order.discount) > 0 && (
@@ -437,9 +465,17 @@ export default function OrderDetailsPage() {
                                     <span className="text-[10px] opacity-70">Wilaya / Code</span>
                                     <span className="font-bold text-encre">
                                         {(() => {
-                                            const rawWilaya = order.shippingAddressSnapshot?.wilayaName || order.shippingAddressSnapshot?.wilaya;
-                                            const matched = SHIPPING_RATES.find(w => w.id === rawWilaya || w.name === rawWilaya);
-                                            const displayName = matched ? `${matched.id} - ${matched.name}` : (rawWilaya || 'Algérie');
+                                            const rawWilaya = order.shippingAddressSnapshot?.wilayaName || 
+                                                              order.shippingAddressSnapshot?.wilaya || 
+                                                              order.shippingAddressSnapshot?.address?.wilayaName || 
+                                                              order.shippingAddressSnapshot?.address?.wilaya || '';
+                                            const rw = rawWilaya.toString().trim();
+                                            const matched = SHIPPING_RATES.find(w => 
+                                                w.id === rw || 
+                                                w.id === rw.padStart(2, '0') || 
+                                                w.name.toLowerCase() === rw.toLowerCase()
+                                            );
+                                            const displayName = matched ? `${matched.id} - ${matched.name}` : (rw || 'Algérie');
                                             const postalCode = order.shippingAddressSnapshot?.postalCode || order.shippingAddressSnapshot?.zipCode;
                                             return `${displayName}${postalCode ? ` (${postalCode})` : ''}`;
                                         })()}
