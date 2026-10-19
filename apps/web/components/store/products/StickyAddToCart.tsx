@@ -14,11 +14,17 @@ interface StickyAddToCartProps {
 }
 
 export default function StickyAddToCart({ product, onAdd, visible, selectedVariantIndex }: StickyAddToCartProps) {
-    if (!product || product.stock === 0) return null;
+    if (!product) return null;
 
     const variant = (selectedVariantIndex !== undefined && selectedVariantIndex !== null && product.variants)
         ? product.variants[selectedVariantIndex]
         : null;
+
+    const isOutOfStock = product.hasVariants
+        ? (variant ? (!variant.stock || variant.stock <= 0) : (product.variants?.length > 0 && product.variants.every((v: any) => !v.stock || v.stock <= 0)))
+        : (!product.stock || product.stock <= 0);
+
+    if (isOutOfStock) return null;
 
     const activeImage = variant?.image || product.images?.[0] || '/images/placeholder.png';
     const activePrice = (variant && variant.price !== undefined && variant.price !== null)

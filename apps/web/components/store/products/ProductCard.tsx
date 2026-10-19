@@ -62,6 +62,10 @@ export default function ProductCard({ product }: ProductCardProps) {
 
     const mainImage = formatImageUrl(product.images?.[0]);
 
+    const isOutOfStock = product.hasVariants
+        ? (product.variants && product.variants.length > 0 && product.variants.every((v: any) => !v.stock || v.stock <= 0))
+        : (!product.stock || product.stock <= 0);
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 15 }}
@@ -73,6 +77,11 @@ export default function ProductCard({ product }: ProductCardProps) {
             <Link href={`/catalogue/${product.slug}`} className="block relative aspect-[4/5] overflow-hidden bg-creme2">
                 {/* Badges */}
                 <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-10 flex flex-col gap-1.5">
+                    {isOutOfStock && (
+                        <span className="text-[7px] sm:text-[9px] font-black uppercase tracking-[0.2em] px-2.5 py-1 rounded-full shadow-lg bg-black/80 text-white border border-white/10 backdrop-blur-md">
+                            Rupture de stock
+                        </span>
+                    )}
                     {Number(product.comparePrice) > Number(product.price) && Number(product.comparePrice) > 0 && (
                         <span className="text-[7px] sm:text-[9px] font-black uppercase tracking-[0.2em] px-2.5 py-1 rounded-full shadow-lg bg-rouge-brand text-gold-brand border border-gold-brand/20 backdrop-blur-md">
                             -{Math.round(((Number(product.comparePrice) - Number(product.price)) / Number(product.comparePrice)) * 100)}%
@@ -113,7 +122,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                     ) : (
                         <button
                             onClick={handleAddToCart}
-                            disabled={!product.stock || product.stock <= 0}
+                            disabled={isOutOfStock}
                             className="p-2.5 rounded-full bg-gold-brand text-rouge-brand shadow-lg active:scale-95 transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-md"
                         >
                             <ShoppingBag size={14} />
@@ -147,11 +156,11 @@ export default function ProductCard({ product }: ProductCardProps) {
                     ) : (
                         <button
                             onClick={handleAddToCart}
-                            disabled={!product.stock || product.stock <= 0}
+                            disabled={isOutOfStock}
                             className="w-full bg-gold-brand hover:bg-creme text-rouge-brand py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-[4px] hover:shadow-lg transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <ShoppingBag size={13} className="mr-2" />
-                            {(!product.stock || product.stock <= 0) ? 'Épuisé' : 'Ajouter au panier'}
+                            {isOutOfStock ? 'Rupture de stock' : 'Ajouter au panier'}
                         </button>
                     )}
                 </div>

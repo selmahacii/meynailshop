@@ -168,7 +168,7 @@ export default function FavorisPage() {
                                             {item.stock === 0 && (
                                                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                                                     <span className="bg-rouge text-creme text-[8px] sm:text-[10px] font-black uppercase tracking-widest px-2 py-1 sm:px-3 sm:py-1.5 rounded-sm">
-                                                        Épuisé
+                                                        Rupture de stock
                                                     </span>
                                                 </div>
                                             )}
@@ -218,7 +218,7 @@ export default function FavorisPage() {
                                                 )}
                                             >
                                                 <ShoppingBag size={12} />
-                                                {item.stock === 0 ? 'Épuisé' : 'Ajouter au panier'}
+                                                {item.stock === 0 ? 'Rupture de stock' : 'Ajouter au panier'}
                                             </button>
                                         </div>
                                     </motion.div>

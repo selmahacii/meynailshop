@@ -107,7 +107,19 @@ export default function ProductPage() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    const isOutOfStock = Boolean(
+        product && (
+            product.hasVariants
+                ? (selectedVariant !== null
+                    ? (!product.variants[selectedVariant]?.stock || product.variants[selectedVariant].stock <= 0)
+                    : (product.variants && product.variants.length > 0 && product.variants.every((v: any) => !v.stock || v.stock <= 0)))
+                : (!product.stock || product.stock <= 0)
+        )
+    );
 
+    const currentStock = (product && product.hasVariants && selectedVariant !== null)
+        ? (product.variants[selectedVariant]?.stock ?? 0)
+        : (product?.stock ?? 0);
 
     const handleAddToCart = () => {
         if (!product) return;
@@ -282,13 +294,15 @@ export default function ProductPage() {
                             </div>
                         )}
 
-                        {/* Inventory Status */}
-                        <div className="flex items-center space-x-2 mb-8">
-                            <div className={`w-2 h-2 rounded-full ${product && product.stock > 0 ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
-                            <span className="text-xs font-bold uppercase tracking-widest text-encre">
-                                {product ? (product.stock > 0 ? 'En Stock' : 'Rupture de stock') : ''}
-                            </span>
-                        </div>
+                        {/* Inventory Status - Seule la rupture de stock est affichée si quantité = 0 */}
+                        {isOutOfStock && (
+                            <div className="flex items-center space-x-2 mb-8">
+                                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                                <span className="text-xs font-bold uppercase tracking-widest text-rouge-deep">
+                                    Rupture de stock
+                                </span>
+                            </div>
+                        )}
 
                         {/* Variants Section */}
                         {product && product.hasVariants && product.variants && product.variants.length > 0 && (
@@ -356,17 +370,19 @@ export default function ProductPage() {
                         {/* Actions */}
                         <div className="flex flex-col space-y-4 mb-10">
                             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                                <div className="flex items-center border border-creme2 bg-white rounded-sm h-14">
+                                <div className={cn("flex items-center border border-creme2 bg-white rounded-sm h-14", isOutOfStock && "opacity-50 pointer-events-none")}>
                                     <button
                                         onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                        className="px-4 text-encre hover:text-or transition-colors"
+                                        disabled={isOutOfStock || quantity <= 1}
+                                        className="px-4 text-encre hover:text-or transition-colors disabled:opacity-50"
                                     >
                                         <Minus size={18} />
                                     </button>
-                                    <span className="w-12 text-center font-bold text-encre">{quantity}</span>
+                                    <span className="w-12 text-center font-bold text-encre">{isOutOfStock ? 0 : quantity}</span>
                                     <button
-                                        onClick={() => setQuantity(Math.min(product ? product.stock : 1, quantity + 1))}
-                                        className="px-4 text-encre hover:text-or transition-colors"
+                                        onClick={() => setQuantity(Math.min(currentStock || 1, quantity + 1))}
+                                        disabled={isOutOfStock || (currentStock > 0 && quantity >= currentStock)}
+                                        className="px-4 text-encre hover:text-or transition-colors disabled:opacity-50"
                                     >
                                         <Plus size={18} />
                                     </button>
@@ -374,11 +390,11 @@ export default function ProductPage() {
 
                                 <button
                                     onClick={handleAddToCart}
-                                    disabled={!product || (!product.hasVariants && (!product.stock || product.stock <= 0))}
+                                    disabled={!product || isOutOfStock}
                                     className="flex-grow bg-rouge-deep hover:bg-rouge-mid text-creme h-14 rounded-sm font-bold uppercase tracking-widest text-[10px] flex items-center justify-center transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <ShoppingBag className="mr-3" size={18} />
-                                    Ajouter au panier
+                                    {isOutOfStock ? 'Rupture de stock' : 'Ajouter au panier'}
                                 </button>
 
                                 <button
