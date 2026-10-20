@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ProductCard from '@/components/store/products/ProductCard';
 import ProductFilters, { FilterState } from '@/components/store/products/ProductFilters';
@@ -17,6 +17,8 @@ const FALLBACK_CATEGORY = { name: 'Catégorie', description: 'Découvrez notre s
 
 export default function CategoryPage() {
     const { slug } = useParams();
+    const router = useRouter();
+    const [allCategories, setAllCategories] = useState<any[]>([]);
     const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
     const [categoryInfo, setCategoryInfo] = useState<any>(FALLBACK_CATEGORY);
     const [products, setProducts] = useState<any[]>([]);
@@ -34,6 +36,14 @@ export default function CategoryPage() {
             setFilters(prev => ({ ...prev, category: slug as string }));
         }
     }, [slug]);
+
+    useEffect(() => {
+        StoreAPI.getCategories().then(res => {
+            if (res.success && res.data) {
+                setAllCategories(res.data);
+            }
+        });
+    }, []);
 
     useEffect(() => {
         let mounted = true;
@@ -137,15 +147,39 @@ export default function CategoryPage() {
                     </div>
                 </div>
 
-                {/* Sub-categories Universe Section */}
+                {/* Categories Universe Section */}
                 <div className="animate-in fade-in slide-in-from-top-4 duration-1000">
-                    <SubCategoryWidgets 
-                        subCategories={categoryInfo.subCategories || []}
-                        activeSubSlug={filters.subCategory}
-                        onSelect={(slug) => setFilters(prev => ({ ...prev, subCategory: slug }))}
-                        title={`L'Univers ${categoryInfo.name}`}
-                        subtitle="Plus de précision"
-                    />
+                    {/* On Mobile: Always show Catégories Principales (never subcategories) */}
+                    <div className="md:hidden">
+                        <SubCategoryWidgets 
+                            subCategories={allCategories}
+                            activeSubSlug={categoryInfo.slug || (slug as string)}
+                            onSelect={(targetSlug) => {
+                                if (targetSlug) {
+                                    router.push(`/categories/${targetSlug}`);
+                                } else {
+                                    router.push('/catalogue');
+                                }
+                            }}
+                            title="Nos Univers de Beauté"
+                            subtitle="Collections Principales"
+                            showAllButton={true}
+                        />
+                    </div>
+
+                    {/* On Desktop: Show sub-categories if any exist */}
+                    {categoryInfo.subCategories && categoryInfo.subCategories.length > 0 && (
+                        <div className="hidden md:block">
+                            <SubCategoryWidgets 
+                                subCategories={categoryInfo.subCategories}
+                                activeSubSlug={filters.subCategory}
+                                onSelect={(s) => setFilters(prev => ({ ...prev, subCategory: s }))}
+                                title={`L'Univers ${categoryInfo.name}`}
+                                subtitle="Sous-catégories"
+                                showAllButton={true}
+                            />
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-12 items-start mt-4">
@@ -174,10 +208,7 @@ export default function CategoryPage() {
 
                     {/* Main Content Area */}
                     <section className="flex-grow">
-                        <div className={cn(
-                            "mb-10",
-                            !filters.subCategory && "hidden md:block"
-                        )}>
+                        <div className="mb-10">
                             <ProductSort 
                                 total={products.length}
                                 currentSort={sortBy}
@@ -187,10 +218,7 @@ export default function CategoryPage() {
                         </div>
 
                         {loading ? (
-                            <div className={cn(
-                                "grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10",
-                                !filters.subCategory && "hidden md:grid"
-                            )}>
+                            <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10">
                                 {[...Array(6)].map((_, i) => (
                                     <ProductCardSkeleton key={i} />
                                 ))}
@@ -202,10 +230,7 @@ export default function CategoryPage() {
                                         variants={container}
                                         initial="hidden"
                                         animate="show"
-                                        className={cn(
-                                            "grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10",
-                                            !filters.subCategory && "hidden md:grid"
-                                        )}
+                                        className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10"
                                     >
                                         {products.map((product) => (
                                             <ProductCard key={product.id} product={product as any} />
@@ -215,10 +240,7 @@ export default function CategoryPage() {
                                     <motion.div 
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        className={cn(
-                                            "bg-white/50 backdrop-blur-sm border border-creme2 border-dashed p-10 md:p-20 text-center rounded-3xl shadow-sm flex flex-col items-center",
-                                            !filters.subCategory && "hidden md:flex"
-                                        )}
+                                        className="bg-white/50 backdrop-blur-sm border border-creme2 border-dashed p-10 md:p-20 text-center rounded-3xl shadow-sm flex flex-col items-center"
                                     >
                                         <div className="w-20 h-20 bg-creme rounded-full flex items-center justify-center mb-8 shadow-inner ring-8 ring-creme/50">
                                             <AlertCircle size={40} className="text-encre3" strokeWidth={1} />

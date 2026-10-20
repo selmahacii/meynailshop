@@ -163,11 +163,7 @@ function CatalogueContent() {
                             </p>
                         </div>
 
-                        <div className={cn(
-                            "flex items-center gap-3",
-                            !filters.subCategory && "hidden md:flex" // Hide counts/mobile-filter-btn on mobile if no sub-category
-                        )}>
-
+                        <div className="flex items-center gap-3">
                             <button 
                                 onClick={() => setIsMobileFiltersOpen(true)}
                                 className="lg:hidden flex items-center gap-3 px-6 py-3 bg-encre text-creme rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl active:scale-95 transition-all"
@@ -181,29 +177,52 @@ function CatalogueContent() {
 
                 {/* Universe Widgets */}
                 <div className="animate-in fade-in slide-in-from-top-4 duration-1000">
-                    <SubCategoryWidgets 
-                        subCategories={activeCategoryData ? (activeCategoryData.subCategories || []) : allCategories}
-                        activeSubSlug={activeCategoryData ? filters.subCategory : filters.category}
-                        onSelect={(slug) => {
-                            if (activeCategoryData) {
-                                setFilters(prev => ({ ...prev, subCategory: slug }));
-                                if (slug) {
-                                    router.push(`/catalogue?category=${filters.category}&subCategory=${slug}`);
-                                } else {
-                                    router.push(`/catalogue?category=${filters.category}`);
-                                }
-                            } else {
-                                setFilters(prev => ({ ...prev, category: slug, subCategory: null }));
-                                if (slug) {
-                                    router.push(`/catalogue?category=${slug}`);
+                    {/* On Mobile: Always Catégories Principales (never subcategories) */}
+                    <div className="md:hidden">
+                        <SubCategoryWidgets 
+                            subCategories={allCategories}
+                            activeSubSlug={filters.category}
+                            onSelect={(targetSlug) => {
+                                setFilters(prev => ({ ...prev, category: targetSlug, subCategory: null }));
+                                if (targetSlug) {
+                                    router.push(`/catalogue?category=${targetSlug}`);
                                 } else {
                                     router.push('/catalogue');
                                 }
-                            }
-                        }}
-                        title={activeCategoryData ? `Collection ${activeCategoryData.name}` : "Collections Populaires"}
-                        subtitle={activeCategoryData ? "Explorez par sous-catégorie" : "Explorez par univers"}
-                    />
+                            }}
+                            title="Nos Univers de Beauté"
+                            subtitle="Catégories Principales"
+                            showAllButton={true}
+                        />
+                    </div>
+
+                    {/* On Desktop: Show sub-categories if category selected, otherwise main categories */}
+                    <div className="hidden md:block">
+                        <SubCategoryWidgets 
+                            subCategories={activeCategoryData ? (activeCategoryData.subCategories || []) : allCategories}
+                            activeSubSlug={activeCategoryData ? filters.subCategory : filters.category}
+                            onSelect={(slug) => {
+                                if (activeCategoryData) {
+                                    setFilters(prev => ({ ...prev, subCategory: slug }));
+                                    if (slug) {
+                                        router.push(`/catalogue?category=${filters.category}&subCategory=${slug}`);
+                                    } else {
+                                        router.push(`/catalogue?category=${filters.category}`);
+                                    }
+                                } else {
+                                    setFilters(prev => ({ ...prev, category: slug, subCategory: null }));
+                                    if (slug) {
+                                        router.push(`/catalogue?category=${slug}`);
+                                    } else {
+                                        router.push('/catalogue');
+                                    }
+                                }
+                            }}
+                            title={activeCategoryData ? `Collection ${activeCategoryData.name}` : "Collections Populaires"}
+                            subtitle={activeCategoryData ? "Explorez par sous-catégorie" : "Explorez par univers"}
+                            showAllButton={true}
+                        />
+                    </div>
                 </div>
 
                 {/* Return/Reset Banner */}
@@ -297,10 +316,7 @@ function CatalogueContent() {
 
                     {/* Main Content Area */}
                     <section className="flex-grow">
-                        <div className={cn(
-                            "mb-10",
-                            !filters.subCategory && "hidden md:block" // Hide sort/filter on mobile if no sub-category
-                        )}>
+                        <div className="mb-10">
                             <ProductSort
                                 total={products.length}
                                 currentSort={sortBy}
@@ -310,10 +326,7 @@ function CatalogueContent() {
                         </div>
 
                         {loading ? (
-                            <div className={cn(
-                                "grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10",
-                                !filters.subCategory && "hidden md:grid"
-                            )}>
+                            <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10">
                                 {[...Array(6)].map((_, i) => (
                                     <ProductCardSkeleton key={i} />
                                 ))}
@@ -325,10 +338,7 @@ function CatalogueContent() {
                                         variants={container}
                                         initial="hidden"
                                         animate="show"
-                                        className={cn(
-                                            "grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10",
-                                            !filters.subCategory && "hidden md:grid"
-                                        )}
+                                        className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8 md:gap-10"
                                     >
                                         {products.map((product) => (
                                             <ProductCard key={product.id} product={product} />
@@ -338,10 +348,7 @@ function CatalogueContent() {
                                     <motion.div 
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        className={cn(
-                                            "bg-white/50 backdrop-blur-sm border border-creme2 border-dashed p-20 text-center rounded-3xl shadow-sm flex flex-col items-center",
-                                            !filters.subCategory && "hidden md:flex"
-                                        )}
+                                        className="bg-white/50 backdrop-blur-sm border border-creme2 border-dashed p-20 text-center rounded-3xl shadow-sm flex flex-col items-center"
                                     >
                                         <div className="w-20 h-20 bg-creme rounded-full flex items-center justify-center mb-8 shadow-inner ring-8 ring-creme/50">
                                             <AlertCircle size={40} className="text-encre3" strokeWidth={1} />

@@ -299,52 +299,13 @@ export default function Navbar() {
                             <p className="text-[10px] uppercase tracking-[0.3em] text-gold-brand font-black mb-6">Menu de Navigation</p>
                             {navLinks.map((link: any) => (
                                 <div key={link.name} className="border-b border-gold-brand/5">
-                                    <div className="flex items-center justify-between">
-                                        <Link
-                                            href={link.href}
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                            className={`flex-grow py-4 text-lg font-serif transition-colors ${pathname === link.href ? 'text-gold-brand font-bold' : 'text-gold-brand/80 hover:text-gold-brand'
-                                                }`}
-                                        >
-                                            {link.name}
-                                        </Link>
-                                        {link.subCategories?.length > 0 && (
-                                            <button
-                                                onClick={() => setExpandedCategory(expandedCategory === link.name ? null : link.name)}
-                                                className="p-4 text-gold-brand"
-                                            >
-                                                <motion.div
-                                                    animate={{ rotate: expandedCategory === link.name ? 180 : 0 }}
-                                                >
-                                                    ▼
-                                                </motion.div>
-                                            </button>
-                                        )}
-                                    </div>
-
-                                    {link.subCategories?.length > 0 && (
-                                        <AnimatePresence>
-                                            {expandedCategory === link.name && (
-                                                <motion.div
-                                                    initial={{ height: 0, opacity: 0 }}
-                                                    animate={{ height: 'auto', opacity: 1 }}
-                                                    exit={{ height: 0, opacity: 0 }}
-                                                    className="pl-6 pb-4 flex flex-col space-y-3 overflow-hidden"
-                                                >
-                                                    {link.subCategories.map((sub: any) => (
-                                                        <Link
-                                                            key={sub.id}
-                                                            href={`/categories/${link.href.split('/').pop()}/${sub.slug}`}
-                                                            onClick={() => setIsMobileMenuOpen(false)}
-                                                            className="py-2 text-sm text-gold-brand/60 hover:text-gold-brand transition-colors font-serif border-l border-gold-brand/10 pl-4"
-                                                        >
-                                                            — {sub.name}
-                                                        </Link>
-                                                    ))}
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                    )}
+                                    <Link
+                                        href={link.href}
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        className={`block py-4 text-lg font-serif transition-colors ${pathname === link.href ? 'text-gold-brand font-bold' : 'text-gold-brand/80 hover:text-gold-brand'}`}
+                                    >
+                                        {link.name}
+                                    </Link>
                                 </div>
                             ))}
                             <Link
