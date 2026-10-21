@@ -70,12 +70,12 @@ export default function HomePage() {
                 ) : categories.length > 0 ? (
                     <>
                         {/* Mobile Only: Single Container for "PRODUITS ONGLERIE" */}
-                        <div className="md:hidden flex justify-center">
+                        <div className="md:hidden flex justify-center px-4">
                             <Link 
                                 href="/catalogue"
-                                className="w-full max-w-sm bg-white border border-gold-brand/10 hover:border-gold-brand/35 transition-all duration-500 rounded-[20px] sm:rounded-[24px] overflow-hidden flex flex-col group cursor-pointer shadow-sm hover:shadow-2xl hover:shadow-gold-brand/5 active:scale-95"
+                                className="w-full max-w-[230px] bg-white border border-gold-brand/15 hover:border-gold-brand/40 transition-all duration-500 rounded-[20px] overflow-hidden flex flex-col group cursor-pointer shadow-md hover:shadow-xl hover:shadow-gold-brand/10 active:scale-95"
                             >
-                                <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden border-b border-gold-brand/5">
+                                <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden border-b border-gold-brand/10">
                                     <img 
                                         src={settings?.onglerieCollectionImage || "https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=800&auto=format&fit=crop"} 
                                         alt="Produits Onglerie" 
@@ -83,13 +83,13 @@ export default function HomePage() {
                                         loading="eager"
                                     />
                                     <div className="absolute inset-0 bg-[#390102]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
-                                    <div className="absolute inset-x-0 bottom-0 p-3 bg-rouge-brand/90 backdrop-blur-sm z-20 flex justify-center">
-                                        <span className="text-gold-brand text-[9px] font-black uppercase tracking-[0.2em]">Découvrir les catégories</span>
+                                    <div className="absolute inset-x-0 bottom-0 p-2.5 bg-rouge-brand/90 backdrop-blur-sm z-20 flex justify-center">
+                                        <span className="text-gold-brand text-[8px] font-black uppercase tracking-[0.2em]">Découvrir les catégories</span>
                                     </div>
                                 </div>
-                                <div className="p-5 text-center flex-grow flex flex-col justify-center bg-white">
-                                    <p className="font-playfair italic text-[10px] text-gold-brand uppercase tracking-[0.2em] mb-1">Collection</p>
-                                    <h3 className="font-italiana text-base sm:text-lg text-encre group-hover:text-rouge-mid transition-colors duration-300 font-bold leading-tight min-h-[2.4em] flex items-center justify-center">
+                                <div className="p-3.5 text-center flex-grow flex flex-col justify-center bg-white">
+                                    <p className="font-playfair italic text-[9px] text-gold-brand uppercase tracking-[0.2em] mb-0.5">Collection</p>
+                                    <h3 className="font-italiana text-sm font-bold text-encre group-hover:text-rouge-mid transition-colors duration-300 leading-tight">
                                         Produits Onglerie
                                     </h3>
                                 </div>
