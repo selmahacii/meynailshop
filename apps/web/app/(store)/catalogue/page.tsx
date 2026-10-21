@@ -13,6 +13,7 @@ import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import { X, Loader2, AlertCircle, Filter, SlidersHorizontal, ArrowRight } from 'lucide-react';
 import SubCategoryWidgets from '@/components/store/products/SubCategoryWidgets';
 import { cn } from '@/lib/utils';
+import { formatImageUrl } from '@/lib/utils/image';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 import { Suspense } from 'react';
@@ -34,6 +35,8 @@ function CatalogueContent() {
     const [sortBy, setSortBy] = useState(searchParams.get('badge') === 'top' ? 'popular' : 'newest');
     const [activeCategoryData, setActiveCategoryData] = useState<any>(null);
     const [allCategories, setAllCategories] = useState<any[]>([]);
+    const [subCategoryFilter, setSubCategoryFilter] = useState<string>('all');
+    const isSubCategoriesView = searchParams.get('view') === 'sous-categories' || searchParams.get('view') === 'subcategories';
 
     // Sync filters with URL when page loads or URL changes (for back button/navigation)
     useEffect(() => {
@@ -132,6 +135,18 @@ function CatalogueContent() {
         fetchProducts();
     }, [filters, sortBy]);
 
+    const allSubCategories = allCategories.flatMap((cat: any) => 
+        (cat.subCategories || []).map((sub: any) => ({
+            ...sub,
+            categoryName: cat.name,
+            categorySlug: cat.slug
+        }))
+    );
+
+    const filteredSubCategories = subCategoryFilter === 'all'
+        ? allSubCategories
+        : allSubCategories.filter((sub: any) => sub.categorySlug === subCategoryFilter);
+
     const container = {
         hidden: { opacity: 0 },
         show: {
@@ -152,14 +167,20 @@ function CatalogueContent() {
                             <Breadcrumbs 
                                 items={[
                                     { label: 'Catalogue', href: '/catalogue' }, 
-                                    ...(filters.category ? [{ label: activeCategoryData?.name || 'Catégorie' }] : [])
+                                    ...(isSubCategoriesView 
+                                        ? [{ label: 'Sous-catégories' }] 
+                                        : (filters.category ? [{ label: activeCategoryData?.name || 'Catégorie' }] : []))
                                 ]} 
                             />
                              <h1 className="font-italiana font-normal text-4xl md:text-6xl lg:text-[5rem] text-encre tracking-wide leading-none">
-                                {activeCategoryData?.name || "Le Catalogue"}
+                                {isSubCategoriesView 
+                                    ? "Les Sous-Catégories" 
+                                    : (activeCategoryData?.name || "Le Catalogue")}
                             </h1>
                             <p className="text-encre/70 text-[11px] md:text-sm max-w-xl font-playfair font-light italic leading-relaxed border-l border-gold-brand/35 pl-5 py-1">
-                                {activeCategoryData?.description || "Découvrez notre collection méticuleusement sélectionnée de produits d'onglerie et soins de luxe."}
+                                {isSubCategoriesView 
+                                    ? "Accédez directement à vos gammes spécialisées pour découvrir tous les produits associés." 
+                                    : (activeCategoryData?.description || "Découvrez notre collection méticuleusement sélectionnée de produits d'onglerie et soins de luxe.")}
                             </p>
                         </div>
 
@@ -178,36 +199,140 @@ function CatalogueContent() {
                 </div>
 
                 {/* Universe Widgets */}
-                <div className="animate-in fade-in slide-in-from-top-4 duration-1000">
-                    <SubCategoryWidgets 
-                        subCategories={activeCategoryData ? (activeCategoryData.subCategories || []) : allCategories}
-                        activeSubSlug={activeCategoryData ? filters.subCategory : filters.category}
-                        onSelect={(slug) => {
-                            if (activeCategoryData) {
-                                setFilters(prev => ({ ...prev, subCategory: slug }));
-                                if (slug) {
-                                    router.push(`/catalogue?category=${filters.category}&subCategory=${slug}`);
+                {/* Universe Widgets / Direct Sub-categories View */}
+                {isSubCategoriesView ? (
+                    <div className="space-y-8 animate-in fade-in duration-500 mb-12">
+                        {/* Navigation / Switch back */}
+                        <div className="flex items-center justify-between flex-wrap gap-4">
+                            <Link 
+                                href="/catalogue"
+                                className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-rouge-mid hover:text-rouge active:scale-95 transition-all py-2 px-4 bg-white rounded-full border border-or/20 shadow-sm"
+                            >
+                                <span>← Voir les catégories principales</span>
+                            </Link>
+                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold-brand">
+                                {filteredSubCategories.length} sous-catégories
+                            </span>
+                        </div>
+
+                        {/* Category Filter Tabs */}
+                        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
+                            <button
+                                onClick={() => setSubCategoryFilter('all')}
+                                className={cn(
+                                    "px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest whitespace-nowrap transition-all",
+                                    subCategoryFilter === 'all'
+                                        ? "bg-encre text-gold-brand shadow-md"
+                                        : "bg-white/80 text-encre3 hover:text-encre border border-creme2"
+                                )}
+                            >
+                                Toutes les collections
+                            </button>
+                            {allCategories.map((cat: any) => (
+                                <button
+                                    key={cat.id || cat.slug}
+                                    onClick={() => setSubCategoryFilter(cat.slug)}
+                                    className={cn(
+                                        "px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest whitespace-nowrap transition-all",
+                                        subCategoryFilter === cat.slug
+                                            ? "bg-encre text-gold-brand shadow-md"
+                                            : "bg-white/80 text-encre3 hover:text-encre border border-creme2"
+                                    )}
+                                >
+                                    {cat.name}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Sub-categories Grid */}
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                            {filteredSubCategories.map((sub: any) => {
+                                const categoryImages: Record<string, string> = {
+                                    'vernis--couleurs': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e572a715-7818-4367-9127-8a6130e6b774.webp',
+                                    'vernis-couleurs': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e572a715-7818-4367-9127-8a6130e6b774.webp',
+                                    'matriel': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/715de6aa-e62f-42ad-99ca-7972a199302b.webp',
+                                    'materiel': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/715de6aa-e62f-42ad-99ca-7972a199302b.webp',
+                                    'construction--technique': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e4a86494-0ba6-4f74-b6d1-048d4feb8996.webp',
+                                    'construction-technique': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e4a86494-0ba6-4f74-b6d1-048d4feb8996.webp',
+                                    'nail-art--dcoration': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/62b0d839-6237-4b68-843f-a0f5ce1bec9c.webp',
+                                    'nail-art-decoration': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/62b0d839-6237-4b68-843f-a0f5ce1bec9c.webp'
+                                };
+
+                                const rawImg = sub.imageUrl || sub.image || '';
+                                const displayImg = (!rawImg || rawImg.includes('placeholder'))
+                                    ? (categoryImages[sub.categorySlug] || 'https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=600&auto=format&fit=crop')
+                                    : formatImageUrl(rawImg);
+
+                                return (
+                                    <Link
+                                        key={sub.id || sub.slug}
+                                        href={`/categories/${sub.categorySlug}?subCategory=${sub.slug}`}
+                                        className="w-full bg-white border border-gold-brand/15 hover:border-gold-brand/40 transition-all duration-500 rounded-[20px] sm:rounded-[24px] overflow-hidden flex flex-col group cursor-pointer hover:-translate-y-1.5 shadow-sm hover:shadow-2xl hover:shadow-gold-brand/5 active:scale-95"
+                                    >
+                                        <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden border-b border-gold-brand/10">
+                                            <img 
+                                                src={displayImg} 
+                                                alt={sub.name} 
+                                                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                                                loading="lazy"
+                                            />
+                                            <div className="absolute inset-0 bg-[#390102]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+                                            
+                                            {/* Parent Category Badge */}
+                                            <div className="absolute top-2 left-2 z-20">
+                                                <span className="text-[7px] md:text-[8px] font-black uppercase tracking-[0.15em] px-2 py-0.5 rounded-sm shadow-md bg-white/90 backdrop-blur-sm text-encre border border-gold-brand/20">
+                                                    {sub.categoryName}
+                                                </span>
+                                            </div>
+
+                                            <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-rouge-brand/90 backdrop-blur-sm z-20 md:flex justify-center hidden">
+                                                <span className="text-gold-brand text-[9px] font-black uppercase tracking-[0.2em]">Voir les produits</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-3.5 sm:p-4 text-center flex-grow flex flex-col justify-center bg-white">
+                                            <p className="font-playfair italic text-[9px] text-gold-brand uppercase tracking-[0.2em] mb-1">Collection</p>
+                                            <h3 className="font-italiana text-xs sm:text-base font-bold text-encre group-hover:text-rouge-mid transition-colors duration-300 leading-tight min-h-[2.4em] flex items-center justify-center">
+                                                {sub.name}
+                                            </h3>
+                                        </div>
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="animate-in fade-in slide-in-from-top-4 duration-1000">
+                        <SubCategoryWidgets 
+                            subCategories={activeCategoryData ? (activeCategoryData.subCategories || []) : allCategories}
+                            activeSubSlug={activeCategoryData ? filters.subCategory : filters.category}
+                            onSelect={(slug) => {
+                                if (activeCategoryData) {
+                                    setFilters(prev => ({ ...prev, subCategory: slug }));
+                                    if (slug) {
+                                        router.push(`/catalogue?category=${filters.category}&subCategory=${slug}`);
+                                    } else {
+                                        router.push(`/catalogue?category=${filters.category}`);
+                                    }
                                 } else {
-                                    router.push(`/catalogue?category=${filters.category}`);
+                                    setFilters(prev => ({ ...prev, category: slug, subCategory: null }));
+                                    if (slug) {
+                                        router.push(`/categories/${slug}`);
+                                    } else {
+                                        router.push('/catalogue');
+                                    }
                                 }
-                            } else {
-                                setFilters(prev => ({ ...prev, category: slug, subCategory: null }));
-                                if (slug) {
-                                    router.push(`/categories/${slug}`);
-                                } else {
-                                    router.push('/catalogue');
-                                }
-                            }
-                        }}
-                        title={activeCategoryData ? `Collection ${activeCategoryData.name}` : "Collections Populaires"}
-                        subtitle={activeCategoryData ? "Explorez par sous-catégorie" : "Explorez par univers"}
-                    />
-                    {(!filters.category && !filters.search) && (
-                        <p className="text-center text-[10px] font-bold uppercase tracking-[0.3em] text-encre3/60 py-6 md:hidden">
-                            Choisissez une catégorie pour continuer
-                        </p>
-                    )}
-                </div>
+                            }}
+                            title={activeCategoryData ? `Collection ${activeCategoryData.name}` : "Collections Populaires"}
+                            subtitle={activeCategoryData ? "Explorez par sous-catégorie" : "Explorez par univers"}
+                        />
+                        {(!filters.category && !filters.search) && (
+                            <p className="text-center text-[10px] font-bold uppercase tracking-[0.3em] text-encre3/60 py-6 md:hidden">
+                                Choisissez une catégorie pour continuer
+                            </p>
+                        )}
+                    </div>
+                )}
 
                 {/* Return/Reset Banner */}
                 {(filters.category || filters.search) && (
@@ -299,7 +424,7 @@ function CatalogueContent() {
                     </aside>
 
                     {/* Main Content Area */}
-                    <section className={cn("flex-grow", (!filters.category && !filters.search) && "hidden md:block")}>
+                    <section className={cn("flex-grow", ((!filters.category && !filters.search) || isSubCategoriesView) && "hidden md:block")}>
                         <div className="mb-10">
                             <ProductSort
                                 total={products.length}
