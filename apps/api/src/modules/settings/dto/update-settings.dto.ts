@@ -43,4 +43,8 @@ export class UpdateSettingsDto {
 
     @IsOptional()
     shippingFees?: any;
+
+    @IsString()
+    @IsOptional()
+    onglerieCollectionImage?: string;
 }

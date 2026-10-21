@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bell, Download, Save, Store, Truck, CreditCard, Shield, Globe, AlertTriangle, Loader, AlertCircle, CheckCircle } from 'lucide-react';
+import { Bell, Download, Save, Store, Truck, CreditCard, Shield, Globe, AlertTriangle, Loader, AlertCircle, CheckCircle, Upload } from 'lucide-react';
+import { UploadAPI } from '@/lib/api/client';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { SettingsAPI } from '@/lib/api/client';
@@ -23,6 +24,27 @@ export default function AdminSettingsPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [saving, setSaving] = useState(false);
+    const [uploadingImage, setUploadingImage] = useState(false);
+
+    const handleUploadOnglerie = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setUploadingImage(true);
+        try {
+            const res = await UploadAPI.uploadProductImage(file);
+            if (res.success && res.data?.url) {
+                handleChange('onglerieCollectionImage', res.data.url);
+                setSuccessMessage('Photo uploadée ! Cliquez sur Sauvegarder pour appliquer.');
+            } else {
+                setError(res.error || 'Erreur d\'upload');
+            }
+        } catch {
+            setError('Erreur réseau lors de l\'upload');
+        } finally {
+            setUploadingImage(false);
+            e.target.value = '';
+        }
+    };
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     useEffect(() => {

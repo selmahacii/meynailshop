@@ -9,8 +9,10 @@ import { Product } from '@/types/product';
 import ProductCardSkeleton from '@/components/store/products/ProductCardSkeleton';
 import CategorySkeleton from '@/components/store/home/CategorySkeleton';
 import { Loader2 } from 'lucide-react';
+import { useSettings } from '@/lib/hooks/useSettings';
 
 export default function HomePage() {
+    const { settings } = useSettings();
     const [categories, setCategories] = useState<any[]>([]);
     const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
@@ -75,7 +77,7 @@ export default function HomePage() {
                             >
                                 <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden border-b border-gold-brand/5">
                                     <img 
-                                        src="https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=800&auto=format&fit=crop" 
+                                        src={settings?.onglerieCollectionImage || "https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=800&auto=format&fit=crop"} 
                                         alt="Produits Onglerie" 
                                         className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                                         loading="eager"

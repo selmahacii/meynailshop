@@ -43,6 +43,9 @@ export class SiteSettings {
   @Column({ type: 'jsonb', nullable: true })
   shippingFees: any;
 
+  @Column({ type: 'text', nullable: true })
+  onglerieCollectionImage?: string;
+
   @UpdateDateColumn()
   updatedAt: Date;
 }

@@ -11,5 +11,6 @@ export declare class SiteSettings {
     notifyNewOrder: boolean;
     notifyNewReview: boolean;
     shippingFees: any;
+    onglerieCollectionImage?: string;
     updatedAt: Date;
 }

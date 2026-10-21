@@ -63,6 +63,10 @@ __decorate([
     __metadata("design:type", Object)
 ], SiteSettings.prototype, "shippingFees", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
+    __metadata("design:type", String)
+], SiteSettings.prototype, "onglerieCollectionImage", void 0);
+__decorate([
     (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], SiteSettings.prototype, "updatedAt", void 0);

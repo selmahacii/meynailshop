@@ -68,4 +68,9 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Object)
 ], UpdateSettingsDto.prototype, "shippingFees", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateSettingsDto.prototype, "onglerieCollectionImage", void 0);
 //# sourceMappingURL=update-settings.dto.js.map

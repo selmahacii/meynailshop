@@ -11,6 +11,7 @@ export interface Settings {
     stockAlertDefault: number;
     shippingCostDefault: number;
     freeShippingThreshold: number;
+    onglerieCollectionImage?: string;
 }
 
 const defaultSettings: Settings = {
@@ -21,6 +22,7 @@ const defaultSettings: Settings = {
     stockAlertDefault: 5,
     shippingCostDefault: 600,
     freeShippingThreshold: 10000,
+    onglerieCollectionImage: 'https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=800&auto=format&fit=crop',
 };
 
 let cachedSettings: Settings | null = null;

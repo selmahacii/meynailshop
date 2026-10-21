@@ -12,11 +12,13 @@ import {
     AlertCircle,
     ChevronRight,
     ArrowLeft,
-    CheckCircle2
+    CheckCircle2,
+    Upload,
+    Save
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { apiFetch, UploadAPI } from '@/lib/api/client';
+import { apiFetch, UploadAPI, SettingsAPI } from '@/lib/api/client';
 import { toast } from 'sonner';
 
 interface Category {
@@ -48,6 +50,9 @@ export default function AdminCategoriesPage() {
         displayOrder: 0
     });
     const [submitting, setSubmitting] = useState(false);
+    const [onglerieImage, setOnglerieImage] = useState<string>('');
+    const [savingOnglerie, setSavingOnglerie] = useState(false);
+    const [uploadingOnglerie, setUploadingOnglerie] = useState(false);
     const [newSubCategoryName, setNewSubCategoryName] = useState('');
     const [editingSubId, setEditingSubId] = useState<string | null>(null);
     const [editingSubName, setEditingSubName] = useState('');
@@ -131,7 +136,49 @@ export default function AdminCategoriesPage() {
 
     useEffect(() => {
         fetchCategories();
+        SettingsAPI.get().then(res => {
+            if (res.success && res.data?.onglerieCollectionImage) {
+                setOnglerieImage(res.data.onglerieCollectionImage);
+            }
+        });
     }, []);
+
+    const handleSaveOnglerieImage = async () => {
+        setSavingOnglerie(true);
+        try {
+            const res = await SettingsAPI.update({ onglerieCollectionImage: onglerieImage });
+            if (res.success) {
+                toast.success('Photo de la collection Produits Onglerie mise à jour !');
+            } else {
+                toast.error(res.error || 'Erreur lors de la sauvegarde');
+            }
+        } catch {
+            toast.error('Erreur réseau');
+        } finally {
+            setSavingOnglerie(false);
+        }
+    };
+
+    const handleUploadOnglerieImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setUploadingOnglerie(true);
+        try {
+            const res = await UploadAPI.uploadProductImage(file);
+            if (res.success && res.data?.url) {
+                setOnglerieImage(res.data.url);
+                await SettingsAPI.update({ onglerieCollectionImage: res.data.url });
+                toast.success('Photo uploadée et enregistrée avec succès !');
+            } else {
+                toast.error(res.error || 'Erreur d\'upload');
+            }
+        } catch {
+            toast.error('Erreur lors du transfert');
+        } finally {
+            setUploadingOnglerie(false);
+            e.target.value = '';
+        }
+    };
 
     const fetchCategories = async () => {
         try {
@@ -258,6 +305,62 @@ export default function AdminCategoriesPage() {
                     <Plus size={16} className="text-[#BFA893] group-hover:rotate-90 transition-transform duration-300" />
                     <span>Nouvelle Catégorie</span>
                 </button>
+            </div>
+
+            {/* Mobile Hero Collection Configuration */}
+            <div className="bg-white rounded-2xl border border-gold-brand/20 shadow-md p-6 sm:p-8">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="flex items-start sm:items-center space-x-4">
+                        <div className="relative w-24 h-28 sm:w-28 sm:h-32 rounded-xl overflow-hidden bg-creme2 border-2 border-gold-brand/30 flex-shrink-0 shadow-sm">
+                            <img 
+                                src={onglerieImage || "https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=800&auto=format&fit=crop"} 
+                                alt="Produits Onglerie" 
+                                className="w-full h-full object-cover" 
+                            />
+                        </div>
+                        <div>
+                            <span className="text-[9px] font-black uppercase tracking-widest text-gold-brand px-2 py-0.5 bg-gold-brand/10 rounded-md">Accueil Mobile</span>
+                            <h2 className="text-xl font-serif text-encre mt-1">Collection « Produits Onglerie »</h2>
+                            <p className="text-xs text-encre3 max-w-xl mt-1 leading-relaxed">
+                                C'est la photo de couverture affichée sur mobile dans la section <i>Nos Univers de Beauté</i>. Les clientes cliquent dessus pour découvrir vos catégories.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                        <label className="cursor-pointer inline-flex items-center justify-center space-x-2 px-5 py-3 bg-white border border-gold-brand/30 text-encre rounded-xl text-xs font-bold uppercase tracking-widest hover:border-gold-brand transition-all shadow-sm">
+                            <Upload size={16} className="text-gold-brand" />
+                            <span>{uploadingOnglerie ? 'Transfert...' : 'Uploader une photo'}</span>
+                            <input 
+                                type="file" 
+                                accept="image/*" 
+                                onChange={handleUploadOnglerieImage} 
+                                className="hidden" 
+                                disabled={uploadingOnglerie}
+                            />
+                        </label>
+
+                        <button 
+                            onClick={handleSaveOnglerieImage}
+                            disabled={savingOnglerie || uploadingOnglerie}
+                            className="inline-flex items-center justify-center space-x-2 px-6 py-3 bg-[#1A0A0A] text-creme rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-rouge-deep transition-all shadow-md disabled:opacity-50"
+                        >
+                            {savingOnglerie ? <Loader size={16} className="animate-spin text-or" /> : <Save size={16} className="text-or" />}
+                            <span>Enregistrer</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div className="mt-4 pt-4 border-t border-creme2 flex flex-col sm:flex-row sm:items-center gap-3">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-encre3 shrink-0">URL directe :</label>
+                    <input 
+                        type="url" 
+                        value={onglerieImage} 
+                        onChange={(e) => setOnglerieImage(e.target.value)} 
+                        placeholder="https://..."
+                        className="w-full px-4 py-2 bg-creme border border-creme2 rounded-lg text-xs text-encre focus:outline-none focus:border-or transition-all"
+                    />
+                </div>
             </div>
 
             {/* Content */}

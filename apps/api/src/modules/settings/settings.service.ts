@@ -75,6 +75,13 @@ export class SettingsService implements OnModuleInit {
     ) { }
 
     async onModuleInit() {
+        try {
+            await this.dataSource.query(`
+                ALTER TABLE "site_settings" ADD COLUMN IF NOT EXISTS "onglerieCollectionImage" text;
+            `);
+        } catch (e) {
+            console.warn('Could not run ALTER TABLE for onglerieCollectionImage:', e);
+        }
         await this.ensureSettingsExist();
     }
 
@@ -94,8 +101,16 @@ export class SettingsService implements OnModuleInit {
             await this.settingsRepository.save(defaultSettings);
         } else {
             const s = settings[0];
+            let needsSave = false;
             if (!s.shippingFees || !Array.isArray(s.shippingFees) || s.shippingFees.length === 0) {
                 s.shippingFees = DEFAULT_SHIPPING_FEES;
+                needsSave = true;
+            }
+            if (!s.onglerieCollectionImage) {
+                s.onglerieCollectionImage = 'https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=800&auto=format&fit=crop';
+                needsSave = true;
+            }
+            if (needsSave) {
                 await this.settingsRepository.save(s);
             }
         }

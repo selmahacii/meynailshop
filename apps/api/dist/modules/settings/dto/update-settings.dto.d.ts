@@ -10,4 +10,5 @@ export declare class UpdateSettingsDto {
     notifyNewOrder?: boolean;
     notifyNewReview?: boolean;
     shippingFees?: any;
+    onglerieCollectionImage?: string;
 }
