@@ -91,6 +91,7 @@ export default function CategoryPage() {
     }, [filters, sortBy, slug, categoryInfo.slug]);
 
     const activeSubCategory = categoryInfo.subCategories?.find((s: any) => s.slug === filters.subCategory);
+    const hasSubCategories = Boolean(categoryInfo.subCategories && categoryInfo.subCategories.length > 0);
 
     const container = {
         hidden: { opacity: 0 },
@@ -138,8 +139,27 @@ export default function CategoryPage() {
                 </div>
 
                 {/* Sub-categories Universe Section */}
-                {categoryInfo.subCategories && categoryInfo.subCategories.length > 0 && (
+                {hasSubCategories && (
                     <div className="animate-in fade-in slide-in-from-top-4 duration-1000">
+                        {/* Mobile Back Button */}
+                        <div className="md:hidden mb-4">
+                            {filters.subCategory ? (
+                                <button 
+                                    onClick={() => setFilters(prev => ({ ...prev, subCategory: null }))}
+                                    className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-rouge-mid hover:text-rouge active:scale-95 transition-all py-1.5 px-3 bg-white/70 rounded-full border border-or/20 shadow-sm"
+                                >
+                                    <span>← Toutes les sous-catégories</span>
+                                </button>
+                            ) : (
+                                <Link 
+                                    href="/catalogue"
+                                    className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-rouge-mid hover:text-rouge active:scale-95 transition-all py-1.5 px-3 bg-white/70 rounded-full border border-or/20 shadow-sm"
+                                >
+                                    <span>← Toutes les catégories</span>
+                                </Link>
+                            )}
+                        </div>
+
                         <SubCategoryWidgets 
                             subCategories={categoryInfo.subCategories}
                             activeSubSlug={filters.subCategory}
@@ -147,6 +167,12 @@ export default function CategoryPage() {
                             title={`L'Univers ${categoryInfo.name}`}
                             subtitle="Plus de précision"
                         />
+
+                        {!filters.subCategory && (
+                            <p className="text-center text-[10px] font-bold uppercase tracking-[0.3em] text-encre3/60 py-6 md:hidden">
+                                Veuillez sélectionner une sous-catégorie
+                            </p>
+                        )}
                     </div>
                 )}
 
@@ -175,7 +201,7 @@ export default function CategoryPage() {
                     </aside>
 
                     {/* Main Content Area */}
-                    <section className="flex-grow">
+                    <section className={cn("flex-grow", (!filters.subCategory && hasSubCategories) && "hidden md:block")}>
                         <div className="mb-10">
                             <ProductSort 
                                 total={products.length}

@@ -164,13 +164,15 @@ function CatalogueContent() {
                         </div>
 
                         <div className="flex items-center gap-3">
-                            <button 
-                                onClick={() => setIsMobileFiltersOpen(true)}
-                                className="lg:hidden flex items-center gap-3 px-6 py-3 bg-encre text-creme rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl active:scale-95 transition-all"
-                            >
-                                <Filter size={14} />
-                                Filtrer
-                            </button>
+                            {(filters.category || filters.search) && (
+                                <button 
+                                    onClick={() => setIsMobileFiltersOpen(true)}
+                                    className="lg:hidden flex items-center gap-3 px-6 py-3 bg-encre text-creme rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl active:scale-95 transition-all"
+                                >
+                                    <Filter size={14} />
+                                    Filtrer
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -191,7 +193,7 @@ function CatalogueContent() {
                             } else {
                                 setFilters(prev => ({ ...prev, category: slug, subCategory: null }));
                                 if (slug) {
-                                    router.push(`/catalogue?category=${slug}`);
+                                    router.push(`/categories/${slug}`);
                                 } else {
                                     router.push('/catalogue');
                                 }
@@ -200,6 +202,11 @@ function CatalogueContent() {
                         title={activeCategoryData ? `Collection ${activeCategoryData.name}` : "Collections Populaires"}
                         subtitle={activeCategoryData ? "Explorez par sous-catégorie" : "Explorez par univers"}
                     />
+                    {(!filters.category && !filters.search) && (
+                        <p className="text-center text-[10px] font-bold uppercase tracking-[0.3em] text-encre3/60 py-6 md:hidden">
+                            Choisissez une catégorie pour continuer
+                        </p>
+                    )}
                 </div>
 
                 {/* Return/Reset Banner */}
@@ -292,7 +299,7 @@ function CatalogueContent() {
                     </aside>
 
                     {/* Main Content Area */}
-                    <section className="flex-grow">
+                    <section className={cn("flex-grow", (!filters.category && !filters.search) && "hidden md:block")}>
                         <div className="mb-10">
                             <ProductSort
                                 total={products.length}
