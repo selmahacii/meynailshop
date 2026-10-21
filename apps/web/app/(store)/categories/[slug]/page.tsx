@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import ProductCard from '@/components/store/products/ProductCard';
 import ProductFilters, { FilterState } from '@/components/store/products/ProductFilters';
@@ -17,8 +17,6 @@ const FALLBACK_CATEGORY = { name: 'Catégorie', description: 'Découvrez notre s
 
 export default function CategoryPage() {
     const { slug } = useParams();
-    const router = useRouter();
-    const [allCategories, setAllCategories] = useState<any[]>([]);
     const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
     const [categoryInfo, setCategoryInfo] = useState<any>(FALLBACK_CATEGORY);
     const [products, setProducts] = useState<any[]>([]);
@@ -36,14 +34,6 @@ export default function CategoryPage() {
             setFilters(prev => ({ ...prev, category: slug as string }));
         }
     }, [slug]);
-
-    useEffect(() => {
-        StoreAPI.getCategories().then(res => {
-            if (res.success && res.data) {
-                setAllCategories(res.data);
-            }
-        });
-    }, []);
 
     useEffect(() => {
         let mounted = true;
@@ -147,50 +137,18 @@ export default function CategoryPage() {
                     </div>
                 </div>
 
-                {/* Categories Universe Section */}
-                <div className="animate-in fade-in slide-in-from-top-4 duration-1000">
-                    {/* On Mobile: Back to All Categories button */}
-                    <div className="md:hidden mb-4">
-                        <Link 
-                            href="/catalogue"
-                            className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-rouge-mid hover:text-rouge active:scale-95 transition-all py-1.5 px-3 bg-white/70 rounded-full border border-or/20 shadow-sm"
-                        >
-                            <span>← Toutes les catégories</span>
-                        </Link>
-                    </div>
-
-                    {/* On Mobile: Always show Catégories Principales (never subcategories) */}
-                    <div className="md:hidden">
+                {/* Sub-categories Universe Section */}
+                {categoryInfo.subCategories && categoryInfo.subCategories.length > 0 && (
+                    <div className="animate-in fade-in slide-in-from-top-4 duration-1000">
                         <SubCategoryWidgets 
-                            subCategories={allCategories}
-                            activeSubSlug={categoryInfo.slug || (slug as string)}
-                            onSelect={(targetSlug) => {
-                                if (targetSlug) {
-                                    router.push(`/categories/${targetSlug}`);
-                                } else {
-                                    router.push('/catalogue');
-                                }
-                            }}
-                            title="Nos Univers de Beauté"
-                            subtitle="Collections Principales"
-                            showAllButton={true}
+                            subCategories={categoryInfo.subCategories}
+                            activeSubSlug={filters.subCategory}
+                            onSelect={(slug) => setFilters(prev => ({ ...prev, subCategory: slug }))}
+                            title={`L'Univers ${categoryInfo.name}`}
+                            subtitle="Plus de précision"
                         />
                     </div>
-
-                    {/* On Desktop: Show sub-categories if any exist */}
-                    {categoryInfo.subCategories && categoryInfo.subCategories.length > 0 && (
-                        <div className="hidden md:block">
-                            <SubCategoryWidgets 
-                                subCategories={categoryInfo.subCategories}
-                                activeSubSlug={filters.subCategory}
-                                onSelect={(s) => setFilters(prev => ({ ...prev, subCategory: s }))}
-                                title={`L'Univers ${categoryInfo.name}`}
-                                subtitle="Sous-catégories"
-                                showAllButton={true}
-                            />
-                        </div>
-                    )}
-                </div>
+                )}
 
                 <div className="flex flex-col lg:flex-row gap-12 items-start mt-4">
                     {/* Desktop Sidebar */}

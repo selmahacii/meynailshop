@@ -25,11 +25,9 @@ export default function HomePage() {
                 ]);
 
                 if (catRes.success) {
-
                     setCategories(catRes.data || []);
                 }
                 if (featRes.success) {
-
                     setFeaturedProducts(featRes.data || []);
                 }
             } catch (err) {
@@ -61,37 +59,68 @@ export default function HomePage() {
                     </p>
                 </div>
 
-                {/* Un seul container identique au style des catégories */}
-                <div className="flex justify-center">
-                    <Link 
-                        href="/catalogue"
-                        className="w-full max-w-xs sm:max-w-sm bg-white border border-gold-brand/10 hover:border-gold-brand/35 transition-all duration-500 rounded-[20px] sm:rounded-[24px] overflow-hidden flex flex-col group cursor-pointer hover:-translate-y-1.5 shadow-sm hover:shadow-2xl hover:shadow-gold-brand/5 active:scale-95"
-                    >
-                        <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden border-b border-gold-brand/5">
-                            <img 
-                                src="https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=800&auto=format&fit=crop" 
-                                alt="Voir toutes les catégories" 
-                                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                                loading="eager"
-                            />
-                            <div className="absolute inset-0 bg-[#390102]/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
-                            <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 bg-gradient-to-t from-black/70 via-black/30 to-transparent z-20 flex justify-center">
-                                <span className="text-gold-brand text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] bg-rouge-brand/90 backdrop-blur-sm px-4 py-1.5 rounded-full border border-gold-brand/30 shadow-md flex items-center gap-1.5">
-                                    Découvrir les collections →
-                                </span>
-                            </div>
-                        </div>
-                        <div className="p-5 sm:p-6 text-center flex-grow flex flex-col justify-center bg-white">
-                            <p className="font-playfair italic text-[10px] sm:text-[11px] text-gold-brand uppercase tracking-[0.2em] mb-1">Collections</p>
-                            <h3 className="font-italiana text-base sm:text-xl text-encre group-hover:text-rouge-mid transition-colors duration-300 font-bold leading-tight">
-                                Voir toutes les catégories
-                            </h3>
-                            <p className="text-[11px] font-playfair italic text-encre3 mt-2">
-                                Vernis, Matériel, Construction & Nail Art
-                            </p>
-                        </div>
-                    </Link>
-                </div>
+                {loading && categories.length === 0 ? (
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                        {[...Array(4)].map((_, i) => (
+                            <CategorySkeleton key={i} />
+                        ))}
+                    </div>
+                ) : categories.length > 0 ? (
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                        {categories.map((cat) => {
+                            const categoryImages: Record<string, string> = {
+                                'vernis--couleurs': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e572a715-7818-4367-9127-8a6130e6b774.webp',
+                                'vernis-couleurs': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e572a715-7818-4367-9127-8a6130e6b774.webp',
+                                'matriel': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/715de6aa-e62f-42ad-99ca-7972a199302b.webp',
+                                'materiel': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/715de6aa-e62f-42ad-99ca-7972a199302b.webp',
+                                'construction--technique': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e4a86494-0ba6-4f74-b6d1-048d4feb8996.webp',
+                                'construction-technique': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e4a86494-0ba6-4f74-b6d1-048d4feb8996.webp',
+                                'nail-art--dcoration': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/62b0d839-6237-4b68-843f-a0f5ce1bec9c.webp',
+                                'nail-art-decoration': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/62b0d839-6237-4b68-843f-a0f5ce1bec9c.webp'
+                            };
+
+                            const rawImage = cat.imageUrl || cat.image || '';
+                            const isPlaceholder = !rawImage || rawImage.includes('placeholder') || rawImage.includes('placehold.co');
+                            
+                            const slug = cat.slug || cat.name?.toLowerCase().replace(/\s+/g, '-');
+                            const displayImage = isPlaceholder 
+                                ? (categoryImages[slug] || 'https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=600&auto=format&fit=crop')
+                                : rawImage;
+
+                            return (
+                                <Link 
+                                    key={cat.id || cat.name} 
+                                    href={`/categories/${slug}`}
+                                    className="w-full bg-white border border-gold-brand/10 hover:border-gold-brand/35 transition-all duration-500 rounded-[20px] sm:rounded-[24px] overflow-hidden flex flex-col group cursor-pointer hover:-translate-y-1.5 shadow-sm hover:shadow-2xl hover:shadow-gold-brand/5 active:scale-95"
+                                >
+                                    <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden border-b border-gold-brand/5">
+                                        <img 
+                                            src={displayImage} 
+                                            alt={cat.name} 
+                                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                                            loading="eager"
+                                        />
+                                        <div className="absolute inset-0 bg-[#390102]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+                                        <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-rouge-brand/90 backdrop-blur-sm z-20 md:flex justify-center hidden">
+                                            <span className="text-gold-brand text-[9px] font-black uppercase tracking-[0.2em]">Découvrir la collection</span>
+                                        </div>
+                                    </div>
+                                    <div className="p-4 sm:p-5 text-center flex-grow flex flex-col justify-center bg-white">
+                                        <p className="font-playfair italic text-[10px] text-gold-brand uppercase tracking-[0.2em] mb-1">Collection</p>
+                                        <h3 className="font-italiana text-xs sm:text-base md:text-lg text-encre group-hover:text-rouge-mid transition-colors duration-300 font-bold leading-tight min-h-[2.4em] flex items-center justify-center">
+                                            {cat.name}
+                                        </h3>
+                                    </div>
+                                </Link>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <div className="text-center py-20 bg-creme2/50 rounded-2xl border border-dashed border-or/20">
+                        <p className="text-encre/50 italic mb-4">Aucune catégorie n'est disponible pour le moment.</p>
+                        <button onClick={() => window.location.reload()} className="text-or text-sm font-bold underline">Actualiser la page</button>
+                    </div>
+                )}
             </section>
 
             {/* Meilleures Ventes */}

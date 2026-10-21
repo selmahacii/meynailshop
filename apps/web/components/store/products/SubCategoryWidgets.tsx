@@ -20,14 +20,17 @@ interface SubCategoryWidgetsProps {
     onSelect: (slug: string | null) => void;
     title?: string;
     subtitle?: string;
-    showAllButton?: boolean;
 }
 
 const CATEGORY_DEFAULT_IMAGES: Record<string, string> = {
     'vernis--couleurs': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e572a715-7818-4367-9127-8a6130e6b774.webp',
+    'vernis-couleurs': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e572a715-7818-4367-9127-8a6130e6b774.webp',
     'matriel': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/715de6aa-e62f-42ad-99ca-7972a199302b.webp',
+    'materiel': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/715de6aa-e62f-42ad-99ca-7972a199302b.webp',
     'construction--technique': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e4a86494-0ba6-4f74-b6d1-048d4feb8996.webp',
-    'nail-art--dcoration': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/62b0d839-6237-4b68-843f-a0f5ce1bec9c.webp'
+    'construction-technique': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e4a86494-0ba6-4f74-b6d1-048d4feb8996.webp',
+    'nail-art--dcoration': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/62b0d839-6237-4b68-843f-a0f5ce1bec9c.webp',
+    'nail-art-decoration': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/62b0d839-6237-4b68-843f-a0f5ce1bec9c.webp'
 };
 
 export default function SubCategoryWidgets({ 
@@ -35,56 +38,64 @@ export default function SubCategoryWidgets({
     activeSubSlug, 
     onSelect,
     title = "Explorez nos univers",
-    subtitle = "Collections Principales",
-    showAllButton = true,
+    subtitle = "Nos spécialités"
 }: SubCategoryWidgetsProps) {
     if (!subCategories || subCategories.length === 0) return null;
 
     return (
-        <div className="mb-12 -mx-4 px-4 sm:mx-0 sm:px-0">
-            <div className="flex items-center justify-between mb-6 md:mb-8 border-b border-creme2 pb-3">
+        <div className="mb-16 -mx-4 px-4 sm:mx-0 sm:px-0">
+            <div className="flex items-center justify-between mb-10 border-b border-creme2 pb-4">
                 <div className="flex flex-col">
-                    <h2 className="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-encre">{title}</h2>
-                    <p className="text-[8px] md:text-[9px] text-or font-bold uppercase tracking-widest mt-1">{subtitle}</p>
+                    <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-encre">{title}</h2>
+                    <p className="text-[9px] text-or font-bold uppercase tracking-widest mt-1">{subtitle}</p>
                 </div>
-                {activeSubSlug && (
-                    <button 
-                        onClick={() => onSelect(null)}
-                        className="flex items-center gap-2 group transition-all"
-                    >
-                        <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-encre3 group-hover:text-rouge-mid">Tout voir</span>
-                        <div className="w-5 h-5 rounded-full border border-creme2 flex items-center justify-center group-hover:bg-creme transition-colors">
-                            <X size={10} className="text-encre3" />
-                        </div>
-                    </button>
-                )}
+                <button 
+                    onClick={() => onSelect(null)}
+                    className={cn(
+                        "flex items-center gap-2 group transition-all",
+                        !activeSubSlug && "opacity-0 pointer-events-none"
+                    )}
+                >
+                    <span className="text-[10px] font-black uppercase tracking-widest text-encre3 group-hover:text-rouge-mid">Tout voir</span>
+                    <div className="w-5 h-5 rounded-full border border-creme2 flex items-center justify-center group-hover:bg-creme transition-colors">
+                        <X size={10} className="text-encre3" />
+                    </div>
+                </button>
             </div>
             
-            <div className="flex items-start gap-4 md:gap-6 overflow-x-auto no-scrollbar pb-4 snap-x">
-                {/* "Tout Voir" General Card */}
-                {showAllButton && (
-                    <div 
-                        onClick={() => onSelect(null)}
-                        className="flex flex-col flex-shrink-0 snap-start w-[110px] sm:w-[130px] md:w-[160px] cursor-pointer group transition-all duration-300"
-                    >
-                        <div className={cn(
-                            "w-full bg-white shadow-sm hover:shadow-lg rounded-[20px] overflow-hidden flex flex-col border-2 transition-all duration-300",
-                            !activeSubSlug ? "border-or shadow-or/15 ring-2 ring-or/10" : "border-gold-brand/15 hover:border-gold-brand/40"
-                        )}>
-                            <div className="relative aspect-[4/5] w-full bg-encre flex items-center justify-center overflow-hidden border-b border-gold-brand/15">
-                                <span className="text-creme text-[9px] md:text-[11px] font-black uppercase tracking-widest text-center px-2">TOUT VOIR</span>
-                            </div>
-                            <div className="p-2 sm:p-3 text-center flex-grow flex flex-col justify-center bg-white">
-                                <p className={cn(
-                                    "font-italiana text-xs md:text-sm font-bold tracking-wide transition-colors line-clamp-1 leading-tight",
-                                    !activeSubSlug ? "text-or font-bold" : "text-encre group-hover:text-rouge-mid"
-                                )}>
-                                    Toutes
-                                </p>
-                            </div>
+            <div className={cn(
+                "pb-6 snap-x",
+                !activeSubSlug 
+                    ? "grid grid-cols-2 gap-4 sm:gap-6 md:flex md:items-start md:gap-8 md:overflow-x-auto md:no-scrollbar" 
+                    : "flex items-start gap-4 md:gap-8 overflow-x-auto no-scrollbar"
+            )}>
+                {/* "All" Widget - Always Horizontal if activeSubSlug */}
+                <div 
+                    onClick={() => onSelect(null)}
+                    className={cn(
+                        "cursor-pointer group transition-all duration-500",
+                        !activeSubSlug 
+                            ? "hidden md:flex flex-col items-center flex-shrink-0 snap-start" 
+                            : "flex flex-col flex-shrink-0 snap-start max-w-[120px] md:max-w-[200px]"
+                    )}
+                >
+                    <div className={cn(
+                        "w-full bg-white shadow-sm hover:shadow-lg rounded-[24px] overflow-hidden flex flex-col border-2 transition-all duration-500",
+                        !activeSubSlug ? "border-or shadow-or/10 ring-4 ring-or/5" : "border-gold-brand/10 hover:border-gold-brand/30"
+                    )}>
+                        <div className="relative aspect-[4/5] w-full bg-encre flex items-center justify-center overflow-hidden border-b-2 border-gold-brand/15">
+                            <span className="text-creme text-[10px] md:text-xs font-black uppercase tracking-widest text-center px-4">TOUT VOIR</span>
+                        </div>
+                        <div className="p-3 md:p-4 text-center flex-grow flex flex-col justify-center">
+                            <p className={cn(
+                                "font-italiana text-[13px] md:text-xl font-bold tracking-wide transition-colors line-clamp-2 md:line-clamp-1 leading-tight",
+                                !activeSubSlug ? "text-or font-bold" : "text-encre group-hover:text-rouge-mid"
+                            )}>
+                                Général
+                            </p>
                         </div>
                     </div>
-                )}
+                </div>
 
                 {subCategories.map((sub: any) => {
                     const isActive = activeSubSlug === sub.slug;
@@ -97,43 +108,47 @@ export default function SubCategoryWidgets({
                         <div
                             key={sub.id || sub.slug}
                             onClick={() => onSelect(sub.slug)}
-                            className="flex flex-col flex-shrink-0 snap-start w-[125px] sm:w-[145px] md:w-[180px] cursor-pointer group transition-all duration-300"
+                            className={cn(
+                                "cursor-pointer group transition-all duration-500",
+                                !activeSubSlug
+                                    ? "w-full flex flex-col md:w-[180px] md:flex-shrink-0 md:snap-start mb-4"
+                                    : "flex flex-col flex-shrink-0 snap-start w-[140px] md:w-[180px]"
+                            )}
                         >
                             <div className={cn(
-                                "w-full bg-white shadow-sm hover:shadow-2xl rounded-[20px] overflow-hidden flex flex-col transition-all duration-300 border-2",
+                                "w-full bg-white shadow-sm hover:shadow-2xl rounded-[24px] overflow-hidden flex flex-col transition-all duration-500 border-2",
                                 isActive 
-                                    ? "border-or scale-[1.02] shadow-xl shadow-or/15 ring-2 ring-or/15" 
-                                    : "border-gold-brand/15 hover:border-gold-brand/40"
+                                    ? "border-or scale-[1.02] md:scale-105 shadow-xl shadow-or/10 ring-4 ring-or/10" 
+                                    : "border-gold-brand/15 hover:border-gold-brand/35"
                             )}>
-                                <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden border-b border-gold-brand/15">
+                                <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden border-b-2 border-gold-brand/15">
                                     <img 
                                         src={displayImg} 
                                         alt={sub.name} 
                                         className={cn(
-                                            "absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out",
+                                            "absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out",
                                             !isActive && "group-hover:scale-105"
                                         )} 
                                         loading="lazy"
                                     />
                                     {sub.hasNewArrivals && (
-                                        <div className="absolute top-2 left-2 z-10">
-                                            <span className="text-[7px] font-black uppercase tracking-[0.2em] px-1.5 py-0.5 rounded-sm shadow-md bg-rouge-brand text-gold-brand border border-gold-brand/20">
+                                        <div className="absolute top-2 left-2 md:top-3 md:left-3 z-10">
+                                            <span className="text-[7px] md:text-[8px] font-black uppercase tracking-[0.2em] px-1.5 md:px-2 py-0.5 md:py-1 rounded-sm shadow-md bg-rouge-brand text-gold-brand border border-gold-brand/20">
                                                 Nouveau
                                             </span>
                                         </div>
                                     )}
-                                    <div className="absolute inset-x-0 bottom-0 p-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-encre/80 via-encre/40 to-transparent z-20 hidden md:flex justify-center">
-                                        <span className="text-creme text-[8px] font-bold uppercase tracking-widest">{isActive ? "Sélectionné" : "Explorer"}</span>
+                                    <div className="absolute inset-x-0 bottom-0 p-2 md:p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-encre/80 via-encre/40 to-transparent z-20 hidden md:flex justify-center">
+                                        <span className="text-creme text-[8px] md:text-[9px] font-bold uppercase tracking-widest">{isActive ? "Sélectionné" : "Explorer"}</span>
                                     </div>
                                 </div>
-                                <div className="p-2 sm:p-3 text-center flex-grow flex flex-col justify-center bg-white">
-                                    <p className="font-playfair italic text-[8px] md:text-[9px] text-gold-brand uppercase tracking-[0.2em] mb-0.5">Collection</p>
-                                    <h3 className={cn(
-                                        "font-italiana text-xs md:text-sm font-bold tracking-wide transition-colors line-clamp-1 leading-tight",
+                                <div className="p-3 md:p-4 text-center flex-grow flex flex-col justify-center">
+                                    <p className={cn(
+                                        "font-italiana text-[13px] md:text-lg font-bold tracking-wide transition-colors line-clamp-2 min-h-[2.4em] flex items-center justify-center leading-tight",
                                         isActive ? "text-or font-bold" : "text-encre group-hover:text-rouge-mid"
                                     )}>
                                         {sub.name}
-                                    </h3>
+                                    </p>
                                 </div>
                             </div>
                         </div>
