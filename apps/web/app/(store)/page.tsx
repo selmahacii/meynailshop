@@ -120,6 +120,17 @@ export default function HomePage() {
                         <button onClick={() => window.location.reload()} className="text-or text-sm font-bold underline">Actualiser la page</button>
                     </div>
                 )}
+
+                {/* Mobile: Link to Catalogue */}
+                <div className="mt-12 text-center md:hidden">
+                    <Link 
+                        href="/catalogue"
+                        className="inline-flex items-center gap-2 px-8 py-3.5 bg-rouge-brand text-gold-brand border border-gold-brand/20 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all"
+                    >
+                        <span>Voir tout le catalogue</span>
+                        <span>→</span>
+                    </Link>
+                </div>
             </section>
 
             {/* Meilleures Ventes */}
@@ -139,7 +150,7 @@ export default function HomePage() {
                                 Les indispensables et favoris plébiscités par nos artistes les plus exigeants.
                             </p>
                         </div>
-                        <Link href="/catalogue?badge=top" className="group/btn text-rouge-mid font-black uppercase tracking-[0.2em] text-xs hover:text-rouge transition-all flex items-center gap-1.5 py-1">
+                        <Link href="/catalogue" className="group/btn text-rouge-mid font-black uppercase tracking-[0.2em] text-xs hover:text-rouge transition-all flex items-center gap-1.5 py-1">
                             <span className="relative">
                                 Voir tout
                                 <span className="absolute bottom-0 left-0 right-0 h-[1px] bg-rouge-mid scale-x-100 group-hover/btn:scale-x-0 transition-transform duration-300 origin-left" />

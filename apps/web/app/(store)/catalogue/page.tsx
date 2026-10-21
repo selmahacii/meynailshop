@@ -10,10 +10,22 @@ import { StoreAPI } from '@/lib/api/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCardSkeleton from '@/components/store/products/ProductCardSkeleton';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
-import { X, Loader2, AlertCircle, Filter, SlidersHorizontal, ArrowRight } from 'lucide-react';
+import { X, Loader2, AlertCircle, Filter, SlidersHorizontal, ArrowRight, ArrowLeft } from 'lucide-react';
 import SubCategoryWidgets from '@/components/store/products/SubCategoryWidgets';
 import { cn } from '@/lib/utils';
+import { formatImageUrl } from '@/lib/utils/image';
 import { useSearchParams, useRouter } from 'next/navigation';
+
+const CATEGORY_DEFAULT_IMAGES: Record<string, string> = {
+    'vernis--couleurs': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e572a715-7818-4367-9127-8a6130e6b774.webp',
+    'vernis-couleurs': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e572a715-7818-4367-9127-8a6130e6b774.webp',
+    'matriel': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/715de6aa-e62f-42ad-99ca-7972a199302b.webp',
+    'materiel': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/715de6aa-e62f-42ad-99ca-7972a199302b.webp',
+    'construction--technique': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e4a86494-0ba6-4f74-b6d1-048d4feb8996.webp',
+    'construction-technique': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e4a86494-0ba6-4f74-b6d1-048d4feb8996.webp',
+    'nail-art--dcoration': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/62b0d839-6237-4b68-843f-a0f5ce1bec9c.webp',
+    'nail-art-decoration': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/62b0d839-6237-4b68-843f-a0f5ce1bec9c.webp'
+};
 
 import { Suspense } from 'react';
 
@@ -111,7 +123,7 @@ function CatalogueContent() {
                     params.sortBy = 'price';
                     params.order = 'desc';
                 } else if (sortBy === 'popular') {
-                    params.badge = 'top';
+                    params.sortBy = 'popular';
                 }
 
                 const res = await StoreAPI.getProducts(1, 50, params);
@@ -164,37 +176,117 @@ function CatalogueContent() {
                         </div>
 
                         <div className="flex items-center gap-3">
-                            <button 
-                                onClick={() => setIsMobileFiltersOpen(true)}
-                                className="lg:hidden flex items-center gap-3 px-6 py-3 bg-encre text-creme rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl active:scale-95 transition-all"
-                            >
-                                <Filter size={14} />
-                                Filtrer
-                            </button>
+                            {(filters.category || filters.search) && (
+                                <button 
+                                    onClick={() => setIsMobileFiltersOpen(true)}
+                                    className="lg:hidden flex items-center gap-3 px-6 py-3 bg-encre text-creme rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl active:scale-95 transition-all"
+                                >
+                                    <Filter size={14} />
+                                    Filtrer
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
 
+                {/* Mobile: Categories Showcase when no category is selected */}
+                {!filters.category && !filters.search && (
+                    <div className="md:hidden mb-12 animate-in fade-in duration-700">
+                        <div className="mb-6 flex items-center justify-between border-b border-creme2 pb-3">
+                            <div>
+                                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-or block mb-1">Nos Collections</span>
+                                <h2 className="font-italiana text-2xl text-encre">Choisissez une Catégorie</h2>
+                            </div>
+                            <span className="text-[9px] font-bold text-encre3 uppercase tracking-wider bg-white px-3 py-1 rounded-full border border-creme2">
+                                {allCategories.length} Univers
+                            </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            {allCategories.map((cat: any) => {
+                                const rawImg = cat.imageUrl || cat.image || '';
+                                const displayImg = (!rawImg || rawImg.includes('placeholder'))
+                                    ? (CATEGORY_DEFAULT_IMAGES[cat.slug] || 'https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=400')
+                                    : formatImageUrl(rawImg);
+
+                                return (
+                                    <div
+                                        key={cat.id || cat.slug}
+                                        onClick={() => {
+                                            setFilters(prev => ({ ...prev, category: cat.slug, subCategory: null }));
+                                            router.push(`/catalogue?category=${cat.slug}`);
+                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        }}
+                                        className="bg-white rounded-[22px] overflow-hidden border border-gold-brand/15 shadow-sm active:scale-95 transition-all flex flex-col group cursor-pointer"
+                                    >
+                                        <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden">
+                                            <img
+                                                src={displayImg}
+                                                alt={cat.name}
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                loading="lazy"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                                            <div className="absolute bottom-2.5 left-2.5 right-2.5">
+                                                <span className="inline-flex items-center gap-1 text-[8px] font-black uppercase tracking-[0.18em] text-gold-brand bg-rouge-brand/90 backdrop-blur-md px-2.5 py-1 rounded-full border border-gold-brand/25 shadow-md">
+                                                    Voir produits →
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="p-3.5 bg-white text-center flex-grow flex flex-col justify-center">
+                                            <p className="text-[8px] font-bold uppercase tracking-[0.2em] text-gold-brand mb-0.5">Collection</p>
+                                            <h3 className="font-italiana text-sm font-bold text-encre line-clamp-1">
+                                                {cat.name}
+                                            </h3>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
+
+                {/* Mobile: Active Category Navigation Bar */}
+                {filters.category && (
+                    <div className="md:hidden mb-6 flex items-center justify-between bg-white/80 backdrop-blur-md p-3 px-4 rounded-2xl border border-gold-brand/20 shadow-sm animate-in fade-in">
+                        <button
+                            onClick={() => {
+                                setFilters(prev => ({ ...prev, category: null, subCategory: null }));
+                                router.push('/catalogue');
+                            }}
+                            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-rouge-mid hover:text-rouge active:scale-95 transition-all"
+                        >
+                            <ArrowLeft size={14} />
+                            <span>Toutes les catégories</span>
+                        </button>
+                        <span className="text-[10px] font-bold text-or uppercase tracking-wider truncate max-w-[140px]">
+                            {activeCategoryData?.name}
+                        </span>
+                    </div>
+                )}
+
                 {/* Universe Widgets */}
                 <div className="animate-in fade-in slide-in-from-top-4 duration-1000">
-                    {/* On Mobile: Always Catégories Principales (never subcategories) */}
-                    <div className="md:hidden">
-                        <SubCategoryWidgets 
-                            subCategories={allCategories}
-                            activeSubSlug={filters.category}
-                            onSelect={(targetSlug) => {
-                                setFilters(prev => ({ ...prev, category: targetSlug, subCategory: null }));
-                                if (targetSlug) {
-                                    router.push(`/catalogue?category=${targetSlug}`);
-                                } else {
-                                    router.push('/catalogue');
-                                }
-                            }}
-                            title="Nos Univers de Beauté"
-                            subtitle="Catégories Principales"
-                            showAllButton={true}
-                        />
-                    </div>
+                    {/* On Mobile: When category is selected, allow quick horizontal switching between main categories */}
+                    {filters.category && (
+                        <div className="md:hidden">
+                            <SubCategoryWidgets 
+                                subCategories={allCategories}
+                                activeSubSlug={filters.category}
+                                onSelect={(targetSlug) => {
+                                    setFilters(prev => ({ ...prev, category: targetSlug, subCategory: null }));
+                                    if (targetSlug) {
+                                        router.push(`/catalogue?category=${targetSlug}`);
+                                    } else {
+                                        router.push('/catalogue');
+                                    }
+                                }}
+                                title="Changer d'univers"
+                                subtitle="Collections Principales"
+                                showAllButton={true}
+                            />
+                        </div>
+                    )}
 
                     {/* On Desktop: Show sub-categories if category selected, otherwise main categories */}
                     <div className="hidden md:block">
@@ -315,7 +407,7 @@ function CatalogueContent() {
                     </aside>
 
                     {/* Main Content Area */}
-                    <section className="flex-grow">
+                    <section className={cn("flex-grow", (!filters.category && !filters.search) && "hidden md:block")}>
                         <div className="mb-10">
                             <ProductSort
                                 total={products.length}

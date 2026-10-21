@@ -81,7 +81,7 @@ export default function CategoryPage() {
                     params.sortBy = 'price';
                     params.order = 'desc';
                 } else if (sortBy === 'popular') {
-                    params.badge = 'top';
+                    params.sortBy = 'popular';
                 }
 
                 const res = await StoreAPI.getProducts(1, 48, params);
@@ -149,6 +149,16 @@ export default function CategoryPage() {
 
                 {/* Categories Universe Section */}
                 <div className="animate-in fade-in slide-in-from-top-4 duration-1000">
+                    {/* On Mobile: Back to All Categories button */}
+                    <div className="md:hidden mb-4">
+                        <Link 
+                            href="/catalogue"
+                            className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-rouge-mid hover:text-rouge active:scale-95 transition-all py-1.5 px-3 bg-white/70 rounded-full border border-or/20 shadow-sm"
+                        >
+                            <span>← Toutes les catégories</span>
+                        </Link>
+                    </div>
+
                     {/* On Mobile: Always show Catégories Principales (never subcategories) */}
                     <div className="md:hidden">
                         <SubCategoryWidgets 
