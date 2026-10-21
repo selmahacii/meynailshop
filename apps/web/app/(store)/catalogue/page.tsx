@@ -158,7 +158,7 @@ function CatalogueContent() {
         <div className="pt-32 pb-24 bg-creme min-h-screen font-sans selection:bg-or selection:text-white">
             <div className="container mx-auto px-4">
                 {/* Header Section */}
-                <div className="mb-12">
+                <div className={cn("mb-12", (!filters.category && !filters.search) && "hidden md:block")}>
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div className="space-y-4">
                             <Breadcrumbs 
@@ -189,23 +189,28 @@ function CatalogueContent() {
                     </div>
                 </div>
 
-                {/* Mobile: Categories Showcase when no category is selected */}
+                {/* Mobile: Exact same UI Container as "Nos Univers de Beauté" */}
                 {!filters.category && !filters.search && (
-                    <div className="md:hidden mb-12 animate-in fade-in duration-700">
-                        <div className="mb-6 flex items-center justify-between border-b border-creme2 pb-3">
-                            <div>
-                                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-or block mb-1">Nos Collections</span>
-                                <h2 className="font-italiana text-2xl text-encre">Choisissez une Catégorie</h2>
+                    <div className="md:hidden pt-2 pb-16 animate-in fade-in duration-700">
+                        <div className="flex flex-col items-center mb-12 text-center">
+                            <div className="flex items-center gap-3 mb-4">
+                                <span className="text-[10px] font-bold tracking-[0.4em] text-gold-brand">01</span>
+                                <div className="w-8 h-[1px] bg-gold-brand/30"></div>
+                                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold-brand">LES COLLECTIONS</span>
                             </div>
-                            <span className="text-[9px] font-bold text-encre3 uppercase tracking-wider bg-white px-3 py-1 rounded-full border border-creme2">
-                                {allCategories.length} Univers
-                            </span>
+                            <h2 className="font-italiana text-4xl sm:text-5xl text-[#390102] tracking-[0.08em] uppercase">
+                                Nos Univers <span className="font-playfair italic lowercase text-gold-brand">de</span> Beauté
+                            </h2>
+                            <p className="font-playfair italic font-light text-sm text-encre3 mt-4 max-w-sm mx-auto leading-relaxed">
+                                Chaque gamme incarne notre quête absolue d'excellence et d'innovation pour vos créations d'exception.
+                            </p>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             {allCategories.map((cat: any) => {
                                 const rawImg = cat.imageUrl || cat.image || '';
-                                const displayImg = (!rawImg || rawImg.includes('placeholder'))
+                                const isPlaceholder = !rawImg || rawImg.includes('placeholder') || rawImg.includes('placehold.co');
+                                const displayImg = isPlaceholder
                                     ? (CATEGORY_DEFAULT_IMAGES[cat.slug] || 'https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=400')
                                     : formatImageUrl(rawImg);
 
@@ -217,25 +222,20 @@ function CatalogueContent() {
                                             router.push(`/catalogue?category=${cat.slug}`);
                                             window.scrollTo({ top: 0, behavior: 'smooth' });
                                         }}
-                                        className="bg-white rounded-[22px] overflow-hidden border border-gold-brand/15 shadow-sm active:scale-95 transition-all flex flex-col group cursor-pointer"
+                                        className="w-full bg-white border border-gold-brand/10 hover:border-gold-brand/35 transition-all duration-500 rounded-[20px] overflow-hidden flex flex-col group cursor-pointer active:scale-95 shadow-sm hover:shadow-xl"
                                     >
-                                        <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden">
-                                            <img
-                                                src={displayImg}
-                                                alt={cat.name}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                                loading="lazy"
+                                        <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden border-b border-gold-brand/5">
+                                            <img 
+                                                src={displayImg} 
+                                                alt={cat.name} 
+                                                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                                                loading="eager"
                                             />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                                            <div className="absolute bottom-2.5 left-2.5 right-2.5">
-                                                <span className="inline-flex items-center gap-1 text-[8px] font-black uppercase tracking-[0.18em] text-gold-brand bg-rouge-brand/90 backdrop-blur-md px-2.5 py-1 rounded-full border border-gold-brand/25 shadow-md">
-                                                    Voir produits →
-                                                </span>
-                                            </div>
+                                            <div className="absolute inset-0 bg-[#390102]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
                                         </div>
-                                        <div className="p-3.5 bg-white text-center flex-grow flex flex-col justify-center">
-                                            <p className="text-[8px] font-bold uppercase tracking-[0.2em] text-gold-brand mb-0.5">Collection</p>
-                                            <h3 className="font-italiana text-sm font-bold text-encre line-clamp-1">
+                                        <div className="p-4 text-center flex-grow flex flex-col justify-center bg-white">
+                                            <p className="font-playfair italic text-[10px] text-gold-brand uppercase tracking-[0.2em] mb-1">Collection</p>
+                                            <h3 className="font-italiana text-xs sm:text-base text-encre group-hover:text-rouge-mid transition-colors duration-300 font-bold leading-tight min-h-[2.4em] flex items-center justify-center">
                                                 {cat.name}
                                             </h3>
                                         </div>

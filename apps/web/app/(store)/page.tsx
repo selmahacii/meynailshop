@@ -106,7 +106,7 @@ export default function HomePage() {
                                     </div>
                                     <div className="p-4 sm:p-5 text-center flex-grow flex flex-col justify-center bg-white">
                                         <p className="font-playfair italic text-[10px] text-gold-brand uppercase tracking-[0.2em] mb-1">Collection</p>
-                                        <h3 className="font-italiana text-sm sm:text-lg text-encre group-hover:text-rouge-mid transition-colors duration-300 font-bold leading-tight line-clamp-1">
+                                        <h3 className="font-italiana text-xs sm:text-base md:text-lg text-encre group-hover:text-rouge-mid transition-colors duration-300 font-bold leading-tight min-h-[2.4em] flex items-center justify-center">
                                             {cat.name}
                                         </h3>
                                     </div>
