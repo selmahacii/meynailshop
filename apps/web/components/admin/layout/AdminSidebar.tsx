@@ -17,6 +17,7 @@ import {
     ChevronRight,
     Zap,
     X,
+    Truck,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
@@ -30,6 +31,7 @@ const menuItems = [
     { name: 'Clients', href: '/admin/clients', icon: Users, badge: null },
     { name: 'Avis clients', href: '/admin/avis', icon: MessageSquare, badge: 0 },
     { name: 'Historique', href: '/admin/historique', icon: Layers, badge: null },
+    { name: 'Tarifs Livraison', href: '/admin/livraison', icon: Truck, badge: null },
     { name: 'Paramètres', href: '/admin/parametres', icon: Settings, badge: null },
 ];
 

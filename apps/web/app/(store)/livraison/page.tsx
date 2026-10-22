@@ -10,7 +10,11 @@ export default function LivraisonPage() {
     const { settings, loading } = useSettings();
     const [searchTerm, setSearchTerm] = useState('');
 
-    const filteredWilayas = SHIPPING_RATES.filter(w => 
+    const activeRates: WilayaShipping[] = (settings?.shippingFees && Array.isArray(settings.shippingFees) && settings.shippingFees.length > 0)
+        ? settings.shippingFees
+        : SHIPPING_RATES;
+
+    const filteredWilayas = activeRates.filter((w: any) => 
         w.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
         w.id.includes(searchTerm)
     );

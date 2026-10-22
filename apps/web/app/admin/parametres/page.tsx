@@ -272,6 +272,63 @@ export default function AdminSettingsPage() {
                         </>
                     )}
 
+                    {activeTab === 'livraison' && (
+                        <div className="space-y-6">
+                            <div className="bg-white rounded-xl border border-creme2 shadow-lg p-8">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-creme2">
+                                    <div>
+                                        <h2 className="font-serif text-2xl text-encre">Frais de Livraison & Expédition</h2>
+                                        <p className="text-xs text-encre3 mt-1">Configurez le seuil de gratuité et les tarifs de livraison pour chaque wilaya d'Algérie.</p>
+                                    </div>
+                                    <Link
+                                        href="/admin/livraison"
+                                        className="inline-flex items-center gap-2 px-5 py-3 bg-[#390102] text-[#BFA893] rounded-xl text-xs font-bold uppercase tracking-widest hover:opacity-90 shadow-md transition-all shrink-0"
+                                    >
+                                        <Truck size={16} />
+                                        <span>Gérer la grille des 58 Wilayas</span>
+                                    </Link>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase tracking-widest text-encre3 mb-2">Frais de livraison par défaut (DA)</label>
+                                        <input 
+                                            type="number" 
+                                            value={settings?.shippingCostDefault || 600} 
+                                            onChange={(e) => handleChange('shippingCostDefault', parseInt(e.target.value))}
+                                            className="w-full px-4 py-3 bg-creme border border-creme2 rounded-xl text-sm text-encre focus:outline-none focus:border-or transition-all font-bold" 
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase tracking-widest text-encre3 mb-2">Seuil livraison gratuite (DA)</label>
+                                        <input 
+                                            type="number" 
+                                            value={settings?.freeShippingThreshold || 10000} 
+                                            onChange={(e) => handleChange('freeShippingThreshold', parseInt(e.target.value))}
+                                            className="w-full px-4 py-3 bg-creme border border-creme2 rounded-xl text-sm text-encre focus:outline-none focus:border-or transition-all font-bold" 
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="mt-8 p-6 bg-creme/30 rounded-2xl border border-gold-brand/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                    <div>
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-gold-brand">Grille Dynamique Complète</span>
+                                        <h3 className="font-serif text-lg text-encre mt-0.5">Tarifs individualisés pour les 58 Wilayas</h3>
+                                        <p className="text-xs text-encre3 mt-1 leading-relaxed">
+                                            Modifiez les prix de livraison à domicile, en point relais, ainsi que les délais d'acheminement avec application immédiate en caisse.
+                                        </p>
+                                    </div>
+                                    <Link
+                                        href="/admin/livraison"
+                                        className="px-5 py-2.5 bg-white border border-gold-brand/30 hover:border-gold-brand text-encre rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm shrink-0"
+                                    >
+                                        Ouvrir l'éditeur des wilayas →
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {activeTab === 'seo' && (
                         <div className="bg-white rounded-xl border border-creme2 shadow-lg p-20 flex flex-col items-center justify-center text-center relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-or/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
@@ -296,7 +353,7 @@ export default function AdminSettingsPage() {
                         </div>
                     )}
 
-                    {!['boutique', 'seo'].includes(activeTab) && (
+                    {!['boutique', 'livraison', 'seo'].includes(activeTab) && (
                         <div className="bg-white rounded-xl border border-creme2 shadow-lg p-16 flex flex-col items-center justify-center text-center">
                             <div className="w-16 h-16 bg-creme rounded-full flex items-center justify-center mb-6 border border-creme2">
                                 {(() => {

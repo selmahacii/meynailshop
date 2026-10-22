@@ -12,6 +12,7 @@ export interface Settings {
     shippingCostDefault: number;
     freeShippingThreshold: number;
     onglerieCollectionImage?: string;
+    shippingFees?: any[];
 }
 
 const defaultSettings: Settings = {

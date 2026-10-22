@@ -16,10 +16,12 @@ enum PaymentMethod {
 }
 import { toast } from 'sonner';
 import { SHIPPING_RATES } from '@/lib/constants/shipping';
+import { useSettings } from '@/lib/hooks/useSettings';
 import CheckoutProgress from '@/components/store/checkout/CheckoutProgress';
 
 export default function CheckoutPage() {
     const { items, getSubtotal, getTotal, clear } = useCartStore();
+    const { settings } = useSettings();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
@@ -36,13 +38,20 @@ export default function CheckoutPage() {
 
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(PaymentMethod.CASH_ON_DELIVERY);
 
-    const wilayas = SHIPPING_RATES;
+    const activeShippingRates = (settings?.shippingFees && Array.isArray(settings.shippingFees) && settings.shippingFees.length > 0)
+        ? settings.shippingFees
+        : SHIPPING_RATES;
 
-    // Real shipping calculation
-    const selectedWilayaRate = SHIPPING_RATES.find(w => w.id === formData.wilaya);
-    const shippingCost = selectedWilayaRate 
-        ? (formData.deliveryType === 'home' ? selectedWilayaRate.homeRate : (selectedWilayaRate.deskRate ?? selectedWilayaRate.homeRate))
-        : 0;
+    const wilayas = activeShippingRates;
+
+    // Real shipping calculation from active dynamic rates
+    const selectedWilayaRate = activeShippingRates.find((w: any) => w.id === formData.wilaya);
+    const isFreeShipping = Boolean(settings?.freeShippingThreshold && getSubtotal() >= settings.freeShippingThreshold);
+    const shippingCost = isFreeShipping 
+        ? 0 
+        : (selectedWilayaRate 
+            ? (formData.deliveryType === 'home' ? selectedWilayaRate.homeRate : (selectedWilayaRate.deskRate ?? selectedWilayaRate.homeRate))
+            : (formData.wilaya ? (settings?.shippingCostDefault || 600) : 0));
     const finalTotal = getTotal() + shippingCost;
 
     const handleSubmit = async (e: React.FormEvent) => {
