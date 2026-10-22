@@ -69,83 +69,73 @@ export default function HomePage() {
                     </div>
                 ) : categories.length > 0 ? (
                     <>
-                        {/* Mobile Only: Single Container for "PRODUITS ONGLERIE" */}
-                        <div className="md:hidden flex justify-center px-4">
-                            <Link 
-                                href="/catalogue"
-                                className="w-full max-w-[230px] bg-white border border-gold-brand/15 hover:border-gold-brand/40 transition-all duration-500 rounded-[20px] overflow-hidden flex flex-col group cursor-pointer shadow-md hover:shadow-xl hover:shadow-gold-brand/10 active:scale-95"
-                            >
-                                <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden border-b border-gold-brand/10">
-                                    <img 
-                                        src={settings?.onglerieCollectionImage || "https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=800&auto=format&fit=crop"} 
-                                        alt="Produits Onglerie" 
-                                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                                        loading="eager"
-                                    />
-                                    <div className="absolute inset-0 bg-[#390102]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
-                                    <div className="absolute inset-x-0 bottom-0 p-2.5 bg-rouge-brand/90 backdrop-blur-sm z-20 flex justify-center">
-                                        <span className="text-gold-brand text-[8px] font-black uppercase tracking-[0.2em]">Découvrir les catégories</span>
+                        {/* If single category (Produits Onglerie), show centered elegant collection container */}
+                        {categories.length === 1 ? (
+                            <div className="flex justify-center px-4">
+                                <Link 
+                                    href={`/categories/${categories[0].slug || 'produits-onglerie'}`}
+                                    className="w-full max-w-[240px] sm:max-w-[280px] md:max-w-[320px] bg-white border border-gold-brand/15 hover:border-gold-brand/40 transition-all duration-500 rounded-[20px] sm:rounded-[24px] overflow-hidden flex flex-col group cursor-pointer shadow-md hover:shadow-2xl hover:shadow-gold-brand/15 active:scale-95 hover:-translate-y-1.5"
+                                >
+                                    <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden border-b border-gold-brand/10">
+                                        <img 
+                                            src={settings?.onglerieCollectionImage || categories[0].imageUrl || "https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=800&auto=format&fit=crop"} 
+                                            alt={categories[0].name || "Produits Onglerie"} 
+                                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                                            loading="eager"
+                                        />
+                                        <div className="absolute inset-0 bg-[#390102]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+                                        <div className="absolute inset-x-0 bottom-0 p-3 bg-rouge-brand/90 backdrop-blur-sm z-20 flex justify-center">
+                                            <span className="text-gold-brand text-[9px] font-black uppercase tracking-[0.2em]">Découvrir les sous-catégories</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="p-3.5 text-center flex-grow flex flex-col justify-center bg-white">
-                                    <p className="font-playfair italic text-[9px] text-gold-brand uppercase tracking-[0.2em] mb-0.5">Collection</p>
-                                    <h3 className="font-italiana text-sm font-bold text-encre group-hover:text-rouge-mid transition-colors duration-300 leading-tight">
-                                        Produits Onglerie
-                                    </h3>
-                                </div>
-                            </Link>
-                        </div>
+                                    <div className="p-4 sm:p-5 text-center flex-grow flex flex-col justify-center bg-white">
+                                        <p className="font-playfair italic text-[10px] text-gold-brand uppercase tracking-[0.2em] mb-1">Collection Exclusive</p>
+                                        <h3 className="font-italiana text-base sm:text-xl font-bold text-encre group-hover:text-rouge-mid transition-colors duration-300 leading-tight">
+                                            {categories[0].name || "Produits Onglerie"}
+                                        </h3>
+                                    </div>
+                                </Link>
+                            </div>
+                        ) : (
+                            /* Multiple Categories Grid */
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                                {categories.map((cat) => {
+                                    const rawImage = cat.imageUrl || cat.image || '';
+                                    const isPlaceholder = !rawImage || rawImage.includes('placeholder') || rawImage.includes('placehold.co');
+                                    const slug = cat.slug || cat.name?.toLowerCase().replace(/\s+/g, '-');
+                                    const displayImage = isPlaceholder 
+                                        ? 'https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=600&auto=format&fit=crop'
+                                        : rawImage;
 
-                        {/* Desktop Only: Categories Grid */}
-                        <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                            {categories.map((cat) => {
-                                const categoryImages: Record<string, string> = {
-                                    'vernis--couleurs': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e572a715-7818-4367-9127-8a6130e6b774.webp',
-                                    'vernis-couleurs': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e572a715-7818-4367-9127-8a6130e6b774.webp',
-                                    'matriel': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/715de6aa-e62f-42ad-99ca-7972a199302b.webp',
-                                    'materiel': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/715de6aa-e62f-42ad-99ca-7972a199302b.webp',
-                                    'construction--technique': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e4a86494-0ba6-4f74-b6d1-048d4feb8996.webp',
-                                    'construction-technique': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/e4a86494-0ba6-4f74-b6d1-048d4feb8996.webp',
-                                    'nail-art--dcoration': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/62b0d839-6237-4b68-843f-a0f5ce1bec9c.webp',
-                                    'nail-art-decoration': 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/62b0d839-6237-4b68-843f-a0f5ce1bec9c.webp'
-                                };
-
-                                const rawImage = cat.imageUrl || cat.image || '';
-                                const isPlaceholder = !rawImage || rawImage.includes('placeholder') || rawImage.includes('placehold.co');
-                                
-                                const slug = cat.slug || cat.name?.toLowerCase().replace(/\s+/g, '-');
-                                const displayImage = isPlaceholder 
-                                    ? (categoryImages[slug] || 'https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=600&auto=format&fit=crop')
-                                    : rawImage;
-
-                                return (
-                                    <Link 
-                                        key={cat.id || cat.name} 
-                                        href={`/categories/${slug}`}
-                                        className="w-full bg-white border border-gold-brand/10 hover:border-gold-brand/35 transition-all duration-500 rounded-[20px] sm:rounded-[24px] overflow-hidden flex flex-col group cursor-pointer hover:-translate-y-1.5 shadow-sm hover:shadow-2xl hover:shadow-gold-brand/5 active:scale-95"
-                                    >
-                                        <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden border-b border-gold-brand/5">
-                                            <img 
-                                                src={displayImage} 
-                                                alt={cat.name} 
-                                                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                                                loading="eager"
-                                            />
-                                            <div className="absolute inset-0 bg-[#390102]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
-                                            <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-rouge-brand/90 backdrop-blur-sm z-20 md:flex justify-center hidden">
-                                                <span className="text-gold-brand text-[9px] font-black uppercase tracking-[0.2em]">Découvrir la collection</span>
+                                    return (
+                                        <Link 
+                                            key={cat.id || cat.name} 
+                                            href={`/categories/${slug}`}
+                                            className="w-full bg-white border border-gold-brand/10 hover:border-gold-brand/35 transition-all duration-500 rounded-[20px] sm:rounded-[24px] overflow-hidden flex flex-col group cursor-pointer hover:-translate-y-1.5 shadow-sm hover:shadow-2xl hover:shadow-gold-brand/5 active:scale-95"
+                                        >
+                                            <div className="relative aspect-[4/5] w-full bg-creme2 overflow-hidden border-b border-gold-brand/5">
+                                                <img 
+                                                    src={displayImage} 
+                                                    alt={cat.name} 
+                                                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                                                    loading="eager"
+                                                />
+                                                <div className="absolute inset-0 bg-[#390102]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+                                                <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-rouge-brand/90 backdrop-blur-sm z-20 md:flex justify-center hidden">
+                                                    <span className="text-gold-brand text-[9px] font-black uppercase tracking-[0.2em]">Découvrir la collection</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="p-4 sm:p-5 text-center flex-grow flex flex-col justify-center bg-white">
-                                            <p className="font-playfair italic text-[10px] text-gold-brand uppercase tracking-[0.2em] mb-1">Collection</p>
-                                            <h3 className="font-italiana text-xs sm:text-base md:text-lg text-encre group-hover:text-rouge-mid transition-colors duration-300 font-bold leading-tight min-h-[2.4em] flex items-center justify-center">
-                                                {cat.name}
-                                            </h3>
-                                        </div>
-                                    </Link>
-                                );
-                            })}
-                        </div>
+                                            <div className="p-4 sm:p-5 text-center flex-grow flex flex-col justify-center bg-white">
+                                                <p className="font-playfair italic text-[10px] text-gold-brand uppercase tracking-[0.2em] mb-1">Collection</p>
+                                                <h3 className="font-italiana text-xs sm:text-base md:text-lg text-encre group-hover:text-rouge-mid transition-colors duration-300 font-bold leading-tight min-h-[2.4em] flex items-center justify-center">
+                                                    {cat.name}
+                                                </h3>
+                                            </div>
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </>
                 ) : (
                     <div className="text-center py-20 bg-creme2/50 rounded-2xl border border-dashed border-or/20">

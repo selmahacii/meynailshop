@@ -1,9 +1,10 @@
 import { Repository } from 'typeorm';
-import { Category, SubCategory } from '../../database/entities';
+import { Category, SubCategory, Product } from '../../database/entities';
 export declare class CategoriesService {
     private categoryRepository;
     private subCategoryRepository;
-    constructor(categoryRepository: Repository<Category>, subCategoryRepository: Repository<SubCategory>);
+    private productRepository;
+    constructor(categoryRepository: Repository<Category>, subCategoryRepository: Repository<SubCategory>, productRepository: Repository<Product>);
     create(createCategoryDto: any): Promise<Category[]>;
     findAll(): Promise<Category[]>;
     createSubCategory(categoryId: string, data: any): Promise<SubCategory[]>;
@@ -30,7 +31,7 @@ export declare class CategoriesService {
         displayOrder: number;
         isActive: boolean;
         createdAt: Date;
-        products: import("../../database/entities").Product[];
+        products: Product[];
     }>;
     findOne(id: string): Promise<Category>;
     update(id: string, updateCategoryDto: any): Promise<Category>;
@@ -39,4 +40,18 @@ export declare class CategoriesService {
     }>;
     removeSubCategory(id: string): Promise<SubCategory>;
     updateSubCategory(id: string, data: any): Promise<SubCategory>;
+    getSubCategoryProducts(subCategoryId: string): Promise<Product[]>;
+    assignProductsToSubCategory(subCategoryId: string, productIds: string[]): Promise<{
+        success: boolean;
+        count: number;
+        subCategory?: undefined;
+    } | {
+        success: boolean;
+        count: number;
+        subCategory: SubCategory;
+    }>;
+    removeProductFromSubCategory(subCategoryId: string, productId: string): Promise<{
+        success: boolean;
+        message: string;
+    }>;
 }

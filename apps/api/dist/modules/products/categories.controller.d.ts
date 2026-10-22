@@ -1,6 +1,6 @@
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto, CreateSubCategoryDto, UpdateSubCategoryDto } from './dto/categories.dto';
+import { UpdateCategoryDto, CreateSubCategoryDto, UpdateSubCategoryDto, AssignProductsDto } from './dto/categories.dto';
 export declare class CategoriesController {
     private categoriesService;
     constructor(categoriesService: CategoriesService);
@@ -62,5 +62,28 @@ export declare class CategoriesController {
     updateSub(id: string, data: UpdateSubCategoryDto): Promise<{
         statusCode: number;
         data: import("../../database/entities").SubCategory;
+    }>;
+    getSubProducts(id: string): Promise<{
+        statusCode: number;
+        data: import("../../database/entities").Product[];
+    }>;
+    assignProducts(id: string, data: AssignProductsDto): Promise<{
+        statusCode: number;
+        data: {
+            success: boolean;
+            count: number;
+            subCategory?: undefined;
+        } | {
+            success: boolean;
+            count: number;
+            subCategory: import("../../database/entities").SubCategory;
+        };
+    }>;
+    removeProductFromSub(id: string, productId: string): Promise<{
+        statusCode: number;
+        data: {
+            success: boolean;
+            message: string;
+        };
     }>;
 }

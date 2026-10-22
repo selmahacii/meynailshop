@@ -19,9 +19,10 @@ const typeorm_2 = require("typeorm");
 const entities_1 = require("../../database/entities");
 const slug_util_1 = require("../../common/utils/slug.util");
 let CategoriesService = class CategoriesService {
-    constructor(categoryRepository, subCategoryRepository) {
+    constructor(categoryRepository, subCategoryRepository, productRepository) {
         this.categoryRepository = categoryRepository;
         this.subCategoryRepository = subCategoryRepository;
+        this.productRepository = productRepository;
     }
     async create(createCategoryDto) {
         const slug = createCategoryDto.slug || (0, slug_util_1.generateSlug)(createCategoryDto.name);
@@ -148,8 +149,62 @@ let CategoriesService = class CategoriesService {
         const sub = await this.subCategoryRepository.findOne({ where: { id } });
         if (!sub)
             throw new common_1.NotFoundException('SubCategory not found');
-        Object.assign(sub, data);
+        if (data.categoryId && data.categoryId !== sub.categoryId) {
+            const parentCat = await this.categoryRepository.findOne({ where: { id: data.categoryId } });
+            if (!parentCat)
+                throw new common_1.NotFoundException('New parent category not found');
+            sub.categoryId = data.categoryId;
+            await this.productRepository.update({ subCategoryId: id }, { categoryId: data.categoryId });
+        }
+        if (data.name !== undefined)
+            sub.name = data.name;
+        if (data.slug !== undefined)
+            sub.slug = data.slug;
+        if (data.imageUrl !== undefined)
+            sub.imageUrl = data.imageUrl;
+        if (data.description !== undefined)
+            sub.description = data.description;
+        if (data.displayOrder !== undefined)
+            sub.displayOrder = data.displayOrder;
+        if (data.isActive !== undefined)
+            sub.isActive = data.isActive;
         return await this.subCategoryRepository.save(sub);
+    }
+    async getSubCategoryProducts(subCategoryId) {
+        const sub = await this.subCategoryRepository.findOne({ where: { id: subCategoryId } });
+        if (!sub)
+            throw new common_1.NotFoundException('SubCategory not found');
+        return await this.productRepository.find({
+            where: { subCategoryId },
+            order: { createdAt: 'DESC' },
+        });
+    }
+    async assignProductsToSubCategory(subCategoryId, productIds) {
+        const sub = await this.subCategoryRepository.findOne({ where: { id: subCategoryId } });
+        if (!sub)
+            throw new common_1.NotFoundException('SubCategory not found');
+        if (!productIds || productIds.length === 0) {
+            return { success: true, count: 0 };
+        }
+        const updateRes = await this.productRepository.update({ id: (0, typeorm_2.In)(productIds) }, {
+            subCategoryId: sub.id,
+            categoryId: sub.categoryId,
+        });
+        return {
+            success: true,
+            count: updateRes.affected || 0,
+            subCategory: sub,
+        };
+    }
+    async removeProductFromSubCategory(subCategoryId, productId) {
+        const product = await this.productRepository.findOne({ where: { id: productId } });
+        if (!product)
+            throw new common_1.NotFoundException('Product not found');
+        if (product.subCategoryId === subCategoryId) {
+            product.subCategoryId = null;
+            await this.productRepository.save(product);
+        }
+        return { success: true, message: 'Product detached from sub-category' };
     }
 };
 exports.CategoriesService = CategoriesService;
@@ -157,7 +212,9 @@ exports.CategoriesService = CategoriesService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(entities_1.Category)),
     __param(1, (0, typeorm_1.InjectRepository)(entities_1.SubCategory)),
+    __param(2, (0, typeorm_1.InjectRepository)(entities_1.Product)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository])
 ], CategoriesService);
 //# sourceMappingURL=categories.service.js.map

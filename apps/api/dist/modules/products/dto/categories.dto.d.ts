@@ -16,4 +16,8 @@ export declare class UpdateSubCategoryDto {
     slug?: string;
     imageUrl?: string;
     isActive?: boolean;
+    categoryId?: string;
+}
+export declare class AssignProductsDto {
+    productIds: string[];
 }

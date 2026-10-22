@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Category, SubCategory } from '../../database/entities';
+import { Repository, In } from 'typeorm';
+import { Category, SubCategory, Product } from '../../database/entities';
 import { generateSlug } from '../../common/utils/slug.util';
 
 @Injectable()
@@ -11,6 +11,8 @@ export class CategoriesService {
     private categoryRepository: Repository<Category>,
     @InjectRepository(SubCategory)
     private subCategoryRepository: Repository<SubCategory>,
+    @InjectRepository(Product)
+    private productRepository: Repository<Product>,
   ) {}
 
   async create(createCategoryDto: any) {
@@ -163,7 +165,72 @@ export class CategoriesService {
   async updateSubCategory(id: string, data: any) {
     const sub = await this.subCategoryRepository.findOne({ where: { id } });
     if (!sub) throw new NotFoundException('SubCategory not found');
-    Object.assign(sub, data);
+
+    if (data.categoryId && data.categoryId !== sub.categoryId) {
+      const parentCat = await this.categoryRepository.findOne({ where: { id: data.categoryId } });
+      if (!parentCat) throw new NotFoundException('New parent category not found');
+
+      sub.categoryId = data.categoryId;
+
+      // Also transfer all existing products of this subcategory to the new parent category
+      await this.productRepository.update(
+        { subCategoryId: id },
+        { categoryId: data.categoryId }
+      );
+    }
+
+    if (data.name !== undefined) sub.name = data.name;
+    if (data.slug !== undefined) sub.slug = data.slug;
+    if (data.imageUrl !== undefined) sub.imageUrl = data.imageUrl;
+    if (data.description !== undefined) sub.description = data.description;
+    if (data.displayOrder !== undefined) sub.displayOrder = data.displayOrder;
+    if (data.isActive !== undefined) sub.isActive = data.isActive;
+
     return await this.subCategoryRepository.save(sub);
+  }
+
+  async getSubCategoryProducts(subCategoryId: string) {
+    const sub = await this.subCategoryRepository.findOne({ where: { id: subCategoryId } });
+    if (!sub) throw new NotFoundException('SubCategory not found');
+
+    return await this.productRepository.find({
+      where: { subCategoryId },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async assignProductsToSubCategory(subCategoryId: string, productIds: string[]) {
+    const sub = await this.subCategoryRepository.findOne({ where: { id: subCategoryId } });
+    if (!sub) throw new NotFoundException('SubCategory not found');
+
+    if (!productIds || productIds.length === 0) {
+      return { success: true, count: 0 };
+    }
+
+    const updateRes = await this.productRepository.update(
+      { id: In(productIds) },
+      {
+        subCategoryId: sub.id,
+        categoryId: sub.categoryId,
+      }
+    );
+
+    return {
+      success: true,
+      count: updateRes.affected || 0,
+      subCategory: sub,
+    };
+  }
+
+  async removeProductFromSubCategory(subCategoryId: string, productId: string) {
+    const product = await this.productRepository.findOne({ where: { id: productId } });
+    if (!product) throw new NotFoundException('Product not found');
+
+    if (product.subCategoryId === subCategoryId) {
+      product.subCategoryId = null as any;
+      await this.productRepository.save(product);
+    }
+
+    return { success: true, message: 'Product detached from sub-category' };
   }
 }

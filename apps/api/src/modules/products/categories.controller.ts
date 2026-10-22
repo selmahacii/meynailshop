@@ -13,7 +13,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto, CreateSubCategoryDto, UpdateSubCategoryDto } from './dto/categories.dto';
+import { UpdateCategoryDto, CreateSubCategoryDto, UpdateSubCategoryDto, AssignProductsDto } from './dto/categories.dto';
 
 @Controller('categories')
 export class CategoriesController {
@@ -94,6 +94,39 @@ export class CategoriesController {
     return {
       statusCode: 200,
       data: await this.categoriesService.updateSubCategory(id, data),
+    };
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @Get('sub-categories/:id/products')
+  async getSubProducts(@Param('id') id: string) {
+    return {
+      statusCode: 200,
+      data: await this.categoriesService.getSubCategoryProducts(id),
+    };
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @Post('sub-categories/:id/products')
+  async assignProducts(@Param('id') id: string, @Body() data: AssignProductsDto) {
+    return {
+      statusCode: 200,
+      data: await this.categoriesService.assignProductsToSubCategory(id, data.productIds),
+    };
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @Delete('sub-categories/:id/products/:productId')
+  async removeProductFromSub(
+    @Param('id') id: string,
+    @Param('productId') productId: string,
+  ) {
+    return {
+      statusCode: 200,
+      data: await this.categoriesService.removeProductFromSubCategory(id, productId),
     };
   }
 }

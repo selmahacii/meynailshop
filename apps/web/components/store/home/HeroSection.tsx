@@ -52,7 +52,7 @@ export default function HeroSection() {
 
                     <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 w-full sm:w-auto">
                         <Link
-                            href="/catalogue?view=sous-categories"
+                            href="/categories/produits-onglerie"
                             className="bg-gold-brand hover:bg-creme text-rouge-brand px-10 py-5 rounded-[4px] font-bold uppercase tracking-[0.2em] text-[10px] sm:text-xs transition-all duration-300 flex items-center justify-center group shadow-xl hover:shadow-gold-brand/20 active:scale-95 w-full sm:w-auto"
                         >
                             Découvrir la collection

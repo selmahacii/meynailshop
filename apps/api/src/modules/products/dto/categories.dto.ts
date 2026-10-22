@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsBoolean, IsNumber } from 'class-validator';
+import { IsOptional, IsString, IsBoolean, IsNumber, IsArray } from 'class-validator';
 
 export class UpdateCategoryDto {
   @IsOptional()
@@ -55,4 +55,15 @@ export class UpdateSubCategoryDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @IsOptional()
+  @IsString()
+  categoryId?: string;
 }
+
+export class AssignProductsDto {
+  @IsArray()
+  @IsString({ each: true })
+  productIds: string[];
+}
+
