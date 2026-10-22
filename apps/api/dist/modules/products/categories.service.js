@@ -102,15 +102,19 @@ let CategoriesService = class CategoriesService {
         const slugs = Array.from(new Set([raw, clean, doubleDash, raw.toLowerCase()]));
         const category = await this.categoryRepository
             .createQueryBuilder('category')
-            .leftJoinAndSelect('category.subCategories', 'subCategory')
+            .leftJoinAndSelect('category.subCategories', 'subCategory', 'subCategory.isActive = :subActive', { subActive: true })
             .leftJoinAndSelect('subCategory.products', 'product')
             .where('category.isActive = :isActive', { isActive: true })
             .andWhere('category.slug IN (:...slugs)', { slugs })
+            .orderBy('subCategory.displayOrder', 'ASC')
             .getOne();
         if (!category) {
             throw new common_1.NotFoundException('Category not found');
         }
-        const subCategories = category.subCategories.map(sub => {
+        const activeSubs = (category.subCategories || [])
+            .filter(sub => sub.isActive)
+            .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+        const subCategories = activeSubs.map(sub => {
             const productCount = sub.products ? sub.products.length : 0;
             const hasNewArrivals = sub.products?.some(p => p.badge === 'new' || p.createdAt > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
             const { products, ...rest } = sub;

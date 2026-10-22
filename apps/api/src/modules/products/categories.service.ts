@@ -104,18 +104,24 @@ export class CategoriesService {
 
     const category = await this.categoryRepository
       .createQueryBuilder('category')
-      .leftJoinAndSelect('category.subCategories', 'subCategory')
+      .leftJoinAndSelect('category.subCategories', 'subCategory', 'subCategory.isActive = :subActive', { subActive: true })
       .leftJoinAndSelect('subCategory.products', 'product')
       .where('category.isActive = :isActive', { isActive: true })
       .andWhere('category.slug IN (:...slugs)', { slugs })
+      .orderBy('subCategory.displayOrder', 'ASC')
       .getOne();
 
     if (!category) {
       throw new NotFoundException('Category not found');
     }
 
+    // Filter active and sort subcategories
+    const activeSubs = (category.subCategories || [])
+      .filter(sub => sub.isActive)
+      .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+
     // Enrich subcategories with product count and "isNew" flag
-    const subCategories = category.subCategories.map(sub => {
+    const subCategories = activeSubs.map(sub => {
       const productCount = sub.products ? sub.products.length : 0;
       const hasNewArrivals = sub.products?.some(p => p.badge === 'new' || p.createdAt > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
       
