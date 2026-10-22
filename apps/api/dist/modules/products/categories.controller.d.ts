@@ -6,7 +6,29 @@ export declare class CategoriesController {
     constructor(categoriesService: CategoriesService);
     findAll(): Promise<{
         statusCode: number;
-        data: import("../../database/entities").Category[];
+        data: {
+            subCategories: {
+                productsCount: number;
+                id: string;
+                name: string;
+                slug: string;
+                description: string;
+                displayOrder: number;
+                isActive: boolean;
+                imageUrl: string;
+                categoryId: string;
+                category: import("../../database/entities").Category;
+            }[];
+            id: string;
+            name: string;
+            slug: string;
+            description: string;
+            imageUrl: string;
+            displayOrder: number;
+            isActive: boolean;
+            createdAt: Date;
+            products: import("../../database/entities").Product[];
+        }[];
     }>;
     findBySlug(slug: string): Promise<{
         statusCode: number;

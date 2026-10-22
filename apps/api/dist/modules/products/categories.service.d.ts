@@ -6,7 +6,29 @@ export declare class CategoriesService {
     private productRepository;
     constructor(categoryRepository: Repository<Category>, subCategoryRepository: Repository<SubCategory>, productRepository: Repository<Product>);
     create(createCategoryDto: any): Promise<Category[]>;
-    findAll(): Promise<Category[]>;
+    findAll(): Promise<{
+        subCategories: {
+            productsCount: number;
+            id: string;
+            name: string;
+            slug: string;
+            description: string;
+            displayOrder: number;
+            isActive: boolean;
+            imageUrl: string;
+            categoryId: string;
+            category: Category;
+        }[];
+        id: string;
+        name: string;
+        slug: string;
+        description: string;
+        imageUrl: string;
+        displayOrder: number;
+        isActive: boolean;
+        createdAt: Date;
+        products: Product[];
+    }[]>;
     createSubCategory(categoryId: string, data: any): Promise<SubCategory[]>;
     findSubBySlug(slug: string): Promise<SubCategory>;
     findBySlug(slug: string): Promise<{

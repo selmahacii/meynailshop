@@ -36,11 +36,25 @@ export class CategoriesService {
 
   async findAll() {
     try {
-      return await this.categoryRepository.find({
+      const categories = await this.categoryRepository.find({
         where: { isActive: true },
-        relations: ['subCategories'],
+        relations: ['subCategories', 'subCategories.products'],
         order: { displayOrder: 'ASC' }
       });
+
+      return categories.map(cat => ({
+        ...cat,
+        subCategories: (cat.subCategories || [])
+          .filter(sub => sub.isActive)
+          .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0))
+          .map(sub => {
+            const { products, ...subRest } = sub;
+            return {
+              ...subRest,
+              productsCount: products ? products.length : 0
+            };
+          })
+      }));
     } catch (error) {
       console.error('❌ [CategoriesService] findAll Error:', error);
       return [];
