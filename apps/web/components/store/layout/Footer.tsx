@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Instagram, Facebook, Mail, Phone, MapPin } from 'lucide-react';
+import { Instagram, Facebook, Mail, Phone, MapPin, Truck, ArrowRight } from 'lucide-react';
 import { useSettings } from '@/lib/hooks/useSettings';
 import { StoreAPI } from '@/lib/api/client';
 
@@ -30,6 +30,30 @@ export default function Footer() {
         <footer className="bg-rouge-brand text-gold-brand pt-20 pb-10 border-t border-gold-brand/10">
             <div className="container mx-auto px-6 sm:px-12 md:px-16">
 
+                {/* Delivery Rates Callout Banner */}
+                <div className="mb-14 p-6 sm:p-8 rounded-2xl bg-white/5 border border-gold-brand/20 backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+                    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+                        <div className="w-12 h-12 rounded-full bg-gold-brand/10 border border-gold-brand/20 flex items-center justify-center text-gold-brand shrink-0">
+                            <Truck size={22} />
+                        </div>
+                        <div>
+                            <h3 className="font-italiana text-lg text-gold-brand font-bold uppercase tracking-wider">
+                                Prix & Tarifs de Livraison (58 Wilayas)
+                            </h3>
+                            <p className="text-xs text-gold-brand/70 font-sans mt-1 max-w-xl leading-relaxed">
+                                Consultez tous les prix d'expédition à domicile et en point relais pour l'ensemble des 58 Wilayas d'Algérie.
+                            </p>
+                        </div>
+                    </div>
+
+                    <Link
+                        href="/livraison"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-gold-brand text-rouge-brand font-bold uppercase tracking-[0.15em] text-[10px] rounded-full hover:bg-white transition-all shadow-lg hover:scale-105 active:scale-95 shrink-0"
+                    >
+                        <span>Voir tous les prix de livraison</span>
+                        <ArrowRight size={13} />
+                    </Link>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
                     {/* Brand Info */}
@@ -97,8 +121,9 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/livraison" className="hover:text-white transition-colors duration-300 hover:translate-x-1 inline-block">
-                                    Livraison & Tarifs
+                                <Link href="/livraison" className="hover:text-white transition-colors duration-300 hover:translate-x-1 inline-flex items-center gap-1.5 font-bold text-gold-brand">
+                                    <Truck size={12} />
+                                    <span>Prix de livraison (58 Wilayas)</span>
                                 </Link>
                             </li>
                             <li>
@@ -149,7 +174,11 @@ export default function Footer() {
                 <div className="pt-8 border-t border-gold-brand/5 flex flex-col md:flex-row justify-between items-center text-[9px] uppercase tracking-[0.25em] text-gold-brand/40 gap-6">
                     <p>© 2026 {settings.shopName || "MEEY Nail Shop"}. Tous droits réservés.</p>
                     <p className="font-bold text-gold-brand/50 tracking-[0.3em] italic">Conçu & Réalisé par Selma Haci</p>
-                    <div className="flex space-x-6 mt-4 md:mt-0 font-sans font-medium">
+                    <div className="flex flex-wrap items-center gap-4 mt-4 md:mt-0 font-sans font-medium">
+                        <Link href="/livraison" className="hover:text-gold-brand transition-colors underline underline-offset-4 decoration-gold-brand/40">
+                            Prix de livraison (58 Wilayas)
+                        </Link>
+                        <span>•</span>
                         <span className="flex items-center gap-2">
                             <div className="w-1 h-1 bg-gold-brand/30 rounded-full"></div>
                             Paiement à la livraison
