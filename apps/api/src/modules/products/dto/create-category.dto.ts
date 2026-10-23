@@ -1,4 +1,5 @@
-import { IsString, IsOptional, IsNumber } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsBoolean } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateCategoryDto {
   @IsString()
@@ -8,16 +9,20 @@ export class CreateCategoryDto {
   @IsString()
   slug?: string;
 
+  @IsOptional()
   @IsString()
-  description: string;
-
-  @IsString()
-  imageUrl: string;
+  description?: string;
 
   @IsOptional()
+  @IsString()
+  imageUrl?: string;
+
+  @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   displayOrder?: number;
 
   @IsOptional()
+  @IsBoolean()
   isActive?: boolean;
 }

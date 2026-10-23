@@ -9,11 +9,17 @@ export declare class UpdateCategoryDto {
 export declare class CreateSubCategoryDto {
     name: string;
     slug?: string;
+    description?: string;
+    displayOrder?: number;
+    isActive?: boolean;
     imageUrl?: string;
+    categoryId?: string;
 }
 export declare class UpdateSubCategoryDto {
     name?: string;
     slug?: string;
+    description?: string;
+    displayOrder?: number;
     imageUrl?: string;
     isActive?: boolean;
     categoryId?: string;

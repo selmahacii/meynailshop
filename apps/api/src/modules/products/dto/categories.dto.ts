@@ -1,4 +1,5 @@
 import { IsOptional, IsString, IsBoolean, IsNumber, IsArray } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class UpdateCategoryDto {
   @IsOptional()
@@ -18,6 +19,7 @@ export class UpdateCategoryDto {
   imageUrl?: string;
 
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   displayOrder?: number;
 
@@ -36,7 +38,24 @@ export class CreateSubCategoryDto {
 
   @IsOptional()
   @IsString()
+  description?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  displayOrder?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+
+  @IsOptional()
+  @IsString()
   imageUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  categoryId?: string;
 }
 
 export class UpdateSubCategoryDto {
@@ -47,6 +66,15 @@ export class UpdateSubCategoryDto {
   @IsOptional()
   @IsString()
   slug?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  displayOrder?: number;
 
   @IsOptional()
   @IsString()
@@ -66,4 +94,5 @@ export class AssignProductsDto {
   @IsString({ each: true })
   productIds: string[];
 }
+
 

@@ -173,18 +173,27 @@ let CategoriesService = class CategoriesService {
             sub.categoryId = data.categoryId;
             await this.productRepository.update({ subCategoryId: id }, { categoryId: data.categoryId });
         }
-        if (data.name !== undefined)
-            sub.name = data.name;
-        if (data.slug !== undefined)
-            sub.slug = data.slug;
+        if (data.name !== undefined && data.name.trim() !== '') {
+            sub.name = data.name.trim();
+        }
+        if (data.slug !== undefined && data.slug.trim() !== '') {
+            const trimmedSlug = data.slug.trim();
+            if (trimmedSlug !== sub.slug) {
+                const existing = await this.subCategoryRepository.findOne({ where: { slug: trimmedSlug } });
+                if (existing && existing.id !== id) {
+                    throw new common_1.BadRequestException('SubCategory with this slug already exists');
+                }
+                sub.slug = trimmedSlug;
+            }
+        }
         if (data.imageUrl !== undefined)
-            sub.imageUrl = data.imageUrl;
+            sub.imageUrl = data.imageUrl || null;
         if (data.description !== undefined)
-            sub.description = data.description;
+            sub.description = data.description || null;
         if (data.displayOrder !== undefined)
-            sub.displayOrder = data.displayOrder;
+            sub.displayOrder = Number(data.displayOrder) || 0;
         if (data.isActive !== undefined)
-            sub.isActive = data.isActive;
+            sub.isActive = Boolean(data.isActive);
         return await this.subCategoryRepository.save(sub);
     }
     async getSubCategoryProducts(subCategoryId) {

@@ -199,12 +199,23 @@ export class CategoriesService {
       );
     }
 
-    if (data.name !== undefined) sub.name = data.name;
-    if (data.slug !== undefined) sub.slug = data.slug;
-    if (data.imageUrl !== undefined) sub.imageUrl = data.imageUrl;
-    if (data.description !== undefined) sub.description = data.description;
-    if (data.displayOrder !== undefined) sub.displayOrder = data.displayOrder;
-    if (data.isActive !== undefined) sub.isActive = data.isActive;
+    if (data.name !== undefined && data.name.trim() !== '') {
+      sub.name = data.name.trim();
+    }
+    if (data.slug !== undefined && data.slug.trim() !== '') {
+      const trimmedSlug = data.slug.trim();
+      if (trimmedSlug !== sub.slug) {
+        const existing = await this.subCategoryRepository.findOne({ where: { slug: trimmedSlug } });
+        if (existing && existing.id !== id) {
+          throw new BadRequestException('SubCategory with this slug already exists');
+        }
+        sub.slug = trimmedSlug;
+      }
+    }
+    if (data.imageUrl !== undefined) sub.imageUrl = data.imageUrl || null;
+    if (data.description !== undefined) sub.description = data.description || null;
+    if (data.displayOrder !== undefined) sub.displayOrder = Number(data.displayOrder) || 0;
+    if (data.isActive !== undefined) sub.isActive = Boolean(data.isActive);
 
     return await this.subCategoryRepository.save(sub);
   }

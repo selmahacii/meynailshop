@@ -171,11 +171,11 @@ export default function AdminCategoriesPage() {
             const method = editingCategory ? 'PATCH' : 'POST';
 
             const payload: any = {
-                name: catFormData.name,
-                slug: catFormData.slug || catFormData.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''),
-                description: catFormData.description,
-                imageUrl: catFormData.imageUrl,
-                displayOrder: catFormData.displayOrder
+                name: catFormData.name.trim(),
+                slug: catFormData.slug?.trim() || catFormData.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''),
+                description: catFormData.description?.trim() || undefined,
+                imageUrl: catFormData.imageUrl?.trim() || undefined,
+                displayOrder: Number(catFormData.displayOrder) || 0
             };
 
             const res = await apiFetch(url, {
@@ -315,12 +315,12 @@ export default function AdminCategoriesPage() {
                 const res = await apiFetch(`/api/categories/sub-categories/${editingSub.id}`, {
                     method: 'PATCH',
                     body: JSON.stringify({
-                        name: subFormData.name,
-                        slug: subFormData.slug || subFormData.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''),
+                        name: subFormData.name.trim(),
+                        slug: subFormData.slug?.trim() || subFormData.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''),
                         categoryId: subFormData.categoryId,
-                        imageUrl: subFormData.imageUrl,
-                        description: subFormData.description,
-                        displayOrder: subFormData.displayOrder,
+                        imageUrl: subFormData.imageUrl?.trim() || undefined,
+                        description: subFormData.description?.trim() || undefined,
+                        displayOrder: Number(subFormData.displayOrder) || 0,
                     })
                 });
 
@@ -339,9 +339,11 @@ export default function AdminCategoriesPage() {
                 const res = await apiFetch(`/api/categories/${subFormData.categoryId}/sub-categories`, {
                     method: 'POST',
                     body: JSON.stringify({
-                        name: subFormData.name,
-                        slug: subFormData.slug || subFormData.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''),
-                        imageUrl: subFormData.imageUrl,
+                        name: subFormData.name.trim(),
+                        slug: subFormData.slug?.trim() || subFormData.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''),
+                        imageUrl: subFormData.imageUrl?.trim() || undefined,
+                        description: subFormData.description?.trim() || undefined,
+                        displayOrder: Number(subFormData.displayOrder) || 0,
                     })
                 });
 
