@@ -17,37 +17,88 @@ export class ProductsService {
   ) { }
 
   private async generateNextSku(): Promise<string> {
-    const lastProduct = await this.productRepository.createQueryBuilder('product')
-      .where("product.sku LIKE 'MEEY-%'")
-      .orderBy("SUBSTRING(product.sku, 6)::INTEGER", "DESC")
-      .getOne();
+    try {
+      const lastProduct = await this.productRepository.createQueryBuilder('product')
+        .where("product.sku ~ '^MEEY-[0-9]+$'")
+        .orderBy("SUBSTRING(product.sku, 6)::INTEGER", "DESC")
+        .getOne();
 
-    let nextNumber = 1;
-    if (lastProduct && lastProduct.sku) {
-      const parts = lastProduct.sku.split('-');
-      if (parts.length > 1) {
-        const currentNumber = parseInt(parts[1]);
-        if (!isNaN(currentNumber)) {
-          nextNumber = currentNumber + 1;
+      let nextNumber = 1;
+      if (lastProduct && lastProduct.sku) {
+        const parts = lastProduct.sku.split('-');
+        if (parts.length > 1) {
+          const currentNumber = parseInt(parts[1], 10);
+          if (!isNaN(currentNumber)) {
+            nextNumber = currentNumber + 1;
+          }
         }
       }
+
+      let candidate = `MEEY-${nextNumber.toString().padStart(3, '0')}`;
+      while (await this.productRepository.findOne({ where: { sku: candidate } })) {
+        nextNumber++;
+        candidate = `MEEY-${nextNumber.toString().padStart(3, '0')}`;
+      }
+
+      return candidate;
+    } catch {
+      const count = await this.productRepository.count();
+      return `MEEY-${(count + 1).toString().padStart(3, '0')}`;
+    }
+  }
+
+  private async generateUniqueSlug(baseSlug: string, currentId?: string): Promise<string> {
+    let cleanSlug = baseSlug
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]+/g, '')
+      .replace(/^-+|-+$/g, '');
+
+    if (!cleanSlug) {
+      cleanSlug = `produit-${Date.now()}`;
     }
 
-    return `MEEY-${nextNumber.toString().padStart(3, '0')}`;
+    let candidate = cleanSlug;
+    let counter = 1;
+
+    while (true) {
+      const existing = await this.productRepository.findOne({ where: { slug: candidate } });
+      if (!existing || (currentId && existing.id === currentId)) {
+        return candidate;
+      }
+      counter++;
+      candidate = `${cleanSlug}-${counter}`;
+    }
   }
 
   async create(createProductDto: any) {
-    const slug = createProductDto.slug || generateSlug(createProductDto.name);
+    const rawSlug = createProductDto.slug || generateSlug(createProductDto.name);
+    const slug = await this.generateUniqueSlug(rawSlug);
     
     // Auto-generate SKU MEEY-001 format
     const sku = await this.generateNextSku();
 
-    const existingProduct = await this.productRepository.createQueryBuilder('product')
-      .where('product.slug = :slug OR product.sku = :sku', { slug, sku })
-      .getOne();
+    // Sanitize fields to prevent DB constraints crashes
+    const costPrice = (createProductDto.costPrice !== undefined && createProductDto.costPrice !== null && createProductDto.costPrice !== '' && !isNaN(Number(createProductDto.costPrice)))
+      ? Number(createProductDto.costPrice)
+      : 0;
 
-    if (existingProduct) {
-      throw new BadRequestException('Product with this slug or SKU already exists');
+    const price = (createProductDto.price !== undefined && createProductDto.price !== null && createProductDto.price !== '' && !isNaN(Number(createProductDto.price)))
+      ? Number(createProductDto.price)
+      : 0;
+
+    const comparePrice = (createProductDto.comparePrice !== undefined && createProductDto.comparePrice !== null && createProductDto.comparePrice !== '' && !isNaN(Number(createProductDto.comparePrice)))
+      ? Number(createProductDto.comparePrice)
+      : null;
+
+    let subCategoryId: string | null = null;
+    if (createProductDto.subCategoryId && typeof createProductDto.subCategoryId === 'string' && createProductDto.subCategoryId.trim() !== '' && createProductDto.subCategoryId !== 'null') {
+      subCategoryId = createProductDto.subCategoryId.trim();
+    }
+
+    let badge: 'top' | 'new' | 'promo' | null = null;
+    if (createProductDto.badge && ['top', 'new', 'promo'].includes(createProductDto.badge)) {
+      badge = createProductDto.badge;
     }
 
     // Ensure variants don't have labels (identified only by sku, image and stock properties)
@@ -56,8 +107,8 @@ export class ProductsService {
       variants = variants.map((v: any) => ({ 
         sku: v.sku, 
         image: v.image, 
-        stock: v.stock || 0,
-        stockAlert: v.stockAlert || createProductDto.stockAlert || 5,
+        stock: (!isNaN(Number(v.stock))) ? Math.max(0, Number(v.stock)) : 0,
+        stockAlert: (!isNaN(Number(v.stockAlert))) ? Math.max(0, Number(v.stockAlert)) : (createProductDto.stockAlert || 5),
         price: (v.price !== undefined && v.price !== null && v.price !== '') ? Number(v.price) : undefined
       }));
     }
@@ -66,6 +117,11 @@ export class ProductsService {
       ...createProductDto,
       sku,
       slug,
+      costPrice,
+      price,
+      comparePrice,
+      subCategoryId,
+      badge,
       variants
     });
     return await this.productRepository.save(product);

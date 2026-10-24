@@ -115,7 +115,11 @@ export default function ProductEditPage() {
         }
         // Fetch real categories with UUIDs
         apiFetch(API_ENDPOINTS.STORE_CATEGORIES)
-            .then(res => setCategories(res.data || []))
+            .then(res => {
+                const raw = res.data;
+                const cats = Array.isArray(raw) ? raw : (raw?.data || []);
+                setCategories(cats);
+            })
             .catch(() => {});
     }, [id]);
 
@@ -177,27 +181,28 @@ export default function ProductEditPage() {
             // LOGIC: users enters Original Price (Required) and optionally Promo Price.
             // In DB: price = what client pays, comparePrice = original price to cross out.
             const originalPriceVal = Number(product.comparePrice);
-            const promoPriceVal = product.price ? Number(product.price) : null;
+            const promoPriceVal = product.price !== '' && product.price !== null && product.price !== undefined ? Number(product.price) : null;
             
-            const sellingPrice = promoPriceVal !== null ? promoPriceVal : originalPriceVal;
-            const crossedPrice = promoPriceVal !== null ? originalPriceVal : null;
+            const sellingPrice = promoPriceVal !== null && !isNaN(promoPriceVal) ? promoPriceVal : (!isNaN(originalPriceVal) ? originalPriceVal : 0);
+            const crossedPrice = promoPriceVal !== null && !isNaN(promoPriceVal) && !isNaN(originalPriceVal) && originalPriceVal > promoPriceVal ? originalPriceVal : null;
+            const costPriceVal = product.costPrice !== undefined && product.costPrice !== '' && !isNaN(Number(product.costPrice)) ? Number(product.costPrice) : 0;
 
             const updateData = {
                 name: product.name,
                 sku: product.sku,
                 price: sellingPrice,
                 comparePrice: crossedPrice,
-                costPrice: Number(product.costPrice),
+                costPrice: costPriceVal,
                 badge: product.badge || null,
-                stock: Number(product.stock),
-                stockAlert: Number(product.stockAlert),
+                stock: !isNaN(Number(product.stock)) ? Math.max(0, Number(product.stock)) : 0,
+                stockAlert: !isNaN(Number(product.stockAlert)) ? Math.max(0, Number(product.stockAlert)) : 5,
                 description: product.description || '',
                 shortDescription: product.shortDescription || product.name || '',
                 categoryId: product.categoryId,
-                subCategoryId: product.subCategoryId || null,
+                subCategoryId: product.subCategoryId && product.subCategoryId.trim() !== '' ? product.subCategoryId.trim() : null,
                 isActive: product.isActive,
                 images: product.images,
-                hasVariants: product.hasVariants || false,
+                hasVariants: Boolean(product.hasVariants),
                 variants: product.hasVariants && product.variants?.length > 0 ? product.variants : null,
             };
 

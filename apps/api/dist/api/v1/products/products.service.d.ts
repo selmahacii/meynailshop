@@ -4,6 +4,8 @@ export declare class ProductsService {
     private productRepository;
     constructor(productRepository: Repository<Product>);
     private generateNextSku;
+    private generateUniqueSlug;
+    private sanitizeProductData;
     findAll(page?: number, limit?: number, search?: string): Promise<{
         data: {
             sku: string;
@@ -48,7 +50,7 @@ export declare class ProductsService {
         };
     }>;
     findOne(id: string): Promise<Product>;
-    create(createProductDto: any): Promise<Product[]>;
+    create(createProductDto: any): Promise<Product>;
     update(id: string, updateProductDto: any): Promise<Product>;
     remove(id: string): Promise<{
         success: boolean;

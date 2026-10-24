@@ -71,7 +71,7 @@ export declare class ProductsController {
     }>;
     create(createProductDto: any): Promise<{
         success: boolean;
-        data: import("../../../database/entities").Product[];
+        data: import("../../../database/entities").Product;
     }>;
     update(id: string, updateProductDto: any): Promise<{
         success: boolean;
