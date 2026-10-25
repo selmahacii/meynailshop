@@ -38,6 +38,7 @@ export default function ProductPage() {
     const { slug } = useParams();
     const [quantity, setQuantity] = useState(1);
     const [selectedVariant, setSelectedVariant] = useState<number | null>(null);
+    const [hoveredVariant, setHoveredVariant] = useState<number | null>(null);
     const addItem = useCartStore((state) => state.addItem);
     const { toggleItem, isInWishlist } = useWishlistStore();
 
@@ -106,6 +107,10 @@ export default function ProductPage() {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    const activeDisplayVariant = hoveredVariant !== null && product?.variants
+        ? product.variants[hoveredVariant]
+        : (selectedVariant !== null && product?.variants ? product.variants[selectedVariant] : null);
 
     const isOutOfStock = Boolean(
         product && (
@@ -201,7 +206,11 @@ export default function ProductPage() {
                                 ...(product.variants?.map((v: any) => v.image).filter((img: any) => img && !product.images?.includes(img)) || [])
                             ]} 
                             productName={product.name}
-                            selectedImage={selectedVariant !== null ? product.variants[selectedVariant]?.image : null}
+                            selectedImage={
+                                hoveredVariant !== null && product.variants?.[hoveredVariant]?.image
+                                    ? product.variants[hoveredVariant].image
+                                    : (selectedVariant !== null ? product.variants?.[selectedVariant]?.image : null)
+                            }
                         />
                     ) : null}
 
@@ -304,25 +313,47 @@ export default function ProductPage() {
                             </div>
                         )}
 
-                        {/* Variants Section */}
+                        {/* Variants Section with Identical Swatch Hover & Selected Effect */}
                         {product && product.hasVariants && product.variants && product.variants.length > 0 && (
                             <div className="mb-8">
-                                <div className="flex items-center justify-between mb-4">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-encre3">Choisissez votre référence</p>
-                                    {selectedVariant !== null && (
-                                        <span className="text-[10px] font-bold text-rouge-deep uppercase animate-pulse">
-                                            Réf: {product.variants[selectedVariant].sku}
+                                <div className="flex items-center justify-between mb-3.5">
+                                    <div className="flex items-center gap-2">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-encre3">
+                                            Modèle / Réf :
+                                        </p>
+                                        <span className="text-xs font-bold text-encre">
+                                            {activeDisplayVariant ? activeDisplayVariant.sku.replace('REF-', '') : 'Sélectionnez un modèle'}
+                                        </span>
+                                    </div>
+                                    {activeDisplayVariant && (
+                                        <span className={cn(
+                                            "text-[10px] font-bold uppercase tracking-wider",
+                                            activeDisplayVariant.stock > 0 
+                                                ? (activeDisplayVariant.stock <= (activeDisplayVariant.stockAlert || 5) ? "text-amber-700" : "text-emerald-700") 
+                                                : "text-rouge font-black"
+                                        )}>
+                                            {activeDisplayVariant.stock > 0 
+                                                ? (activeDisplayVariant.stock <= (activeDisplayVariant.stockAlert || 5) ? `Plus que ${activeDisplayVariant.stock} en stock` : 'En stock')
+                                                : 'Rupture de stock'}
                                         </span>
                                     )}
                                 </div>
-                                <div className="flex flex-wrap gap-3">
+
+                                {/* Swatches Grid */}
+                                <div className="flex flex-wrap items-center gap-3 pt-1 pb-2">
                                     {product.variants.map((variant: any, index: number) => {
                                         const isSelected = selectedVariant === index;
                                         const isOutOfStock = variant.stock <= 0;
+                                        const variantImg = variant.image || product.images?.[0] || 'https://placehold.co/120x120?text=' + encodeURIComponent(variant.sku);
+
                                         return (
                                             <button
                                                 key={index}
                                                 type="button"
+                                                title={variant.sku}
+                                                aria-label={variant.sku}
+                                                onMouseEnter={() => setHoveredVariant(index)}
+                                                onMouseLeave={() => setHoveredVariant(null)}
                                                 onClick={() => {
                                                     if (isOutOfStock) {
                                                         toast.error("Cette référence est en rupture de stock");
@@ -331,39 +362,30 @@ export default function ProductPage() {
                                                     setSelectedVariant(isSelected ? null : index);
                                                 }}
                                                 className={cn(
-                                                    "min-w-[70px] h-12 px-6 rounded-full border transition-all flex items-center justify-center font-black text-[11px] tracking-[0.15em] uppercase relative overflow-hidden",
+                                                    "group relative w-[60px] h-[60px] sm:w-[66px] sm:h-[66px] rounded-[16px] overflow-hidden bg-white transition-all duration-200 cursor-pointer focus:outline-none shrink-0 border border-black/15 shadow-xs",
                                                     isSelected
-                                                        ? "bg-rouge-brand border-gold-brand/40 text-gold-brand shadow-xl shadow-rouge-brand/20 scale-105"
-                                                        : isOutOfStock 
-                                                            ? "bg-creme/10 border-creme2 text-encre3/30 cursor-not-allowed line-through"
-                                                            : "bg-white border-creme2 text-encre3 hover:border-rouge-brand/30 hover:bg-creme/30"
+                                                        ? "shadow-[0_0_0_2px_#FAF5EF,0_0_0_4px_#007185,0_0_0_5.5px_#111820] scale-[1.03]"
+                                                        : isOutOfStock
+                                                            ? "opacity-35 cursor-not-allowed hover:opacity-50"
+                                                            : "hover:shadow-[0_0_0_2px_#FAF5EF,0_0_0_4px_#007185,0_0_0_5.5px_#111820] hover:scale-[1.03]"
                                                 )}
                                             >
-                                                {variant.sku.replace('REF-', '')}
+                                                <Image
+                                                    src={variantImg}
+                                                    alt={variant.sku}
+                                                    fill
+                                                    sizes="70px"
+                                                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                                />
                                                 {isOutOfStock && (
-                                                   <span className="absolute inset-0 flex items-center justify-center">
-                                                       <div className="w-full h-[1.5px] bg-rouge-brand/20 -rotate-12"></div>
-                                                   </span>
+                                                    <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
+                                                        <div className="w-full h-[1.5px] bg-rouge-brand/70 -rotate-45" />
+                                                    </div>
                                                 )}
                                             </button>
                                         );
                                     })}
                                 </div>
-                                {selectedVariant !== null && product.variants[selectedVariant].image && (
-                                    <motion.div 
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        className="mt-6 flex items-center gap-4 p-4 bg-white/50 backdrop-blur-sm border border-creme2 rounded-2xl"
-                                    >
-                                        <div className="relative w-16 h-16 rounded-xl border border-creme2 overflow-hidden shadow-sm">
-                                            <Image src={product.variants[selectedVariant].image} fill className="object-cover" alt="Selected variant" />
-                                        </div>
-                                        <div>
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-encre3">Aperçu sélection</p>
-                                            <p className="text-sm font-bold text-encre">{product.variants[selectedVariant].sku}</p>
-                                        </div>
-                                    </motion.div>
-                                )}
                             </div>
                         )}
 
