@@ -362,7 +362,7 @@ export default function ProductPage() {
                                                     setSelectedVariant(isSelected ? null : index);
                                                 }}
                                                 className={cn(
-                                                    "group relative w-[60px] h-[60px] sm:w-[66px] sm:h-[66px] rounded-[16px] overflow-hidden bg-white transition-all duration-200 cursor-pointer focus:outline-none shrink-0 border border-black/15 shadow-xs",
+                                                    "group relative w-[60px] h-[60px] sm:w-[66px] sm:h-[66px] rounded-[16px] overflow-hidden bg-white transition-all duration-200 cursor-pointer focus:outline-none shrink-0 border border-black/15 shadow-xs will-change-transform active:scale-95",
                                                     isSelected
                                                         ? "shadow-[0_0_0_2px_#FAF5EF,0_0_0_4px_#007185,0_0_0_5.5px_#111820] scale-[1.03]"
                                                         : isOutOfStock
