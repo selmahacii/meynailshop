@@ -28,19 +28,16 @@ function formatAlgerianPhoneForWhatsApp(phone: string): string {
 
 function formatPhoneForCallMeBot(phone: string): string {
     if (!phone) return '';
-    let clean = phone.trim().replace(/\s+/g, '');
-    if (clean.startsWith('00')) {
-        clean = '+' + clean.slice(2);
-    } else if (!clean.startsWith('+')) {
-        if (clean.startsWith('0') && clean.length === 10) {
-            clean = '+213' + clean.slice(1);
-        } else if (!clean.startsWith('213')) {
-            clean = '+213' + clean;
-        } else {
-            clean = '+' + clean;
-        }
+    let digits = phone.trim().replace(/[^0-9]/g, '');
+    if (digits.startsWith('00')) {
+        digits = digits.slice(2);
     }
-    return clean;
+    if (digits.startsWith('0') && digits.length === 10) {
+        digits = '213' + digits.slice(1);
+    } else if (!digits.startsWith('213') && digits.length === 9) {
+        digits = '213' + digits;
+    }
+    return digits;
 }
 
 @Injectable()
@@ -82,7 +79,8 @@ export class NotificationsService {
     async sendWhatsAppCallMeBot(phone: string, apiKey: string, text: string): Promise<{ success: boolean; message?: string }> {
         try {
             const formattedPhone = formatPhoneForCallMeBot(phone);
-            const url = `https://api.callmebot.com/whatsapp.php?phone=${encodeURIComponent(formattedPhone)}&text=${encodeURIComponent(text)}&apikey=${encodeURIComponent(apiKey)}`;
+            const cleanApiKey = (apiKey || '').trim();
+            const url = `https://api.callmebot.com/whatsapp.php?phone=${encodeURIComponent(formattedPhone)}&text=${encodeURIComponent(text)}&apikey=${encodeURIComponent(cleanApiKey)}`;
 
             const response = await fetch(url, { method: 'GET' });
             const responseText = await response.text();

@@ -122,8 +122,47 @@ export default function AdminSettingsPage() {
     };
 
     const handleTestNotification = async (channel: 'whatsapp' | 'telegram') => {
-        setTestingNotification(channel);
         setTestNotificationResult(null);
+
+        if (channel === 'whatsapp') {
+            if (!settings?.whatsappPhone || !settings?.whatsappPhone.trim()) {
+                setTestNotificationResult({
+                    channel: 'whatsapp',
+                    success: false,
+                    message: 'Veuillez saisir votre numéro WhatsApp administrateur (ex: +213780125700).',
+                });
+                return;
+            }
+            if (!settings?.whatsappApiKey || !settings?.whatsappApiKey.trim()) {
+                setTestNotificationResult({
+                    channel: 'whatsapp',
+                    success: false,
+                    message: 'Veuillez d\'abord obtenir votre clé APIKEY sur WhatsApp en cliquant sur le lien vert ci-dessous, la coller dans le champ "Clé API", puis cliquer sur Sauvegarder.',
+                });
+                return;
+            }
+        }
+
+        if (channel === 'telegram') {
+            if (!settings?.telegramBotToken || !settings?.telegramBotToken.trim()) {
+                setTestNotificationResult({
+                    channel: 'telegram',
+                    success: false,
+                    message: 'Veuillez renseigner le Token de votre bot Telegram (fourni par @BotFather).',
+                });
+                return;
+            }
+            if (!settings?.telegramChatId || !settings?.telegramChatId.trim()) {
+                setTestNotificationResult({
+                    channel: 'telegram',
+                    success: false,
+                    message: 'Veuillez renseigner votre Chat ID Telegram (obtenu via @userinfobot).',
+                });
+                return;
+            }
+        }
+
+        setTestingNotification(channel);
         try {
             const res = await SettingsAPI.testNotification({
                 channel,
@@ -429,27 +468,46 @@ export default function AdminSettingsPage() {
                                             Clé API CallMeBot (APIKEY)
                                         </label>
                                         <input 
-                                            type="password" 
-                                            placeholder="Ex: 987654" 
+                                            type="text" 
+                                            placeholder="Ex: 839201" 
                                             value={settings?.whatsappApiKey || ''} 
-                                            onChange={(e) => handleChange('whatsappApiKey', e.target.value)}
-                                            className="w-full px-4 py-3 bg-creme border border-creme2 rounded-xl text-sm text-encre focus:outline-none focus:border-green-600 transition-all font-mono" 
+                                            onChange={(e) => handleChange('whatsappApiKey', e.target.value.trim())}
+                                            className="w-full px-4 py-3 bg-creme border border-creme2 rounded-xl text-sm text-encre focus:outline-none focus:border-green-600 transition-all font-mono font-bold" 
                                         />
-                                        <p className="text-[10px] text-encre3 mt-1.5">Clé reçue par WhatsApp suite au message d'autorisation</p>
+                                        <p className="text-[10px] text-encre3 mt-1.5">Code numérique à 5-6 chiffres reçu par WhatsApp suite au message d'autorisation</p>
                                     </div>
                                 </div>
 
                                 {/* Guide d'activation WhatsApp */}
-                                <div className="mt-6 p-5 bg-green-50/50 border border-green-200/60 rounded-xl space-y-3">
-                                    <div className="flex items-center gap-2 text-green-800 text-xs font-bold uppercase tracking-wider">
-                                        <HelpCircle size={16} />
-                                        <span>Comment activer WhatsApp en 30 secondes (gratuit) :</span>
+                                <div className="mt-6 p-6 bg-green-50/70 border border-green-200 rounded-2xl space-y-4">
+                                    <div className="flex items-center gap-2 text-green-900 text-xs font-black uppercase tracking-wider">
+                                        <HelpCircle size={18} className="text-green-700" />
+                                        <span>Comment obtenir votre clé API WhatsApp gratuitement en 30 secondes :</span>
                                     </div>
-                                    <ol className="text-xs text-green-900/90 space-y-1.5 list-decimal list-inside leading-relaxed">
-                                        <li>Ajoutez le numéro <strong>+34 644 44 26 19</strong> dans vos contacts WhatsApp sous le nom <em>CallMeBot</em>.</li>
-                                        <li>Envoyez-lui par WhatsApp le message exact : <code className="bg-white px-2 py-0.5 rounded border border-green-200 font-bold select-all">I allow callmebot to send me messages</code></li>
-                                        <li>CallMeBot vous répond instantanément en vous donnant votre <strong>APIKEY</strong>.</li>
-                                        <li>Indiquez votre numéro et votre clé ci-dessus, puis cliquez sur <strong>Sauvegarder</strong> et <strong>Tester WhatsApp</strong> !</li>
+
+                                    <div className="bg-white/80 p-4 rounded-xl border border-green-200/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                                        <div>
+                                            <p className="text-xs font-bold text-green-950">Lien direct d'activation WhatsApp :</p>
+                                            <p className="text-[11px] text-green-800/80 mt-0.5">Ouvre directement la conversation avec le bot et pré-remplit le message pour vous.</p>
+                                        </div>
+                                        <a
+                                            href="https://wa.me/34684723962?text=I%20allow%20callmebot%20to%20send%20me%20messages"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-sm transition-all shrink-0"
+                                        >
+                                            <MessageSquare size={15} />
+                                            <span>Ouvrir WhatsApp (+34 684 72 39 62)</span>
+                                            <ExternalLink size={14} />
+                                        </a>
+                                    </div>
+
+                                    <ol className="text-xs text-green-900/90 space-y-2 list-decimal list-inside leading-relaxed">
+                                        <li>Cliquez sur le bouton vert ci-dessus pour ouvrir WhatsApp (ou envoyez un message au <strong>+34 684 72 39 62</strong> ou au numéro secondaire <strong>+34 644 44 26 19</strong>).</li>
+                                        <li>Envoyez le message pré-rempli : <code className="bg-white px-2 py-0.5 rounded border border-green-200 font-bold select-all">I allow callmebot to send me messages</code></li>
+                                        <li>Le bot WhatsApp vous répondra en quelques secondes avec : <em>« API Activated for your phone number. Your APIKEY is: <strong>XXXXXX</strong> »</em>.</li>
+                                        <li>Copiez ce numéro <strong>APIKEY</strong> et collez-le dans le champ ci-dessus.</li>
+                                        <li>Cliquez sur <strong>« Sauvegarder »</strong> en haut à droite, puis sur <strong>« Tester WhatsApp »</strong> pour vérifier !</li>
                                     </ol>
                                 </div>
 
