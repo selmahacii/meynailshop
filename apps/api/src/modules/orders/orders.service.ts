@@ -20,6 +20,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { OrdersQueryDto } from './dto/orders-query.dto';
 import { DEFAULT_SHIPPING_FEES } from '../settings/settings.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 export function calculateOrderShippingRate(
   snapshot: any,
@@ -81,6 +82,7 @@ export class OrdersService implements OnModuleInit {
     private couponRepository: Repository<Coupon>,
     @InjectDataSource()
     private dataSource: DataSource,
+    private notificationsService: NotificationsService,
   ) { }
 
   async onModuleInit() {
@@ -298,6 +300,12 @@ export class OrdersService implements OnModuleInit {
         relations: ['user'],
       });
       if (!result) throw new InternalServerErrorException('Order not found after creation');
+
+      // Dispatch real-time admin notification (WhatsApp & Telegram) asynchronously
+      this.notificationsService.sendAdminOrderNotification(result, items).catch((notifErr) => {
+        console.error('[OrdersService] Error dispatching order notification:', notifErr);
+      });
+
       return result;
     } catch (error) {
       await queryRunner.rollbackTransaction();

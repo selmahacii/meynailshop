@@ -1,7 +1,28 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bell, Download, Save, Store, Truck, CreditCard, Shield, Globe, AlertTriangle, Loader, AlertCircle, CheckCircle, Upload } from 'lucide-react';
+import { 
+    Bell, 
+    Download, 
+    Save, 
+    Store, 
+    Truck, 
+    CreditCard, 
+    Shield, 
+    Globe, 
+    AlertTriangle, 
+    Loader, 
+    AlertCircle, 
+    CheckCircle, 
+    Upload, 
+    Smartphone, 
+    MessageSquare, 
+    Send, 
+    ExternalLink, 
+    HelpCircle, 
+    Check, 
+    Copy 
+} from 'lucide-react';
 import { UploadAPI } from '@/lib/api/client';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -9,6 +30,7 @@ import { SettingsAPI } from '@/lib/api/client';
 
 const tabs = [
     { key: 'boutique', label: 'Boutique', icon: Store },
+    { key: 'notifications', label: 'Notifications Mobile', icon: Bell },
     { key: 'livraison', label: 'Livraison', icon: Truck },
     { key: 'paiement', label: 'Paiement', icon: CreditCard },
     { key: 'securite', label: 'Sécurité', icon: Shield },
@@ -25,6 +47,11 @@ export default function AdminSettingsPage() {
     const [error, setError] = useState<string | null>(null);
     const [saving, setSaving] = useState(false);
     const [uploadingImage, setUploadingImage] = useState(false);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+    // Test notification states
+    const [testingNotification, setTestingNotification] = useState<'whatsapp' | 'telegram' | null>(null);
+    const [testNotificationResult, setTestNotificationResult] = useState<{ channel: string; success: boolean; message: string } | null>(null);
 
     const handleUploadOnglerie = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -45,7 +72,6 @@ export default function AdminSettingsPage() {
             e.target.value = '';
         }
     };
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     useEffect(() => {
         fetchSettings();
@@ -75,12 +101,10 @@ export default function AdminSettingsPage() {
         setSuccessMessage(null);
         setError(null);
         try {
-            // Filtrer pour ne pas envoyer id, updatedAt ou d'autres champs non autorisés (whitelist/forbidNonWhitelisted)
             const { id, updatedAt, ...payload } = settings;
             const res = await SettingsAPI.update(payload);
             if (res.success) {
                 setSuccessMessage('Paramètres enregistrés avec succès');
-                // Refresh global cache
                 await refreshSettings();
                 setTimeout(() => setSuccessMessage(null), 3000);
             } else {
@@ -95,6 +119,43 @@ export default function AdminSettingsPage() {
 
     const handleChange = (key: string, value: any) => {
         setSettings((prev: any) => ({ ...prev, [key]: value }));
+    };
+
+    const handleTestNotification = async (channel: 'whatsapp' | 'telegram') => {
+        setTestingNotification(channel);
+        setTestNotificationResult(null);
+        try {
+            const res = await SettingsAPI.testNotification({
+                channel,
+                whatsappPhone: settings?.whatsappPhone,
+                whatsappApiKey: settings?.whatsappApiKey,
+                telegramBotToken: settings?.telegramBotToken,
+                telegramChatId: settings?.telegramChatId,
+            });
+
+            const channelResult = res.data?.[channel];
+            if (channelResult?.success) {
+                setTestNotificationResult({
+                    channel,
+                    success: true,
+                    message: channelResult.message || `Test ${channel === 'whatsapp' ? 'WhatsApp' : 'Telegram'} réussi ! Vérifiez votre téléphone.`,
+                });
+            } else {
+                setTestNotificationResult({
+                    channel,
+                    success: false,
+                    message: channelResult?.message || res.error || `Échec du test ${channel}.`,
+                });
+            }
+        } catch (err: any) {
+            setTestNotificationResult({
+                channel,
+                success: false,
+                message: err?.message || 'Erreur réseau lors de l\'envoi du test.',
+            });
+        } finally {
+            setTestingNotification(null);
+        }
     };
 
     const handleReset = async () => {
@@ -169,7 +230,10 @@ export default function AdminSettingsPage() {
                         {tabs.map((tab) => (
                             <button
                                 key={tab.key}
-                                onClick={() => setActiveTab(tab.key)}
+                                onClick={() => {
+                                    setActiveTab(tab.key);
+                                    setTestNotificationResult(null);
+                                }}
                                 className={cn(
                                     "w-full flex items-center space-x-3 px-6 py-4 text-left transition-all border-b border-creme2 last:border-0 group",
                                     activeTab === tab.key
@@ -186,6 +250,7 @@ export default function AdminSettingsPage() {
 
                 {/* Settings Content */}
                 <div className="lg:col-span-9 space-y-6">
+                    {/* ONGLET 1: BOUTIQUE */}
                     {activeTab === 'boutique' && (
                         <>
                             <div className="bg-white rounded-xl border border-creme2 shadow-lg p-8">
@@ -272,6 +337,229 @@ export default function AdminSettingsPage() {
                         </>
                     )}
 
+                    {/* ONGLET 2: NOTIFICATIONS MOBILE & WHATSAPP */}
+                    {activeTab === 'notifications' && (
+                        <div className="space-y-6">
+                            {/* Alerte générale */}
+                            <div className="bg-white rounded-xl border border-creme2 shadow-lg p-8">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-creme2">
+                                    <div>
+                                        <h2 className="font-serif text-2xl text-encre">Alertes Commandes sur Mobile</h2>
+                                        <p className="text-xs text-encre3 mt-1 leading-relaxed">
+                                            Soyez notifié(e) instantanément sur votre smartphone ou WhatsApp dès qu'une cliente finalise sa commande.
+                                        </p>
+                                    </div>
+                                    <label className="inline-flex items-center gap-3 cursor-pointer shrink-0">
+                                        <span className="text-xs font-bold uppercase tracking-wider text-encre3">
+                                            {settings?.notifyNewOrder ? 'Alertes activées' : 'Alertes désactivées'}
+                                        </span>
+                                        <input
+                                            type="checkbox"
+                                            checked={settings?.notifyNewOrder ?? true}
+                                            onChange={(e) => handleChange('notifyNewOrder', e.target.checked)}
+                                            className="w-5 h-5 accent-or rounded cursor-pointer"
+                                        />
+                                    </label>
+                                </div>
+
+                                {testNotificationResult && (
+                                    <div className={cn(
+                                        "mt-6 p-4 rounded-xl border flex items-start gap-3 animate-fade-in",
+                                        testNotificationResult.success 
+                                            ? "bg-green-50 border-green-200 text-green-800" 
+                                            : "bg-red-50 border-red-200 text-red-800"
+                                    )}>
+                                        {testNotificationResult.success ? (
+                                            <CheckCircle className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+                                        ) : (
+                                            <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                                        )}
+                                        <div className="text-xs leading-relaxed">
+                                            <p className="font-bold uppercase tracking-wider mb-0.5">
+                                                {testNotificationResult.success ? 'Notification envoyée avec succès' : 'Échec du test de notification'}
+                                            </p>
+                                            <p>{testNotificationResult.message}</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* SECTION WHATSAPP */}
+                            <div className="bg-white rounded-xl border border-creme2 shadow-lg p-8">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-creme2">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-green-50 border border-green-200 flex items-center justify-center text-green-600 shrink-0">
+                                            <MessageSquare size={20} />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-serif text-xl text-encre">WhatsApp Direct (CallMeBot)</h3>
+                                            <p className="text-xs text-encre3 mt-0.5">Réception de la commande complète directement sur votre WhatsApp personnel (100% gratuit).</p>
+                                        </div>
+                                    </div>
+                                    <label className="inline-flex items-center gap-3 cursor-pointer shrink-0">
+                                        <span className="text-xs font-bold uppercase tracking-wider text-encre3">
+                                            {settings?.whatsappNotificationsEnabled ? 'Actif' : 'Inactif'}
+                                        </span>
+                                        <input
+                                            type="checkbox"
+                                            checked={settings?.whatsappNotificationsEnabled ?? false}
+                                            onChange={(e) => handleChange('whatsappNotificationsEnabled', e.target.checked)}
+                                            className="w-5 h-5 accent-green-600 rounded cursor-pointer"
+                                        />
+                                    </label>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase tracking-widest text-encre3 mb-2">
+                                            Numéro WhatsApp Administrateur
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            placeholder="+213555123456" 
+                                            value={settings?.whatsappPhone || ''} 
+                                            onChange={(e) => handleChange('whatsappPhone', e.target.value)}
+                                            className="w-full px-4 py-3 bg-creme border border-creme2 rounded-xl text-sm text-encre focus:outline-none focus:border-green-600 transition-all font-mono" 
+                                        />
+                                        <p className="text-[10px] text-encre3 mt-1.5">Format international recommandé (ex : <code>+213555123456</code> ou <code>0555123456</code>)</p>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase tracking-widest text-encre3 mb-2">
+                                            Clé API CallMeBot (APIKEY)
+                                        </label>
+                                        <input 
+                                            type="password" 
+                                            placeholder="Ex: 987654" 
+                                            value={settings?.whatsappApiKey || ''} 
+                                            onChange={(e) => handleChange('whatsappApiKey', e.target.value)}
+                                            className="w-full px-4 py-3 bg-creme border border-creme2 rounded-xl text-sm text-encre focus:outline-none focus:border-green-600 transition-all font-mono" 
+                                        />
+                                        <p className="text-[10px] text-encre3 mt-1.5">Clé reçue par WhatsApp suite au message d'autorisation</p>
+                                    </div>
+                                </div>
+
+                                {/* Guide d'activation WhatsApp */}
+                                <div className="mt-6 p-5 bg-green-50/50 border border-green-200/60 rounded-xl space-y-3">
+                                    <div className="flex items-center gap-2 text-green-800 text-xs font-bold uppercase tracking-wider">
+                                        <HelpCircle size={16} />
+                                        <span>Comment activer WhatsApp en 30 secondes (gratuit) :</span>
+                                    </div>
+                                    <ol className="text-xs text-green-900/90 space-y-1.5 list-decimal list-inside leading-relaxed">
+                                        <li>Ajoutez le numéro <strong>+34 644 44 26 19</strong> dans vos contacts WhatsApp sous le nom <em>CallMeBot</em>.</li>
+                                        <li>Envoyez-lui par WhatsApp le message exact : <code className="bg-white px-2 py-0.5 rounded border border-green-200 font-bold select-all">I allow callmebot to send me messages</code></li>
+                                        <li>CallMeBot vous répond instantanément en vous donnant votre <strong>APIKEY</strong>.</li>
+                                        <li>Indiquez votre numéro et votre clé ci-dessus, puis cliquez sur <strong>Sauvegarder</strong> et <strong>Tester WhatsApp</strong> !</li>
+                                    </ol>
+                                </div>
+
+                                <div className="mt-6 pt-4 border-t border-creme2 flex justify-end">
+                                    <button
+                                        type="button"
+                                        onClick={() => handleTestNotification('whatsapp')}
+                                        disabled={testingNotification === 'whatsapp'}
+                                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-sm transition-all disabled:opacity-50"
+                                    >
+                                        {testingNotification === 'whatsapp' ? (
+                                            <Loader size={14} className="animate-spin" />
+                                        ) : (
+                                            <Send size={14} />
+                                        )}
+                                        <span>{testingNotification === 'whatsapp' ? 'Envoi du test...' : 'Tester WhatsApp'}</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* SECTION TELEGRAM */}
+                            <div className="bg-white rounded-xl border border-creme2 shadow-lg p-8">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-creme2">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600 shrink-0">
+                                            <Send size={20} />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-serif text-xl text-encre">Notification Push Telegram</h3>
+                                            <p className="text-xs text-encre3 mt-0.5">Notification instantanée avec son d'alerte sur smartphone iPhone/Android.</p>
+                                        </div>
+                                    </div>
+                                    <label className="inline-flex items-center gap-3 cursor-pointer shrink-0">
+                                        <span className="text-xs font-bold uppercase tracking-wider text-encre3">
+                                            {settings?.telegramNotificationsEnabled ? 'Actif' : 'Inactif'}
+                                        </span>
+                                        <input
+                                            type="checkbox"
+                                            checked={settings?.telegramNotificationsEnabled ?? false}
+                                            onChange={(e) => handleChange('telegramNotificationsEnabled', e.target.checked)}
+                                            className="w-5 h-5 accent-sky-600 rounded cursor-pointer"
+                                        />
+                                    </label>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase tracking-widest text-encre3 mb-2">
+                                            Telegram Bot Token
+                                        </label>
+                                        <input 
+                                            type="password" 
+                                            placeholder="Ex: 7123456789:AAEF..." 
+                                            value={settings?.telegramBotToken || ''} 
+                                            onChange={(e) => handleChange('telegramBotToken', e.target.value)}
+                                            className="w-full px-4 py-3 bg-creme border border-creme2 rounded-xl text-sm text-encre focus:outline-none focus:border-sky-500 transition-all font-mono" 
+                                        />
+                                        <p className="text-[10px] text-encre3 mt-1.5">Fourni par @BotFather sur Telegram</p>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-[10px] font-black uppercase tracking-widest text-encre3 mb-2">
+                                            Telegram Chat ID
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            placeholder="Ex: 123456789" 
+                                            value={settings?.telegramChatId || ''} 
+                                            onChange={(e) => handleChange('telegramChatId', e.target.value)}
+                                            className="w-full px-4 py-3 bg-creme border border-creme2 rounded-xl text-sm text-encre focus:outline-none focus:border-sky-500 transition-all font-mono" 
+                                        />
+                                        <p className="text-[10px] text-encre3 mt-1.5">Votre identifiant de discussion ou celui d'un groupe privé d'alertes</p>
+                                    </div>
+                                </div>
+
+                                {/* Guide d'activation Telegram */}
+                                <div className="mt-6 p-5 bg-sky-50/50 border border-sky-200/60 rounded-xl space-y-3">
+                                    <div className="flex items-center gap-2 text-sky-800 text-xs font-bold uppercase tracking-wider">
+                                        <HelpCircle size={16} />
+                                        <span>Comment configurer Telegram en 1 minute (gratuit) :</span>
+                                    </div>
+                                    <ol className="text-xs text-sky-900/90 space-y-1.5 list-decimal list-inside leading-relaxed">
+                                        <li>Sur Telegram, recherchez <strong>@BotFather</strong> et envoyez la commande <code className="bg-white px-2 py-0.5 rounded border border-sky-200 font-bold select-all">/newbot</code>.</li>
+                                        <li>Choisissez un nom d'affichage (ex: <em>MEEY Nail Shop Alertes</em>) et un pseudo se terminant par <em>bot</em>.</li>
+                                        <li>Copiez le <strong>Token</strong> généré et collez-le dans le champ Token ci-dessus.</li>
+                                        <li>Envoyez le message <code className="bg-white px-2 py-0.5 rounded border border-sky-200 font-bold select-all">/start</code> à votre nouveau bot, puis utilisez <strong>@userinfobot</strong> pour copier votre <strong>Chat ID</strong> numérique.</li>
+                                        <li>Collez votre Chat ID ci-dessus, cliquez sur <strong>Sauvegarder</strong> puis <strong>Tester Telegram</strong> !</li>
+                                    </ol>
+                                </div>
+
+                                <div className="mt-6 pt-4 border-t border-creme2 flex justify-end">
+                                    <button
+                                        type="button"
+                                        onClick={() => handleTestNotification('telegram')}
+                                        disabled={testingNotification === 'telegram'}
+                                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-sm transition-all disabled:opacity-50"
+                                    >
+                                        {testingNotification === 'telegram' ? (
+                                            <Loader size={14} className="animate-spin" />
+                                        ) : (
+                                            <Send size={14} />
+                                        )}
+                                        <span>{testingNotification === 'telegram' ? 'Envoi du test...' : 'Tester Telegram'}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ONGLET 3: LIVRAISON */}
                     {activeTab === 'livraison' && (
                         <div className="space-y-6">
                             <div className="bg-white rounded-xl border border-creme2 shadow-lg p-8">
@@ -329,6 +617,7 @@ export default function AdminSettingsPage() {
                         </div>
                     )}
 
+                    {/* ONGLET 4: SEO */}
                     {activeTab === 'seo' && (
                         <div className="bg-white rounded-xl border border-creme2 shadow-lg p-20 flex flex-col items-center justify-center text-center relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-or/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
@@ -353,7 +642,8 @@ export default function AdminSettingsPage() {
                         </div>
                     )}
 
-                    {!['boutique', 'livraison', 'seo'].includes(activeTab) && (
+                    {/* AUTRES ONGLETS EN DÉVELOPPEMENT */}
+                    {!['boutique', 'notifications', 'livraison', 'seo'].includes(activeTab) && (
                         <div className="bg-white rounded-xl border border-creme2 shadow-lg p-16 flex flex-col items-center justify-center text-center">
                             <div className="w-16 h-16 bg-creme rounded-full flex items-center justify-center mb-6 border border-creme2">
                                 {(() => {

@@ -9,6 +9,7 @@ import { PaginatedResult } from '../../common/pagination/paginated-result.interf
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { OrdersQueryDto } from './dto/orders-query.dto';
+import { NotificationsService } from '../notifications/notifications.service';
 export declare function calculateOrderShippingRate(snapshot: any, deliveryType?: string, fees?: any[]): {
     shippingCost: number;
     returnCost: number;
@@ -21,7 +22,8 @@ export declare class OrdersService implements OnModuleInit {
     private productRepository;
     private couponRepository;
     private dataSource;
-    constructor(orderRepository: Repository<Order>, orderItemRepository: Repository<OrderItem>, addressRepository: Repository<Address>, productRepository: Repository<Product>, couponRepository: Repository<Coupon>, dataSource: DataSource);
+    private notificationsService;
+    constructor(orderRepository: Repository<Order>, orderItemRepository: Repository<OrderItem>, addressRepository: Repository<Address>, productRepository: Repository<Product>, couponRepository: Repository<Coupon>, dataSource: DataSource, notificationsService: NotificationsService);
     onModuleInit(): Promise<void>;
     repairOrdersWithDefaultShipping(): Promise<void>;
     create(userId: string | null, createOrderDto: CreateOrderDto, cartItems: Array<{

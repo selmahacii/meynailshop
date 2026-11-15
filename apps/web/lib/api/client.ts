@@ -323,6 +323,10 @@ export class SettingsAPI {
   static async reset() {
     return apiPost('/api/settings/reset');
   }
+
+  static async testNotification(payload?: any) {
+    return apiPost('/api/settings/test-notification', payload || {});
+  }
 }
 
 export class ClientsAPI {

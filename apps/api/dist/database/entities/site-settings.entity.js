@@ -67,6 +67,30 @@ __decorate([
     __metadata("design:type", String)
 ], SiteSettings.prototype, "onglerieCollectionImage", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'boolean', default: false }),
+    __metadata("design:type", Boolean)
+], SiteSettings.prototype, "whatsappNotificationsEnabled", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 50, nullable: true }),
+    __metadata("design:type", String)
+], SiteSettings.prototype, "whatsappPhone", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 100, nullable: true }),
+    __metadata("design:type", String)
+], SiteSettings.prototype, "whatsappApiKey", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'boolean', default: false }),
+    __metadata("design:type", Boolean)
+], SiteSettings.prototype, "telegramNotificationsEnabled", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 150, nullable: true }),
+    __metadata("design:type", String)
+], SiteSettings.prototype, "telegramBotToken", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 100, nullable: true }),
+    __metadata("design:type", String)
+], SiteSettings.prototype, "telegramChatId", void 0);
+__decorate([
     (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], SiteSettings.prototype, "updatedAt", void 0);

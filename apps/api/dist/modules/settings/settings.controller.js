@@ -20,9 +20,11 @@ const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_guard_1 = require("../auth/guards/roles.guard");
 const roles_decorator_1 = require("../../common/decorators/roles.decorator");
 const shared_1 = require("@meey/shared");
+const notifications_service_1 = require("../notifications/notifications.service");
 let SettingsController = class SettingsController {
-    constructor(settingsService) {
+    constructor(settingsService, notificationsService) {
         this.settingsService = settingsService;
+        this.notificationsService = notificationsService;
     }
     getSettings() {
         return this.settingsService.getSettings();
@@ -32,6 +34,9 @@ let SettingsController = class SettingsController {
     }
     resetShop() {
         return this.settingsService.resetShop();
+    }
+    async testNotification(body) {
+        return this.notificationsService.testNotification(body);
     }
 };
 exports.SettingsController = SettingsController;
@@ -58,8 +63,18 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], SettingsController.prototype, "resetShop", null);
+__decorate([
+    (0, common_1.Post)('test-notification'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(shared_1.UserRole.ADMIN),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], SettingsController.prototype, "testNotification", null);
 exports.SettingsController = SettingsController = __decorate([
     (0, common_1.Controller)('settings'),
-    __metadata("design:paramtypes", [settings_service_1.SettingsService])
+    __metadata("design:paramtypes", [settings_service_1.SettingsService,
+        notifications_service_1.NotificationsService])
 ], SettingsController);
 //# sourceMappingURL=settings.controller.js.map

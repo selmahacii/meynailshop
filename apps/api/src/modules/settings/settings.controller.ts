@@ -5,10 +5,14 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '@meey/shared';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Controller('settings')
 export class SettingsController {
-    constructor(private readonly settingsService: SettingsService) { }
+    constructor(
+        private readonly settingsService: SettingsService,
+        private readonly notificationsService: NotificationsService,
+    ) { }
 
     @Get()
     getSettings() {
@@ -27,5 +31,12 @@ export class SettingsController {
     @Roles(UserRole.ADMIN)
     resetShop() {
         return this.settingsService.resetShop();
+    }
+
+    @Post('test-notification')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
+    async testNotification(@Body() body: any) {
+        return this.notificationsService.testNotification(body);
     }
 }

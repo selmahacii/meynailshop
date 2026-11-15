@@ -46,6 +46,24 @@ export class SiteSettings {
   @Column({ type: 'text', nullable: true })
   onglerieCollectionImage?: string;
 
+  @Column({ type: 'boolean', default: false })
+  whatsappNotificationsEnabled: boolean;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  whatsappPhone?: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  whatsappApiKey?: string;
+
+  @Column({ type: 'boolean', default: false })
+  telegramNotificationsEnabled: boolean;
+
+  @Column({ type: 'varchar', length: 150, nullable: true })
+  telegramBotToken?: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  telegramChatId?: string;
+
   @UpdateDateColumn()
   updatedAt: Date;
 }

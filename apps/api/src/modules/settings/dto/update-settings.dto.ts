@@ -47,4 +47,28 @@ export class UpdateSettingsDto {
     @IsString()
     @IsOptional()
     onglerieCollectionImage?: string;
+
+    @IsBoolean()
+    @IsOptional()
+    whatsappNotificationsEnabled?: boolean;
+
+    @IsString()
+    @IsOptional()
+    whatsappPhone?: string;
+
+    @IsString()
+    @IsOptional()
+    whatsappApiKey?: string;
+
+    @IsBoolean()
+    @IsOptional()
+    telegramNotificationsEnabled?: boolean;
+
+    @IsString()
+    @IsOptional()
+    telegramBotToken?: string;
+
+    @IsString()
+    @IsOptional()
+    telegramChatId?: string;
 }

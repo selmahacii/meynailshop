@@ -26,6 +26,7 @@ const coupon_entity_1 = require("../../database/entities/coupon.entity");
 const site_settings_entity_1 = require("../../database/entities/site-settings.entity");
 const order_number_util_1 = require("../../common/utils/order-number.util");
 const settings_service_1 = require("../settings/settings.service");
+const notifications_service_1 = require("../notifications/notifications.service");
 function calculateOrderShippingRate(snapshot, deliveryType = 'home', fees = settings_service_1.DEFAULT_SHIPPING_FEES) {
     if (!snapshot)
         return null;
@@ -61,13 +62,14 @@ function calculateOrderShippingRate(snapshot, deliveryType = 'home', fees = sett
     };
 }
 let OrdersService = class OrdersService {
-    constructor(orderRepository, orderItemRepository, addressRepository, productRepository, couponRepository, dataSource) {
+    constructor(orderRepository, orderItemRepository, addressRepository, productRepository, couponRepository, dataSource, notificationsService) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.addressRepository = addressRepository;
         this.productRepository = productRepository;
         this.couponRepository = couponRepository;
         this.dataSource = dataSource;
+        this.notificationsService = notificationsService;
     }
     async onModuleInit() {
         await this.repairOrdersWithDefaultShipping();
@@ -249,6 +251,9 @@ let OrdersService = class OrdersService {
             });
             if (!result)
                 throw new common_1.InternalServerErrorException('Order not found after creation');
+            this.notificationsService.sendAdminOrderNotification(result, items).catch((notifErr) => {
+                console.error('[OrdersService] Error dispatching order notification:', notifErr);
+            });
             return result;
         }
         catch (error) {
@@ -445,6 +450,7 @@ exports.OrdersService = OrdersService = __decorate([
         typeorm_3.Repository,
         typeorm_3.Repository,
         typeorm_3.Repository,
-        typeorm_3.DataSource])
+        typeorm_3.DataSource,
+        notifications_service_1.NotificationsService])
 ], OrdersService);
 //# sourceMappingURL=orders.service.js.map

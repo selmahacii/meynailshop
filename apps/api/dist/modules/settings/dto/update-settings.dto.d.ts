@@ -11,4 +11,10 @@ export declare class UpdateSettingsDto {
     notifyNewReview?: boolean;
     shippingFees?: any;
     onglerieCollectionImage?: string;
+    whatsappNotificationsEnabled?: boolean;
+    whatsappPhone?: string;
+    whatsappApiKey?: string;
+    telegramNotificationsEnabled?: boolean;
+    telegramBotToken?: string;
+    telegramChatId?: string;
 }

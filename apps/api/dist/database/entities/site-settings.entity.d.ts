@@ -12,5 +12,11 @@ export declare class SiteSettings {
     notifyNewReview: boolean;
     shippingFees: any;
     onglerieCollectionImage?: string;
+    whatsappNotificationsEnabled: boolean;
+    whatsappPhone?: string;
+    whatsappApiKey?: string;
+    telegramNotificationsEnabled: boolean;
+    telegramBotToken?: string;
+    telegramChatId?: string;
     updatedAt: Date;
 }
