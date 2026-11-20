@@ -26,12 +26,7 @@ export declare class OrdersService implements OnModuleInit {
     constructor(orderRepository: Repository<Order>, orderItemRepository: Repository<OrderItem>, addressRepository: Repository<Address>, productRepository: Repository<Product>, couponRepository: Repository<Coupon>, dataSource: DataSource, notificationsService: NotificationsService);
     onModuleInit(): Promise<void>;
     repairOrdersWithDefaultShipping(): Promise<void>;
-    create(userId: string | null, createOrderDto: CreateOrderDto, cartItems: Array<{
-        productId: string;
-        quantity: number;
-        variantSku?: string;
-        variantImage?: string;
-    }>): Promise<Order>;
+    create(userId: string | null, createOrderDto: CreateOrderDto, cartItems: any[]): Promise<Order>;
     findAll(userId: string, query: OrdersQueryDto, isAdmin?: boolean): Promise<PaginatedResult<Order>>;
     findOne(id: string, userId?: string): Promise<Order>;
     findOneWithItems(id: string, userId?: string): Promise<Order>;

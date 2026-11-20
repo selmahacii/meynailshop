@@ -1,6 +1,9 @@
 declare class OrderItemDto {
-    productId: string;
+    productId?: string;
     quantity: number;
+    unitPrice?: number;
+    productName?: string;
+    productImage?: string;
     variantSku?: string;
     variantImage?: string;
 }
@@ -9,15 +12,9 @@ export declare class CreateOrderDto {
     deliveryType: 'home' | 'office';
     paymentMethod: 'cash_on_delivery' | 'ccp' | 'baridimob';
     notes?: string;
+    source?: string;
     couponCode?: string;
-    shippingAddress?: {
-        firstName: string;
-        lastName: string;
-        phone: string;
-        address: string;
-        wilaya: string;
-        commune: string;
-    };
+    shippingAddress?: any;
     items?: OrderItemDto[];
 }
 export {};

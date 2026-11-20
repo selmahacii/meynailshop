@@ -80,12 +80,12 @@ export default function PublicLandingPage() {
         try {
             const { ordersApi } = await import('@/lib/api/orders');
 
-            // Référence de commande
-            const refNumber = 'MEEY-' + Math.floor(1000 + Math.random() * 9000);
+            // Référence de commande par défaut
+            let finalOrderRef = 'MEEY-' + Math.floor(1000 + Math.random() * 9000);
             
             // Passer la commande à l'API du magasin
             try {
-                await ordersApi.createOrder({
+                const res = await ordersApi.createOrder({
                     shippingAddress: {
                         firstName: name.split(' ')[0] || name,
                         lastName: name.split(' ').slice(1).join(' ') || name,
@@ -97,23 +97,34 @@ export default function PublicLandingPage() {
                     paymentMethod: 'cash_on_delivery',
                     deliveryType: deliveryType === 'home' ? 'home' : 'office',
                     notes: `[Commande Landing Page: /lp/${landingPage.slug}] - ${landingPage.title} ${selectedVariant ? `(Formule: ${selectedVariant.name})` : ''}`,
-                    items: landingPage.productId ? [
+                    source: 'instagram',
+                    items: [
                         {
-                            productId: landingPage.productId,
+                            productId: landingPage.productId || undefined,
+                            productName: `${landingPage.title}${selectedVariant ? ` (${selectedVariant.name})` : ''}`,
+                            productImage: currentPhoto,
+                            unitPrice: productPrice,
                             quantity: 1,
-                            variantSku: selectedVariant?.sku || undefined
+                            variantSku: selectedVariant?.sku || `LP-${landingPage.slug.toUpperCase()}`
                         }
-                    ] : []
+                    ]
                 });
+
+                if (res?.data?.orderNumber) {
+                    finalOrderRef = res.data.orderNumber;
+                }
+
+                // Déclencher l'événement pour actualiser immédiatement le tableau de bord admin
+                if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new Event('orderUpdated'));
+                }
             } catch (apiErr) {
-                // Même si le backend catalogue n'a pas encore le produit exact lié, 
-                // la commande est validée côté client et loggée
                 console.warn('Backend order call logged:', apiErr);
             }
 
             // Afficher le modal reçu professionnel
             setOrderSuccess({
-                ref: refNumber,
+                ref: finalOrderRef,
                 name,
                 phone,
                 wilayaName: wilayaRate?.name || wilayaId,

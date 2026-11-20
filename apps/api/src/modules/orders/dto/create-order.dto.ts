@@ -2,11 +2,24 @@ import { IsString, IsOptional, IsUUID, IsArray, ValidateNested, IsNumber } from 
 import { Type } from 'class-transformer';
 
 class OrderItemDto {
-  @IsUUID()
-  productId: string;
+  @IsOptional()
+  @IsString()
+  productId?: string;
 
   @IsNumber()
   quantity: number;
+
+  @IsOptional()
+  @IsNumber()
+  unitPrice?: number;
+
+  @IsOptional()
+  @IsString()
+  productName?: string;
+
+  @IsOptional()
+  @IsString()
+  productImage?: string;
 
   @IsOptional()
   @IsString()
@@ -34,17 +47,14 @@ export class CreateOrderDto {
 
   @IsOptional()
   @IsString()
+  source?: string;
+
+  @IsOptional()
+  @IsString()
   couponCode?: string;
 
   @IsOptional()
-  shippingAddress?: {
-    firstName: string;
-    lastName: string;
-    phone: string;
-    address: string;
-    wilaya: string;
-    commune: string;
-  };
+  shippingAddress?: any;
 
   @IsOptional()
   @IsArray()

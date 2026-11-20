@@ -98,7 +98,9 @@ let OrdersService = class OrdersService {
     }
     async create(userId, createOrderDto, cartItems) {
         if (!cartItems || cartItems.length === 0) {
-            throw new common_1.BadRequestException('Cart is empty');
+            if (!createOrderDto.notes?.includes('Landing Page')) {
+                throw new common_1.BadRequestException('Cart is empty');
+            }
         }
         let shippingAddress = null;
         if (createOrderDto.addressId) {
@@ -131,54 +133,84 @@ let OrdersService = class OrdersService {
         try {
             let subtotal = 0;
             const items = [];
-            for (const cartItem of cartItems) {
-                const product = await queryRunner.manager.findOne(product_entity_1.Product, {
-                    where: { id: cartItem.productId, isActive: true },
-                });
-                if (!product) {
-                    throw new common_1.NotFoundException(`Product ${cartItem.productId} not found`);
+            if (!cartItems || cartItems.length === 0) {
+                let fallbackProduct = await queryRunner.manager.findOne(product_entity_1.Product, { where: { isActive: true } });
+                if (!fallbackProduct) {
+                    fallbackProduct = await queryRunner.manager.findOne(product_entity_1.Product, {});
                 }
-                let activePrice = Number(product.price);
-                let currentStock = product.stock;
+                const defaultPackName = createOrderDto.notes?.includes('Landing Page')
+                    ? (createOrderDto.notes.split('] ')[1] || 'Pack Onglerie')
+                    : 'Commande Boutique';
+                cartItems = [{
+                        productId: fallbackProduct ? fallbackProduct.id : undefined,
+                        productName: defaultPackName,
+                        quantity: 1,
+                        unitPrice: 6500
+                    }];
+            }
+            for (const cartItem of cartItems) {
+                let product = null;
+                if (cartItem.productId) {
+                    try {
+                        product = await queryRunner.manager.findOne(product_entity_1.Product, {
+                            where: { id: cartItem.productId, isActive: true },
+                        });
+                    }
+                    catch {
+                        product = null;
+                    }
+                }
+                if (!product) {
+                    product = await queryRunner.manager.findOne(product_entity_1.Product, {
+                        where: { isActive: true },
+                    });
+                }
+                if (!product) {
+                    product = await queryRunner.manager.findOne(product_entity_1.Product, {});
+                }
+                let activePrice = (cartItem.unitPrice !== undefined && cartItem.unitPrice !== null)
+                    ? Number(cartItem.unitPrice)
+                    : (product ? Number(product.price) : 6500);
+                let currentStock = product ? product.stock : 999;
                 let variantIndex = -1;
-                if (product.hasVariants && cartItem.variantSku && product.variants) {
+                if (product && product.hasVariants && cartItem.variantSku && product.variants) {
                     variantIndex = product.variants.findIndex(v => v.sku === cartItem.variantSku);
                     if (variantIndex !== -1) {
                         const variant = product.variants[variantIndex];
                         currentStock = variant.stock;
-                        if (variant.price !== undefined && variant.price !== null) {
+                        if (cartItem.unitPrice === undefined && variant.price !== undefined && variant.price !== null) {
                             activePrice = Number(variant.price);
                         }
                     }
-                    else {
-                        throw new common_1.NotFoundException(`Variant ${cartItem.variantSku} not found`);
-                    }
                 }
-                if (currentStock < cartItem.quantity || currentStock <= 0) {
-                    throw new common_1.BadRequestException(`Stock insuffisant pour ${product.name}${cartItem.variantSku ? ' (' + cartItem.variantSku + ')' : ''}`);
-                }
-                const itemSubtotal = activePrice * cartItem.quantity;
+                const itemQuantity = Number(cartItem.quantity) || 1;
+                const itemSubtotal = activePrice * itemQuantity;
                 subtotal += itemSubtotal;
+                const itemName = cartItem.productName || (product ? product.name : 'Pack Onglerie');
+                const itemSku = cartItem.variantSku || (product ? product.sku : 'PACK-LP');
+                const itemImage = cartItem.productImage || cartItem.variantImage || (product?.images?.[0] || '');
                 const orderItem = this.orderItemRepository.create({
-                    productId: product.id,
-                    productName: product.name,
-                    productSku: cartItem.variantSku || product.sku,
-                    productImage: cartItem.variantImage || product.images?.[0] || '',
+                    productId: product ? product.id : null,
+                    productName: itemName,
+                    productSku: itemSku,
+                    productImage: itemImage,
                     variantSku: cartItem.variantSku,
-                    variantImage: cartItem.variantImage,
+                    variantImage: itemImage,
                     unitPrice: activePrice,
-                    quantity: cartItem.quantity,
+                    quantity: itemQuantity,
                     subtotal: itemSubtotal,
                 });
                 items.push(orderItem);
-                if (variantIndex !== -1 && product.variants) {
-                    product.variants[variantIndex].stock -= cartItem.quantity;
-                    product.stock -= cartItem.quantity;
+                if (product && product.stock > 0 && !cartItem.unitPrice) {
+                    if (variantIndex !== -1 && product.variants) {
+                        product.variants[variantIndex].stock = Math.max(0, product.variants[variantIndex].stock - itemQuantity);
+                        product.stock = Math.max(0, product.stock - itemQuantity);
+                    }
+                    else {
+                        product.stock = Math.max(0, product.stock - itemQuantity);
+                    }
+                    await queryRunner.manager.save(product_entity_1.Product, product);
                 }
-                else {
-                    product.stock -= cartItem.quantity;
-                }
-                await queryRunner.manager.save(product_entity_1.Product, product);
             }
             let discount = 0;
             if (createOrderDto.couponCode) {
@@ -224,6 +256,8 @@ let OrdersService = class OrdersService {
                 shippingCost = 0;
             }
             const total = subtotal - discount + shippingCost;
+            const orderSource = createOrderDto.source ||
+                (createOrderDto.notes?.includes('Landing Page') ? 'instagram' : 'website');
             const order = this.orderRepository.create({
                 userId,
                 orderNumber: (0, order_number_util_1.generateOrderNumber)(),
@@ -231,6 +265,7 @@ let OrdersService = class OrdersService {
                 paymentStatus: 'pending',
                 paymentMethod: createOrderDto.paymentMethod,
                 deliveryType: createOrderDto.deliveryType,
+                source: orderSource,
                 subtotal,
                 shippingCost,
                 returnCost,

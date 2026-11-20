@@ -176,12 +176,18 @@ export class NotificationsService {
 
             const shippingFormatted = Number(order.shippingCost || 0).toLocaleString('fr-DZ');
             const totalFormatted = Number(order.total || 0).toLocaleString('fr-DZ');
+            const isLandingPage = Boolean(order.notes && order.notes.includes('Landing Page'));
 
             // 1. WhatsApp Dispatch (CallMeBot)
             if (canSendWhatsApp) {
+                const waHeader = isLandingPage 
+                    ? `⚡🔥 *NOUVELLE COMMANDE DIRECTE (LANDING PAGE) #${order.orderNumber}*`
+                    : `🛍️ *NOUVELLE COMMANDE #${order.orderNumber}*`;
+
                 const waLines = [
-                    `🛍️ *NOUVELLE COMMANDE #${order.orderNumber}*`,
+                    waHeader,
                     `━━━━━━━━━━━━━━━━━━`,
+                    isLandingPage ? `🎯 *Offre :* ${order.notes}` : '',
                     `👤 *Client :* ${customerName}`,
                     `📞 *Téléphone :* ${rawPhone}`,
                     `📍 *Wilaya :* ${wilaya} (${deliveryLabel})`,
@@ -191,7 +197,7 @@ export class NotificationsService {
                     itemsSummaryPlain,
                     ``,
                     `🚚 *Livraison :* ${shippingFormatted} DA`,
-                    `💰 *TOTAL :* ${totalFormatted} DA`,
+                    `💰 *TOTAL À ENCAISSER :* ${totalFormatted} DA`,
                     `💳 *Paiement :* ${paymentLabel}`,
                     `━━━━━━━━━━━━━━━━━━`,
                     waPhone ? `💬 *WhatsApp Client :* https://wa.me/${waPhone}` : '',
@@ -205,9 +211,14 @@ export class NotificationsService {
 
             // 2. Telegram Dispatch
             if (canSendTelegram) {
+                const tgHeader = isLandingPage
+                    ? `⚡🔥 <b>NOUVELLE COMMANDE DIRECTE (LANDING PAGE) #${escapeTelegramHtml(order.orderNumber)}</b>`
+                    : `🛍️ <b>NOUVELLE COMMANDE #${escapeTelegramHtml(order.orderNumber)}</b>`;
+
                 const tgLines = [
-                    `🛍️ <b>NOUVELLE COMMANDE #${escapeTelegramHtml(order.orderNumber)}</b>`,
+                    tgHeader,
                     `━━━━━━━━━━━━━━━━━━`,
+                    isLandingPage ? `🎯 <b>Offre :</b> ${escapeTelegramHtml(order.notes || '')}` : '',
                     `👤 <b>Client :</b> ${escapeTelegramHtml(customerName)}`,
                     `📞 <b>Téléphone :</b> <code>${escapeTelegramHtml(rawPhone)}</code>`,
                     `📍 <b>Wilaya :</b> ${escapeTelegramHtml(wilaya)} (<i>${escapeTelegramHtml(deliveryLabel)}</i>)`,
@@ -217,7 +228,7 @@ export class NotificationsService {
                     itemsSummaryHtml,
                     ``,
                     `🚚 <b>Livraison :</b> ${shippingFormatted} DA`,
-                    `💰 <b>TOTAL :</b> <b>${totalFormatted} DA</b>`,
+                    `💰 <b>TOTAL À ENCAISSER :</b> <b>${totalFormatted} DA</b>`,
                     `💳 <b>Paiement :</b> ${escapeTelegramHtml(paymentLabel)}`,
                     `━━━━━━━━━━━━━━━━━━`,
                     waPhone ? `💬 <a href="https://wa.me/${waPhone}">Discuter sur WhatsApp</a>` : '',

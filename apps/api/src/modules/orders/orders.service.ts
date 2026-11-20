@@ -114,10 +114,12 @@ export class OrdersService implements OnModuleInit {
   async create(
     userId: string | null,
     createOrderDto: CreateOrderDto,
-    cartItems: Array<{ productId: string; quantity: number; variantSku?: string; variantImage?: string }>,
+    cartItems: any[],
   ): Promise<Order> {
     if (!cartItems || cartItems.length === 0) {
-      throw new BadRequestException('Cart is empty');
+      if (!createOrderDto.notes?.includes('Landing Page')) {
+        throw new BadRequestException('Cart is empty');
+      }
     }
 
     let shippingAddress: any = null;
@@ -154,63 +156,94 @@ export class OrdersService implements OnModuleInit {
       let subtotal = 0;
       const items: OrderItem[] = [];
 
-      for (const cartItem of cartItems) {
-        const product = await queryRunner.manager.findOne(Product, {
-          where: { id: cartItem.productId, isActive: true },
-        });
+      // Si cartItems est vide mais que c'est une commande landing page
+      if (!cartItems || cartItems.length === 0) {
+        let fallbackProduct = await queryRunner.manager.findOne(Product, { where: { isActive: true } });
+        if (!fallbackProduct) {
+          fallbackProduct = await queryRunner.manager.findOne(Product, {});
+        }
+        const defaultPackName = createOrderDto.notes?.includes('Landing Page')
+          ? (createOrderDto.notes.split('] ')[1] || 'Pack Onglerie')
+          : 'Commande Boutique';
+        cartItems = [{
+          productId: fallbackProduct ? fallbackProduct.id : undefined,
+          productName: defaultPackName,
+          quantity: 1,
+          unitPrice: 6500
+        }];
+      }
 
-        if (!product) {
-          throw new NotFoundException(`Product ${cartItem.productId} not found`);
+      for (const cartItem of cartItems) {
+        let product: Product | null = null;
+        if (cartItem.productId) {
+          try {
+            product = await queryRunner.manager.findOne(Product, {
+              where: { id: cartItem.productId, isActive: true },
+            });
+          } catch {
+            product = null;
+          }
         }
 
-        let activePrice = Number(product.price);
-        let currentStock = product.stock;
+        if (!product) {
+          product = await queryRunner.manager.findOne(Product, {
+            where: { isActive: true },
+          });
+        }
+        if (!product) {
+          product = await queryRunner.manager.findOne(Product, {});
+        }
+
+        let activePrice = (cartItem.unitPrice !== undefined && cartItem.unitPrice !== null)
+          ? Number(cartItem.unitPrice)
+          : (product ? Number(product.price) : 6500);
+
+        let currentStock = product ? product.stock : 999;
         let variantIndex = -1;
 
-        if (product.hasVariants && cartItem.variantSku && product.variants) {
+        if (product && product.hasVariants && cartItem.variantSku && product.variants) {
           variantIndex = product.variants.findIndex(v => v.sku === cartItem.variantSku);
           if (variantIndex !== -1) {
             const variant = product.variants[variantIndex];
             currentStock = variant.stock;
-            if (variant.price !== undefined && variant.price !== null) {
+            if (cartItem.unitPrice === undefined && variant.price !== undefined && variant.price !== null) {
               activePrice = Number(variant.price);
             }
-          } else {
-            throw new NotFoundException(`Variant ${cartItem.variantSku} not found`);
           }
         }
 
-        if (currentStock < cartItem.quantity || currentStock <= 0) {
-          throw new BadRequestException(
-            `Stock insuffisant pour ${product.name}${cartItem.variantSku ? ' ('+cartItem.variantSku+')' : ''}`,
-          );
-        }
-
-        const itemSubtotal = activePrice * cartItem.quantity;
+        const itemQuantity = Number(cartItem.quantity) || 1;
+        const itemSubtotal = activePrice * itemQuantity;
         subtotal += itemSubtotal;
 
+        const itemName = cartItem.productName || (product ? product.name : 'Pack Onglerie');
+        const itemSku = cartItem.variantSku || (product ? product.sku : 'PACK-LP');
+        const itemImage = cartItem.productImage || cartItem.variantImage || (product?.images?.[0] || '');
+
         const orderItem = this.orderItemRepository.create({
-          productId: product.id,
-          productName: product.name,
-          productSku: cartItem.variantSku || product.sku,
-          productImage: cartItem.variantImage || product.images?.[0] || '',
+          productId: product ? product.id : null,
+          productName: itemName,
+          productSku: itemSku,
+          productImage: itemImage,
           variantSku: cartItem.variantSku,
-          variantImage: cartItem.variantImage,
+          variantImage: itemImage,
           unitPrice: activePrice,
-          quantity: cartItem.quantity,
+          quantity: itemQuantity,
           subtotal: itemSubtotal,
         });
 
         items.push(orderItem);
 
-        // Update product stock
-        if (variantIndex !== -1 && product.variants) {
-          product.variants[variantIndex].stock -= cartItem.quantity;
-          product.stock -= cartItem.quantity;
-        } else {
-          product.stock -= cartItem.quantity;
+        // Décrémenter le stock si produit catalogue réel
+        if (product && product.stock > 0 && !cartItem.unitPrice) {
+          if (variantIndex !== -1 && product.variants) {
+            product.variants[variantIndex].stock = Math.max(0, product.variants[variantIndex].stock - itemQuantity);
+            product.stock = Math.max(0, product.stock - itemQuantity);
+          } else {
+            product.stock = Math.max(0, product.stock - itemQuantity);
+          }
+          await queryRunner.manager.save(Product, product);
         }
-        await queryRunner.manager.save(Product, product);
       }
 
       let discount = 0;
@@ -269,6 +302,9 @@ export class OrdersService implements OnModuleInit {
 
       const total = subtotal - discount + shippingCost;
 
+      const orderSource = createOrderDto.source || 
+        (createOrderDto.notes?.includes('Landing Page') ? 'instagram' : 'website');
+
       const order = this.orderRepository.create({
         userId,
         orderNumber: generateOrderNumber(),
@@ -276,6 +312,7 @@ export class OrdersService implements OnModuleInit {
         paymentStatus: 'pending',
         paymentMethod: createOrderDto.paymentMethod,
         deliveryType: createOrderDto.deliveryType,
+        source: orderSource,
         subtotal,
         shippingCost,
         returnCost,

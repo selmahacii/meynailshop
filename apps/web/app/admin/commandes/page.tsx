@@ -21,7 +21,8 @@ import {
     Instagram,
     MessageCircle,
     Globe,
-    Store
+    Store,
+    Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -50,7 +51,15 @@ export default function AdminOrdersPage() {
     useEffect(() => {
         fetchOrders('active');
         fetchStats();
-    }, []);
+
+        // Rafraîchissement automatique ultra-rapide (toutes les 15 secondes) pour détecter immédiatement les commandes
+        const interval = setInterval(() => {
+            fetchOrders(activeTab);
+            fetchStats();
+        }, 15000);
+
+        return () => clearInterval(interval);
+    }, [activeTab]);
 
     const fetchOrders = async (status?: string, page: number = 1) => {
         try {
@@ -161,9 +170,24 @@ export default function AdminOrdersPage() {
         }
     };
 
-    const filteredOrders = activeTab === 'all' || activeTab === 'active' || activeTab === 'history'
-        ? orders
-        : orders.filter(order => order.status === activeTab);
+    const landingOrders = orders.filter(o => o.notes?.includes('Landing Page') || o.source === 'landing' || o.source === 'instagram');
+    const landingCount = landingOrders.length;
+    const pendingLandingCount = landingOrders.filter(o => o.status === 'pending').length;
+
+    const dynamicTabs = [
+        { name: 'Actives', count: stats?.active || 0, key: 'active' },
+        { name: '⚡ Landing Pages', count: landingCount, key: 'landing' },
+        { name: 'En attente', count: stats?.pending || 0, key: 'pending' },
+        { name: 'Expédiées', count: stats?.shipped || 0, key: 'shipped' },
+        { name: 'Retournées', count: stats?.returned || 0, key: 'returned' },
+        { name: 'Historique', count: stats?.history || 0, key: 'history' },
+    ];
+
+    const filteredOrders = activeTab === 'landing'
+        ? landingOrders
+        : (activeTab === 'all' || activeTab === 'active' || activeTab === 'history'
+            ? orders
+            : orders.filter(order => order.status === activeTab));
 
     if (loading && orders.length === 0) {
         return (
@@ -229,23 +253,51 @@ export default function AdminOrdersPage() {
                 </div>
             )}
 
+            {/* Banner Alerte Instantanée Landing Page */}
+            {pendingLandingCount > 0 && (
+                <div className="bg-[#390102] text-[#FAF5EF] border border-[#BFA893]/40 p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg animate-in fade-in slide-in-from-top-2">
+                    <div className="flex items-center gap-3">
+                        <span className="w-9 h-9 rounded-full bg-[#BFA893] text-[#390102] flex items-center justify-center font-black text-sm shrink-0 shadow-md">
+                            ⚡
+                        </span>
+                        <div>
+                            <p className="text-xs font-bold text-white tracking-wide">
+                                {pendingLandingCount} nouvelle(s) commande(s) directe(s) via Landing Page à traiter en priorité !
+                            </p>
+                            <p className="text-[11px] text-[#BFA893]/90 mt-0.5">
+                                Alertes transmises sur WhatsApp & Telegram. Cliquez pour les isoler immédiatement.
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setActiveTab('landing')}
+                        className="px-4 py-2 bg-[#BFA893] hover:bg-[#D4AF7A] text-[#18080A] text-xs font-extrabold rounded-xl shadow-md transition-all active:scale-95 shrink-0"
+                    >
+                        Filtrer les Landing Pages ({pendingLandingCount})
+                    </button>
+                </div>
+            )}
+
             {/* Content Section */}
             <div className="bg-white rounded-xl border border-creme2 shadow-lg overflow-hidden">
                 {/* Tabs & Toolbar */}
                 <div className="p-4 md:p-6 border-b border-creme2 bg-creme/10 flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="flex items-center bg-white p-1 rounded-xl border border-creme2 overflow-x-auto w-full md:w-auto custom-scrollbar no-scrollbar">
-                        {tabs.map((tab) => (
+                        {dynamicTabs.map((tab) => (
                             <button
                                 key={tab.key}
                                 onClick={() => {
                                     setActiveTab(tab.key);
-                                    fetchOrders(tab.key);
+                                    if (tab.key !== 'landing') {
+                                        fetchOrders(tab.key);
+                                    }
                                 }}
                                 className={cn(
                                     "px-4 md:px-5 py-2.5 text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-xl transition-all flex items-center space-x-2 whitespace-nowrap",
                                     activeTab === tab.key
                                         ? "bg-encre text-creme shadow-md transition-all scale-[1.02]"
-                                        : "text-encre3 hover:bg-creme/5 group"
+                                        : "text-encre3 hover:bg-creme/5 group",
+                                    tab.key === 'landing' && activeTab !== tab.key && "text-[#8C1424] font-black"
                                 )}
                             >
                                 <span>{tab.name}</span>
@@ -336,6 +388,17 @@ export default function AdminOrdersPage() {
                                                     {order.deliveryType === 'office' ? 'Bureau' : 'Domicile'}
                                                 </span>
                                             </div>
+                                            {order.notes?.includes('Landing Page') && (
+                                                <div className="flex items-center gap-1.5 mt-1.5">
+                                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[8px] font-black bg-[#390102] text-[#BFA893] border border-[#BFA893]/40 shadow-sm animate-pulse tracking-wide shrink-0">
+                                                        <Sparkles size={9} className="text-[#B8935A]" />
+                                                        <span>LANDING PAGE</span>
+                                                    </span>
+                                                    <span className="text-[10px] text-[#8C1424] font-bold truncate max-w-[220px]" title={order.notes}>
+                                                        {order.notes.replace(/^\[.*?\]\s*-?\s*/, '')}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
                                     </td>
                                     <td className="px-8 py-6 text-[11px] font-bold text-encre3 uppercase">
@@ -470,6 +533,17 @@ export default function AdminOrdersPage() {
                                                 {order.deliveryType === 'office' ? 'Bureau' : 'Domicile'}
                                             </span>
                                         </div>
+                                        {order.notes?.includes('Landing Page') && (
+                                            <div className="flex items-center gap-1.5 mt-1.5">
+                                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[8px] font-black bg-[#390102] text-[#BFA893] border border-[#BFA893]/40 shadow-sm animate-pulse tracking-wide shrink-0">
+                                                    <Sparkles size={9} className="text-[#B8935A]" />
+                                                    <span>LANDING PAGE</span>
+                                                </span>
+                                                <span className="text-[10px] text-[#8C1424] font-bold truncate max-w-[190px]">
+                                                    {order.notes.replace(/^\[.*?\]\s*-?\s*/, '')}
+                                                </span>
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="text-right">
                                         <span className="text-sm font-black text-or">{(Number(order.subtotal || 0) + Number(order.shippingCost || 0) - Number(order.discount || 0)).toLocaleString('fr-FR')} DA</span>
