@@ -91,6 +91,10 @@ __decorate([
     __metadata("design:type", String)
 ], SiteSettings.prototype, "telegramChatId", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'jsonb', nullable: true, default: () => "'[]'" }),
+    __metadata("design:type", Object)
+], SiteSettings.prototype, "landingPages", void 0);
+__decorate([
     (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], SiteSettings.prototype, "updatedAt", void 0);

@@ -103,4 +103,8 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateSettingsDto.prototype, "telegramChatId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Object)
+], UpdateSettingsDto.prototype, "landingPages", void 0);
 //# sourceMappingURL=update-settings.dto.js.map

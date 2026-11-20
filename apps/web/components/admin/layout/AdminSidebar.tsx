@@ -18,6 +18,7 @@ import {
     Zap,
     X,
     Truck,
+    Sparkles,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
@@ -27,6 +28,7 @@ const menuItems = [
     { name: 'Commandes', href: '/admin/commandes', icon: ShoppingCart, badge: 0 },
     { name: 'Produits', href: '/admin/produits', icon: Package, badge: null },
     { name: 'Collections', href: '/admin/categories', icon: Tag, badge: null },
+    { name: 'Landing Pages', href: '/admin/landing-pages', icon: Sparkles, badge: null },
     { name: 'Stock', href: '/admin/stock', icon: Box, badge: 0 },
     { name: 'Clients', href: '/admin/clients', icon: Users, badge: null },
     { name: 'Avis clients', href: '/admin/avis', icon: MessageSquare, badge: 0 },
@@ -179,7 +181,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                     </button>
                     {expandedGroups.principal && (
                         <ul className="mt-2 space-y-1 px-1">
-                            {menuItems.slice(0, 4).map(renderMenuItem)}
+                            {menuItems.slice(0, 5).map(renderMenuItem)}
                         </ul>
                     )}
                 </div>
@@ -195,7 +197,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                     </button>
                     {expandedGroups.clients && (
                         <ul className="mt-2 space-y-1 px-1">
-                            {menuItems.slice(4, 7).map(renderMenuItem)}
+                            {menuItems.slice(5, 8).map(renderMenuItem)}
                         </ul>
                     )}
                 </div>
@@ -211,7 +213,7 @@ export default function AdminSidebar({ onClose }: { onClose?: () => void }) {
                     </button>
                     {expandedGroups.systeme && (
                         <ul className="mt-2 space-y-1 px-1">
-                            {menuItems.slice(7).map(renderMenuItem)}
+                            {menuItems.slice(8).map(renderMenuItem)}
                         </ul>
                     )}
                 </div>

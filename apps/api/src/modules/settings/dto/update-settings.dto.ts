@@ -71,4 +71,7 @@ export class UpdateSettingsDto {
     @IsString()
     @IsOptional()
     telegramChatId?: string;
+
+    @IsOptional()
+    landingPages?: any;
 }

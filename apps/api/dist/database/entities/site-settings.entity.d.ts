@@ -18,5 +18,6 @@ export declare class SiteSettings {
     telegramNotificationsEnabled: boolean;
     telegramBotToken?: string;
     telegramChatId?: string;
+    landingPages?: any;
     updatedAt: Date;
 }

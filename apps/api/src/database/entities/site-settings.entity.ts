@@ -64,6 +64,9 @@ export class SiteSettings {
   @Column({ type: 'varchar', length: 100, nullable: true })
   telegramChatId?: string;
 
+  @Column({ type: 'jsonb', nullable: true, default: () => "'[]'" })
+  landingPages?: any;
+
   @UpdateDateColumn()
   updatedAt: Date;
 }

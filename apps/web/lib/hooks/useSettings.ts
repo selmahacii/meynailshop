@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { SettingsAPI } from '@/lib/api/client';
+import { LandingPageData } from '@/types/landing-page';
 
 export interface Settings {
     shopName: string;
@@ -13,6 +14,7 @@ export interface Settings {
     freeShippingThreshold: number;
     onglerieCollectionImage?: string;
     shippingFees?: any[];
+    landingPages?: LandingPageData[];
 }
 
 const defaultSettings: Settings = {

@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SettingsService = exports.DEFAULT_SHIPPING_FEES = void 0;
+exports.SettingsService = exports.DEFAULT_LANDING_PAGES = exports.DEFAULT_SHIPPING_FEES = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
@@ -77,6 +77,57 @@ exports.DEFAULT_SHIPPING_FEES = [
     { "id": "57", "name": "El M'Ghair", "delay": "2-5", "homeRate": 1200, "deskRate": null, "returnRate": 300 },
     { "id": "58", "name": "El Menia", "delay": "2-5", "homeRate": 1100, "deskRate": 700, "returnRate": 300 }
 ];
+exports.DEFAULT_LANDING_PAGES = [
+    {
+        id: "lp_pack_onglerie_17",
+        slug: "pack-onglerie",
+        title: "باك متكامل للأظافر والـ Press-on nails",
+        subtitle: "كل الأدوات الاحترافية والدرجات الأساسية مجموعة في حقيبة واحدة باه تبداي خدمتك بكل احترافية وبدون ما تشري كل حاجة وحدها.",
+        brandName: "MEEY NAIL SHOP",
+        primaryColor: "#390102",
+        accentColor: "#BFA893",
+        backgroundColor: "#FAF5EF",
+        textColor: "#18080A",
+        price: 6500,
+        compareAtPrice: 8500,
+        currency: "DA",
+        photos: [
+            "https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/4e73288c-a77a-4d2d-a8e2-1ec2dcbb4327.webp",
+            "https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/7a433d20-e73b-4859-bf4c-5c5c3748aeca.webp",
+            "https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/a8c724d8-929f-4f95-a490-7ab60b051529.webp"
+        ],
+        items: [
+            { id: "1", nameFr: "Mini lampe UV", descDz: "مصباح UV ميني عملي وخفيف باه تفيكسي الكبسولة ضربة ضربة وتشيحي الفيرني ليه ليه وبلا ما يدي بلاصة.", quantity: 1 },
+            { id: "2", nameFr: "Lampe UV grand format", descDz: "مصباح UV كبير واحترافي تدخلي فيه يدك كاملة وتشيحي الخدمة ضربة وحدة كيما الصالون.", quantity: 1 },
+            { id: "3", nameFr: "Coupe capsule", descDz: "مقص سبيسيال يقص الكبسولة ضربة وحدة نقية بلا ما يشققها باه تتحكمي في الطول لي يعجبك.", quantity: 1 },
+            { id: "4", nameFr: "Pack pinceaux liner", descDz: "مجموعة بانسوات رقاق بريسيز باه ترسمي خطوط ناعمة، فرنش وديزاينات متقونة بكل سهولة.", quantity: 1 },
+            { id: "5", nameFr: "Mini bâtonnets", descDz: "عيدان خشبية ترجعي بيهم الجليدة الزايدة للور وتمسحي بيهم زوايد الفيرني بدقة.", quantity: 1 },
+            { id: "6", nameFr: "Minis limes", descDz: "ليمات صغار وعمليين باه تفصلي وتعدلي بيهم الحواف والزوايا في أي بلاصة.", quantity: 1 },
+            { id: "7", nameFr: "Lime et bloc polissoir", descDz: "مبرد نوعية باهية مع بلوك بوليسوار تحكي بيه سطح الظفر باه ينحي اللمعة ويشد الفيرني مليح وما يطيرش.", quantity: 1 },
+            { id: "8", nameFr: "Vernis (bordeaux, marron, blanc, vert kaki)", descDz: "4 ألوان أساسية راقية ومطلوبة بزاف، تغطية شابة وثابتة تخدمي بيهم قاع الستايلات.", quantity: 4 },
+            { id: "9", nameFr: "Vernis effet gel : milky rosé nude", descDz: "لون ميلكي روزي نود طبيعي يهبل يمد هذاك المظهر الناعم والمنفوخ تاع صالونات التجميل.", quantity: 1 },
+            { id: "10", nameFr: "Top coat & Base coat", descDz: "البيس كوت باه تحمي الظفر وتلصق اللون مليح، والتوب كوت يقفل الخدمة بلمعة قوية ويحميها من التقشر.", quantity: 2 },
+            { id: "11", nameFr: "Support Press-on", descDz: "حامل مريح تثبتي عليه الكبسولة باه تخدمي وترسمي بكل راحة وتكون يدك خفيفة.", quantity: 1 },
+            { id: "12", nameFr: "Pâte à fix", descDz: "عجينة سبيسيال تلصق الكبسولة فوق السيبور مليح باه ما تتحركش خلاص كي تكوني تخدمي فيها.", quantity: 1 },
+            { id: "13", nameFr: "Scotch double face", descDz: "لصقة قوية وخفيفة تلصقلك الأظافر ليه ليه وتشدهم مليح بلا ما تضر ظفرك الطبيعي.", quantity: 1 },
+            { id: "14", nameFr: "Déco des strass", descDz: "تشكيلة أحجار وستراس يبريو بزاف يمدو لمسة راقية ولامعة تزيد النص في خدمتك.", quantity: 1 },
+            { id: "15", nameFr: "Chrome doré", descDz: "بودرة كروم بلون ذهبي فخم تعطي لمسة معدنية راقية كيما الذهب للديزاينات.", quantity: 1 },
+            { id: "16", nameFr: "Effet miroir", descDz: "بودرة لمعان عاكس كي المرايا، تمد مظهر غلاسي عصري ومطلوب بزاف في المناسبات.", quantity: 1 },
+            { id: "17", nameFr: "Des papillons colorés", descDz: "ديزاينات فراشات ثلاثية الأبعاد ملونة وشابة بزاف باه تزيني بيهم أظافرك وتخرجي أشكال ترند.", quantity: 1 }
+        ],
+        isAccordion: true,
+        accordionTitle: "المكونات الأساسية للباك (17 عنصر بالتفصيل) :",
+        variants: [],
+        hasVariants: false,
+        deliveryText: "توصيل متوفر لكامل 58 ولاية — الدفع كاش عند الاستلام",
+        guaranteeText: "الدفع يداً بيد عند الاستلام. تقدري تفتحي الطرد وتعايني سلعتك قبل ما تخلصي.",
+        instagramUrl: "https://ig.me/m/meeynailshop",
+        instagramMessage: "السلام عليكم، حبيت نستفسر ونعرف معلومات أكثر على هذا الباك",
+        isActive: true,
+        createdAt: "2026-11-20T22:00:00.000Z",
+        updatedAt: "2026-11-20T22:00:00.000Z"
+    }
+];
 let SettingsService = class SettingsService {
     constructor(settingsRepository, dataSource) {
         this.settingsRepository = settingsRepository;
@@ -86,10 +137,11 @@ let SettingsService = class SettingsService {
         try {
             await this.dataSource.query(`
                 ALTER TABLE "site_settings" ADD COLUMN IF NOT EXISTS "onglerieCollectionImage" text;
+                ALTER TABLE "site_settings" ADD COLUMN IF NOT EXISTS "landingPages" jsonb DEFAULT '[]'::jsonb;
             `);
         }
         catch (e) {
-            console.warn('Could not run ALTER TABLE for onglerieCollectionImage:', e);
+            console.warn('Could not run ALTER TABLE for landingPages or onglerieCollectionImage:', e);
         }
         await this.ensureSettingsExist();
     }
@@ -104,7 +156,8 @@ let SettingsService = class SettingsService {
                 shippingCostDefault: 600,
                 freeShippingThreshold: 10000,
                 stockAlertDefault: 5,
-                shippingFees: exports.DEFAULT_SHIPPING_FEES
+                shippingFees: exports.DEFAULT_SHIPPING_FEES,
+                landingPages: exports.DEFAULT_LANDING_PAGES
             });
             await this.settingsRepository.save(defaultSettings);
         }
@@ -117,6 +170,10 @@ let SettingsService = class SettingsService {
             }
             if (!s.onglerieCollectionImage) {
                 s.onglerieCollectionImage = 'https://images.unsplash.com/photo-1632345033839-245a1e2ca9cb?q=80&w=800&auto=format&fit=crop';
+                needsSave = true;
+            }
+            if (!s.landingPages || !Array.isArray(s.landingPages) || s.landingPages.length === 0) {
+                s.landingPages = exports.DEFAULT_LANDING_PAGES;
                 needsSave = true;
             }
             if (needsSave) {
@@ -134,8 +191,16 @@ let SettingsService = class SettingsService {
             }
         }
         const s = settings[0];
+        let needsSave = false;
         if (!s.shippingFees || !Array.isArray(s.shippingFees) || s.shippingFees.length === 0) {
             s.shippingFees = exports.DEFAULT_SHIPPING_FEES;
+            needsSave = true;
+        }
+        if (!s.landingPages || !Array.isArray(s.landingPages) || s.landingPages.length === 0) {
+            s.landingPages = exports.DEFAULT_LANDING_PAGES;
+            needsSave = true;
+        }
+        if (needsSave) {
             await this.settingsRepository.save(s);
         }
         return s;

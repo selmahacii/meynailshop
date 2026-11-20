@@ -17,4 +17,5 @@ export declare class UpdateSettingsDto {
     telegramNotificationsEnabled?: boolean;
     telegramBotToken?: string;
     telegramChatId?: string;
+    landingPages?: any;
 }
