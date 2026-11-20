@@ -102,35 +102,25 @@ export default function PublicLandingPage() {
     const handleSubmitOrder = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validation téléphone algérien (05/06/07 + 8 chiffres)
         const cleanPhone = phone.trim().replace(/\s+/g, '');
-        const dzPhoneRegex = /^(0)(5|6|7)[0-9]{8}$/;
-        if (!dzPhoneRegex.test(cleanPhone)) {
-            toast.error('يرجى إدخال رقم هاتف جزائري صحيح يتكون من 10 أرقام (05/06/07)');
+        if (!cleanPhone) {
+            toast.error('يرجى إدخال رقم الهاتف');
             return;
         }
 
-        if (!name.trim()) {
-            toast.error('يرجى إدخال الاسم واللقب الكامل');
-            return;
-        }
-
-        if (!commune.trim()) {
-            toast.error('يرجى اختيار البلدية');
-            return;
-        }
+        const customerName = name.trim() || 'Selma';
 
         setSubmitting(true);
         try {
             const payload = {
-                customerName: name.trim(),
+                customerName: customerName,
                 customerPhone: cleanPhone,
                 shippingAddress: {
                     wilayaId: Number(wilayaId),
                     wilayaName: currentWilayaRate.name || 'Wilaya ' + wilayaId,
-                    commune: commune.trim(),
+                    commune: commune.trim() || 'البلدية المركزية',
                     deliveryType: deliveryType,
-                    fullAddress: `${currentWilayaRate.name} — ${commune.trim()} (${deliveryType === 'home' ? 'توصيل للدار' : 'استلام من المكتب'})`
+                    fullAddress: `${currentWilayaRate.name} — ${commune.trim() || 'المركز'} (${deliveryType === 'home' ? 'توصيل للدار' : 'استلام من المكتب'})`
                 },
                 items: [
                     {
@@ -505,60 +495,43 @@ export default function PublicLandingPage() {
                                     
                                     {/* Nom et prénom */}
                                     <div>
-                                        <label className="block text-xs font-semibold text-[#18080A] mb-1.5 flex items-center justify-between">
-                                            <span>{landingPage.nameLabel || 'الاسم واللقب الكامل'}</span>
-                                            <span className="text-[10px] text-red-500 font-normal">* مطلوب</span>
+                                        <label className="block text-xs font-semibold text-[#18080A] mb-1.5 text-right">
+                                            {landingPage.nameLabel || 'الاسم واللقب الكامل'}
                                         </label>
-                                        <div className="relative">
-                                            <input 
-                                                type="text" 
-                                                required 
-                                                value={name}
-                                                onChange={(e) => setName(e.target.value)}
-                                                placeholder={landingPage.namePlaceholder || 'مثال: أمينة بوزيد'} 
-                                                className="w-full pr-10 pl-3.5 py-3 bg-white border border-[#EFECE6] text-xs focus:outline-none rounded-xl focus:border-[#390102] focus:ring-2 focus:ring-[#390102]/10 transition-all placeholder:text-gray-400"
-                                            />
-                                            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#BFA893] pointer-events-none">
-                                                <User size={15} />
-                                            </div>
-                                        </div>
+                                        <input 
+                                            type="text" 
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                            placeholder="Selma" 
+                                            className="w-full px-3.5 py-3 bg-white border border-[#EFECE6] text-xs focus:outline-none rounded-xl focus:border-[#390102] focus:ring-2 focus:ring-[#390102]/10 transition-all placeholder:text-gray-400 text-right"
+                                        />
                                     </div>
 
-                                    {/* Téléphone avec drapeau DZ */}
+                                    {/* Téléphone */}
                                     <div>
-                                        <label className="block text-xs font-semibold text-[#18080A] mb-1.5 flex items-center justify-between">
-                                            <span>{landingPage.phoneLabel || 'رقم الهاتف'}</span>
-                                            <span className="text-[10px] text-red-500 font-normal">* لتأكيد الإرسال</span>
+                                        <label className="block text-xs font-semibold text-[#18080A] mb-1.5 text-right">
+                                            {landingPage.phoneLabel || 'رقم الهاتف'}
                                         </label>
-                                        <div className="relative flex items-center" dir="ltr">
-                                            <div className="absolute left-3.5 text-xs text-[#7A5459] font-bold flex items-center gap-1.5 pointer-events-none">
-                                                <span>🇩🇿</span>
-                                            </div>
-                                            <input 
-                                                type="tel" 
-                                                required 
-                                                value={phone}
-                                                onChange={(e) => setPhone(e.target.value)}
-                                                placeholder={landingPage.phonePlaceholder || '05 / 06 / 07 XX XX XX'} 
-                                                pattern="^(0)(5|6|7)[0-9]{8}$"
-                                                className="w-full pl-11 pr-3.5 py-3 bg-white border border-[#EFECE6] text-xs font-bold num tracking-wider focus:outline-none rounded-xl focus:border-[#390102] focus:ring-2 focus:ring-[#390102]/10 text-left transition-all placeholder:text-gray-400 placeholder:font-normal placeholder:tracking-normal"
-                                            />
-                                        </div>
+                                        <input 
+                                            type="tel" 
+                                            value={phone}
+                                            onChange={(e) => setPhone(e.target.value)}
+                                            placeholder="0555514785" 
+                                            className="w-full px-3.5 py-3 bg-white border border-[#EFECE6] text-xs font-bold num tracking-wider focus:outline-none rounded-xl focus:border-[#390102] focus:ring-2 focus:ring-[#390102]/10 transition-all placeholder:text-gray-400 placeholder:font-normal placeholder:tracking-normal text-right"
+                                        />
                                     </div>
 
-                                    {/* WILAYA & COMMUNE (Custom Dropdowns Chic) */}
+                                    {/* WILAYA & COMMUNE */}
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         <div>
-                                            <label className="block text-xs font-semibold text-[#18080A] mb-1.5 flex items-center justify-between">
-                                                <span>{landingPage.wilayaLabel || 'الولاية'}</span>
-                                                <span className="text-[10px] text-red-500 font-normal">*</span>
+                                            <label className="block text-xs font-semibold text-[#18080A] mb-1.5 text-right">
+                                                {landingPage.wilayaLabel || 'الولاية'}
                                             </label>
                                             <div className="relative">
                                                 <select 
                                                     value={wilayaId}
                                                     onChange={(e) => setWilayaId(e.target.value)}
-                                                    required
-                                                    className="w-full pr-10 pl-8 py-3 bg-white border border-[#EFECE6] text-xs focus:outline-none rounded-xl focus:border-[#390102] focus:ring-2 focus:ring-[#390102]/10 cursor-pointer transition-all appearance-none text-[#18080A] font-medium"
+                                                    className="w-full pr-10 pl-8 py-3 bg-white border border-[#EFECE6] text-xs focus:outline-none rounded-xl focus:border-[#390102] focus:ring-2 focus:ring-[#390102]/10 cursor-pointer transition-all appearance-none text-[#18080A] font-medium text-right"
                                                 >
                                                     {activeRates.map((w: any) => (
                                                         <option key={w.id} value={w.id}>
@@ -576,16 +549,14 @@ export default function PublicLandingPage() {
                                         </div>
 
                                         <div>
-                                            <label className="block text-xs font-semibold text-[#18080A] mb-1.5 flex items-center justify-between">
-                                                <span>{landingPage.communeLabel || 'البلدية'}</span>
-                                                <span className="text-[10px] text-red-500 font-normal">*</span>
+                                            <label className="block text-xs font-semibold text-[#18080A] mb-1.5 text-right">
+                                                {landingPage.communeLabel || 'البلدية'}
                                             </label>
                                             <div className="relative">
                                                 <select 
                                                     value={commune}
                                                     onChange={(e) => setCommune(e.target.value)}
-                                                    required
-                                                    className="w-full pr-10 pl-8 py-3 bg-white border border-[#EFECE6] text-xs focus:outline-none rounded-xl focus:border-[#390102] focus:ring-2 focus:ring-[#390102]/10 cursor-pointer transition-all appearance-none text-[#18080A] font-medium"
+                                                    className="w-full pr-10 pl-8 py-3 bg-white border border-[#EFECE6] text-xs focus:outline-none rounded-xl focus:border-[#390102] focus:ring-2 focus:ring-[#390102]/10 cursor-pointer transition-all appearance-none text-[#18080A] font-medium text-right"
                                                 >
                                                     {communesList.map((c: string) => (
                                                         <option key={c} value={c}>{c}</option>
