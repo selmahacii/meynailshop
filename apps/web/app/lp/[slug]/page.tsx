@@ -109,6 +109,7 @@ export default function PublicLandingPage() {
         }
 
         const customerName = name.trim() || 'Selma';
+        const mappedDeliveryType: 'home' | 'office' = deliveryType === 'desk' ? 'office' : 'home';
 
         setSubmitting(true);
         try {
@@ -119,7 +120,7 @@ export default function PublicLandingPage() {
                     wilayaId: Number(wilayaId),
                     wilayaName: currentWilayaRate.name || 'Wilaya ' + wilayaId,
                     commune: commune.trim() || 'البلدية المركزية',
-                    deliveryType: deliveryType,
+                    deliveryType: mappedDeliveryType,
                     fullAddress: `${currentWilayaRate.name} — ${commune.trim() || 'المركز'} (${deliveryType === 'home' ? 'توصيل للدار' : 'استلام من المكتب'})`
                 },
                 items: [
@@ -139,55 +140,70 @@ export default function PublicLandingPage() {
                 source: 'landing_page'
             };
 
-            const res = await fetch('/api/orders/landing-page', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+            let orderData: any = null;
 
-            const data = await res.json();
+            // 1. Essayer la route dédiée /api/orders/landing-page
+            try {
+                const res = await fetch('/api/orders/landing-page', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
 
-            if (res.ok && data.success) {
-                setOrderSuccess({
-                    orderId: data.data?.id,
-                    ref: data.data?.orderNumber || 'MEEY-' + Math.floor(100000 + Math.random() * 900000),
-                    total: totalAmount,
-                    name: name.trim(),
-                    phone: cleanPhone,
-                    wilayaName: currentWilayaRate.name,
-                    commune: commune.trim(),
-                    delType: deliveryType === 'home' ? 'توصيل للدار (Domicile)' : 'استلام من المكتب (Bureau)',
-                    productTitle: landingPage.title,
-                    variantName: selectedVariant?.name,
-                    shippingCost: shippingCost
-                });
-                toast.success('تم تسجيل طلبكِ بنجاح ! سيتصل بكِ فريق العمل لتأكيد الإرسال.');
-            } else {
-                // Mode résilience / fallback local
-                const fallbackRef = 'MEEY-' + Math.floor(100000 + Math.random() * 900000);
-                setOrderSuccess({
-                    orderId: 'lp_' + Date.now(),
-                    ref: fallbackRef,
-                    total: totalAmount,
-                    name: name.trim(),
-                    phone: cleanPhone,
-                    wilayaName: currentWilayaRate.name,
-                    commune: commune.trim(),
-                    delType: deliveryType === 'home' ? 'توصيل للدار (Domicile)' : 'استلام من المكتب (Bureau)',
-                    productTitle: landingPage.title,
-                    variantName: selectedVariant?.name,
-                    shippingCost: shippingCost
-                });
-                toast.success('تم تسجيل طلبكِ بنجاح ! سنتصل بكِ لتأكيد الإرسال.');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success && data.data) {
+                        orderData = data.data;
+                    }
+                }
+            } catch (err) {
+                console.warn('[LandingPage] /api/orders/landing-page call failed, trying direct store order API', err);
             }
-        } catch (error) {
-            console.error('Landing page order error:', error);
-            const fallbackRef = 'MEEY-' + Math.floor(100000 + Math.random() * 900000);
+
+            // 2. Si non réussi via /api/orders/landing-page, repli direct sur /api/orders
+            if (!orderData) {
+                const { ordersApi } = await import('@/lib/api/orders');
+                const directRes = await ordersApi.createOrder({
+                    deliveryType: mappedDeliveryType,
+                    paymentMethod: 'cash_on_delivery',
+                    source: 'landing_page',
+                    notes: `[Commande Landing Page: /lp/${landingPage.slug}] - ${landingPage.title} ${selectedVariant ? `(Formule: ${selectedVariant.name})` : ''}`,
+                    shippingAddress: {
+                        fullName: customerName,
+                        phone: cleanPhone,
+                        wilaya: currentWilayaRate.name || 'Wilaya ' + wilayaId,
+                        commune: commune.trim() || 'البلدية المركزية',
+                        address: `${currentWilayaRate.name} — ${commune.trim() || 'المركز'} (${deliveryType === 'home' ? 'توصيل للدار' : 'استلام من المكتب'})`,
+                        deliveryType: mappedDeliveryType,
+                    },
+                    items: [
+                        {
+                            productName: `${landingPage.title}${selectedVariant ? ` (${selectedVariant.name})` : ''}`,
+                            productImage: currentPhoto,
+                            unitPrice: productPrice,
+                            quantity: 1,
+                            variantSku: `LP-${landingPage.slug.toUpperCase()}`,
+                        }
+                    ]
+                });
+
+                if (directRes && (directRes as any).success && (directRes as any).data) {
+                    orderData = (directRes as any).data;
+                } else if ((directRes as any)?.id || (directRes as any)?.orderNumber) {
+                    orderData = directRes;
+                }
+            }
+
+            if (!orderData) {
+                throw new Error('Erreur de transmission au serveur');
+            }
+
+            // Commande confirmée et enregistrée en base de données
             setOrderSuccess({
-                orderId: 'lp_' + Date.now(),
-                ref: fallbackRef,
+                orderId: orderData?.id,
+                ref: orderData?.orderNumber || 'MEEY-' + Math.floor(100000 + Math.random() * 900000),
                 total: totalAmount,
-                name: name.trim(),
+                name: customerName,
                 phone: cleanPhone,
                 wilayaName: currentWilayaRate.name,
                 commune: commune.trim(),
@@ -196,7 +212,10 @@ export default function PublicLandingPage() {
                 variantName: selectedVariant?.name,
                 shippingCost: shippingCost
             });
-            toast.success('تم تسجيل طلبكِ بنجاح ! سنتصل بكِ قريباً.');
+            toast.success('🎉 تم تسجيل طلبكِ بنجاح ! سيتصل بكِ فريق العمل لتأكيد الإرسال.');
+        } catch (error: any) {
+            console.error('Landing page order error:', error);
+            toast.error('تعذر تسجيل الطلب، يرجى إعادة المحاولة أو التواصل معنا مباشرة عبر إنستغرام.');
         } finally {
             setSubmitting(false);
         }
@@ -274,13 +293,6 @@ export default function PublicLandingPage() {
                 {/* HERO : TITRE DU PACK SOBRE, FIN & ÉPURÉ                  */}
                 {/* ======================================================== */}
                 <div className="text-center mb-3.5 sm:mb-4 px-2">
-                    <div 
-                        className="inline-block text-[10px] uppercase tracking-[0.25em] font-medium mb-1.5"
-                        style={{ color: landingPage.accentColor || '#BFA893' }}
-                    >
-                        Édition Spéciale — Pack Démarrage
-                    </div>
-
                     <h1 
                         className="text-lg sm:text-xl font-medium tracking-wide leading-snug font-serif"
                         style={{ color: landingPage.primaryColor || '#390102' }}

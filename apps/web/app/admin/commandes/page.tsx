@@ -162,6 +162,8 @@ export default function AdminOrdersPage() {
 
     const getSourceIcon = (source: string) => {
         switch (source) {
+            case 'landing_page':
+            case 'landing': return <Sparkles size={14} className="text-[#8B5E3C]" />;
             case 'instagram': return <Instagram size={14} className="text-pink-600" />;
             case 'whatsapp': return <MessageCircle size={14} className="text-emerald-600" />;
             case 'facebook': return <Globe size={14} className="text-blue-600" />;
@@ -170,7 +172,7 @@ export default function AdminOrdersPage() {
         }
     };
 
-    const landingOrders = orders.filter(o => o.notes?.includes('Landing Page') || o.source === 'landing' || o.source === 'instagram');
+    const landingOrders = orders.filter(o => o.notes?.includes('Landing Page') || o.source === 'landing' || o.source === 'landing_page' || o.source === 'instagram');
     const landingCount = landingOrders.length;
     const pendingLandingCount = landingOrders.filter(o => o.status === 'pending').length;
 

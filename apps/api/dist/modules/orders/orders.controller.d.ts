@@ -14,6 +14,12 @@ export declare class OrdersController {
         message: string;
         data: import("../../database/entities").Order;
     }>;
+    createFromLandingPage(body: any): Promise<{
+        statusCode: number;
+        success: boolean;
+        message: string;
+        data: import("../../database/entities").Order;
+    }>;
     findAll(user: any, query: OrdersQueryDto): Promise<{
         statusCode: number;
         data: import("../../common/pagination/paginated-result.interface").PaginatedResult<import("../../database/entities").Order>;

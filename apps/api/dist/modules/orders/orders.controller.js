@@ -52,6 +52,50 @@ let OrdersController = class OrdersController {
             data: order,
         };
     }
+    async createFromLandingPage(body) {
+        const customerName = (body.customerName || body.name || 'Selma').trim();
+        const customerPhone = (body.customerPhone || body.phone || '').trim().replace(/\s+/g, '');
+        const wilayaName = body.shippingAddress?.wilayaName || body.wilayaName || body.wilaya || 'Alger';
+        const commune = (body.shippingAddress?.commune || body.commune || 'البلدية المركزية').trim();
+        const fullAddress = body.shippingAddress?.fullAddress || body.address || `${wilayaName} — ${commune}`;
+        const rawDeliveryType = body.shippingAddress?.deliveryType || body.deliveryType || 'home';
+        const deliveryType = (rawDeliveryType === 'desk' || rawDeliveryType === 'office') ? 'office' : 'home';
+        const landingPageTitle = body.landingPageTitle || body.title || 'باك متكامل للأظافر';
+        const landingPageSlug = body.landingPageSlug || body.slug || 'pack-onglerie';
+        const variantName = body.items?.[0]?.variantName || body.variantName || null;
+        const price = Number(body.productPrice || body.items?.[0]?.price || body.price || 6500);
+        const image = body.items?.[0]?.image || body.image || '';
+        const createOrderDto = {
+            deliveryType,
+            paymentMethod: 'cash_on_delivery',
+            source: 'landing_page',
+            notes: `[Commande Landing Page: /lp/${landingPageSlug}] - ${landingPageTitle}${variantName ? ` (${variantName})` : ''}`,
+            shippingAddress: {
+                fullName: customerName,
+                phone: customerPhone,
+                wilaya: wilayaName,
+                commune: commune,
+                address: fullAddress,
+                deliveryType,
+            },
+        };
+        const cartItems = [
+            {
+                productName: `${landingPageTitle}${variantName ? ` (${variantName})` : ''}`,
+                productImage: image,
+                unitPrice: price,
+                quantity: 1,
+                variantSku: `LP-${landingPageSlug.toUpperCase()}`,
+            },
+        ];
+        const order = await this.ordersService.create(null, createOrderDto, cartItems);
+        return {
+            statusCode: 201,
+            success: true,
+            message: 'Landing page order created successfully',
+            data: order,
+        };
+    }
     async findAll(user, query) {
         const isAdmin = user.role === 'admin';
         const result = await this.ordersService.findAll(user.id, query, isAdmin);
@@ -130,6 +174,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, create_order_dto_1.CreateOrderDto]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "create", null);
+__decorate([
+    (0, common_1.Post)('landing-page'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "createFromLandingPage", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(),
