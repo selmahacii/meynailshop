@@ -16,6 +16,29 @@ export interface LandingPageVariant {
   sku?: string;
 }
 
+export interface LandingPageBenefit {
+  id: string;
+  title: string;
+  description: string;
+  icon?: string;
+}
+
+export interface LandingPageReview {
+  id: string;
+  authorName: string;
+  wilaya?: string;
+  rating: number; // 1-5
+  comment: string;
+  date?: string;
+  photo?: string;
+}
+
+export interface LandingPageFaq {
+  id: string;
+  question: string;
+  answer: string;
+}
+
 export interface LandingPageData {
   id: string;
   slug: string;
@@ -23,6 +46,21 @@ export interface LandingPageData {
   subtitle: string;
   brandName: string;
   logoUrl?: string;
+  
+  // Section Visibility Toggles (Activer / Désactiver chaque section)
+  showBrandHeader?: boolean;
+  showGallery?: boolean;
+  showPricing?: boolean;
+  showVariants?: boolean;
+  showItems?: boolean;
+  showBenefits?: boolean;
+  showVideo?: boolean;
+  showReviews?: boolean;
+  showFaq?: boolean;
+  showOrderForm?: boolean;
+  showInstagram?: boolean;
+  showReassurance?: boolean;
+  showStickyCta?: boolean;
   
   // Colors & Styling
   primaryColor: string; // ex: '#390102'
@@ -41,7 +79,7 @@ export interface LandingPageData {
   // Photos
   photos: string[];
   
-  // Pack Items / Components
+  // Pack Items / Components (17+ éléments)
   items: LandingPageItem[];
   isAccordion: boolean;
   accordionTitle?: string;
@@ -51,6 +89,26 @@ export interface LandingPageData {
   variants: LandingPageVariant[];
   hasVariants: boolean;
   variantsTitle?: string;
+  
+  // Video Section
+  videoUrl?: string;
+  videoTitle?: string;
+  videoSubtitle?: string;
+  
+  // Benefits Section (علاش تختاري هذا الباك ؟)
+  benefitsTitle?: string;
+  benefitsSubtitle?: string;
+  benefits?: LandingPageBenefit[];
+  
+  // Reviews Section (آراء الزبونات)
+  reviewsTitle?: string;
+  reviewsSubtitle?: string;
+  reviews?: LandingPageReview[];
+  
+  // FAQ Section (الأسئلة الشائعة)
+  faqTitle?: string;
+  faqSubtitle?: string;
+  faqs?: LandingPageFaq[];
   
   // Order Form Customization
   formTitle?: string;
@@ -70,14 +128,14 @@ export interface LandingPageData {
   summaryShippingLabel?: string;
   summaryTotalLabel?: string;
   
-  // CTA Button & Guarantees
+  // CTA Button, Floating CTA & Guarantees
   ctaButtonText?: string;
+  stickyCtaText?: string;
   submittingText?: string;
   guaranteeText?: string;
   deliveryText?: string;
   
   // Instagram Section
-  showInstagram?: boolean;
   instagramTitle?: string;
   instagramSubtitle?: string;
   instagramUrl?: string;

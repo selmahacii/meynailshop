@@ -32,13 +32,25 @@ import {
     ArrowUp,
     ArrowDown,
     ShoppingBag,
-    CheckSquare
+    CheckSquare,
+    Star,
+    HelpCircle,
+    Sliders,
+    Video,
+    Award
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { SettingsAPI, ProductsAPI, UploadAPI } from '@/lib/api/client';
 import { useSettings } from '@/lib/hooks/useSettings';
-import { LandingPageData, LandingPageItem, LandingPageVariant } from '@/types/landing-page';
+import { 
+    LandingPageData, 
+    LandingPageItem, 
+    LandingPageVariant,
+    LandingPageBenefit,
+    LandingPageReview,
+    LandingPageFaq
+} from '@/types/landing-page';
 import { DEFAULT_LANDING_PAGES } from '@/lib/constants/landing-pages';
 
 export default function AdminLandingPagesPage() {
@@ -51,7 +63,7 @@ export default function AdminLandingPagesPage() {
     // État d'édition
     const [isEditing, setIsEditing] = useState(false);
     const [currentLP, setCurrentLP] = useState<LandingPageData | null>(null);
-    const [activeTab, setActiveTab] = useState<'general' | 'offer' | 'photos' | 'items' | 'form' | 'design' | 'contact'>('general');
+    const [activeTab, setActiveTab] = useState<'sections' | 'general' | 'offer' | 'photos' | 'items' | 'marketing' | 'form' | 'design_contact'>('sections');
     const [previewMode, setPreviewMode] = useState<'mobile' | 'desktop'>('mobile');
     const [showLivePreview, setShowLivePreview] = useState(false);
     const [uploadingImage, setUploadingImage] = useState(false);
@@ -92,7 +104,7 @@ export default function AdminLandingPagesPage() {
             if (res.success) {
                 setLandingPages(updatedList);
                 refreshSettings();
-                toast.success('Toutes les configurations ont été enregistrées avec succès en production !');
+                toast.success('Toutes les configurations de la landing page ont été enregistrées en production !');
                 return true;
             } else {
                 toast.error(res.error || 'Erreur lors de la sauvegarde');
@@ -123,6 +135,22 @@ export default function AdminLandingPagesPage() {
             currency: 'DA',
             priceBadgeText: 'سعر الباك الكامل (عناصر متكاملة)',
             deliveryBadgeText: 'توصيل متوفر لـ 58 ولاية',
+            
+            // Section toggles
+            showBrandHeader: true,
+            showGallery: true,
+            showPricing: true,
+            showVariants: false,
+            showItems: true,
+            showBenefits: true,
+            showVideo: false,
+            showReviews: true,
+            showFaq: true,
+            showOrderForm: true,
+            showInstagram: true,
+            showReassurance: true,
+            showStickyCta: true,
+
             photos: [
                 'https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/4e73288c-a77a-4d2d-a8e2-1ec2dcbb4327.webp'
             ],
@@ -136,6 +164,30 @@ export default function AdminLandingPagesPage() {
             variants: [],
             hasVariants: false,
             variantsTitle: 'اختاري الصيغة أو الباك المناسب لكِ :',
+            
+            benefitsTitle: 'علاش تختاري هذا الباك المتكامل ؟',
+            benefitsSubtitle: 'كل ما تحتاجينه لبداية احترافية ونظيفة بدون تضييع الوقت والمال',
+            benefits: [
+                { id: 'b1', title: 'سلعة احترافية 100%', description: 'مكونات صالون مختارة بعناية تعيش معاك وتمدلك نتيجة نقية ومتقونة من أول تجربة.' },
+                { id: 'b2', title: 'توفير كبير في الوقت والدراهم', description: 'بلا ما تحوسي في الحوانيت وتشري كل قطعة وحدها بسعر غالي، جمعنالك كلش في باك واحد شامل.' }
+            ],
+
+            reviewsTitle: 'آراء زبوناتنا الوفيات',
+            reviewsSubtitle: 'تجارب حقيقية من زبونات بدأن مشروعهن بهذا الباك',
+            reviews: [
+                { id: 'r1', authorName: 'أمينة ب.', wilaya: 'الجزائر العاصمة', rating: 5, comment: 'الباك جاني كيما في التصويرة تماماً وفيه كلش، لمبة UV خفيفة بزاف والفيرني يشد مليح.', date: 'منذ يومين' }
+            ],
+
+            faqTitle: 'الأسئلة الأكثر تكراراً (FAQ)',
+            faqSubtitle: 'كل الإجابات عن التوصيل، الدفع، ومكونات الباك',
+            faqs: [
+                { id: 'f1', question: 'كيفاش نخلص ووقتاش توصلني السلعة ؟', answer: 'الدفع يداً بيد عند الاستلام كاش. التوصيل يوصلك حتى لباب دارك أو للمكتب خلال 24 إلى 48 ساعة حسب ولايتك.' }
+            ],
+
+            videoTitle: 'فيديو توضيحي لطريقة الاستعمال والنتيجة',
+            videoSubtitle: 'شاهدي كيفاش تخدمي ديزاينات احترافية خطوة بخطوة بالمنتجات لي في الباك',
+            videoUrl: '',
+
             formTitle: 'اطلبي الباك تاعك درك',
             formSubtitle: 'عمري معلوماتك لتحت، التوصيل يوصلك حتى لباب دارك والدفع كاش عند الاستلام بعد ما تفتحي وتعايني سلعتك.',
             nameLabel: 'الاسم واللقب الكامل',
@@ -151,10 +203,10 @@ export default function AdminLandingPagesPage() {
             summaryShippingLabel: 'سعر التوصيل لولايتك :',
             summaryTotalLabel: 'المجموع الكلي عند الاستلام :',
             ctaButtonText: 'تأكيد الطلب',
+            stickyCtaText: 'اطلبي الآن — الدفع عند الاستلام',
             submittingText: 'جاري تسجيل طلبكِ...',
             deliveryText: 'توصيل متوفر لكامل 58 ولاية — الدفع كاش عند الاستلام',
             guaranteeText: 'الدفع يداً بيد عند الاستلام. تقدري تفتحي الطرد وتعايني سلعتك قبل ما تخلصي.',
-            showInstagram: true,
             instagramTitle: 'عندك أي سؤال أو استفسار على هذا الباك؟',
             instagramSubtitle: 'تواصلي معنا مباشرة في الشات الخاص على حسابنا في إنستغرام',
             instagramUrl: 'https://ig.me/m/meeynailshop',
@@ -170,13 +222,13 @@ export default function AdminLandingPagesPage() {
         };
         setCurrentLP(newLP);
         setIsEditing(true);
-        setActiveTab('general');
+        setActiveTab('sections');
     };
 
     const handleEdit = (lp: LandingPageData) => {
         setCurrentLP(JSON.parse(JSON.stringify(lp)));
         setIsEditing(true);
-        setActiveTab('general');
+        setActiveTab('sections');
     };
 
     const handleDuplicate = async (lp: LandingPageData) => {
@@ -262,7 +314,7 @@ export default function AdminLandingPagesPage() {
         toast.info(`Informations pré-remplies depuis "${prod.name}" !`);
     };
 
-    // Upload d'une photo directement vers Supabase
+    // Upload d'une photo vers Supabase
     const handleUploadPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file || !currentLP) return;
@@ -398,6 +450,90 @@ export default function AdminLandingPagesPage() {
         });
     };
 
+    // Gestion des Avantages (Benefits)
+    const handleAddBenefit = () => {
+        if (!currentLP) return;
+        const newB: LandingPageBenefit = {
+            id: 'b_' + Date.now(),
+            title: 'ميزة جديدة',
+            description: 'شرح بسيط ومقنع لفائدة هذه الميزة للزبونة.'
+        };
+        setCurrentLP({
+            ...currentLP,
+            benefits: [...(currentLP.benefits || []), newB]
+        });
+    };
+
+    const handleUpdateBenefit = (index: number, field: keyof LandingPageBenefit, value: any) => {
+        if (!currentLP || !currentLP.benefits) return;
+        const updated = [...currentLP.benefits];
+        updated[index] = { ...updated[index], [field]: value };
+        setCurrentLP({ ...currentLP, benefits: updated });
+    };
+
+    const handleDeleteBenefit = (index: number) => {
+        if (!currentLP || !currentLP.benefits) return;
+        const updated = currentLP.benefits.filter((_, i) => i !== index);
+        setCurrentLP({ ...currentLP, benefits: updated });
+    };
+
+    // Gestion des Avis (Reviews)
+    const handleAddReview = () => {
+        if (!currentLP) return;
+        const newR: LandingPageReview = {
+            id: 'r_' + Date.now(),
+            authorName: 'زبونة جديدة',
+            wilaya: 'الجزائر',
+            rating: 5,
+            comment: 'تجربة ممتازة وسلعة روعة كيما في الوصف بالضبط.',
+            date: 'منذ يوم'
+        };
+        setCurrentLP({
+            ...currentLP,
+            reviews: [...(currentLP.reviews || []), newR]
+        });
+    };
+
+    const handleUpdateReview = (index: number, field: keyof LandingPageReview, value: any) => {
+        if (!currentLP || !currentLP.reviews) return;
+        const updated = [...currentLP.reviews];
+        updated[index] = { ...updated[index], [field]: value };
+        setCurrentLP({ ...currentLP, reviews: updated });
+    };
+
+    const handleDeleteReview = (index: number) => {
+        if (!currentLP || !currentLP.reviews) return;
+        const updated = currentLP.reviews.filter((_, i) => i !== index);
+        setCurrentLP({ ...currentLP, reviews: updated });
+    };
+
+    // Gestion des FAQs
+    const handleAddFaq = () => {
+        if (!currentLP) return;
+        const newF: LandingPageFaq = {
+            id: 'f_' + Date.now(),
+            question: 'سؤال متكرر جديد ؟',
+            answer: 'جواب واضح ومريح يجيب على مخاوف الزبونة ويشجعها على الطلب.'
+        };
+        setCurrentLP({
+            ...currentLP,
+            faqs: [...(currentLP.faqs || []), newF]
+        });
+    };
+
+    const handleUpdateFaq = (index: number, field: keyof LandingPageFaq, value: any) => {
+        if (!currentLP || !currentLP.faqs) return;
+        const updated = [...currentLP.faqs];
+        updated[index] = { ...updated[index], [field]: value };
+        setCurrentLP({ ...currentLP, faqs: updated });
+    };
+
+    const handleDeleteFaq = (index: number) => {
+        if (!currentLP || !currentLP.faqs) return;
+        const updated = currentLP.faqs.filter((_, i) => i !== index);
+        setCurrentLP({ ...currentLP, faqs: updated });
+    };
+
     return (
         <div className="space-y-6">
             
@@ -479,13 +615,14 @@ export default function AdminLandingPagesPage() {
                     {/* ONGLETS DES MICRO-DÉTAILS */}
                     <div className="border-b border-[#EFE4D8] bg-[#FAF5EF]/60 px-6 flex flex-wrap gap-1">
                         {[
-                            { key: 'general', label: '1. Informations & Marque', icon: FileText },
-                            { key: 'offer', label: '2. Prix, Offre & Variantes', icon: Tag },
-                            { key: 'photos', label: '3. Photos & Médias', icon: ImageIcon },
-                            { key: 'items', label: '4. Composants du Pack (17+)', icon: Layers },
-                            { key: 'form', label: '5. Formulaire, Textes & Reçu', icon: CheckSquare },
-                            { key: 'design', label: '6. Couleurs & Style', icon: Palette },
-                            { key: 'contact', label: '7. Instagram & Tracking', icon: MessageCircle },
+                            { key: 'sections', label: '1. Sections & Visibilité', icon: Sliders },
+                            { key: 'general', label: '2. Infos, Marque & Logo', icon: FileText },
+                            { key: 'offer', label: '3. Prix & Variantes', icon: Tag },
+                            { key: 'photos', label: '4. Photos (Full-Width)', icon: ImageIcon },
+                            { key: 'items', label: '5. Composants Pack (17+)', icon: Layers },
+                            { key: 'marketing', label: '6. Avantages, Avis & FAQ', icon: Star },
+                            { key: 'form', label: '7. Formulaire, Textes & Reçu', icon: CheckSquare },
+                            { key: 'design_contact', label: '8. Couleurs, Contact & Tracking', icon: Palette },
                         ].map((t) => (
                             <button
                                 key={t.key}
@@ -509,7 +646,62 @@ export default function AdminLandingPagesPage() {
                         {/* FORMULAIRE DES PARAMÈTRES (COLONNE GAUCHE) */}
                         <div className={cn("p-6 space-y-6 overflow-y-auto max-h-[75vh]", showLivePreview ? "lg:col-span-7 border-r border-[#EFE4D8]" : "lg:col-span-12")}>
                             
-                            {/* TAB 1: INFORMATIONS GÉNÉRALES, MARQUE & URL */}
+                            {/* TAB 1: VISIBILITÉ DE TOUTES LES SECTIONS */}
+                            {activeTab === 'sections' && (
+                                <div className="space-y-4">
+                                    <div className="bg-[#FAF5EF] p-4 rounded-xl border border-[#EFE4D8]">
+                                        <h3 className="text-xs font-bold text-[#390102] mb-1">
+                                            Interrupteurs d'activation de chaque section :
+                                        </h3>
+                                        <p className="text-[11px] text-[#7A5459]">
+                                            Vous pouvez afficher ou masquer n'importe quelle section de la page en un seul clic selon vos objectifs.
+                                        </p>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        {[
+                                            { key: 'showBrandHeader', label: 'En-tête de Marque & Logo', desc: 'Affiche le logo centré et le nom de la boutique tout en haut' },
+                                            { key: 'showGallery', label: 'Galerie Photos Pleine Largeur', desc: 'Photo principale bord à bord + miniatures' },
+                                            { key: 'showPricing', label: 'Bloc Prix & Badges de livraison', desc: 'Prix, ancien prix barré et badges promo' },
+                                            { key: 'showVariants', label: 'Sélecteur de Formules / Variantes', desc: 'Permet à la cliente de choisir entre plusieurs formules' },
+                                            { key: 'showItems', label: 'Composants du Pack (Accordéon)', desc: 'Liste dépliable des 17+ articles avec explications Darija' },
+                                            { key: 'showBenefits', label: 'Points Forts & Avantages', desc: 'Section 3 cartes : pourquoi choisir ce pack' },
+                                            { key: 'showVideo', label: 'Vidéo Démonstration / Tuto', desc: 'Vidéo explicative intégrée (YouTube ou MP4)' },
+                                            { key: 'showReviews', label: 'Avis & Témoignages Clientes', desc: 'Notes 5 étoiles et commentaires vérifiés' },
+                                            { key: 'showFaq', label: 'Foire Aux Questions (FAQ)', desc: 'Questions fréquentes dépliables' },
+                                            { key: 'showOrderForm', label: 'Formulaire de Commande Direct', desc: 'Saisie Nom, Téléphone, Wilaya, Commune, Paiement cash' },
+                                            { key: 'showReassurance', label: 'Texte de Garantie & Réassurance', desc: 'Vérification du colis avant paiement' },
+                                            { key: 'showInstagram', label: 'Bouton Chat Privé Instagram', desc: 'Redirige vers votre messagerie Instagram ou WhatsApp' },
+                                            { key: 'showStickyCta', label: 'Barre de commande flottante (Mobile)', desc: 'Bouton toujours visible au bas de l\'écran sur téléphone' },
+                                        ].map((sec) => {
+                                            const isEnabled = (currentLP as any)[sec.key] !== false;
+                                            return (
+                                                <div 
+                                                    key={sec.key} 
+                                                    className="p-3 bg-white border border-[#EFE4D8] rounded-xl flex items-center justify-between gap-3 hover:border-[#BFA893] transition-all"
+                                                >
+                                                    <div>
+                                                        <h4 className="text-xs font-bold text-[#18080A]">{sec.label}</h4>
+                                                        <p className="text-[10px] text-[#7A5459] mt-0.5">{sec.desc}</p>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setCurrentLP({ ...currentLP, [sec.key]: !isEnabled })}
+                                                        className={cn(
+                                                            "px-3 py-1 text-[11px] font-bold rounded-full transition-colors shrink-0",
+                                                            isEnabled ? "bg-emerald-100 text-emerald-800" : "bg-gray-200 text-gray-600"
+                                                        )}
+                                                    >
+                                                        {isEnabled ? 'Affichée' : 'Masquée'}
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* TAB 2: INFORMATIONS GÉNÉRALES, MARQUE & URL */}
                             {activeTab === 'general' && (
                                 <div className="space-y-4">
                                     <div className="bg-[#FAF5EF] p-4 rounded-xl border border-[#EFE4D8] mb-4">
@@ -640,7 +832,7 @@ export default function AdminLandingPagesPage() {
                                 </div>
                             )}
 
-                            {/* TAB 2: PRIX, OFFRE & VARIANTES */}
+                            {/* TAB 3: PRIX, OFFRE & VARIANTES */}
                             {activeTab === 'offer' && (
                                 <div className="space-y-5">
                                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -807,7 +999,7 @@ export default function AdminLandingPagesPage() {
                                 </div>
                             )}
 
-                            {/* TAB 3: PHOTOS & MÉDIAS FULL-WIDTH */}
+                            {/* TAB 4: PHOTOS & MÉDIAS FULL-WIDTH */}
                             {activeTab === 'photos' && (
                                 <div className="space-y-4">
                                     <div className="bg-[#FAF5EF] p-4 rounded-xl border border-[#EFE4D8] flex items-center justify-between">
@@ -905,7 +1097,7 @@ export default function AdminLandingPagesPage() {
                                 </div>
                             )}
 
-                            {/* TAB 4: COMPOSANTS DU PACK (17+ PIÈCES) */}
+                            {/* TAB 5: COMPOSANTS DU PACK (17+ PIÈCES) */}
                             {activeTab === 'items' && (
                                 <div className="space-y-4">
                                     <div className="bg-[#FAF5EF] p-4 rounded-xl border border-[#EFE4D8] space-y-3">
@@ -1049,7 +1241,292 @@ export default function AdminLandingPagesPage() {
                                 </div>
                             )}
 
-                            {/* TAB 5: FORMULAIRE, TEXTES, BOUTONS & REÇU DE COMMANDE */}
+                            {/* TAB 6: AVANTAGES, AVIS & FAQ */}
+                            {activeTab === 'marketing' && (
+                                <div className="space-y-6">
+                                    
+                                    {/* SECTION POINTS FORTS / AVANTAGES */}
+                                    <div className="bg-[#FAF5EF] p-4 rounded-xl border border-[#EFE4D8] space-y-3">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <h3 className="text-xs font-bold text-[#390102]">Section Avantages & Points Forts :</h3>
+                                                <p className="text-[11px] text-[#7A5459]">Pourquoi choisir ce pack plutôt que d'acheter pièce par pièce.</p>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={handleAddBenefit}
+                                                className="px-3 py-1.5 bg-[#390102] text-white text-xs font-bold rounded-lg hover:bg-black"
+                                            >
+                                                + Ajouter un avantage
+                                            </button>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-[#7A5459] mb-1">Titre de la section :</label>
+                                                <input
+                                                    type="text"
+                                                    value={currentLP.benefitsTitle || ''}
+                                                    onChange={(e) => setCurrentLP({ ...currentLP, benefitsTitle: e.target.value })}
+                                                    className="w-full px-3 py-1.5 bg-white border border-[#EFE4D8] text-xs rounded text-right"
+                                                    dir="rtl"
+                                                    placeholder="علاش تختاري هذا الباك المتكامل ؟"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-[#7A5459] mb-1">Sous-titre :</label>
+                                                <input
+                                                    type="text"
+                                                    value={currentLP.benefitsSubtitle || ''}
+                                                    onChange={(e) => setCurrentLP({ ...currentLP, benefitsSubtitle: e.target.value })}
+                                                    className="w-full px-3 py-1.5 bg-white border border-[#EFE4D8] text-xs rounded text-right"
+                                                    dir="rtl"
+                                                    placeholder="كل ما تحتاجينه لبداية احترافية..."
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-2 pt-2">
+                                            {(currentLP.benefits || []).map((b, idx) => (
+                                                <div key={b.id || idx} className="p-3 bg-white border border-[#EFE4D8] rounded-xl flex items-start justify-between gap-3">
+                                                    <div className="flex-1 space-y-1.5">
+                                                        <input
+                                                            type="text"
+                                                            value={b.title}
+                                                            onChange={(e) => handleUpdateBenefit(idx, 'title', e.target.value)}
+                                                            className="w-full px-2.5 py-1 font-bold text-xs border border-[#EFE4D8] rounded text-right"
+                                                            dir="rtl"
+                                                            placeholder="عنوان الميزة"
+                                                        />
+                                                        <textarea
+                                                            rows={2}
+                                                            value={b.description}
+                                                            onChange={(e) => handleUpdateBenefit(idx, 'description', e.target.value)}
+                                                            className="w-full px-2.5 py-1 text-xs border border-[#EFE4D8] rounded text-right"
+                                                            dir="rtl"
+                                                            placeholder="شرح الميزة بالتفصيل..."
+                                                        />
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleDeleteBenefit(idx)}
+                                                        className="p-1.5 text-red-500 hover:text-red-700"
+                                                    >
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* SECTION AVIS CLIENTES */}
+                                    <div className="bg-[#FAF5EF] p-4 rounded-xl border border-[#EFE4D8] space-y-3">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <h3 className="text-xs font-bold text-[#390102]">Section Avis Clientes :</h3>
+                                                <p className="text-[11px] text-[#7A5459]">Rassurez vos visiteuses avec des retours d'expérience authentiques.</p>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={handleAddReview}
+                                                className="px-3 py-1.5 bg-[#390102] text-white text-xs font-bold rounded-lg hover:bg-black"
+                                            >
+                                                + Ajouter un avis
+                                            </button>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-[#7A5459] mb-1">Titre de la section avis :</label>
+                                                <input
+                                                    type="text"
+                                                    value={currentLP.reviewsTitle || ''}
+                                                    onChange={(e) => setCurrentLP({ ...currentLP, reviewsTitle: e.target.value })}
+                                                    className="w-full px-3 py-1.5 bg-white border border-[#EFE4D8] text-xs rounded text-right"
+                                                    dir="rtl"
+                                                    placeholder="آراء زبوناتنا الوفيات"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-[#7A5459] mb-1">Sous-titre :</label>
+                                                <input
+                                                    type="text"
+                                                    value={currentLP.reviewsSubtitle || ''}
+                                                    onChange={(e) => setCurrentLP({ ...currentLP, reviewsSubtitle: e.target.value })}
+                                                    className="w-full px-3 py-1.5 bg-white border border-[#EFE4D8] text-xs rounded text-right"
+                                                    dir="rtl"
+                                                    placeholder="تجارب حقيقية من زبونات بدأن مشروعهن..."
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-2.5 pt-2">
+                                            {(currentLP.reviews || []).map((r, idx) => (
+                                                <div key={r.id || idx} className="p-3 bg-white border border-[#EFE4D8] rounded-xl flex items-start justify-between gap-3">
+                                                    <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                                        <div>
+                                                            <label className="block text-[10px] text-gray-500 mb-0.5">Nom de la cliente :</label>
+                                                            <input
+                                                                type="text"
+                                                                value={r.authorName}
+                                                                onChange={(e) => handleUpdateReview(idx, 'authorName', e.target.value)}
+                                                                className="w-full px-2 py-1 text-xs font-bold border border-[#EFE4D8] rounded text-right"
+                                                                dir="rtl"
+                                                                placeholder="مثال: أمينة ب."
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label className="block text-[10px] text-gray-500 mb-0.5">Wilaya :</label>
+                                                            <input
+                                                                type="text"
+                                                                value={r.wilaya || ''}
+                                                                onChange={(e) => handleUpdateReview(idx, 'wilaya', e.target.value)}
+                                                                className="w-full px-2 py-1 text-xs border border-[#EFE4D8] rounded text-right"
+                                                                dir="rtl"
+                                                                placeholder="الجزائر العاصمة"
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label className="block text-[10px] text-gray-500 mb-0.5">Note (sur 5 étoiles) :</label>
+                                                            <select
+                                                                value={r.rating}
+                                                                onChange={(e) => handleUpdateReview(idx, 'rating', Number(e.target.value))}
+                                                                className="w-full px-2 py-1 text-xs border border-[#EFE4D8] rounded"
+                                                            >
+                                                                <option value={5}>★★★★★ (5 étoiles)</option>
+                                                                <option value={4}>★★★★☆ (4 étoiles)</option>
+                                                            </select>
+                                                        </div>
+                                                        <div className="sm:col-span-3">
+                                                            <label className="block text-[10px] text-gray-500 mb-0.5">Commentaire / Témoignage :</label>
+                                                            <textarea
+                                                                rows={2}
+                                                                value={r.comment}
+                                                                onChange={(e) => handleUpdateReview(idx, 'comment', e.target.value)}
+                                                                className="w-full px-2 py-1 text-xs border border-[#EFE4D8] rounded text-right"
+                                                                dir="rtl"
+                                                                placeholder="الباك جاني كيما في التصويرة تماماً وفيه كلش..."
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleDeleteReview(idx)}
+                                                        className="p-1.5 text-red-500 hover:text-red-700 mt-2"
+                                                    >
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* SECTION FAQ (FOIRE AUX QUESTIONS) */}
+                                    <div className="bg-[#FAF5EF] p-4 rounded-xl border border-[#EFE4D8] space-y-3">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <h3 className="text-xs font-bold text-[#390102]">Foire Aux Questions (FAQ) :</h3>
+                                                <p className="text-[11px] text-[#7A5459]">Répondez aux questions sur la livraison, la garantie et le paiement.</p>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={handleAddFaq}
+                                                className="px-3 py-1.5 bg-[#390102] text-white text-xs font-bold rounded-lg hover:bg-black"
+                                            >
+                                                + Ajouter une question
+                                            </button>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-[#7A5459] mb-1">Titre de la section FAQ :</label>
+                                                <input
+                                                    type="text"
+                                                    value={currentLP.faqTitle || ''}
+                                                    onChange={(e) => setCurrentLP({ ...currentLP, faqTitle: e.target.value })}
+                                                    className="w-full px-3 py-1.5 bg-white border border-[#EFE4D8] text-xs rounded text-right"
+                                                    dir="rtl"
+                                                    placeholder="الأسئلة الأكثر تكراراً (FAQ)"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-[#7A5459] mb-1">Sous-titre :</label>
+                                                <input
+                                                    type="text"
+                                                    value={currentLP.faqSubtitle || ''}
+                                                    onChange={(e) => setCurrentLP({ ...currentLP, faqSubtitle: e.target.value })}
+                                                    className="w-full px-3 py-1.5 bg-white border border-[#EFE4D8] text-xs rounded text-right"
+                                                    dir="rtl"
+                                                    placeholder="كل الإجابات عن التوصيل، الدفع..."
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-2.5 pt-2">
+                                            {(currentLP.faqs || []).map((f, idx) => (
+                                                <div key={f.id || idx} className="p-3 bg-white border border-[#EFE4D8] rounded-xl flex items-start justify-between gap-3">
+                                                    <div className="flex-1 space-y-1.5">
+                                                        <input
+                                                            type="text"
+                                                            value={f.question}
+                                                            onChange={(e) => handleUpdateFaq(idx, 'question', e.target.value)}
+                                                            className="w-full px-2.5 py-1 font-bold text-xs border border-[#EFE4D8] rounded text-right"
+                                                            dir="rtl"
+                                                            placeholder="السؤال..."
+                                                        />
+                                                        <textarea
+                                                            rows={2}
+                                                            value={f.answer}
+                                                            onChange={(e) => handleUpdateFaq(idx, 'answer', e.target.value)}
+                                                            className="w-full px-2.5 py-1 text-xs border border-[#EFE4D8] rounded text-right"
+                                                            dir="rtl"
+                                                            placeholder="الجواب الواضح والشامل..."
+                                                        />
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleDeleteFaq(idx)}
+                                                        className="p-1.5 text-red-500 hover:text-red-700"
+                                                    >
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* SECTION VIDÉO */}
+                                    <div className="p-4 bg-white border border-[#EFE4D8] rounded-xl space-y-3">
+                                        <h3 className="text-xs font-bold text-[#390102]">Vidéo de Démonstration / Tutoriel :</h3>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-[#7A5459] mb-1">Titre de la vidéo :</label>
+                                                <input
+                                                    type="text"
+                                                    value={currentLP.videoTitle || ''}
+                                                    onChange={(e) => setCurrentLP({ ...currentLP, videoTitle: e.target.value })}
+                                                    className="w-full px-3 py-1.5 border border-[#EFE4D8] text-xs rounded text-right"
+                                                    dir="rtl"
+                                                    placeholder="فيديو توضيحي لطريقة الاستعمال..."
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-[#7A5459] mb-1">Lien de la vidéo (YouTube ou lien direct MP4) :</label>
+                                                <input
+                                                    type="url"
+                                                    value={currentLP.videoUrl || ''}
+                                                    onChange={(e) => setCurrentLP({ ...currentLP, videoUrl: e.target.value })}
+                                                    className="w-full px-3 py-1.5 border border-[#EFE4D8] text-xs font-mono rounded"
+                                                    placeholder="https://www.youtube.com/watch?v=..."
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            )}
+
+                            {/* TAB 7: FORMULAIRE, TEXTES, BOUTONS & REÇU DE COMMANDE */}
                             {activeTab === 'form' && (
                                 <div className="space-y-5">
                                     
@@ -1228,13 +1705,13 @@ export default function AdminLandingPagesPage() {
                                         </div>
                                     </div>
 
-                                    {/* Bouton CTA & Réassurance */}
+                                    {/* Bouton CTA, Barre flottante mobile & Réassurance */}
                                     <div className="p-4 bg-white border border-[#EFE4D8] rounded-xl space-y-3">
-                                        <h3 className="text-xs font-bold text-[#390102]">Bouton de commande (CTA) & Réassurance :</h3>
+                                        <h3 className="text-xs font-bold text-[#390102]">Boutons de commande & Réassurance :</h3>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                             <div>
                                                 <label className="block text-[11px] font-bold text-[#7A5459] mb-1">
-                                                    Texte du bouton (utiliser {'{total}'} pour insérer le montant dynamique) :
+                                                    Texte du bouton CTA (balise {'{total}'} supportée) :
                                                 </label>
                                                 <input
                                                     type="text"
@@ -1246,6 +1723,20 @@ export default function AdminLandingPagesPage() {
                                                 />
                                             </div>
                                             <div>
+                                                <label className="block text-[11px] font-bold text-[#7A5459] mb-1">Texte bouton flottant (Mobile) :</label>
+                                                <input
+                                                    type="text"
+                                                    value={currentLP.stickyCtaText || ''}
+                                                    onChange={(e) => setCurrentLP({ ...currentLP, stickyCtaText: e.target.value })}
+                                                    className="w-full px-3 py-2 border border-[#EFE4D8] text-xs rounded text-right"
+                                                    dir="rtl"
+                                                    placeholder="اطلبي الآن — الدفع عند الاستلام"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div>
                                                 <label className="block text-[11px] font-bold text-[#7A5459] mb-1">Texte pendant l'envoi :</label>
                                                 <input
                                                     type="text"
@@ -1256,20 +1747,19 @@ export default function AdminLandingPagesPage() {
                                                     placeholder="جاري تسجيل طلبكِ..."
                                                 />
                                             </div>
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-[11px] font-bold text-[#7A5459] mb-1">
-                                                Texte de réassurance / Garantie (Sous le bouton) :
-                                            </label>
-                                            <input
-                                                type="text"
-                                                value={currentLP.guaranteeText || ''}
-                                                onChange={(e) => setCurrentLP({ ...currentLP, guaranteeText: e.target.value })}
-                                                className="w-full px-3 py-2 border border-[#EFE4D8] text-xs rounded text-right"
-                                                dir="rtl"
-                                                placeholder="الدفع يداً بيد عند الاستلام. تقدري تفتحي الطرد وتعايني سلعتك قبل ما تخلصي."
-                                            />
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-[#7A5459] mb-1">
+                                                    Texte de garantie (Sous le bouton) :
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={currentLP.guaranteeText || ''}
+                                                    onChange={(e) => setCurrentLP({ ...currentLP, guaranteeText: e.target.value })}
+                                                    className="w-full px-3 py-2 border border-[#EFE4D8] text-xs rounded text-right"
+                                                    dir="rtl"
+                                                    placeholder="الدفع يداً بيد عند الاستلام. تقدري تفتحي الطرد وتعايني سلعتك قبل ما تخلصي."
+                                                />
+                                            </div>
                                         </div>
                                     </div>
 
@@ -1278,7 +1768,7 @@ export default function AdminLandingPagesPage() {
                                         <h3 className="text-xs font-bold text-[#390102]">Reçu & Modal de Confirmation de commande :</h3>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                             <div>
-                                                <label className="block text-[11px] font-bold text-[#7A5459] mb-1">Titre du modal de confirmation :</label>
+                                                <label className="block text-[11px] font-bold text-[#7A5459] mb-1">Titre du modal :</label>
                                                 <input
                                                     type="text"
                                                     value={currentLP.successModalTitle || ''}
@@ -1316,12 +1806,14 @@ export default function AdminLandingPagesPage() {
                                 </div>
                             )}
 
-                            {/* TAB 6: COULEURS & DESIGN */}
-                            {activeTab === 'design' && (
-                                <div className="space-y-5">
-                                    <div className="p-4 bg-[#FAF5EF] border border-[#EFE4D8] rounded-xl">
-                                        <h3 className="text-xs font-bold text-[#390102] mb-1">Palettes recommandées MEEY Nail Shop :</h3>
-                                        <div className="flex flex-wrap gap-2 mt-2">
+                            {/* TAB 8: COULEURS, CONTACT INSTAGRAM & PIXELS */}
+                            {activeTab === 'design_contact' && (
+                                <div className="space-y-6">
+                                    
+                                    {/* Palette & Couleurs */}
+                                    <div className="p-4 bg-[#FAF5EF] border border-[#EFE4D8] rounded-xl space-y-3">
+                                        <h3 className="text-xs font-bold text-[#390102]">Palettes de marque pré-configurées :</h3>
+                                        <div className="flex flex-wrap gap-2">
                                             {[
                                                 { name: 'Rouge Brand & Or', primary: '#390102', accent: '#BFA893', bg: '#FAF5EF' },
                                                 { name: 'Encre Noire & Doré', primary: '#18080A', accent: '#B8935A', bg: '#FAF5EF' },
@@ -1344,84 +1836,67 @@ export default function AdminLandingPagesPage() {
                                                 </button>
                                             ))}
                                         </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-[#18080A] mb-1">Couleur Principale</label>
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        type="color"
+                                                        value={currentLP.primaryColor}
+                                                        onChange={(e) => setCurrentLP({ ...currentLP, primaryColor: e.target.value })}
+                                                        className="w-8 h-8 p-0.5 border border-[#EFE4D8] rounded cursor-pointer"
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        value={currentLP.primaryColor}
+                                                        onChange={(e) => setCurrentLP({ ...currentLP, primaryColor: e.target.value })}
+                                                        className="w-full px-2 py-1.5 border border-[#EFE4D8] text-xs font-mono rounded"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-[#18080A] mb-1">Couleur Accent / Or</label>
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        type="color"
+                                                        value={currentLP.accentColor}
+                                                        onChange={(e) => setCurrentLP({ ...currentLP, accentColor: e.target.value })}
+                                                        className="w-8 h-8 p-0.5 border border-[#EFE4D8] rounded cursor-pointer"
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        value={currentLP.accentColor}
+                                                        onChange={(e) => setCurrentLP({ ...currentLP, accentColor: e.target.value })}
+                                                        className="w-full px-2 py-1.5 border border-[#EFE4D8] text-xs font-mono rounded"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-[#18080A] mb-1">Fond de la page</label>
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        type="color"
+                                                        value={currentLP.backgroundColor}
+                                                        onChange={(e) => setCurrentLP({ ...currentLP, backgroundColor: e.target.value })}
+                                                        className="w-8 h-8 p-0.5 border border-[#EFE4D8] rounded cursor-pointer"
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        value={currentLP.backgroundColor}
+                                                        onChange={(e) => setCurrentLP({ ...currentLP, backgroundColor: e.target.value })}
+                                                        className="w-full px-2 py-1.5 border border-[#EFE4D8] text-xs font-mono rounded"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                        <div>
-                                            <label className="block text-xs font-bold text-[#18080A] mb-1">Couleur Principale (Boutons & Titres)</label>
-                                            <div className="flex items-center gap-2">
-                                                <input
-                                                    type="color"
-                                                    value={currentLP.primaryColor}
-                                                    onChange={(e) => setCurrentLP({ ...currentLP, primaryColor: e.target.value })}
-                                                    className="w-10 h-10 p-0.5 border border-[#EFE4D8] rounded cursor-pointer"
-                                                />
-                                                <input
-                                                    type="text"
-                                                    value={currentLP.primaryColor}
-                                                    onChange={(e) => setCurrentLP({ ...currentLP, primaryColor: e.target.value })}
-                                                    className="w-full px-2.5 py-2 border border-[#EFE4D8] text-xs font-mono rounded"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-xs font-bold text-[#18080A] mb-1">Couleur Dorée / Accent</label>
-                                            <div className="flex items-center gap-2">
-                                                <input
-                                                    type="color"
-                                                    value={currentLP.accentColor}
-                                                    onChange={(e) => setCurrentLP({ ...currentLP, accentColor: e.target.value })}
-                                                    className="w-10 h-10 p-0.5 border border-[#EFE4D8] rounded cursor-pointer"
-                                                />
-                                                <input
-                                                    type="text"
-                                                    value={currentLP.accentColor}
-                                                    onChange={(e) => setCurrentLP({ ...currentLP, accentColor: e.target.value })}
-                                                    className="w-full px-2.5 py-2 border border-[#EFE4D8] text-xs font-mono rounded"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-xs font-bold text-[#18080A] mb-1">Couleur de Fond de la page</label>
-                                            <div className="flex items-center gap-2">
-                                                <input
-                                                    type="color"
-                                                    value={currentLP.backgroundColor}
-                                                    onChange={(e) => setCurrentLP({ ...currentLP, backgroundColor: e.target.value })}
-                                                    className="w-10 h-10 p-0.5 border border-[#EFE4D8] rounded cursor-pointer"
-                                                />
-                                                <input
-                                                    type="text"
-                                                    value={currentLP.backgroundColor}
-                                                    onChange={(e) => setCurrentLP({ ...currentLP, backgroundColor: e.target.value })}
-                                                    className="w-full px-2.5 py-2 border border-[#EFE4D8] text-xs font-mono rounded"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* TAB 7: INSTAGRAM, FOOTER & TRACKING PIXELS */}
-                            {activeTab === 'contact' && (
-                                <div className="space-y-4">
-                                    <div className="p-4 bg-[#FAF5EF] border border-[#EFE4D8] rounded-xl space-y-3">
-                                        <div className="flex items-center justify-between">
-                                            <h3 className="text-xs font-bold text-[#390102]">Section Contact Direct Instagram :</h3>
-                                            <button
-                                                type="button"
-                                                onClick={() => setCurrentLP({ ...currentLP, showInstagram: currentLP.showInstagram === false ? true : false })}
-                                                className={cn(
-                                                    "px-3 py-1 text-xs font-bold rounded-full transition-colors",
-                                                    currentLP.showInstagram !== false ? "bg-emerald-100 text-emerald-800" : "bg-gray-200 text-gray-700"
-                                                )}
-                                            >
-                                                {currentLP.showInstagram !== false ? 'Affichée sur la page' : 'Masquée'}
-                                            </button>
-                                        </div>
-
+                                    {/* Section Contact Direct Instagram */}
+                                    <div className="p-4 bg-white border border-[#EFE4D8] rounded-xl space-y-3">
+                                        <h3 className="text-xs font-bold text-[#390102]">Section Contact Direct Instagram :</h3>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                             <div>
                                                 <label className="block text-[11px] font-bold text-[#7A5459] mb-1">Titre de la section Instagram :</label>
@@ -1429,20 +1904,20 @@ export default function AdminLandingPagesPage() {
                                                     type="text"
                                                     value={currentLP.instagramTitle || ''}
                                                     onChange={(e) => setCurrentLP({ ...currentLP, instagramTitle: e.target.value })}
-                                                    className="w-full px-3 py-1.5 bg-white border border-[#EFE4D8] text-xs rounded text-right"
+                                                    className="w-full px-3 py-1.5 border border-[#EFE4D8] text-xs rounded text-right"
                                                     dir="rtl"
                                                     placeholder="عندك أي سؤال أو استفسار على هذا الباك؟"
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-[11px] font-bold text-[#7A5459] mb-1">Sous-titre explicatif :</label>
+                                                <label className="block text-[11px] font-bold text-[#7A5459] mb-1">Sous-titre :</label>
                                                 <input
                                                     type="text"
                                                     value={currentLP.instagramSubtitle || ''}
                                                     onChange={(e) => setCurrentLP({ ...currentLP, instagramSubtitle: e.target.value })}
-                                                    className="w-full px-3 py-1.5 bg-white border border-[#EFE4D8] text-xs rounded text-right"
+                                                    className="w-full px-3 py-1.5 border border-[#EFE4D8] text-xs rounded text-right"
                                                     dir="rtl"
-                                                    placeholder="تواصلي معنا مباشرة في الشات الخاص على حسابنا في إنستغرام"
+                                                    placeholder="تواصلي معنا مباشرة في الشات الخاص..."
                                                 />
                                             </div>
                                         </div>
@@ -1454,7 +1929,7 @@ export default function AdminLandingPagesPage() {
                                                     type="url"
                                                     value={currentLP.instagramUrl || ''}
                                                     onChange={(e) => setCurrentLP({ ...currentLP, instagramUrl: e.target.value })}
-                                                    className="w-full px-3 py-1.5 bg-white border border-[#EFE4D8] text-xs rounded font-mono text-left"
+                                                    className="w-full px-3 py-1.5 border border-[#EFE4D8] text-xs rounded font-mono text-left"
                                                     placeholder="https://ig.me/m/meeynailshop"
                                                 />
                                             </div>
@@ -1464,7 +1939,7 @@ export default function AdminLandingPagesPage() {
                                                     type="text"
                                                     value={currentLP.instagramButtonLabel || ''}
                                                     onChange={(e) => setCurrentLP({ ...currentLP, instagramButtonLabel: e.target.value })}
-                                                    className="w-full px-3 py-1.5 bg-white border border-[#EFE4D8] text-xs rounded text-right"
+                                                    className="w-full px-3 py-1.5 border border-[#EFE4D8] text-xs rounded text-right"
                                                     dir="rtl"
                                                     placeholder="مراسلة في الخاص..."
                                                 />
@@ -1477,32 +1952,30 @@ export default function AdminLandingPagesPage() {
                                                 type="text"
                                                 value={currentLP.instagramMessage || ''}
                                                 onChange={(e) => setCurrentLP({ ...currentLP, instagramMessage: e.target.value })}
-                                                className="w-full px-3 py-1.5 bg-white border border-[#EFE4D8] text-xs rounded text-right"
+                                                className="w-full px-3 py-1.5 border border-[#EFE4D8] text-xs rounded text-right"
                                                 dir="rtl"
                                                 placeholder="السلام عليكم، حبيت نستفسر ونعرف معلومات أكثر على هذا الباك"
                                             />
                                         </div>
                                     </div>
 
-                                    {/* Footer Copyright */}
-                                    <div className="p-4 bg-white border border-[#EFE4D8] rounded-xl space-y-2">
-                                        <label className="block text-xs font-bold text-[#18080A]">Texte du Footer (Bas de page) :</label>
-                                        <input
-                                            type="text"
-                                            value={currentLP.footerText || ''}
-                                            onChange={(e) => setCurrentLP({ ...currentLP, footerText: e.target.value })}
-                                            className="w-full px-3.5 py-2 border border-[#EFE4D8] text-xs rounded-lg text-right"
-                                            dir="rtl"
-                                            placeholder="© MEEY NAIL SHOP. جميع الحقوق محفوظة."
-                                        />
-                                    </div>
-
-                                    {/* Pixels de Tracking Publicitaire */}
+                                    {/* Footer & Tracking Pixels */}
                                     <div className="p-4 bg-white border border-[#EFE4D8] rounded-xl space-y-3">
-                                        <h3 className="text-xs font-bold text-[#390102]">Pixels de Tracking (Campagnes Ads) :</h3>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="block text-[11px] font-bold text-[#18080A] mb-1">Texte du Footer (Bas de page) :</label>
+                                            <input
+                                                type="text"
+                                                value={currentLP.footerText || ''}
+                                                onChange={(e) => setCurrentLP({ ...currentLP, footerText: e.target.value })}
+                                                className="w-full px-3 py-1.5 border border-[#EFE4D8] text-xs rounded-lg text-right"
+                                                dir="rtl"
+                                                placeholder="© MEEY NAIL SHOP. جميع الحقوق محفوظة."
+                                            />
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-[#EFE4D8]">
                                             <div>
-                                                <label className="block text-[11px] font-bold text-[#7A5459] mb-1">Meta Pixel ID (Facebook / Instagram) :</label>
+                                                <label className="block text-[11px] font-bold text-[#7A5459] mb-1">Meta Pixel ID (Facebook Ads) :</label>
                                                 <input
                                                     type="text"
                                                     value={currentLP.facebookPixelId || ''}
@@ -1523,6 +1996,7 @@ export default function AdminLandingPagesPage() {
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
                             )}
 
@@ -1558,42 +2032,57 @@ export default function AdminLandingPagesPage() {
                                     dir="rtl"
                                 >
                                     {/* Header simulation */}
-                                    <div className="p-4 text-center border-b border-[#EFE4D8]">
-                                        <div className="w-9 h-9 mx-auto mb-1.5 rounded-full bg-white border border-[#BFA893] flex items-center justify-center text-[#390102] font-bold text-xs overflow-hidden">
-                                            {currentLP.logoUrl ? (
-                                                <img src={currentLP.logoUrl} alt="" className="w-full h-full object-cover" />
-                                            ) : (
-                                                '✓'
+                                    {currentLP.showBrandHeader !== false && (
+                                        <div className="p-4 text-center border-b border-[#EFE4D8]">
+                                            <div className="w-9 h-9 mx-auto mb-1.5 rounded-full bg-white border border-[#BFA893] flex items-center justify-center text-[#390102] font-bold text-xs overflow-hidden">
+                                                {currentLP.logoUrl ? (
+                                                    <img src={currentLP.logoUrl} alt="" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    '✓'
+                                                )}
+                                            </div>
+                                            <div className="text-[10px] uppercase font-bold text-[#B8935A] tracking-wider">
+                                                {currentLP.brandName}
+                                            </div>
+                                            <h4 className="text-sm font-bold text-[#390102] mt-1 leading-snug">
+                                                {currentLP.title}
+                                            </h4>
+                                            {currentLP.subtitle && (
+                                                <p className="text-[10px] text-gray-600 mt-1">{currentLP.subtitle}</p>
                                             )}
                                         </div>
-                                        <div className="text-[10px] uppercase font-bold text-[#B8935A] tracking-wider">
-                                            {currentLP.brandName}
-                                        </div>
-                                        <h4 className="text-sm font-bold text-[#390102] mt-1 leading-snug">
-                                            {currentLP.title}
-                                        </h4>
-                                        {currentLP.subtitle && (
-                                            <p className="text-[10px] text-gray-600 mt-1">{currentLP.subtitle}</p>
-                                        )}
-                                    </div>
+                                    )}
 
                                     {/* Image Full Width */}
-                                    <div className="w-full aspect-[4/3] bg-white overflow-hidden">
-                                        <img src={currentLP.photos[0]} alt="" className="w-full h-full object-cover" />
-                                    </div>
+                                    {currentLP.showGallery !== false && currentLP.photos && currentLP.photos.length > 0 && (
+                                        <div className="w-full aspect-[4/3] bg-white overflow-hidden">
+                                            <img src={currentLP.photos[0]} alt="" className="w-full h-full object-cover" />
+                                        </div>
+                                    )}
 
                                     {/* Prix & Bouton */}
                                     <div className="p-4 space-y-3">
-                                        <div className="flex justify-between items-baseline border-b border-[#EFE4D8] pb-2">
-                                            <span className="text-[11px] text-gray-500">{currentLP.priceBadgeText || 'سعر الباك الكامل:'}</span>
-                                            <span className="text-lg font-bold text-[#390102] font-mono">
-                                                {currentLP.price.toLocaleString('fr-DZ')} {currentLP.currency || 'DA'}
-                                            </span>
-                                        </div>
+                                        {currentLP.showPricing !== false && (
+                                            <div className="flex justify-between items-baseline border-b border-[#EFE4D8] pb-2">
+                                                <span className="text-[11px] text-gray-500">{currentLP.priceBadgeText || 'سعر الباك الكامل:'}</span>
+                                                <span className="text-lg font-bold text-[#390102] font-mono">
+                                                    {currentLP.price.toLocaleString('fr-DZ')} {currentLP.currency || 'DA'}
+                                                </span>
+                                            </div>
+                                        )}
 
-                                        <div className="p-2.5 bg-[#FAF5EF] rounded text-center text-xs text-gray-700">
-                                            {currentLP.accordionTitle || `${currentLP.items.length} قطع أساسية متكاملة`}
-                                        </div>
+                                        {currentLP.showItems !== false && (
+                                            <div className="p-2.5 bg-[#FAF5EF] rounded text-center text-xs text-gray-700">
+                                                {currentLP.accordionTitle || `${currentLP.items.length} قطع أساسية متكاملة`}
+                                            </div>
+                                        )}
+
+                                        {currentLP.showBenefits !== false && currentLP.benefits && currentLP.benefits.length > 0 && (
+                                            <div className="p-2.5 bg-[#FAF5EF] border border-[#EFE4D8] rounded-lg text-right space-y-1">
+                                                <span className="text-[10px] font-bold text-[#390102]">✓ {currentLP.benefits[0].title}</span>
+                                                <p className="text-[9px] text-gray-600">{currentLP.benefits[0].description}</p>
+                                            </div>
+                                        )}
 
                                         <button 
                                             className="w-full py-2.5 text-white text-xs font-bold rounded-lg shadow"
@@ -1602,7 +2091,7 @@ export default function AdminLandingPagesPage() {
                                             {currentLP.ctaButtonText || 'تأكيد الطلب الآن'}
                                         </button>
 
-                                        {currentLP.guaranteeText && (
+                                        {currentLP.showReassurance !== false && currentLP.guaranteeText && (
                                             <p className="text-[10px] text-gray-500 text-center">{currentLP.guaranteeText}</p>
                                         )}
                                     </div>

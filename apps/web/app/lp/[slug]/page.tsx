@@ -28,6 +28,7 @@ export default function PublicLandingPage() {
     const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
     const [selectedVariant, setSelectedVariant] = useState<LandingPageVariant | null>(null);
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+    const [openFaqId, setOpenFaqId] = useState<string | null>(null);
 
     // Formulaire de commande
     const [name, setName] = useState('');
@@ -387,7 +388,7 @@ export default function PublicLandingPage() {
                         {/* ==================================================== */}
                         {/* FORMULAIRE DE COMMANDE ULTRA-RAPIDE                  */}
                         {/* ==================================================== */}
-                        <section className="pt-6">
+                        <section id="order-section" className="pt-6">
                             <div className="mb-5 text-right">
                                 <h2 className="text-lg font-bold" style={{ color: landingPage.primaryColor }}>
                                     {landingPage.formTitle || 'اطلبي الباك تاعك درك'}
@@ -561,6 +562,133 @@ export default function PublicLandingPage() {
                 </article>
 
                 {/* ======================================================== */}
+                {/* SECTION AVANTAGES / POINTS FORTS                         */}
+                {/* ======================================================== */}
+                {landingPage.showBenefits !== false && landingPage.benefits && landingPage.benefits.length > 0 && (
+                    <section className="mt-6 bg-white border border-[#EFE4D8] rounded-2xl p-5 sm:p-6 shadow-sm">
+                        <div className="text-right mb-4">
+                            <h2 className="text-sm sm:text-base font-bold" style={{ color: landingPage.primaryColor }}>
+                                {landingPage.benefitsTitle || 'علاش تختاري هذا الباك المتكامل ؟'}
+                            </h2>
+                            {landingPage.benefitsSubtitle && (
+                                <p className="text-[11px] opacity-75 mt-0.5">{landingPage.benefitsSubtitle}</p>
+                            )}
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            {landingPage.benefits.map((b, idx) => (
+                                <div key={b.id || idx} className="p-3.5 bg-[#FAF5EF] border border-[#EFE4D8] rounded-xl text-right space-y-1">
+                                    <div className="w-6 h-6 rounded-full bg-white border flex items-center justify-center font-bold text-xs" style={{ borderColor: landingPage.accentColor, color: landingPage.primaryColor }}>
+                                        ✓
+                                    </div>
+                                    <h3 className="font-bold text-xs pt-1" style={{ color: landingPage.primaryColor }}>{b.title}</h3>
+                                    <p className="text-[11px] opacity-80 leading-relaxed">{b.description}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* ======================================================== */}
+                {/* SECTION VIDÉO DÉMONSTRATION / TUTO                       */}
+                {/* ======================================================== */}
+                {landingPage.showVideo && landingPage.videoUrl && (
+                    <section className="mt-6 bg-white border border-[#EFE4D8] rounded-2xl p-5 sm:p-6 shadow-sm text-right">
+                        <h2 className="text-sm sm:text-base font-bold mb-1" style={{ color: landingPage.primaryColor }}>
+                            {landingPage.videoTitle || 'فيديو توضيحي لطريقة الاستعمال والنتيجة'}
+                        </h2>
+                        {landingPage.videoSubtitle && (
+                            <p className="text-[11px] opacity-75 mb-3">{landingPage.videoSubtitle}</p>
+                        )}
+                        <div className="w-full aspect-video rounded-xl overflow-hidden bg-black/5 border border-[#EFE4D8]">
+                            {landingPage.videoUrl.includes('youtube.com') || landingPage.videoUrl.includes('youtu.be') ? (
+                                <iframe 
+                                    src={landingPage.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')} 
+                                    className="w-full h-full"
+                                    allowFullScreen
+                                />
+                            ) : (
+                                <video src={landingPage.videoUrl} controls className="w-full h-full object-cover" />
+                            )}
+                        </div>
+                    </section>
+                )}
+
+                {/* ======================================================== */}
+                {/* SECTION AVIS & TÉMOIGNAGES CLIENTES                      */}
+                {/* ======================================================== */}
+                {landingPage.showReviews !== false && landingPage.reviews && landingPage.reviews.length > 0 && (
+                    <section className="mt-6 bg-white border border-[#EFE4D8] rounded-2xl p-5 sm:p-6 shadow-sm">
+                        <div className="text-right mb-4">
+                            <h2 className="text-sm sm:text-base font-bold" style={{ color: landingPage.primaryColor }}>
+                                {landingPage.reviewsTitle || 'آراء زبوناتنا الوفيات'}
+                            </h2>
+                            {landingPage.reviewsSubtitle && (
+                                <p className="text-[11px] opacity-75 mt-0.5">{landingPage.reviewsSubtitle}</p>
+                            )}
+                        </div>
+                        <div className="space-y-3">
+                            {landingPage.reviews.map((r, idx) => (
+                                <div key={r.id || idx} className="p-3.5 bg-[#FAF5EF] border border-[#EFE4D8] rounded-xl text-right space-y-1.5">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-1 text-[#B8935A]">
+                                            {[...Array(r.rating || 5)].map((_, i) => (
+                                                <svg key={i} className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                                </svg>
+                                            ))}
+                                        </div>
+                                        <div className="text-xs font-bold" style={{ color: landingPage.primaryColor }}>
+                                            {r.authorName} {r.wilaya ? <span className="opacity-70 font-normal">({r.wilaya})</span> : ''}
+                                        </div>
+                                    </div>
+                                    <p className="text-xs opacity-85 leading-relaxed">{r.comment}</p>
+                                    {r.date && <div className="text-[10px] opacity-60 text-left num">{r.date}</div>}
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* ======================================================== */}
+                {/* SECTION FOIRE AUX QUESTIONS (FAQ)                        */}
+                {/* ======================================================== */}
+                {landingPage.showFaq !== false && landingPage.faqs && landingPage.faqs.length > 0 && (
+                    <section className="mt-6 bg-white border border-[#EFE4D8] rounded-2xl p-5 sm:p-6 shadow-sm">
+                        <div className="text-right mb-4">
+                            <h2 className="text-sm sm:text-base font-bold" style={{ color: landingPage.primaryColor }}>
+                                {landingPage.faqTitle || 'الأسئلة الأكثر تكراراً (FAQ)'}
+                            </h2>
+                            {landingPage.faqSubtitle && (
+                                <p className="text-[11px] opacity-75 mt-0.5">{landingPage.faqSubtitle}</p>
+                            )}
+                        </div>
+                        <div className="divide-y divide-[#EFE4D8] text-right">
+                            {landingPage.faqs.map((f, idx) => {
+                                const isOpen = openFaqId === (f.id || String(idx));
+                                return (
+                                    <div key={f.id || idx} className="py-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => setOpenFaqId(isOpen ? null : (f.id || String(idx)))}
+                                            className="w-full flex items-center justify-between text-right font-bold text-xs focus:outline-none"
+                                            style={{ color: landingPage.primaryColor }}
+                                        >
+                                            <span>{f.question}</span>
+                                            <span className="text-base font-bold mr-2">{isOpen ? '−' : '+'}</span>
+                                        </button>
+                                        {isOpen && (
+                                            <p className="text-xs opacity-80 mt-2 pr-1 leading-relaxed text-[#57393D]">
+                                                {f.answer}
+                                            </p>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </section>
+                )}
+
+                {/* ======================================================== */}
                 {/* SECTION CONTACT INSTAGRAM (CHAT PRIVÉ DIRECT)            */}
                 {/* ======================================================== */}
                 {landingPage.showInstagram !== false && landingPage.instagramUrl && (
@@ -719,6 +847,29 @@ export default function PublicLandingPage() {
                         `
                     }}
                 />
+            )}
+
+            {/* BARRE FLOTTANTE MOBILE DE COMMANDE RAPIDE */}
+            {landingPage.showStickyCta !== false && (
+                <aside className="fixed bottom-0 left-0 right-0 z-40 p-3 bg-white/95 backdrop-blur-md border-t border-[#EFE4D8] shadow-2xl sm:hidden flex items-center justify-between gap-3">
+                    <div className="text-right">
+                        <div className="text-[10px] opacity-75">المجموع :</div>
+                        <div className="text-sm font-bold num" style={{ color: landingPage.primaryColor }}>
+                            {productPrice.toLocaleString('fr-DZ')} {landingPage.currency || 'DA'}
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const el = document.getElementById('order-section');
+                            if (el) el.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className="flex-1 py-2.5 px-4 text-white text-xs font-bold rounded-xl shadow transition-all active:scale-95"
+                        style={{ backgroundColor: landingPage.primaryColor }}
+                    >
+                        {landingPage.stickyCtaText || 'اطلبي الآن — الدفع عند الاستلام'}
+                    </button>
+                </aside>
             )}
 
         </div>

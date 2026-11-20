@@ -30,6 +30,47 @@ export declare const DEFAULT_LANDING_PAGES: {
         descDz: string;
         quantity: number;
     }[];
+    showBrandHeader: boolean;
+    showGallery: boolean;
+    showPricing: boolean;
+    showVariants: boolean;
+    showItems: boolean;
+    showBenefits: boolean;
+    showVideo: boolean;
+    showReviews: boolean;
+    showFaq: boolean;
+    showOrderForm: boolean;
+    showInstagram: boolean;
+    showReassurance: boolean;
+    showStickyCta: boolean;
+    benefitsTitle: string;
+    benefitsSubtitle: string;
+    benefits: {
+        id: string;
+        title: string;
+        description: string;
+    }[];
+    reviewsTitle: string;
+    reviewsSubtitle: string;
+    reviews: {
+        id: string;
+        authorName: string;
+        wilaya: string;
+        rating: number;
+        comment: string;
+        date: string;
+    }[];
+    faqTitle: string;
+    faqSubtitle: string;
+    faqs: {
+        id: string;
+        question: string;
+        answer: string;
+    }[];
+    videoTitle: string;
+    videoSubtitle: string;
+    videoUrl: string;
+    stickyCtaText: string;
     isAccordion: boolean;
     accordionTitle: string;
     accordionBadgeText: string;
@@ -56,7 +97,6 @@ export declare const DEFAULT_LANDING_PAGES: {
     variantsTitle: string;
     deliveryText: string;
     guaranteeText: string;
-    showInstagram: boolean;
     instagramTitle: string;
     instagramSubtitle: string;
     instagramUrl: string;

@@ -38,6 +38,55 @@ export const DEFAULT_LANDING_PAGES: LandingPageData[] = [
       { id: "16", nameFr: "Effet miroir", descDz: "بودرة لمعان عاكس كي المرايا، تمد مظهر غلاسي عصري ومطلوب بزاف في المناسبات.", quantity: 1 },
       { id: "17", nameFr: "Des papillons colorés", descDz: "ديزاينات فراشات ثلاثية الأبعاد ملونة وشابة بزاف باه تزيني بيهم أظافرك وتخرجي أشكال ترند.", quantity: 1 }
     ],
+    // Section Visibility Toggles
+    showBrandHeader: true,
+    showGallery: true,
+    showPricing: true,
+    showVariants: false,
+    showItems: true,
+    showBenefits: true,
+    showVideo: false,
+    showReviews: true,
+    showFaq: true,
+    showOrderForm: true,
+    showInstagram: true,
+    showReassurance: true,
+    showStickyCta: true,
+
+    // Benefits Section
+    benefitsTitle: "علاش تختاري هذا الباك المتكامل ؟",
+    benefitsSubtitle: "كل ما تحتاجينه لبداية احترافية ونظيفة بدون تضييع الوقت والمال",
+    benefits: [
+      { id: "b1", title: "سلعة احترافية 100%", description: "مكونات صالون مختارة بعناية تعيش معاك وتمدلك نتيجة نقية ومتقونة من أول تجربة." },
+      { id: "b2", title: "توفير كبير في الوقت والدراهم", description: "بلا ما تحوسي في الحوانيت وتشري كل قطعة وحدها بسعر غالي، جمعنالك كلش في باك واحد شامل." },
+      { id: "b3", title: "توصيل سريع وباب للدار", description: "نوصلولك لكامل 58 ولاية مع إمكانية فتح الطرد ومعاينة السلعة قبل الدفع كاش عند الاستلام." }
+    ],
+
+    // Reviews Section
+    reviewsTitle: "آراء زبوناتنا الوفيات",
+    reviewsSubtitle: "تجارب حقيقية من زبونات بدأن مشروعهن بهذا الباك",
+    reviews: [
+      { id: "r1", authorName: "أمينة ب.", wilaya: "الجزائر العاصمة", rating: 5, comment: "الباك جاني كيما في التصويرة تماماً وفيه كلش، لمبة UV خفيفة بزاف والفيرني يشد مليح، يعطيك الصحة.", date: "منذ يومين" },
+      { id: "r2", authorName: "سارة م.", wilaya: "وهران", rating: 5, comment: "خدمة هايلة والتوصيل وصلني في 48 ساعة لباب الدار، عجبني بلي نقدر نتحقق من السلعة قبل ما نخلص.", date: "منذ 5 أيام" },
+      { id: "r3", authorName: "نادية ك.", wilaya: "قسنطينة", rating: 5, comment: "أنصح كل وحدة حابة تبدا في الأظافر والـ Press-on nails تشري هذا الباك، ما تسحقي تزيدي تشري والو معاه.", date: "منذ أسبوع" }
+    ],
+
+    // FAQ Section
+    faqTitle: "الأسئلة الأكثر تكراراً (FAQ)",
+    faqSubtitle: "كل الإجابات عن التوصيل، الدفع، ومكونات الباك",
+    faqs: [
+      { id: "f1", question: "كيفاش نخلص ووقتاش توصلني السلعة ؟", answer: "الدفع يداً بيد عند الاستلام كاش. التوصيل يوصلك حتى لباب دارك أو للمكتب خلال 24 إلى 48 ساعة حسب ولايتك." },
+      { id: "f2", question: "هل نقدر نفتح الطرد ونشوف السلعة قبل ما نخلص ؟", answer: "نعم بكل تأكيد ! تقدري تفتحي الطرد وتعايني المكونات وتتأكدي من كلش قبل ما تمدي الدراهم لعامل التوصيل." },
+      { id: "f3", question: "هل الباك فيه كل الأدوات الكافية باه نبدأ ؟", answer: "نعم، الباك يضم 17 قطعة أساسية متكاملة (مصابيح UV، مقص، بانسوات، مبرد، توب كوت وبيس كوت، ألوان الفيرني والديزاينات) باه تبداي مباشرة وبلا ما يخصك والو." }
+    ],
+
+    // Video Section
+    videoTitle: "فيديو توضيحي لطريقة الاستعمال والنتيجة",
+    videoSubtitle: "شاهدي كيفاش تخدمي ديزاينات احترافية خطوة بخطوة بالمنتجات لي في الباك",
+    videoUrl: "",
+
+    // Sticky CTA Text
+    stickyCtaText: "اطلبي الآن — الدفع عند الاستلام",
     isAccordion: true,
     accordionTitle: "المكونات الأساسية للباك (17 عنصر بالتفصيل) :",
     accordionBadgeText: "17 pièces",
@@ -64,7 +113,6 @@ export const DEFAULT_LANDING_PAGES: LandingPageData[] = [
     variantsTitle: "اختاري الصيغة أو الباك المناسب لكِ :",
     deliveryText: "توصيل متوفر لكامل 58 ولاية — الدفع كاش عند الاستلام",
     guaranteeText: "الدفع يداً بيد عند الاستلام. تقدري تفتحي الطرد وتعايني سلعتك قبل ما تخلصي.",
-    showInstagram: true,
     instagramTitle: "عندك أي سؤال أو استفسار على هذا الباك؟",
     instagramSubtitle: "تواصلي معنا مباشرة في الشات الخاص على حسابنا في إنستغرام",
     instagramUrl: "https://ig.me/m/meeynailshop",
