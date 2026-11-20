@@ -181,13 +181,17 @@ export default function PublicLandingPage() {
                     {/* Icône officielle centrée */}
                     <div className="flex justify-center mb-4">
                         <div 
-                            className="w-14 h-14 rounded-full bg-white border border-[#EFE4D8] shadow-sm flex items-center justify-center transition-transform hover:scale-105"
+                            className="w-14 h-14 rounded-full bg-white border border-[#EFE4D8] shadow-sm flex items-center justify-center transition-transform hover:scale-105 overflow-hidden"
                             style={{ borderColor: `${landingPage.accentColor}60` }}
                         >
-                            <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" style={{ color: landingPage.primaryColor }}>
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 2L14.5 8.5L21 9.5L16 14L17.5 20.5L12 17L6.5 20.5L8 14L3 9.5L9.5 8.5L12 2Z" fill="rgba(184, 147, 90, 0.15)" stroke={landingPage.accentColor}/>
-                                <circle cx="12" cy="12" r="3" fill={landingPage.primaryColor}/>
-                            </svg>
+                            {landingPage.logoUrl ? (
+                                <img src={landingPage.logoUrl} alt={landingPage.brandName} className="w-full h-full object-cover" />
+                            ) : (
+                                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" style={{ color: landingPage.primaryColor }}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 2L14.5 8.5L21 9.5L16 14L17.5 20.5L12 17L6.5 20.5L8 14L3 9.5L9.5 8.5L12 2Z" fill="rgba(184, 147, 90, 0.15)" stroke={landingPage.accentColor}/>
+                                    <circle cx="12" cy="12" r="3" fill={landingPage.primaryColor}/>
+                                </svg>
+                            )}
                         </div>
                     </div>
 
@@ -253,12 +257,14 @@ export default function PublicLandingPage() {
                         {/* Prix & Livraison */}
                         <div className="flex items-center justify-between pb-5 border-b border-[#EFE4D8]">
                             <div>
-                                <div className="text-[11px] opacity-75 font-medium">سعر الباك الكامل ({landingPage.items.length} عنصر متكامل)</div>
+                                <div className="text-[11px] opacity-75 font-medium">
+                                    {landingPage.priceBadgeText || `سعر الباك الكامل (${landingPage.items?.length || 0} عنصر متكامل)`}
+                                </div>
                                 <div className="text-2xl sm:text-3xl font-extrabold mt-0.5" style={{ color: landingPage.primaryColor }}>
-                                    <span className="num">{productPrice.toLocaleString('fr-DZ')}</span> <span className="text-sm font-semibold tracking-normal">{landingPage.currency}</span>
+                                    <span className="num">{productPrice.toLocaleString('fr-DZ')}</span> <span className="text-sm font-semibold tracking-normal">{landingPage.currency || 'DA'}</span>
                                     {landingPage.compareAtPrice && landingPage.compareAtPrice > productPrice && (
                                         <span className="text-xs text-gray-400 line-through mr-2 font-normal num">
-                                            {landingPage.compareAtPrice.toLocaleString('fr-DZ')} {landingPage.currency}
+                                            {landingPage.compareAtPrice.toLocaleString('fr-DZ')} {landingPage.currency || 'DA'}
                                         </span>
                                     )}
                                 </div>
@@ -270,7 +276,7 @@ export default function PublicLandingPage() {
                                     style={{ color: landingPage.primaryColor, borderColor: `${landingPage.accentColor}50` }}
                                 >
                                     <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: landingPage.accentColor }}></span>
-                                    توصيل متوفر لـ <span className="num">58</span> ولاية
+                                    {landingPage.deliveryBadgeText || 'توصيل متوفر لـ 58 ولاية'}
                                 </span>
                             </div>
                         </div>
@@ -279,7 +285,7 @@ export default function PublicLandingPage() {
                         {landingPage.hasVariants && landingPage.variants && landingPage.variants.length > 0 && (
                             <div className="py-4 border-b border-[#EFE4D8] space-y-2">
                                 <label className="block text-xs font-bold" style={{ color: landingPage.primaryColor }}>
-                                    اختاري الصيغة أو الباك المناسب لكِ :
+                                    {landingPage.variantsTitle || 'اختاري الصيغة أو الباك المناسب لكِ :'}
                                 </label>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                     {landingPage.variants.map((v) => {
@@ -304,7 +310,7 @@ export default function PublicLandingPage() {
                                                     )}
                                                 </div>
                                                 <div className="text-xs font-bold font-mono" style={{ color: landingPage.primaryColor }}>
-                                                    {v.price ? `${v.price.toLocaleString('fr-DZ')} DA` : ''}
+                                                    {v.price ? `${v.price.toLocaleString('fr-DZ')} ${landingPage.currency || 'DA'}` : ''}
                                                 </div>
                                             </button>
                                         );
@@ -331,7 +337,7 @@ export default function PublicLandingPage() {
                                             {landingPage.accordionTitle || `المكونات الأساسية للباك (${landingPage.items.length} عنصر بالتفصيل) :`}
                                         </h2>
                                         <span className="text-[11px] font-bold num" style={{ color: landingPage.accentColor }}>
-                                            {landingPage.items.length} pièces
+                                            {landingPage.accordionBadgeText || `${landingPage.items.length} pièces`}
                                         </span>
                                     </div>
 
@@ -384,10 +390,10 @@ export default function PublicLandingPage() {
                         <section className="pt-6">
                             <div className="mb-5 text-right">
                                 <h2 className="text-lg font-bold" style={{ color: landingPage.primaryColor }}>
-                                    اطلبي الباك تاعك درك
+                                    {landingPage.formTitle || 'اطلبي الباك تاعك درك'}
                                 </h2>
                                 <p className="text-xs opacity-75 mt-1 leading-relaxed">
-                                    عمري معلوماتك لتحت، التوصيل يوصلك حتى لباب دارك والدفع كاش عند الاستلام بعد ما تفتحي وتعايني سلعتك.
+                                    {landingPage.formSubtitle || 'عمري معلوماتك لتحت، التوصيل يوصلك حتى لباب دارك والدفع كاش عند الاستلام بعد ما تفتحي وتعايني سلعتك.'}
                                 </p>
                             </div>
 
@@ -396,14 +402,14 @@ export default function PublicLandingPage() {
                                 {/* Nom et prénom */}
                                 <div>
                                     <label className="block text-xs font-bold mb-1">
-                                        الاسم واللقب الكامل <span className="text-red-600">*</span>
+                                        {landingPage.nameLabel || 'الاسم واللقب الكامل'} <span className="text-red-600">*</span>
                                     </label>
                                     <input 
                                         type="text" 
                                         required 
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        placeholder="مثال: أمينة بوزيد" 
+                                        placeholder={landingPage.namePlaceholder || 'مثال: أمينة بوزيد'} 
                                         className="w-full px-3.5 py-2.5 bg-white border border-[#EFE4D8] text-xs focus:outline-none rounded-lg"
                                         style={{ borderColor: '#EFE4D8' }}
                                     />
@@ -412,14 +418,14 @@ export default function PublicLandingPage() {
                                 {/* Téléphone */}
                                 <div>
                                     <label className="block text-xs font-bold mb-1">
-                                        رقم الهاتف (للاتصال وتأكيد الطلب) <span className="text-red-600">*</span>
+                                        {landingPage.phoneLabel || 'رقم الهاتف (للاتصال وتأكيد الطلب)'} <span className="text-red-600">*</span>
                                     </label>
                                     <input 
                                         type="tel" 
                                         required 
                                         value={phone}
                                         onChange={(e) => setPhone(e.target.value)}
-                                        placeholder="05 / 06 / 07 XX XX XX" 
+                                        placeholder={landingPage.phonePlaceholder || '05 / 06 / 07 XX XX XX'} 
                                         pattern="^(0)(5|6|7)[0-9]{8}$"
                                         className="w-full px-3.5 py-2.5 bg-white border border-[#EFE4D8] text-xs num focus:outline-none rounded-lg text-left"
                                     />
@@ -429,7 +435,7 @@ export default function PublicLandingPage() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div>
                                         <label className="block text-xs font-bold mb-1">
-                                            الولاية <span className="text-red-600">*</span>
+                                            {landingPage.wilayaLabel || 'الولاية'} <span className="text-red-600">*</span>
                                         </label>
                                         <select 
                                             value={wilayaId}
@@ -447,7 +453,7 @@ export default function PublicLandingPage() {
 
                                     <div>
                                         <label className="block text-xs font-bold mb-1">
-                                            البلدية <span className="text-red-600">*</span>
+                                            {landingPage.communeLabel || 'البلدية'} <span className="text-red-600">*</span>
                                         </label>
                                         <select 
                                             value={commune}
@@ -465,7 +471,7 @@ export default function PublicLandingPage() {
                                 {/* Mode de livraison */}
                                 <div className="pt-1">
                                     <label className="block text-xs font-bold mb-2">
-                                        طريقة التوصيل المفضلة
+                                        {landingPage.deliveryTypeLabel || 'طريقة التوصيل المفضلة'}
                                     </label>
                                     <div className="grid grid-cols-2 gap-2.5">
                                         <label 
@@ -483,7 +489,7 @@ export default function PublicLandingPage() {
                                                     onChange={() => setDeliveryType('home')}
                                                 />
                                                 <span className="font-bold text-[11px]" style={{ color: landingPage.primaryColor }}>
-                                                    توصيل للدار (Domicile)
+                                                    {landingPage.homeDeliveryLabel || 'توصيل للدار (Domicile)'}
                                                 </span>
                                             </div>
                                         </label>
@@ -503,7 +509,7 @@ export default function PublicLandingPage() {
                                                     onChange={() => setDeliveryType('desk')}
                                                 />
                                                 <span className="font-medium text-[11px] opacity-80">
-                                                    استلام من المكتب (Bureau)
+                                                    {landingPage.deskDeliveryLabel || 'استلام من المكتب (Bureau)'}
                                                 </span>
                                             </div>
                                         </label>
@@ -513,17 +519,17 @@ export default function PublicLandingPage() {
                                 {/* Récapitulatif avec chiffres français */}
                                 <div className="mt-4 p-4 bg-[#FAF5EF] border border-[#EFE4D8] rounded-xl space-y-2 text-xs">
                                     <div className="flex justify-between opacity-80">
-                                        <span>سعر الباك :</span>
-                                        <span className="font-bold num">{productPrice.toLocaleString('fr-DZ')} DA</span>
+                                        <span>{landingPage.summaryProductLabel || 'سعر الباك :'}</span>
+                                        <span className="font-bold num">{productPrice.toLocaleString('fr-DZ')} {landingPage.currency || 'DA'}</span>
                                     </div>
                                     <div className="flex justify-between opacity-80">
-                                        <span>سعر التوصيل لولايتك :</span>
-                                        <span className="font-bold num">{shippingCost.toLocaleString('fr-DZ')} DA</span>
+                                        <span>{landingPage.summaryShippingLabel || 'سعر التوصيل لولايتك :'}</span>
+                                        <span className="font-bold num">{shippingCost.toLocaleString('fr-DZ')} {landingPage.currency || 'DA'}</span>
                                     </div>
                                     <div className="h-[1px] bg-[#EFE4D8] pt-1"></div>
                                     <div className="flex justify-between text-sm font-bold pt-1" style={{ color: landingPage.primaryColor }}>
-                                        <span>المجموع الكلي عند الاستلام :</span>
-                                        <span className="text-base font-extrabold num">{totalAmount.toLocaleString('fr-DZ')} DA</span>
+                                        <span>{landingPage.summaryTotalLabel || 'المجموع الكلي عند الاستلام :'}</span>
+                                        <span className="text-base font-extrabold num">{totalAmount.toLocaleString('fr-DZ')} {landingPage.currency || 'DA'}</span>
                                     </div>
                                 </div>
 
@@ -534,7 +540,13 @@ export default function PublicLandingPage() {
                                     className="w-full py-4 px-6 text-[#FAF5EF] text-xs font-bold tracking-wide active:scale-[0.99] transition-all cursor-pointer shadow-md rounded-xl disabled:opacity-50"
                                     style={{ backgroundColor: landingPage.primaryColor }}
                                 >
-                                    {submitting ? 'جاري تسجيل طلبكِ...' : `تأكيد الطلب — ${totalAmount.toLocaleString('fr-DZ')} DA`}
+                                    {submitting 
+                                        ? (landingPage.submittingText || 'جاري تسجيل طلبكِ...') 
+                                        : (landingPage.ctaButtonText 
+                                            ? (landingPage.ctaButtonText.includes('{total}') 
+                                                ? landingPage.ctaButtonText.replace('{total}', `${totalAmount.toLocaleString('fr-DZ')} ${landingPage.currency || 'DA'}`)
+                                                : `${landingPage.ctaButtonText} — ${totalAmount.toLocaleString('fr-DZ')} ${landingPage.currency || 'DA'}`)
+                                            : `تأكيد الطلب — ${totalAmount.toLocaleString('fr-DZ')} ${landingPage.currency || 'DA'}`)}
                                 </button>
 
                                 {/* Réassurance discrète */}
@@ -551,7 +563,7 @@ export default function PublicLandingPage() {
                 {/* ======================================================== */}
                 {/* SECTION CONTACT INSTAGRAM (CHAT PRIVÉ DIRECT)            */}
                 {/* ======================================================== */}
-                {landingPage.instagramUrl && (
+                {landingPage.showInstagram !== false && landingPage.instagramUrl && (
                     <section className="mt-6 bg-white border border-[#EFE4D8] rounded-2xl p-4 sm:p-5 text-center shadow-sm">
                         <div className="flex flex-col items-center justify-center gap-2.5">
                             
@@ -580,7 +592,7 @@ export default function PublicLandingPage() {
                                 <svg className="w-4 h-4 text-[#D6249F]" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/>
                                 </svg>
-                                <span>مراسلة في الخاص: « {landingPage.instagramMessage || 'السلام عليكم، حبيت نستفسر على الباك'} »</span>
+                                <span>{landingPage.instagramButtonLabel || `مراسلة في الخاص: « ${landingPage.instagramMessage || 'السلام عليكم، حبيت نستفسر على الباك'} »`}</span>
                             </a>
 
                         </div>
@@ -589,7 +601,7 @@ export default function PublicLandingPage() {
 
                 {/* Footer sobre */}
                 <footer className="mt-8 text-center text-xs opacity-70 font-medium">
-                    <p>© {landingPage.brandName || 'MEEY NAIL SHOP'}. جميع الحقوق محفوظة.</p>
+                    <p>{landingPage.footerText || `© ${landingPage.brandName || 'MEEY NAIL SHOP'}. جميع الحقوق محفوظة.`}</p>
                 </footer>
 
             </main>
@@ -607,7 +619,7 @@ export default function PublicLandingPage() {
                                     {landingPage.brandName}
                                 </span>
                                 <h3 className="text-lg font-bold mt-0.5" style={{ color: landingPage.primaryColor }}>
-                                    تم تسجيل طلبكِ بنجاح
+                                    {landingPage.successModalTitle || 'تم تسجيل طلبكِ بنجاح'}
                                 </h3>
                             </div>
                             <div 
@@ -619,7 +631,7 @@ export default function PublicLandingPage() {
                         </div>
 
                         <p className="text-xs text-[#7A5459] leading-relaxed mb-4">
-                            تم استلام طلبكِ في نظام المتجر. سيتصل بكِ فريق العمل عبر الهاتف لتأكيد موعد إرسال الطرد إلى عنوانكِ.
+                            {landingPage.successModalMessage || 'تم استلام طلبكِ في نظام المتجر. سيتصل بكِ فريق العمل عبر الهاتف لتأكيد موعد إرسال الطرد إلى عنوانكِ.'}
                         </p>
 
                         {/* Fiche Récapitulatif Pro */}
@@ -654,11 +666,11 @@ export default function PublicLandingPage() {
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-500">سعر التوصيل :</span>
-                                <span className="font-bold num">{orderSuccess.shippingCost.toLocaleString('fr-DZ')} DA</span>
+                                <span className="font-bold num">{orderSuccess.shippingCost.toLocaleString('fr-DZ')} {landingPage.currency || 'DA'}</span>
                             </div>
                             <div className="flex justify-between border-t border-[#B8935A]/40 pt-2 font-bold text-sm" style={{ color: landingPage.primaryColor }}>
                                 <span>المجموع الإجمالي عند الاستلام :</span> 
-                                <span className="num">{orderSuccess.total.toLocaleString('fr-DZ')} DA</span>
+                                <span className="num">{orderSuccess.total.toLocaleString('fr-DZ')} {landingPage.currency || 'DA'}</span>
                             </div>
                         </div>
 
@@ -670,10 +682,43 @@ export default function PublicLandingPage() {
                             className="w-full py-3 text-white text-xs font-bold uppercase tracking-wider transition-colors rounded-xl shadow"
                             style={{ backgroundColor: landingPage.primaryColor }}
                         >
-                            الرجوع إلى المتجر
+                            {landingPage.successModalButtonText || 'الرجوع إلى المتجر'}
                         </button>
                     </div>
                 </div>
+            )}
+
+            {/* Pixel Tracking (Facebook & TikTok) */}
+            {landingPage.facebookPixelId && (
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `
+                            !function(f,b,e,v,n,t,s)
+                            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+                            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+                            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+                            n.queue=[];t=b.createElement(e);t.async=!0;
+                            t.src=v;s=b.getElementsByTagName(e)[0];
+                            s.parentNode.insertBefore(t,s)}(window, document,'script',
+                            'https://connect.facebook.net/en_US/fbevents.js');
+                            fbq('init', '${landingPage.facebookPixelId}');
+                            fbq('track', 'PageView');
+                        `
+                    }}
+                />
+            )}
+            {landingPage.tiktokPixelId && (
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `
+                            !function (w, d, t) {
+                                w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=i,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var o=document.createElement("script");o.type="text/javascript",o.async=!0,o.src=i+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};
+                                ttq.load('${landingPage.tiktokPixelId}');
+                                ttq.page();
+                            }(window, document, 'ttq');
+                        `
+                    }}
+                />
             )}
 
         </div>
