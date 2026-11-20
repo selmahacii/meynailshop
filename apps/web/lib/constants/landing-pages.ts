@@ -93,7 +93,7 @@ export const DEFAULT_LANDING_PAGES: LandingPageData[] = [
     priceBadgeText: "سعر الباك الكامل (17 عنصر متكامل)",
     deliveryBadgeText: "توصيل متوفر لـ 58 ولاية",
     formTitle: "اطلبي الباك تاعك درك",
-    formSubtitle: "عمري معلوماتك لتحت، التوصيل يوصلك حتى لباب دارك والدفع كاش عند الاستلام بعد ما تفتحي وتعايني سلعتك.",
+    formSubtitle: "",
     nameLabel: "الاسم واللقب",
     namePlaceholder: "Selma",
     phoneLabel: "رقم الهاتف",

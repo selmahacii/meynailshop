@@ -490,17 +490,11 @@ export default function PublicLandingPage() {
                         <section id="order-section" className="pt-3">
                             <div className="bg-[#FAF9F6] border border-[#EFECE6] rounded-2xl p-4 sm:p-5 space-y-4 shadow-sm">
                                 
-                                {/* En-tête de l'encart formulaire */}
-                                <div className="text-right pb-3 border-b border-[#EFECE6]">
-                                    <div className="inline-block text-[10px] uppercase tracking-[0.2em] font-bold text-[#BFA893] mb-1">
-                                        استمارة الطلب السريع
-                                    </div>
+                                {/* En-tête de l'encart formulaire épuré */}
+                                <div className="text-right pb-2.5 border-b border-[#EFECE6]">
                                     <h2 className="text-base sm:text-lg font-bold" style={{ color: landingPage.primaryColor }}>
                                         {landingPage.formTitle || 'اطلبي الباك تاعك درك'}
                                     </h2>
-                                    <p className="text-xs text-[#7A5459] mt-0.5 leading-relaxed font-light">
-                                        {landingPage.formSubtitle || 'عمري معلوماتك لتحت، التوصيل يوصلك حتى لباب دارك والدفع كاش عند الاستلام بعد ما تفتحي وتعايني سلعتك.'}
-                                    </p>
                                 </div>
 
                                 <form onSubmit={handleSubmitOrder} className="space-y-3.5">

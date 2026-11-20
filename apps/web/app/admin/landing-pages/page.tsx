@@ -186,7 +186,7 @@ export default function AdminLandingPagesPage() {
             videoUrl: '',
 
             formTitle: 'اطلبي الباك تاعك درك',
-            formSubtitle: 'عمري معلوماتك لتحت، التوصيل يوصلك حتى لباب دارك والدفع كاش عند الاستلام بعد ما تفتحي وتعايني سلعتك.',
+            formSubtitle: '',
             nameLabel: 'الاسم واللقب',
             namePlaceholder: 'Selma',
             phoneLabel: 'رقم الهاتف',
