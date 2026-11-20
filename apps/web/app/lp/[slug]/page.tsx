@@ -3,6 +3,19 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { 
+    User, 
+    Phone, 
+    MapPin, 
+    Building2, 
+    Home, 
+    Truck, 
+    ShieldCheck, 
+    ChevronDown, 
+    Package, 
+    Sparkles, 
+    CheckCircle2 
+} from 'lucide-react';
 import { useSettings } from '@/lib/hooks/useSettings';
 import { SHIPPING_RATES } from '@/lib/constants/shipping';
 import { DEFAULT_LANDING_PAGES, ALGERIA_COMMUNES } from '@/lib/constants/landing-pages';
@@ -48,25 +61,31 @@ export default function PublicLandingPage() {
         }
     }, [landingPage]);
 
-    // Initialiser la première commune d'Alger
+    // Initialiser la première commune de la wilaya sélectionnée
+    const paddedWilayaId = String(wilayaId).padStart(2, '0');
+    const communesList = useMemo(() => {
+        return ALGERIA_COMMUNES[paddedWilayaId] || ALGERIA_COMMUNES[wilayaId] || ['البلدية المركزية (Chef-lieu)'];
+    }, [wilayaId, paddedWilayaId]);
+
     useEffect(() => {
-        const communes = ALGERIA_COMMUNES[wilayaId] || ['البلدية المركزية (Chef-lieu)'];
-        if (communes.length > 0) {
-            setCommune(communes[0]);
+        if (communesList && communesList.length > 0) {
+            setCommune(communesList[0]);
         }
-    }, [wilayaId]);
+    }, [communesList]);
 
     // Calcul de la livraison dynamique sur les 58 wilayas
     const activeRates = (settings?.shippingFees && Array.isArray(settings.shippingFees) && settings.shippingFees.length > 0)
         ? settings.shippingFees
         : SHIPPING_RATES;
 
-    const currentWilayaRate = activeRates.find((w: any) => String(w.id) === String(wilayaId)) || activeRates[15] || { homeFee: 500, deskFee: 350, name: 'Alger' };
+    const currentWilayaRate = activeRates.find((w: any) => String(w.id) === String(wilayaId) || String(w.id) === paddedWilayaId) 
+        || activeRates[15] 
+        || { homeFee: 500, deskFee: 350, homeRate: 500, deskRate: 350, name: 'Alger' };
     
-    // Tarifs et totaux
-    const shippingCost = deliveryType === 'home' 
-        ? Number(currentWilayaRate.homeFee || 500) 
-        : Number(currentWilayaRate.deskFee || 350);
+    // Tarifs exacts et totaux
+    const homeShippingFee = Number(currentWilayaRate.homeRate ?? currentWilayaRate.homeFee ?? 500);
+    const deskShippingFee = Number(currentWilayaRate.deskRate ?? currentWilayaRate.deskFee ?? 350);
+    const shippingCost = deliveryType === 'home' ? homeShippingFee : deskShippingFee;
 
     const productPrice = selectedVariant?.price 
         ? Number(selectedVariant.price) 
@@ -204,7 +223,7 @@ export default function PublicLandingPage() {
         >
             {/* Typographie Haute Parfumerie & Beauté Pure */}
             <style jsx global>{`
-                @import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Italiana&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+                @import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Italiana&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
                 
                 body {
                     font-family: 'Alexandria', -apple-system, BlinkMacSystemFont, sans-serif !important;
@@ -324,20 +343,22 @@ export default function PublicLandingPage() {
                     {/* Détails, Prix & Formulaire */}
                     <div className="p-4 sm:p-6 space-y-4">
                         
-                        {/* Prix & Livraison (Minimaliste & Respirant) */}
-                        <div className="flex items-center justify-between pb-4 border-b border-[#F0ECE6]">
-                            <div>
-                                <div className="text-[11px] text-[#7A5459] font-medium mb-0.5">
+                        {/* ==================================================== */}
+                        {/* BLOC OFFRE & PRIX HAUTE CONVERSION                   */}
+                        {/* ==================================================== */}
+                        <div className="bg-[#FAF9F6] border border-[#F0ECE6] rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-sm">
+                            <div className="text-right">
+                                <span className="text-[11px] text-[#7A5459] font-medium block mb-0.5">
                                     {landingPage.priceBadgeText || `سعر الباك الكامل (${landingPage.items?.length || 0} عنصر)`}
-                                </div>
+                                </span>
                                 <div className="flex items-baseline gap-1.5" dir="ltr">
                                     <span 
-                                        className="text-2xl sm:text-3xl font-bold tracking-tight num" 
+                                        className="text-2xl sm:text-3xl font-extrabold tracking-tight num" 
                                         style={{ color: landingPage.primaryColor || '#390102' }}
                                     >
                                         {productPrice.toLocaleString('fr-DZ')}
                                     </span>
-                                    <span className="text-xs font-semibold tracking-normal text-[#7A5459]">
+                                    <span className="text-xs font-bold text-[#7A5459]">
                                         {landingPage.currency || 'DA'}
                                     </span>
                                     {landingPage.compareAtPrice && landingPage.compareAtPrice > productPrice && (
@@ -348,19 +369,22 @@ export default function PublicLandingPage() {
                                 </div>
                             </div>
 
-                            <div className="text-left">
+                            <div className="flex flex-col items-end gap-1.5">
                                 <span 
-                                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#FAF9F6] border border-[#EFECE6] rounded-full text-[11px] font-medium text-[#7A5459]"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#EFECE6] rounded-full text-[11px] font-semibold text-[#390102] shadow-sm"
                                 >
                                     <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: landingPage.accentColor || '#BFA893' }}></span>
-                                    {landingPage.deliveryBadgeText || 'توصيل متوفر لـ 58 ولاية'}
+                                    <span>{landingPage.deliveryBadgeText || 'توصيل متوفر لـ 58 ولاية'}</span>
+                                </span>
+                                <span className="text-[10px] text-emerald-700 font-medium">
+                                    الدفع كاش عند الاستلام
                                 </span>
                             </div>
                         </div>
 
                         {/* Sélecteur de formules si activé */}
                         {landingPage.hasVariants && landingPage.variants && landingPage.variants.length > 0 && (
-                            <div className="py-3 border-b border-[#F0ECE6] space-y-2">
+                            <div className="py-2 space-y-2">
                                 <label className="block text-xs font-bold" style={{ color: landingPage.primaryColor }}>
                                     {landingPage.variantsTitle || 'اختاري الصيغة المناسبة لكِ :'}
                                 </label>
@@ -372,7 +396,7 @@ export default function PublicLandingPage() {
                                                 key={v.id}
                                                 type="button"
                                                 onClick={() => setSelectedVariant(v)}
-                                                className="p-2.5 text-right border rounded-xl transition-all flex items-center justify-between text-xs"
+                                                className="p-3 text-right border rounded-xl transition-all flex items-center justify-between text-xs"
                                                 style={{
                                                     borderColor: isSel ? landingPage.primaryColor : '#F0ECE6',
                                                     backgroundColor: isSel ? `${landingPage.primaryColor}08` : 'white'
@@ -397,44 +421,37 @@ export default function PublicLandingPage() {
                         )}
 
                         {/* ==================================================== */}
-                        {/* SECTION PLIABLE (ACCORDÉON) DES COMPOSANTS           */}
+                        {/* BOUTON-CARTE INTERACTIF POUR L'ACCORDÉON DU PACK     */}
                         {/* ==================================================== */}
                         {landingPage.items && landingPage.items.length > 0 && (
-                            <section className="py-3 border-b border-[#F0ECE6]">
+                            <div className="pt-1">
                                 <button
                                     type="button"
                                     onClick={() => setIsAccordionOpen(!isAccordionOpen)}
-                                    className="w-full flex items-center justify-between cursor-pointer group focus:outline-none py-1"
+                                    className="w-full bg-[#FAF9F6] hover:bg-[#F3EAE0]/50 border border-[#EFECE6] rounded-2xl p-3 sm:p-3.5 flex items-center justify-between transition-all group shadow-sm active:scale-[0.99]"
                                 >
-                                    <div className="flex items-center gap-2">
-                                        <h2 
-                                            className="text-xs font-bold transition-colors"
-                                            style={{ color: landingPage.primaryColor }}
-                                        >
-                                            {landingPage.accordionTitle || `المكونات الأساسية للباك (${landingPage.items.length} عنصر بالتفصيل) :`}
-                                        </h2>
-                                        <span className="text-[11px] font-medium num text-[#BFA893]">
-                                            {landingPage.accordionBadgeText || `${landingPage.items.length} pièces`}
+                                    <div className="flex items-center gap-3">
+                                        <span className="w-8 h-8 rounded-xl bg-[#390102] text-[#BFA893] flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
+                                            {landingPage.items?.length || 17}
                                         </span>
+                                        <div className="text-right">
+                                            <span className="text-xs font-bold text-[#18080A] block">
+                                                {landingPage.accordionTitle || `المكونات الأساسية للباك (${landingPage.items?.length || 17} عنصر بالتفصيل)`}
+                                            </span>
+                                            <span className="text-[10px] text-[#7A5459] font-light">
+                                                اضغطي هنا لمعاينة جميع الأدوات والمواد
+                                            </span>
+                                        </div>
                                     </div>
 
-                                    <div className="flex items-center gap-1 text-xs text-[#7A5459] font-medium">
-                                        <span className="text-[11px]">
-                                            {isAccordionOpen ? 'إخفاء' : 'عرض'}
-                                        </span>
-                                        <svg 
-                                            className={`w-3.5 h-3.5 transition-transform duration-200 ${isAccordionOpen ? 'rotate-180' : ''}`}
-                                            fill="none" 
-                                            stroke="currentColor" 
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-                                        </svg>
+                                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#EFECE6] rounded-xl text-xs font-bold text-[#390102] group-hover:border-[#390102]/30 transition-all shadow-sm">
+                                        <span>{isAccordionOpen ? 'إخفاء' : 'عرض التفاصيل'}</span>
+                                        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isAccordionOpen ? 'rotate-180' : ''}`} />
                                     </div>
                                 </button>
 
                                 {isAccordionOpen && (
-                                    <div className="pt-2 divide-y divide-[#F0ECE6] text-xs">
+                                    <div className="mt-2.5 bg-[#FAF9F6] border border-[#EFECE6] rounded-2xl p-3 sm:p-4 divide-y divide-[#EFECE6] text-xs animate-in fade-in slide-in-from-top-2 duration-200">
                                         {landingPage.items.map((it, idx) => (
                                             <div key={it.id || idx} className="py-2.5 flex items-start gap-2.5">
                                                 <span 
@@ -453,185 +470,242 @@ export default function PublicLandingPage() {
                                                         {it.descDz}
                                                     </div>
                                                 </div>
+                                                {it.quantity && it.quantity > 1 && (
+                                                    <span className="text-[10px] bg-white px-2 py-0.5 rounded-full border border-[#EFECE6] text-[#390102] font-bold num">
+                                                        x{it.quantity}
+                                                    </span>
+                                                )}
                                             </div>
                                         ))}
                                     </div>
                                 )}
-                            </section>
+                            </div>
                         )}
 
                         {/* ==================================================== */}
                         {/* FORMULAIRE DE COMMANDE ULTRA-RAPIDE & ÉPURÉ          */}
                         {/* ==================================================== */}
-                        <section id="order-section" className="pt-4">
-                            <div className="mb-4 text-right">
-                                <h2 className="text-base font-bold" style={{ color: landingPage.primaryColor }}>
-                                    {landingPage.formTitle || 'اطلبي الباك تاعك درك'}
-                                </h2>
-                                <p className="text-xs text-[#7A5459] mt-0.5 leading-relaxed font-light">
-                                    {landingPage.formSubtitle || 'عمري معلوماتك لتحت، التوصيل يوصلك حتى لباب دارك والدفع كاش عند الاستلام.'}
-                                </p>
-                            </div>
-
-                            <form onSubmit={handleSubmitOrder} className="space-y-3">
+                        <section id="order-section" className="pt-3">
+                            <div className="bg-[#FAF9F6] border border-[#EFECE6] rounded-2xl p-4 sm:p-5 space-y-4 shadow-sm">
                                 
-                                {/* Nom et prénom */}
-                                <div>
-                                    <label className="block text-xs font-semibold text-[#18080A] mb-1">
-                                        {landingPage.nameLabel || 'الاسم واللقب الكامل'} <span className="text-red-500">*</span>
-                                    </label>
-                                    <input 
-                                        type="text" 
-                                        required 
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                        placeholder={landingPage.namePlaceholder || 'مثال: أمينة بوزيد'} 
-                                        className="w-full px-3.5 py-2.5 bg-white border border-[#EFECE6] text-xs focus:outline-none rounded-xl focus:border-[#390102] transition-colors"
-                                    />
+                                {/* En-tête de l'encart formulaire */}
+                                <div className="text-right pb-3 border-b border-[#EFECE6]">
+                                    <div className="inline-block text-[10px] uppercase tracking-[0.2em] font-bold text-[#BFA893] mb-1">
+                                        استمارة الطلب السريع
+                                    </div>
+                                    <h2 className="text-base sm:text-lg font-bold" style={{ color: landingPage.primaryColor }}>
+                                        {landingPage.formTitle || 'اطلبي الباك تاعك درك'}
+                                    </h2>
+                                    <p className="text-xs text-[#7A5459] mt-0.5 leading-relaxed font-light">
+                                        {landingPage.formSubtitle || 'عمري معلوماتك لتحت، التوصيل يوصلك حتى لباب دارك والدفع كاش عند الاستلام بعد ما تفتحي وتعايني سلعتك.'}
+                                    </p>
                                 </div>
 
-                                {/* Téléphone */}
-                                <div>
-                                    <label className="block text-xs font-semibold text-[#18080A] mb-1">
-                                        {landingPage.phoneLabel || 'رقم الهاتف'} <span className="text-red-500">*</span>
-                                    </label>
-                                    <input 
-                                        type="tel" 
-                                        required 
-                                        value={phone}
-                                        onChange={(e) => setPhone(e.target.value)}
-                                        placeholder={landingPage.phonePlaceholder || '05 / 06 / 07 XX XX XX'} 
-                                        pattern="^(0)(5|6|7)[0-9]{8}$"
-                                        className="w-full px-3.5 py-2.5 bg-white border border-[#EFECE6] text-xs num focus:outline-none rounded-xl focus:border-[#390102] text-left transition-colors"
-                                    />
-                                </div>
-
-                                {/* WILAYA & COMMUNE */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <form onSubmit={handleSubmitOrder} className="space-y-3.5">
+                                    
+                                    {/* Nom et prénom */}
                                     <div>
-                                        <label className="block text-xs font-semibold text-[#18080A] mb-1">
-                                            {landingPage.wilayaLabel || 'الولاية'} <span className="text-red-500">*</span>
+                                        <label className="block text-xs font-semibold text-[#18080A] mb-1.5 flex items-center justify-between">
+                                            <span>{landingPage.nameLabel || 'الاسم واللقب الكامل'}</span>
+                                            <span className="text-[10px] text-red-500 font-normal">* مطلوب</span>
                                         </label>
-                                        <select 
-                                            value={wilayaId}
-                                            onChange={(e) => setWilayaId(e.target.value)}
-                                            required
-                                            className="w-full px-3 py-2.5 bg-white border border-[#EFECE6] text-xs focus:outline-none rounded-xl focus:border-[#390102] cursor-pointer transition-colors"
-                                        >
-                                            {activeRates.map((w: any) => (
-                                                <option key={w.id} value={w.id}>
-                                                    {w.id} - {w.name}
-                                                </option>
-                                            ))}
-                                        </select>
+                                        <div className="relative">
+                                            <input 
+                                                type="text" 
+                                                required 
+                                                value={name}
+                                                onChange={(e) => setName(e.target.value)}
+                                                placeholder={landingPage.namePlaceholder || 'مثال: أمينة بوزيد'} 
+                                                className="w-full pr-10 pl-3.5 py-3 bg-white border border-[#EFECE6] text-xs focus:outline-none rounded-xl focus:border-[#390102] focus:ring-2 focus:ring-[#390102]/10 transition-all placeholder:text-gray-400"
+                                            />
+                                            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#BFA893] pointer-events-none">
+                                                <User size={15} />
+                                            </div>
+                                        </div>
                                     </div>
 
+                                    {/* Téléphone avec drapeau DZ */}
                                     <div>
-                                        <label className="block text-xs font-semibold text-[#18080A] mb-1">
-                                            {landingPage.communeLabel || 'البلدية'} <span className="text-red-500">*</span>
+                                        <label className="block text-xs font-semibold text-[#18080A] mb-1.5 flex items-center justify-between">
+                                            <span>{landingPage.phoneLabel || 'رقم الهاتف'}</span>
+                                            <span className="text-[10px] text-red-500 font-normal">* لتأكيد الإرسال</span>
                                         </label>
-                                        <select 
-                                            value={commune}
-                                            onChange={(e) => setCommune(e.target.value)}
-                                            required
-                                            className="w-full px-3 py-2.5 bg-white border border-[#EFECE6] text-xs focus:outline-none rounded-xl focus:border-[#390102] cursor-pointer transition-colors"
-                                        >
-                                            {(ALGERIA_COMMUNES[wilayaId] || ['البلدية المركزية (Chef-lieu)']).map((c: string) => (
-                                                <option key={c} value={c}>{c}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-
-                                {/* Mode de livraison */}
-                                <div className="pt-1">
-                                    <label className="block text-xs font-semibold text-[#18080A] mb-1.5">
-                                        {landingPage.deliveryTypeLabel || 'طريقة التوصيل المفضلة'}
-                                    </label>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <label 
-                                            className="cursor-pointer border p-2.5 flex items-center justify-between text-xs rounded-xl transition-all"
-                                            style={{
-                                                borderColor: deliveryType === 'home' ? (landingPage.primaryColor || '#390102') : '#EFECE6',
-                                                backgroundColor: deliveryType === 'home' ? `${landingPage.primaryColor || '#390102'}08` : 'white'
-                                            }}
-                                        >
-                                            <div className="flex items-center gap-2">
-                                                <input 
-                                                    type="radio" 
-                                                    name="delType" 
-                                                    checked={deliveryType === 'home'}
-                                                    onChange={() => setDeliveryType('home')}
-                                                    className="accent-[#390102]"
-                                                />
-                                                <span className="font-bold text-[11px]" style={{ color: landingPage.primaryColor }}>
-                                                    {landingPage.homeDeliveryLabel || 'توصيل للدار (Domicile)'}
-                                                </span>
+                                        <div className="relative flex items-center" dir="ltr">
+                                            <div className="absolute left-3.5 text-xs text-[#7A5459] font-bold flex items-center gap-1.5 pointer-events-none">
+                                                <span>🇩🇿</span>
                                             </div>
-                                        </label>
+                                            <input 
+                                                type="tel" 
+                                                required 
+                                                value={phone}
+                                                onChange={(e) => setPhone(e.target.value)}
+                                                placeholder={landingPage.phonePlaceholder || '05 / 06 / 07 XX XX XX'} 
+                                                pattern="^(0)(5|6|7)[0-9]{8}$"
+                                                className="w-full pl-11 pr-3.5 py-3 bg-white border border-[#EFECE6] text-xs font-bold num tracking-wider focus:outline-none rounded-xl focus:border-[#390102] focus:ring-2 focus:ring-[#390102]/10 text-left transition-all placeholder:text-gray-400 placeholder:font-normal placeholder:tracking-normal"
+                                            />
+                                        </div>
+                                    </div>
 
-                                        <label 
-                                            className="cursor-pointer border p-2.5 flex items-center justify-between text-xs rounded-xl transition-all"
-                                            style={{
-                                                borderColor: deliveryType === 'desk' ? (landingPage.primaryColor || '#390102') : '#EFECE6',
-                                                backgroundColor: deliveryType === 'desk' ? `${landingPage.primaryColor || '#390102'}08` : 'white'
-                                            }}
-                                        >
-                                            <div className="flex items-center gap-2">
-                                                <input 
-                                                    type="radio" 
-                                                    name="delType" 
-                                                    checked={deliveryType === 'desk'}
-                                                    onChange={() => setDeliveryType('desk')}
-                                                    className="accent-[#390102]"
-                                                />
-                                                <span className="font-medium text-[11px] text-[#7A5459]">
-                                                    {landingPage.deskDeliveryLabel || 'استلام من المكتب (Bureau)'}
-                                                </span>
+                                    {/* WILAYA & COMMUNE (Custom Dropdowns Chic) */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="block text-xs font-semibold text-[#18080A] mb-1.5 flex items-center justify-between">
+                                                <span>{landingPage.wilayaLabel || 'الولاية'}</span>
+                                                <span className="text-[10px] text-red-500 font-normal">*</span>
+                                            </label>
+                                            <div className="relative">
+                                                <select 
+                                                    value={wilayaId}
+                                                    onChange={(e) => setWilayaId(e.target.value)}
+                                                    required
+                                                    className="w-full pr-10 pl-8 py-3 bg-white border border-[#EFECE6] text-xs focus:outline-none rounded-xl focus:border-[#390102] focus:ring-2 focus:ring-[#390102]/10 cursor-pointer transition-all appearance-none text-[#18080A] font-medium"
+                                                >
+                                                    {activeRates.map((w: any) => (
+                                                        <option key={w.id} value={w.id}>
+                                                            {w.id} - {w.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#BFA893] pointer-events-none">
+                                                    <MapPin size={15} />
+                                                </div>
+                                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7A5459] pointer-events-none">
+                                                    <ChevronDown size={14} />
+                                                </div>
                                             </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-xs font-semibold text-[#18080A] mb-1.5 flex items-center justify-between">
+                                                <span>{landingPage.communeLabel || 'البلدية'}</span>
+                                                <span className="text-[10px] text-red-500 font-normal">*</span>
+                                            </label>
+                                            <div className="relative">
+                                                <select 
+                                                    value={commune}
+                                                    onChange={(e) => setCommune(e.target.value)}
+                                                    required
+                                                    className="w-full pr-10 pl-8 py-3 bg-white border border-[#EFECE6] text-xs focus:outline-none rounded-xl focus:border-[#390102] focus:ring-2 focus:ring-[#390102]/10 cursor-pointer transition-all appearance-none text-[#18080A] font-medium"
+                                                >
+                                                    {communesList.map((c: string) => (
+                                                        <option key={c} value={c}>{c}</option>
+                                                    ))}
+                                                </select>
+                                                <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#BFA893] pointer-events-none">
+                                                    <Building2 size={15} />
+                                                </div>
+                                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7A5459] pointer-events-none">
+                                                    <ChevronDown size={14} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Mode de livraison avec cartes interactives et tarifs exacts */}
+                                    <div className="pt-1">
+                                        <label className="block text-xs font-semibold text-[#18080A] mb-2">
+                                            {landingPage.deliveryTypeLabel || 'طريقة التوصيل المفضلة'}
                                         </label>
-                                    </div>
-                                </div>
+                                        <div className="grid grid-cols-2 gap-2.5">
+                                            <button
+                                                type="button"
+                                                onClick={() => setDeliveryType('home')}
+                                                className={`p-3 rounded-xl border text-right transition-all flex flex-col justify-between gap-1.5 cursor-pointer ${
+                                                    deliveryType === 'home'
+                                                        ? 'border-[#390102] bg-white ring-2 ring-[#390102]/10 shadow-sm'
+                                                        : 'border-[#EFECE6] bg-white/60 hover:bg-white'
+                                                }`}
+                                            >
+                                                <div className="flex items-center justify-between w-full">
+                                                    <div className="flex items-center gap-1.5 text-xs font-bold" style={{ color: landingPage.primaryColor }}>
+                                                        <Home size={14} />
+                                                        <span>{landingPage.homeDeliveryLabel || 'توصيل للدار'}</span>
+                                                    </div>
+                                                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center text-[10px] ${
+                                                        deliveryType === 'home' ? 'bg-[#390102] text-white border-[#390102]' : 'border-gray-300'
+                                                    }`}>
+                                                        {deliveryType === 'home' && '✓'}
+                                                    </div>
+                                                </div>
+                                                <span className="text-[11px] font-bold num text-[#7A5459]">
+                                                    +{homeShippingFee} DA
+                                                </span>
+                                            </button>
 
-                                {/* Récapitulatif épuré */}
-                                <div className="mt-3.5 p-3.5 bg-[#FAF9F6] border border-[#F0ECE6] rounded-xl space-y-1.5 text-xs">
-                                    <div className="flex justify-between text-[#7A5459]">
-                                        <span>{landingPage.summaryProductLabel || 'سعر الباك :'}</span>
-                                        <span className="font-semibold num">{productPrice.toLocaleString('fr-DZ')} {landingPage.currency || 'DA'}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => setDeliveryType('desk')}
+                                                className={`p-3 rounded-xl border text-right transition-all flex flex-col justify-between gap-1.5 cursor-pointer ${
+                                                    deliveryType === 'desk'
+                                                        ? 'border-[#390102] bg-white ring-2 ring-[#390102]/10 shadow-sm'
+                                                        : 'border-[#EFECE6] bg-white/60 hover:bg-white'
+                                                }`}
+                                            >
+                                                <div className="flex items-center justify-between w-full">
+                                                    <div className="flex items-center gap-1.5 text-xs font-bold" style={{ color: landingPage.primaryColor }}>
+                                                        <Truck size={14} />
+                                                        <span>{landingPage.deskDeliveryLabel || 'استلام من المكتب'}</span>
+                                                    </div>
+                                                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center text-[10px] ${
+                                                        deliveryType === 'desk' ? 'bg-[#390102] text-white border-[#390102]' : 'border-gray-300'
+                                                    }`}>
+                                                        {deliveryType === 'desk' && '✓'}
+                                                    </div>
+                                                </div>
+                                                <span className="text-[11px] font-bold num text-[#7A5459]">
+                                                    +{deskShippingFee} DA
+                                                </span>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className="flex justify-between text-[#7A5459]">
-                                        <span>{landingPage.summaryShippingLabel || 'سعر التوصيل لولايتك :'}</span>
-                                        <span className="font-semibold num">{shippingCost.toLocaleString('fr-DZ')} {landingPage.currency || 'DA'}</span>
+
+                                    {/* Récapitulatif épuré & Transparent */}
+                                    <div className="mt-3.5 p-3.5 bg-white border border-[#EFECE6] rounded-xl space-y-1.5 text-xs shadow-sm">
+                                        <div className="flex justify-between text-[#7A5459]">
+                                            <span>{landingPage.summaryProductLabel || 'سعر الباك :'}</span>
+                                            <span className="font-semibold num text-[#18080A]">{productPrice.toLocaleString('fr-DZ')} {landingPage.currency || 'DA'}</span>
+                                        </div>
+                                        <div className="flex justify-between text-[#7A5459]">
+                                            <span>{landingPage.summaryShippingLabel || 'سعر التوصيل لولايتك :'}</span>
+                                            <span className="font-semibold num text-[#18080A]">{shippingCost.toLocaleString('fr-DZ')} {landingPage.currency || 'DA'}</span>
+                                        </div>
+                                        <div className="border-t border-dashed border-[#EFECE6] my-1 pt-1.5 flex justify-between items-baseline font-bold" style={{ color: landingPage.primaryColor }}>
+                                            <span className="text-xs">{landingPage.summaryTotalLabel || 'المجموع الكلي عند الاستلام :'}</span>
+                                            <div className="flex items-baseline gap-1" dir="ltr">
+                                                <span className="text-base sm:text-lg font-black num">{totalAmount.toLocaleString('fr-DZ')}</span>
+                                                <span className="text-xs font-bold">{landingPage.currency || 'DA'}</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="h-[1px] bg-[#F0ECE6] my-1"></div>
-                                    <div className="flex justify-between text-xs font-bold pt-0.5" style={{ color: landingPage.primaryColor }}>
-                                        <span>{landingPage.summaryTotalLabel || 'المجموع الكلي عند الاستلام :'}</span>
-                                        <span className="text-sm font-bold num">{totalAmount.toLocaleString('fr-DZ')} {landingPage.currency || 'DA'}</span>
+
+                                    {/* Bouton de confirmation irrésistible */}
+                                    <button 
+                                        type="submit" 
+                                        disabled={submitting}
+                                        className="w-full py-4 px-6 text-[#FAF5EF] text-sm font-bold tracking-wide active:scale-[0.98] transition-all cursor-pointer shadow-md rounded-2xl disabled:opacity-50 hover:opacity-95 flex flex-col items-center justify-center gap-0.5 mt-2"
+                                        style={{ backgroundColor: landingPage.primaryColor || '#390102' }}
+                                    >
+                                        <span className="flex items-center gap-2">
+                                            <span>{submitting ? (landingPage.submittingText || 'جاري تسجيل طلبكِ...') : 'تأكيد الطلب الآن'}</span>
+                                            {!submitting && (
+                                                <span className="num font-extrabold text-white text-base">
+                                                    ({totalAmount.toLocaleString('fr-DZ')} {landingPage.currency || 'DA'})
+                                                </span>
+                                            )}
+                                        </span>
+                                        <span className="text-[10px] text-[#BFA893] font-normal">
+                                            الدفع يداً بيد عند الاستلام كاش
+                                        </span>
+                                    </button>
+
+                                    {/* Réassurance discrète & Puce Garantie */}
+                                    <div className="flex items-center justify-center gap-2 pt-2 text-[#7A5459] text-[11px] leading-relaxed">
+                                        <ShieldCheck size={16} className="text-[#B8935A] shrink-0" />
+                                        <span>{landingPage.guaranteeText || 'الدفع يداً بيد عند الاستلام. تقدري تفتحي الطرد وتعايني سلعتك قبل ما تخلصي.'}</span>
                                     </div>
-                                </div>
 
-                                {/* Bouton de confirmation chic */}
-                                <button 
-                                    type="submit" 
-                                    disabled={submitting}
-                                    className="w-full py-3.5 px-6 text-[#FAF5EF] text-xs font-bold tracking-wide active:scale-[0.99] transition-all cursor-pointer shadow-sm rounded-xl disabled:opacity-50 hover:opacity-95"
-                                    style={{ backgroundColor: landingPage.primaryColor || '#390102' }}
-                                >
-                                    {submitting 
-                                        ? (landingPage.submittingText || 'جاري تسجيل طلبكِ...') 
-                                        : (landingPage.ctaButtonText 
-                                            ? (landingPage.ctaButtonText.includes('{total}') 
-                                                ? landingPage.ctaButtonText.replace('{total}', `${totalAmount.toLocaleString('fr-DZ')} ${landingPage.currency || 'DA'}`)
-                                                : `${landingPage.ctaButtonText} — ${totalAmount.toLocaleString('fr-DZ')} ${landingPage.currency || 'DA'}`)
-                                            : `تأكيد الطلب — ${totalAmount.toLocaleString('fr-DZ')} ${landingPage.currency || 'DA'}`)}
-                                </button>
-
-                                {/* Réassurance discrète */}
-                                <p className="text-center text-[11px] text-[#7A5459] pt-1.5 leading-relaxed font-light">
-                                    {landingPage.guaranteeText || 'الدفع يداً بيد عند الاستلام. تقدري تفتحي الطرد وتعايني سلعتك قبل ما تخلصي.'}
-                                </p>
-
-                            </form>
+                                </form>
+                            </div>
                         </section>
 
                     </div>
