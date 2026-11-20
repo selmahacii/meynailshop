@@ -185,7 +185,7 @@ export default function AdminLandingPagesPage() {
             videoSubtitle: 'شاهدي كيفاش تخدمي ديزاينات احترافية خطوة بخطوة بالمنتجات لي في الباك',
             videoUrl: '',
 
-            formTitle: 'اطلبي الباك تاعك درك',
+            formTitle: 'املئي معلوماتك',
             formSubtitle: '',
             nameLabel: 'الاسم واللقب',
             namePlaceholder: 'Selma',

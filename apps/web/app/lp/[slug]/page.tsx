@@ -93,6 +93,43 @@ export default function PublicLandingPage() {
 
     const totalAmount = productPrice + shippingCost;
 
+    // Intégration et Initialisation du Pixel Meta (Facebook) et TikTok
+    useEffect(() => {
+        const fbPixelId = landingPage.facebookPixelId?.trim();
+        if (fbPixelId && typeof window !== 'undefined') {
+            if (!(window as any).fbq) {
+                (function (f: any, b: any, e: any, v: any, n?: any, t?: any, s?: any) {
+                    if (f.fbq) return;
+                    n = f.fbq = function () {
+                        n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+                    };
+                    if (!f._fbq) f._fbq = n;
+                    n.push = n;
+                    n.loaded = !0;
+                    n.version = '2.0';
+                    n.queue = [];
+                    t = b.createElement(e);
+                    t.async = !0;
+                    t.src = v;
+                    s = b.getElementsByTagName(e)[0];
+                    s.parentNode?.insertBefore(t, s);
+                })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+            }
+
+            try {
+                (window as any).fbq('init', fbPixelId);
+                (window as any).fbq('track', 'PageView');
+                (window as any).fbq('track', 'ViewContent', {
+                    content_name: landingPage.title,
+                    value: productPrice,
+                    currency: 'DZD'
+                });
+            } catch (e) {
+                console.warn('[Meta Pixel] Init error:', e);
+            }
+        }
+    }, [landingPage.facebookPixelId, landingPage.title, productPrice]);
+
     // Photo actuelle
     const currentPhoto = landingPage.photos && landingPage.photos.length > 0
         ? landingPage.photos[selectedPhotoIndex] || landingPage.photos[0]
@@ -212,6 +249,36 @@ export default function PublicLandingPage() {
                 variantName: selectedVariant?.name,
                 shippingCost: shippingCost
             });
+
+            // Tracking des conversions Meta Pixel & TikTok Pixel
+            try {
+                if (typeof window !== 'undefined') {
+                    if ((window as any).fbq) {
+                        (window as any).fbq('track', 'Purchase', {
+                            content_name: landingPage.title,
+                            value: totalAmount,
+                            currency: 'DZD',
+                            num_items: 1,
+                            order_id: orderData?.orderNumber || orderData?.id
+                        });
+                        (window as any).fbq('track', 'Lead', {
+                            content_name: landingPage.title,
+                            value: totalAmount,
+                            currency: 'DZD'
+                        });
+                    }
+                    if ((window as any).ttq) {
+                        (window as any).ttq.track('PlaceAnOrder', {
+                            content_name: landingPage.title,
+                            value: totalAmount,
+                            currency: 'DZD'
+                        });
+                    }
+                }
+            } catch (trackErr) {
+                console.warn('[Pixel Tracking] Error firing purchase event:', trackErr);
+            }
+
             toast.success('🎉 تم تسجيل طلبكِ بنجاح ! سيتصل بكِ فريق العمل لتأكيد الإرسال.');
         } catch (error: any) {
             console.error('Landing page order error:', error);
@@ -493,7 +560,7 @@ export default function PublicLandingPage() {
                                 {/* En-tête de l'encart formulaire épuré */}
                                 <div className="text-right pb-2.5 border-b border-[#EFECE6]">
                                     <h2 className="text-base sm:text-lg font-bold" style={{ color: landingPage.primaryColor }}>
-                                        {landingPage.formTitle || 'اطلبي الباك تاعك درك'}
+                                        {(!landingPage.formTitle || landingPage.formTitle === 'اطلبي الباك تاعك درك') ? 'املئي معلوماتك' : landingPage.formTitle}
                                     </h2>
                                 </div>
 

@@ -157,7 +157,7 @@ export const DEFAULT_LANDING_PAGES = [
         accordionBadgeText: "17 pièces",
         priceBadgeText: "سعر الباك الكامل (17 عنصر متكامل)",
         deliveryBadgeText: "توصيل متوفر لـ 58 ولاية",
-        formTitle: "اطلبي الباك تاعك درك",
+        formTitle: "املئي معلوماتك",
         formSubtitle: "",
         nameLabel: "الاسم واللقب",
         namePlaceholder: "Selma",
