@@ -29,11 +29,11 @@ export function calculateOrderShippingRate(
 ) {
   if (!snapshot) return null;
   const rawWilaya = (
+    snapshot.wilayaId ||
     snapshot.wilaya ||
     snapshot.wilayaName ||
     snapshot.address?.wilaya ||
     snapshot.address?.wilayaName ||
-    (typeof snapshot.address === 'string' ? '' : '') ||
     ''
   ).toString().trim();
 
@@ -56,8 +56,8 @@ export function calculateOrderShippingRate(
 
   const isHome = deliveryType === 'home';
   const shippingCost = isHome
-    ? Number(wilayaRate.homeRate)
-    : Number(wilayaRate.deskRate ?? wilayaRate.homeRate);
+    ? Number(wilayaRate.homeRate ?? wilayaRate.homeFee ?? 500)
+    : Number(wilayaRate.deskRate ?? wilayaRate.deskFee ?? wilayaRate.homeRate ?? 350);
   const returnCost = Number(wilayaRate.returnRate || 0);
 
   return {
@@ -296,7 +296,19 @@ export class OrdersService implements OnModuleInit {
         }
       }
 
-      if (subtotal >= Number(settings?.freeShippingThreshold || 10000)) {
+      // Si le tarif de livraison est explicitement fourni (ex: calculé par la Landing Page selon la wilaya)
+      if (createOrderDto.shippingCost !== undefined && createOrderDto.shippingCost !== null) {
+        shippingCost = Number(createOrderDto.shippingCost);
+      }
+
+      const isLandingPage = Boolean(
+        createOrderDto.notes?.includes('Landing Page') ||
+        createOrderDto.source === 'instagram' ||
+        createOrderDto.shippingCost !== undefined
+      );
+
+      // Le seuil de livraison gratuite de la boutique générale ne doit pas écraser les commandes de la landing page
+      if (!isLandingPage && subtotal >= Number(settings?.freeShippingThreshold || 10000)) {
         shippingCost = 0;
       }
 

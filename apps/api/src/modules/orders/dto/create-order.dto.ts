@@ -54,6 +54,10 @@ export class CreateOrderDto {
   couponCode?: string;
 
   @IsOptional()
+  @IsNumber()
+  shippingCost?: number;
+
+  @IsOptional()
   shippingAddress?: any;
 
   @IsOptional()

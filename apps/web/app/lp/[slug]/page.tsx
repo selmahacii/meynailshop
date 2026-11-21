@@ -204,6 +204,7 @@ export default function PublicLandingPage() {
                     deliveryType: mappedDeliveryType,
                     paymentMethod: 'cash_on_delivery',
                     source: 'instagram',
+                    shippingCost: shippingCost,
                     notes: `[Commande Landing Page: /lp/${landingPage.slug}] - ${landingPage.title} ${selectedVariant ? `(Formule: ${selectedVariant.name})` : ''}`,
                     shippingAddress: {
                         fullName: customerName,
@@ -561,8 +562,8 @@ export default function PublicLandingPage() {
                                 
                                 {/* En-tête de l'encart formulaire épuré */}
                                 <div className="text-right pb-2.5 border-b border-[#EFECE6]">
-                                    <h2 className="text-base sm:text-lg font-bold" style={{ color: landingPage.primaryColor }}>
-                                        {(!landingPage.formTitle || landingPage.formTitle === 'اطلبي الباك تاعك درك') ? 'املئي معلوماتك' : landingPage.formTitle}
+                                    <h2 className="text-base sm:text-lg font-bold" style={{ color: landingPage.primaryColor || '#390102' }}>
+                                        املئي معلوماتك
                                     </h2>
                                 </div>
 

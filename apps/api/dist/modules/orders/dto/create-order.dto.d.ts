@@ -14,6 +14,7 @@ export declare class CreateOrderDto {
     notes?: string;
     source?: string;
     couponCode?: string;
+    shippingCost?: number;
     shippingAddress?: any;
     items?: OrderItemDto[];
 }

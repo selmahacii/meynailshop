@@ -30,11 +30,11 @@ const notifications_service_1 = require("../notifications/notifications.service"
 function calculateOrderShippingRate(snapshot, deliveryType = 'home', fees = settings_service_1.DEFAULT_SHIPPING_FEES) {
     if (!snapshot)
         return null;
-    const rawWilaya = (snapshot.wilaya ||
+    const rawWilaya = (snapshot.wilayaId ||
+        snapshot.wilaya ||
         snapshot.wilayaName ||
         snapshot.address?.wilaya ||
         snapshot.address?.wilayaName ||
-        (typeof snapshot.address === 'string' ? '' : '') ||
         '').toString().trim();
     if (!rawWilaya)
         return null;
@@ -52,8 +52,8 @@ function calculateOrderShippingRate(snapshot, deliveryType = 'home', fees = sett
         return null;
     const isHome = deliveryType === 'home';
     const shippingCost = isHome
-        ? Number(wilayaRate.homeRate)
-        : Number(wilayaRate.deskRate ?? wilayaRate.homeRate);
+        ? Number(wilayaRate.homeRate ?? wilayaRate.homeFee ?? 500)
+        : Number(wilayaRate.deskRate ?? wilayaRate.deskFee ?? wilayaRate.homeRate ?? 350);
     const returnCost = Number(wilayaRate.returnRate || 0);
     return {
         shippingCost,
@@ -252,7 +252,13 @@ let OrdersService = class OrdersService {
                     returnCost = calculated.returnCost;
                 }
             }
-            if (subtotal >= Number(settings?.freeShippingThreshold || 10000)) {
+            if (createOrderDto.shippingCost !== undefined && createOrderDto.shippingCost !== null) {
+                shippingCost = Number(createOrderDto.shippingCost);
+            }
+            const isLandingPage = Boolean(createOrderDto.notes?.includes('Landing Page') ||
+                createOrderDto.source === 'instagram' ||
+                createOrderDto.shippingCost !== undefined);
+            if (!isLandingPage && subtotal >= Number(settings?.freeShippingThreshold || 10000)) {
                 shippingCost = 0;
             }
             const total = subtotal - discount + shippingCost;

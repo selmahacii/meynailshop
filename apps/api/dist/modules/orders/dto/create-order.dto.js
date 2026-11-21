@@ -81,6 +81,11 @@ __decorate([
 ], CreateOrderDto.prototype, "couponCode", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateOrderDto.prototype, "shippingCost", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Object)
 ], CreateOrderDto.prototype, "shippingAddress", void 0);
 __decorate([

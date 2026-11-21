@@ -64,6 +64,7 @@ let OrdersController = class OrdersController {
         const landingPageSlug = body.landingPageSlug || body.slug || 'pack-onglerie';
         const variantName = body.items?.[0]?.variantName || body.variantName || null;
         const price = Number(body.productPrice || body.items?.[0]?.price || body.price || 6500);
+        const shippingCost = body.shippingCost !== undefined ? Number(body.shippingCost) : undefined;
         const image = body.items?.[0]?.image || body.image || '';
         const nameParts = customerName.split(/\s+/);
         const firstName = nameParts[0] || 'Selma';
@@ -72,6 +73,7 @@ let OrdersController = class OrdersController {
             deliveryType,
             paymentMethod: 'cash_on_delivery',
             source: 'instagram',
+            shippingCost,
             notes: `[Commande Landing Page: /lp/${landingPageSlug}] - ${landingPageTitle}${variantName ? ` (${variantName})` : ''}`,
             shippingAddress: {
                 fullName: customerName,
