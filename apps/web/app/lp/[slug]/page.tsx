@@ -95,7 +95,7 @@ export default function PublicLandingPage() {
 
     // Intégration et Initialisation du Pixel Meta (Facebook) et TikTok
     useEffect(() => {
-        const fbPixelId = landingPage.facebookPixelId?.trim();
+        const fbPixelId = landingPage.facebookPixelId?.trim() || '1702992101434180';
         if (fbPixelId && typeof window !== 'undefined') {
             if (!(window as any).fbq) {
                 (function (f: any, b: any, e: any, v: any, n?: any, t?: any, s?: any) {

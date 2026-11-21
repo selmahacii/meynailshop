@@ -188,6 +188,7 @@ exports.DEFAULT_LANDING_PAGES = [
         successModalMessage: "تم استلام طلبكِ في نظام المتجر. سيتصل بكِ فريق العمل عبر الهاتف لتأكيد موعد إرسال الطرد إلى عنوانكِ.",
         successModalButtonText: "الرجوع إلى المتجر",
         footerText: "© MEEY NAIL SHOP. جميع الحقوق محفوظة.",
+        facebookPixelId: "1702992101434180",
         isActive: true,
         createdAt: "2026-11-20T22:00:00.000Z",
         updatedAt: "2026-11-20T22:00:00.000Z"

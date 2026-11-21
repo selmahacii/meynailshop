@@ -106,6 +106,7 @@ export declare const DEFAULT_LANDING_PAGES: {
     successModalMessage: string;
     successModalButtonText: string;
     footerText: string;
+    facebookPixelId: string;
     isActive: boolean;
     createdAt: string;
     updatedAt: string;
