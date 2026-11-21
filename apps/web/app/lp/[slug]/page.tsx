@@ -15,11 +15,7 @@ import {
     Package, 
     Sparkles, 
     CheckCircle2,
-    Flame,
-    Clock,
-    Star,
-    Lock,
-    PhoneCall
+    Lock
 } from 'lucide-react';
 import { useSettings } from '@/lib/hooks/useSettings';
 import { SHIPPING_RATES } from '@/lib/constants/shipping';
@@ -57,46 +53,6 @@ export default function PublicLandingPage() {
     const [submitting, setSubmitting] = useState(false);
     const [orderSuccess, setOrderSuccess] = useState<any | null>(null);
 
-    // Compte à rebours d'urgence (Lightfunnels Scarcity Timer)
-    const [timeLeft, setTimeLeft] = useState({ hours: 3, minutes: 42, seconds: 18 });
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setTimeLeft(prev => {
-                if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
-                if (prev.minutes > 0) return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
-                if (prev.hours > 0) return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
-                return { hours: 4, minutes: 59, seconds: 59 };
-            });
-        }, 1000);
-        return () => clearInterval(timer);
-    }, []);
-
-    // Notifications d'achats en direct (Lightfunnels Live Social Proof Ticker)
-    const recentBuyers = useMemo(() => [
-        { name: 'سارة', wilaya: 'وهران', time: 'منذ دقيقتين' },
-        { name: 'مريم', wilaya: 'الجزائر العاصمة', time: 'منذ 4 دقائق' },
-        { name: 'نسرين', wilaya: 'سطيف', time: 'منذ 6 دقائق' },
-        { name: 'أمينة', wilaya: 'قسنطينة', time: 'منذ 9 دقائق' },
-        { name: 'خديجة', wilaya: 'البليدة', time: 'منذ 12 دقيقة' },
-        { name: 'ياسمين', wilaya: 'عنابة', time: 'منذ 15 دقيقة' },
-    ], []);
-    const [activeBuyerIndex, setActiveBuyerIndex] = useState(0);
-    const [showBuyerToast, setShowBuyerToast] = useState(false);
-
-    useEffect(() => {
-        const initialDelay = setTimeout(() => setShowBuyerToast(true), 3500);
-        const interval = setInterval(() => {
-            setShowBuyerToast(true);
-            setTimeout(() => {
-                setShowBuyerToast(false);
-                setActiveBuyerIndex(prev => (prev + 1) % recentBuyers.length);
-            }, 4500);
-        }, 13000);
-        return () => {
-            clearTimeout(initialDelay);
-            clearInterval(interval);
-        };
-    }, [recentBuyers.length]);
 
     // Initialiser la première variante si existante
     useEffect(() => {
@@ -376,25 +332,10 @@ export default function PublicLandingPage() {
             `}</style>
 
             {/* ======================================================== */}
-            {/* LIGHTFUNNELS TOP URGENCY & SCARCITY ANNOUNCEMENT BAR     */}
-            {/* ======================================================== */}
-            <div className="bg-[#18080A] text-[#FAF5EF] py-2 px-3 text-center text-[11px] sm:text-xs font-medium border-b border-[#390102] flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
-                <span className="flex items-center gap-1.5 text-amber-300 font-bold">
-                    <Flame size={14} className="text-amber-400 animate-pulse fill-amber-400" />
-                    <span>عرض خاص محدود لليوم فقط :</span>
-                </span>
-                <span className="text-[#F0ECE6]">توصيل سريع لـ 58 ولاية والدفع بعد معاينة السلعة</span>
-                <div className="inline-flex items-center gap-1 bg-[#390102] text-amber-300 px-2 py-0.5 rounded-md font-mono text-[10px] font-bold tracking-wider border border-amber-400/20">
-                    <Clock size={11} />
-                    <span>{String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}</span>
-                </div>
-            </div>
-
-            {/* ======================================================== */}
-            {/* BARRE DE MARQUE HAUTE COUTURE (MINIMALISTE & RESPIRANTE)  */}
+            {/* BARRE DE MARQUE MINIMALISTE & ÉLÉGANTE                   */}
             {/* ======================================================== */}
             {landingPage.showBrandHeader !== false && (
-                <header className="w-full py-2.5 sm:py-3.5 border-b border-[#F0ECE6]/80 bg-white/90 backdrop-blur-md sticky top-0 z-30 transition-all">
+                <header className="w-full py-3 sm:py-4 border-b border-[#F0ECE6]/80 bg-white/80 backdrop-blur-md sticky top-0 z-30 transition-all">
                     <div className="max-w-xl mx-auto px-4 flex items-center justify-between">
                         <div className="flex items-center">
                             {landingPage.logoUrl ? (
@@ -404,26 +345,24 @@ export default function PublicLandingPage() {
                                     className="h-7 sm:h-8 w-auto object-contain transition-transform hover:scale-105"
                                 />
                             ) : (
-                                <div className="flex flex-col">
-                                    <span 
-                                        className="font-italiana tracking-[0.22em] text-lg sm:text-xl uppercase leading-none"
-                                        style={{ color: landingPage.primaryColor || '#390102' }}
-                                    >
-                                        {landingPage.brandName || 'MEEY'}
-                                    </span>
-                                </div>
+                                <span 
+                                    className="font-italiana tracking-[0.25em] text-xl sm:text-2xl uppercase leading-none font-medium"
+                                    style={{ color: landingPage.primaryColor || '#390102' }}
+                                >
+                                    {landingPage.brandName || 'MEEY'}
+                                </span>
                             )}
                         </div>
 
-                        {/* Bouton direct Instagram dans le header */}
+                        {/* Bouton direct Instagram épuré */}
                         <a 
                             href={`${landingPage.instagramUrl || 'https://ig.me/m/meeynailshop'}?text=${encodeURIComponent(landingPage.instagramMessage || 'السلام عليكم، حبيت نستفسر ونعرف معلومات أكثر على هذا الباك')}`}
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-tr from-[#FD5949] via-[#D6249F] to-[#285AEB] text-white text-[11px] font-bold shadow-sm hover:opacity-95 active:scale-95 transition-all"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF9F6] hover:bg-[#F3EAE0] border border-[#EFECE6] text-xs font-medium text-[#390102] transition-colors"
                             title="تحدثي معنا على إنستغرام"
                         >
-                            <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                            <svg className="w-3.5 h-3.5 text-[#D6249F] fill-current" viewBox="0 0 24 24">
                                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                             </svg>
                             <span>إنستغرام</span>
@@ -433,76 +372,42 @@ export default function PublicLandingPage() {
             )}
 
             {/* CONTENEUR PRINCIPAL RESPIRANT */}
-            <main className="max-w-xl mx-auto px-4 pt-4 sm:pt-6 pb-12">
+            <main className="max-w-xl mx-auto px-4 pt-5 sm:pt-7 pb-12">
                 
                 {/* ======================================================== */}
-                {/* HERO : TITRE DU PACK & PREUVE SOCIALE LIGHTFUNNELS        */}
+                {/* HERO : TITRE ÉPURÉ & SANS BRUIT                          */}
                 {/* ======================================================== */}
-                <div className="text-center mb-3.5 sm:mb-4 px-2">
-                    {/* Stars & Social Proof Pill */}
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 border border-amber-200/80 rounded-full text-[11px] text-amber-900 font-semibold mb-2 shadow-xs">
-                        <div className="flex items-center gap-0.5 text-amber-500">
-                            {[...Array(5)].map((_, i) => (
-                                <Star key={i} size={12} className="fill-amber-400 text-amber-400" />
-                            ))}
-                        </div>
-                        <span className="font-bold">4.9/5</span>
-                        <span className="text-amber-700/80">(142 تقييم مؤكد)</span>
-                        <span className="text-amber-300">•</span>
-                        <span className="text-[#8B1E22] font-bold flex items-center gap-1">
-                            الأكثر طلباً 🔥
-                        </span>
-                    </div>
-
+                <div className="text-center mb-5 px-2">
                     <h1 
-                        className="text-lg sm:text-xl font-medium tracking-wide leading-snug font-serif"
+                        className="text-xl sm:text-2xl font-medium tracking-wide leading-snug font-serif"
                         style={{ color: landingPage.primaryColor || '#390102' }}
                     >
                         {landingPage.title}
                     </h1>
 
                     {landingPage.subtitle && (
-                        <p className="text-xs text-[#7A5459] mt-1.5 max-w-md mx-auto leading-relaxed font-light opacity-85">
+                        <p className="text-xs text-[#7A5459] mt-2 max-w-md mx-auto leading-relaxed font-light opacity-85">
                             {landingPage.subtitle}
                         </p>
                     )}
                 </div>
 
                 {/* ======================================================== */}
-                {/* CARTE PRODUIT : PHOTO FULL-WIDTH ÉPURÉE                  */}
+                {/* CARTE PRODUIT : PHOTO PURE & SOUS-PHOTOS PLEINE LARGEUR */}
                 {/* ======================================================== */}
                 <article className="bg-white border border-[#F0ECE6] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_2px_16px_rgba(0,0,0,0.02)]">
                     
-                    {/* Photo Full-Width (Hero Showcase) avec Badges Lightfunnels */}
-                    <div className="w-full bg-[#FAF9F6] border-b border-[#F0ECE6]">
+                    {/* Photo Principale Épurée (Sans Stickers) */}
+                    <div className="w-full bg-[#FAF9F6]">
                         <div className="w-full aspect-[4/3] sm:aspect-[16/11] overflow-hidden bg-[#FAF9F6] relative">
                             <img 
                                 src={currentPhoto} 
                                 alt={landingPage.title}
                                 className="w-full h-full object-cover transition-opacity duration-300"
                             />
-
-                            {/* Badge Réduction & Rareté sur Photo */}
-                            <div className="absolute top-3 right-3 bg-[#390102] text-amber-300 text-[11px] font-bold px-3 py-1 rounded-full shadow-md flex items-center gap-1 border border-amber-400/30">
-                                <Flame size={12} className="text-amber-400 fill-amber-400 animate-pulse" />
-                                <span>تخفيض حصري -23%</span>
-                            </div>
-
-                            {/* Badge Garantie & Confiance sur Photo */}
-                            <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-md text-emerald-800 text-[10px] sm:text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md flex items-center gap-1 border border-emerald-200">
-                                <ShieldCheck size={13} className="text-emerald-600" />
-                                <span>معاينة السلعة قبل الدفع</span>
-                            </div>
-
-                            {/* Compteur photo */}
-                            {landingPage.photos && landingPage.photos.length > 1 && (
-                                <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-md text-white text-[10px] font-mono font-bold px-2 py-0.5 rounded-md">
-                                    {selectedPhotoIndex + 1} / {landingPage.photos.length}
-                                </div>
-                            )}
                         </div>
 
-                        {/* Miniatures Full-Width bien structurées */}
+                        {/* Sous-photos en pleine largeur bien structurées */}
                         {landingPage.photos && landingPage.photos.length > 1 && (
                             <div className="p-2.5 sm:p-3 bg-white border-t border-[#F0ECE6]">
                                 <div 
@@ -514,23 +419,17 @@ export default function PublicLandingPage() {
                                             key={idx}
                                             type="button"
                                             onClick={() => setSelectedPhotoIndex(idx)}
-                                            className={`relative w-full aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden border-2 transition-all cursor-pointer shadow-sm focus:outline-none ${
+                                            className={`relative w-full aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden border transition-all cursor-pointer focus:outline-none ${
                                                 selectedPhotoIndex === idx
-                                                    ? 'scale-[1.02] shadow-md ring-2 ring-[#390102]/20'
+                                                    ? 'border-[#390102] ring-2 ring-[#390102]/20'
                                                     : 'border-[#F0ECE6] opacity-60 hover:opacity-100 hover:border-[#BFA893]'
                                             }`}
-                                            style={{
-                                                borderColor: selectedPhotoIndex === idx ? (landingPage.primaryColor || '#390102') : undefined,
-                                            }}
                                         >
                                             <img 
                                                 src={p} 
                                                 alt={`Photo ${idx + 1}`} 
                                                 className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
                                             />
-                                            {selectedPhotoIndex === idx && (
-                                                <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#390102] ring-2 ring-white"></div>
-                                            )}
                                         </button>
                                     ))}
                                 </div>
@@ -538,107 +437,42 @@ export default function PublicLandingPage() {
                         )}
                     </div>
 
-                    {/* Détails, Prix & Formulaire */}
+                    {/* Détails & Formulaire */}
                     <div className="p-4 sm:p-6 space-y-4">
                         
                         {/* ==================================================== */}
-                        {/* BLOC OFFRE & PRIX HAUTE CONVERSION (LIGHTFUNNELS)   */}
+                        {/* BLOC PRIX & RÉASSURANCE MINIMALISTE                  */}
                         {/* ==================================================== */}
-                        <div className="bg-[#FAF9F6] border border-[#F0ECE6] rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
-                            <div className="flex items-center justify-between">
-                                <div className="text-right">
-                                    <span className="text-[11px] text-[#7A5459] font-medium block mb-0.5">
-                                        {landingPage.priceBadgeText || `سعر الباك الكامل (${landingPage.items?.length || 0} عنصر)`}
-                                    </span>
-                                    <div className="flex items-baseline gap-1.5" dir="ltr">
-                                        <span 
-                                            className="text-2xl sm:text-3xl font-extrabold tracking-tight num" 
-                                            style={{ color: landingPage.primaryColor || '#390102' }}
-                                        >
-                                            {productPrice.toLocaleString('fr-DZ')}
-                                        </span>
-                                        <span className="text-xs font-bold text-[#7A5459]">
-                                            {landingPage.currency || 'DA'}
-                                        </span>
-                                        {landingPage.compareAtPrice && landingPage.compareAtPrice > productPrice && (
-                                            <span className="text-xs text-gray-400 line-through ml-2 font-normal num">
-                                                {landingPage.compareAtPrice.toLocaleString('fr-DZ')} {landingPage.currency || 'DA'}
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-col items-end gap-1.5">
+                        <div className="bg-[#FAF9F6] border border-[#F0ECE6] rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-xs">
+                            <div className="text-right">
+                                <span className="text-[11px] text-[#7A5459] font-medium block mb-0.5">
+                                    {landingPage.priceBadgeText || `سعر الباك الكامل (${landingPage.items?.length || 0} عنصر)`}
+                                </span>
+                                <div className="flex items-baseline gap-1.5" dir="ltr">
                                     <span 
-                                        className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#EFECE6] rounded-full text-[11px] font-semibold text-[#390102] shadow-sm"
+                                        className="text-2xl sm:text-3xl font-extrabold tracking-tight num font-serif" 
+                                        style={{ color: landingPage.primaryColor || '#390102' }}
                                     >
-                                        <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: landingPage.accentColor || '#BFA893' }}></span>
-                                        <span>{landingPage.deliveryBadgeText || 'توصيل متوفر لـ 58 ولاية'}</span>
+                                        {productPrice.toLocaleString('fr-DZ')}
+                                    </span>
+                                    <span className="text-xs font-bold text-[#7A5459]">
+                                        {landingPage.currency || 'DA'}
                                     </span>
                                     {landingPage.compareAtPrice && landingPage.compareAtPrice > productPrice && (
-                                        <span className="px-2 py-0.5 rounded-md bg-rose-50 border border-rose-200 text-rose-700 text-[10px] font-bold num">
-                                            وفري {(landingPage.compareAtPrice - productPrice).toLocaleString('fr-DZ')} DA (-{Math.round(((landingPage.compareAtPrice - productPrice) / landingPage.compareAtPrice) * 100)}%)
+                                        <span className="text-xs text-gray-400 line-through ml-2 font-normal num">
+                                            {landingPage.compareAtPrice.toLocaleString('fr-DZ')} {landingPage.currency || 'DA'}
                                         </span>
                                     )}
                                 </div>
                             </div>
 
-                            {/* Scarcity Bar Lightfunnels */}
-                            <div className="pt-2.5 border-t border-[#EFECE6] space-y-1.5">
-                                <div className="flex items-center justify-between text-[11px]">
-                                    <span className="font-bold text-[#8B1E22] flex items-center gap-1">
-                                        <Flame size={13} className="text-amber-500 fill-amber-500 animate-pulse" />
-                                        <span>سارعي قبل نفاد الكمية المخصصة لهذا العرض!</span>
-                                    </span>
-                                    <span className="text-gray-500 font-medium">متبقي <strong className="text-[#390102] font-mono">6 قطع</strong> فقط</span>
-                                </div>
-                                <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                                    <div 
-                                        className="bg-gradient-to-r from-amber-500 via-rose-500 to-[#390102] h-full rounded-full transition-all duration-500"
-                                        style={{ width: '84%' }}
-                                    />
-                                </div>
-                                <div className="text-[10px] text-gray-500 flex justify-between">
-                                    <span>تم حجز 84% من المخزون</span>
-                                    <span>عرض صالح حتى منتصف الليل</span>
-                                </div>
-                            </div>
-
-                            {/* Bouton Scroll Rapide vers Commande */}
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    const el = document.getElementById('order-section');
-                                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                                }}
-                                className="w-full py-3 px-4 bg-gradient-to-r from-[#390102] via-[#5c0b11] to-[#390102] text-white rounded-xl font-bold text-xs shadow-md hover:shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 group cursor-pointer"
-                            >
-                                <span>اضغطي هنا للطلب المباشر والدفع عند الاستلام</span>
-                                <span className="group-hover:translate-y-0.5 transition-transform">👇</span>
-                            </button>
-                        </div>
-
-                        {/* 4 Badges de Confiance Lightfunnels */}
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
-                            <div className="bg-[#FAF9F6] border border-[#EFECE6] rounded-xl p-2.5 text-center flex flex-col items-center justify-center gap-1">
-                                <Truck className="w-4 h-4 text-[#390102]" />
-                                <span className="text-[11px] font-bold text-[#18080A]">توصيل 58 ولاية</span>
-                                <span className="text-[9px] text-[#7A5459]">لباب الدار أو للمكتب</span>
-                            </div>
-                            <div className="bg-[#FAF9F6] border border-[#EFECE6] rounded-xl p-2.5 text-center flex flex-col items-center justify-center gap-1">
-                                <ShieldCheck className="w-4 h-4 text-emerald-700" />
-                                <span className="text-[11px] font-bold text-[#18080A]">معاينة قبل الدفع</span>
-                                <span className="text-[9px] text-[#7A5459]">افتحي شوفي سلعتك</span>
-                            </div>
-                            <div className="bg-[#FAF9F6] border border-[#EFECE6] rounded-xl p-2.5 text-center flex flex-col items-center justify-center gap-1">
-                                <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-                                <span className="text-[11px] font-bold text-[#18080A]">جودة صالونات 100%</span>
-                                <span className="text-[9px] text-[#7A5459]">مستلزمات أصلية</span>
-                            </div>
-                            <div className="bg-[#FAF9F6] border border-[#EFECE6] rounded-xl p-2.5 text-center flex flex-col items-center justify-center gap-1">
-                                <PhoneCall className="w-4 h-4 text-[#390102]" />
-                                <span className="text-[11px] font-bold text-[#18080A]">تأكيد هاتفي سريع</span>
-                                <span className="text-[9px] text-[#7A5459]">فريقنا يتصل بكِ فوراً</span>
+                            <div className="flex flex-col items-end gap-1 text-right">
+                                <span className="text-xs font-semibold text-emerald-800">
+                                    الدفع عند الاستلام
+                                </span>
+                                <span className="text-[11px] text-[#7A5459]">
+                                    {landingPage.deliveryBadgeText || 'توصيل متوفر لـ 58 ولاية'}
+                                </span>
                             </div>
                         </div>
 
@@ -1239,70 +1073,22 @@ export default function PublicLandingPage() {
             )}
 
             {/* ======================================================== */}
-            {/* BOUTON FLOTTANT STICKY INSTAGRAM DIRECT CONVERSATION     */}
+            {/* BOUTON FLOTTANT INSTAGRAM DISCRET (LANDING PAGE)         */}
             {/* ======================================================== */}
-            <aside className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-50 animate-in fade-in duration-300">
+            <aside className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-50">
                 <a
                     href={`${landingPage.instagramUrl || 'https://ig.me/m/meeynailshop'}?text=${encodeURIComponent(landingPage.instagramMessage || 'السلام عليكم، حبيت نستفسر ونعرف معلومات أكثر على هذا الباك')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={() => {
-                        try {
-                            if (typeof window !== 'undefined' && (window as any).fbq) {
-                                (window as any).fbq('track', 'Contact', {
-                                    content_name: landingPage.title,
-                                    source: 'sticky_instagram_button'
-                                });
-                            }
-                        } catch (e) {
-                            console.warn('[Pixel] Contact track error', e);
-                        }
-                    }}
-                    className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-full bg-gradient-to-tr from-[#FD5949] via-[#D6249F] to-[#285AEB] text-white shadow-[0_6px_25px_rgba(214,36,159,0.45)] hover:shadow-[0_8px_30px_rgba(214,36,159,0.7)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer group"
+                    className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-white/90 hover:bg-white border border-[#EFECE6] text-[#390102] shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer text-xs font-medium backdrop-blur-sm"
                     title="تحدثي معنا مباشرة على إنستغرام"
                 >
-                    <div className="relative w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/15 flex items-center justify-center shrink-0">
-                        <svg className="w-4 h-4 sm:w-4.5 sm:h-4.5 fill-current" viewBox="0 0 24 24">
-                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                        </svg>
-                        <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400 border border-white"></span>
-                        </span>
-                    </div>
-
-                    <span className="text-xs font-bold whitespace-nowrap drop-shadow-sm">
-                        تحدثي معنا في إنستغرام
-                    </span>
+                    <svg className="w-4 h-4 text-[#D6249F] fill-current" viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                    </svg>
+                    <span>إنستغرام</span>
                 </a>
             </aside>
-
-            {/* ======================================================== */}
-            {/* LIVE BUYER POPUP TICKER (LIGHTFUNNELS SOCIAL PROOF)      */}
-            {/* ======================================================== */}
-            {showBuyerToast && (
-                <aside className="fixed bottom-20 left-4 sm:bottom-6 sm:left-6 z-40 max-w-xs bg-white/95 backdrop-blur-md border border-[#EFECE6] shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-2xl p-3 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-3 duration-300">
-                    <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-[#F0ECE6] bg-[#FAF9F6]">
-                        <img src={currentPhoto} alt="Pack Onglerie" className="w-full h-full object-cover" />
-                    </div>
-                    <div className="text-right flex-1 min-w-0">
-                        <div className="text-xs font-bold text-[#18080A] truncate">
-                            {recentBuyers[activeBuyerIndex]?.name} من {recentBuyers[activeBuyerIndex]?.wilaya}
-                        </div>
-                        <div className="text-[10px] text-emerald-700 font-medium flex items-center gap-1 mt-0.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                            <span>اشترت هذا الباك للتو ({recentBuyers[activeBuyerIndex]?.time})</span>
-                        </div>
-                    </div>
-                    <button
-                        type="button"
-                        onClick={() => setShowBuyerToast(false)}
-                        className="text-gray-400 hover:text-gray-600 p-1 text-xs"
-                    >
-                        ✕
-                    </button>
-                </aside>
-            )}
 
             {/* BARRE FLOTTANTE MOBILE DE COMMANDE RAPIDE (RESPIRANTE & ÉLÉGANTE) */}
             {landingPage.showStickyCta !== false && (
