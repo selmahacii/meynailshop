@@ -65,6 +65,9 @@ let OrdersController = class OrdersController {
         const variantName = body.items?.[0]?.variantName || body.variantName || null;
         const price = Number(body.productPrice || body.items?.[0]?.price || body.price || 6500);
         const image = body.items?.[0]?.image || body.image || '';
+        const nameParts = customerName.split(/\s+/);
+        const firstName = nameParts[0] || 'Selma';
+        const lastName = nameParts.slice(1).join(' ') || '';
         const createOrderDto = {
             deliveryType,
             paymentMethod: 'cash_on_delivery',
@@ -72,10 +75,14 @@ let OrdersController = class OrdersController {
             notes: `[Commande Landing Page: /lp/${landingPageSlug}] - ${landingPageTitle}${variantName ? ` (${variantName})` : ''}`,
             shippingAddress: {
                 fullName: customerName,
+                firstName: firstName,
+                lastName: lastName,
                 phone: customerPhone,
                 wilaya: wilayaName,
+                wilayaName: wilayaName,
                 commune: commune,
                 address: fullAddress,
+                fullAddress: fullAddress,
                 deliveryType,
             },
         };

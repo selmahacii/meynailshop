@@ -207,6 +207,8 @@ export default function PublicLandingPage() {
                     notes: `[Commande Landing Page: /lp/${landingPage.slug}] - ${landingPage.title} ${selectedVariant ? `(Formule: ${selectedVariant.name})` : ''}`,
                     shippingAddress: {
                         fullName: customerName,
+                        firstName: customerName.split(/\s+/)[0] || customerName,
+                        lastName: customerName.split(/\s+/).slice(1).join(' ') || '',
                         phone: cleanPhone,
                         wilaya: currentWilayaRate.name || 'Wilaya ' + wilayaId,
                         commune: commune.trim() || 'البلدية المركزية',

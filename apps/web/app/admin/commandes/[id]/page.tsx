@@ -410,12 +410,15 @@ export default function OrderDetailsPage() {
                         <div className="p-8 space-y-6">
                             <div className="flex items-center space-x-4">
                                 <div className="w-12 h-12 bg-or/10 rounded-full flex items-center justify-center text-or border border-or/20 text-lg font-black">
-                                    {(order.user?.firstName || order.shippingAddressSnapshot?.firstName || '?').charAt(0)}
-                                    {(order.user?.lastName || order.shippingAddressSnapshot?.lastName || '').charAt(0)}
+                                    {(order.user?.firstName || order.shippingAddressSnapshot?.fullName || order.shippingAddressSnapshot?.firstName || '?').charAt(0).toUpperCase()}
                                 </div>
                                 <div>
                                     <p className="text-sm font-black text-encre uppercase tracking-wide">
-                                        {order.user?.firstName || order.shippingAddressSnapshot?.firstName} {order.user?.lastName || order.shippingAddressSnapshot?.lastName}
+                                        {order.user 
+                                            ? `${order.user.firstName} ${order.user.lastName}`
+                                            : (order.shippingAddressSnapshot?.fullName || 
+                                               `${order.shippingAddressSnapshot?.firstName || ''} ${order.shippingAddressSnapshot?.lastName || ''}`.trim() || 
+                                               'Client')}
                                         {!order.userId && <span className="ml-2 text-[8px] bg-creme2 text-encre3 px-1.5 py-0.5 rounded tracking-tighter">INVITÉ</span>}
                                     </p>
                                     <p className="text-[11px] text-encre3">ID: {order.userId ? `#${order.userId.slice(0, 8)}` : 'Client non inscrit'}</p>

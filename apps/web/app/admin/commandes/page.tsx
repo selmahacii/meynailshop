@@ -368,11 +368,20 @@ export default function AdminOrdersPage() {
                                             <span className="text-sm font-bold text-encre">
                                                 {order.user
                                                     ? `${order.user.firstName} ${order.user.lastName}`
-                                                    : (order.shippingAddressSnapshot?.firstName
-                                                        ? `${order.shippingAddressSnapshot.firstName} ${order.shippingAddressSnapshot.lastName}`
-                                                        : 'Client anonyme')}
+                                                    : (order.shippingAddressSnapshot?.fullName || 
+                                                       (order.shippingAddressSnapshot?.firstName
+                                                           ? `${order.shippingAddressSnapshot.firstName} ${order.shippingAddressSnapshot.lastName || ''}`.trim()
+                                                           : 'Client'))}
                                                 {!order.user && <span className="ml-2 text-[8px] bg-creme2 text-encre3 px-1 rounded tracking-tighter">INVITÉ</span>}
                                             </span>
+                                            {(order.shippingAddressSnapshot?.phone || order.user?.phone) && (
+                                                <a 
+                                                    href={`tel:${order.shippingAddressSnapshot?.phone || order.user?.phone}`}
+                                                    className="text-xs font-black text-[#390102] font-mono tracking-wider hover:text-or transition-colors mt-0.5 inline-block"
+                                                >
+                                                    📞 {order.shippingAddressSnapshot?.phone || order.user?.phone}
+                                                </a>
+                                            )}
                                             <div className="flex items-center space-x-2 mt-1">
                                                 <span className="text-[10px] text-encre3 uppercase tracking-wide font-medium">
                                                     {(() => {
@@ -513,11 +522,20 @@ export default function AdminOrdersPage() {
                                         <span className="text-sm font-black text-encre flex items-center">
                                             {order.user
                                                 ? `${order.user.firstName} ${order.user.lastName}`
-                                                : (order.shippingAddressSnapshot?.firstName
-                                                    ? `${order.shippingAddressSnapshot.firstName} ${order.shippingAddressSnapshot.lastName}`
-                                                    : 'Client anonyme')}
+                                                : (order.shippingAddressSnapshot?.fullName || 
+                                                   (order.shippingAddressSnapshot?.firstName
+                                                       ? `${order.shippingAddressSnapshot.firstName} ${order.shippingAddressSnapshot.lastName || ''}`.trim()
+                                                       : 'Client'))}
                                             {!order.user && <span className="ml-2 text-[7px] bg-creme2 text-encre3 px-1 rounded tracking-tighter">INVITÉ</span>}
                                         </span>
+                                        {(order.shippingAddressSnapshot?.phone || order.user?.phone) && (
+                                            <a 
+                                                href={`tel:${order.shippingAddressSnapshot?.phone || order.user?.phone}`}
+                                                className="text-xs font-black text-[#390102] font-mono tracking-wider hover:text-or transition-colors mt-0.5 inline-block"
+                                            >
+                                                📞 {order.shippingAddressSnapshot?.phone || order.user?.phone}
+                                            </a>
+                                        )}
                                         <div className="flex items-center space-x-2 mt-0.5">
                                             <span className="text-[10px] text-encre3 uppercase tracking-wide font-medium">
                                                 {(() => {
