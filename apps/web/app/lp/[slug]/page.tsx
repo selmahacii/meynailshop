@@ -14,7 +14,12 @@ import {
     ChevronDown, 
     Package, 
     Sparkles, 
-    CheckCircle2 
+    CheckCircle2,
+    Flame,
+    Clock,
+    Star,
+    Lock,
+    PhoneCall
 } from 'lucide-react';
 import { useSettings } from '@/lib/hooks/useSettings';
 import { SHIPPING_RATES } from '@/lib/constants/shipping';
@@ -51,6 +56,47 @@ export default function PublicLandingPage() {
     const [deliveryType, setDeliveryType] = useState<'home' | 'desk'>('home');
     const [submitting, setSubmitting] = useState(false);
     const [orderSuccess, setOrderSuccess] = useState<any | null>(null);
+
+    // Compte à rebours d'urgence (Lightfunnels Scarcity Timer)
+    const [timeLeft, setTimeLeft] = useState({ hours: 3, minutes: 42, seconds: 18 });
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
+                if (prev.minutes > 0) return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
+                if (prev.hours > 0) return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
+                return { hours: 4, minutes: 59, seconds: 59 };
+            });
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
+
+    // Notifications d'achats en direct (Lightfunnels Live Social Proof Ticker)
+    const recentBuyers = useMemo(() => [
+        { name: 'سارة', wilaya: 'وهران', time: 'منذ دقيقتين' },
+        { name: 'مريم', wilaya: 'الجزائر العاصمة', time: 'منذ 4 دقائق' },
+        { name: 'نسرين', wilaya: 'سطيف', time: 'منذ 6 دقائق' },
+        { name: 'أمينة', wilaya: 'قسنطينة', time: 'منذ 9 دقائق' },
+        { name: 'خديجة', wilaya: 'البليدة', time: 'منذ 12 دقيقة' },
+        { name: 'ياسمين', wilaya: 'عنابة', time: 'منذ 15 دقيقة' },
+    ], []);
+    const [activeBuyerIndex, setActiveBuyerIndex] = useState(0);
+    const [showBuyerToast, setShowBuyerToast] = useState(false);
+
+    useEffect(() => {
+        const initialDelay = setTimeout(() => setShowBuyerToast(true), 3500);
+        const interval = setInterval(() => {
+            setShowBuyerToast(true);
+            setTimeout(() => {
+                setShowBuyerToast(false);
+                setActiveBuyerIndex(prev => (prev + 1) % recentBuyers.length);
+            }, 4500);
+        }, 13000);
+        return () => {
+            clearTimeout(initialDelay);
+            clearInterval(interval);
+        };
+    }, [recentBuyers.length]);
 
     // Initialiser la première variante si existante
     useEffect(() => {
@@ -330,6 +376,21 @@ export default function PublicLandingPage() {
             `}</style>
 
             {/* ======================================================== */}
+            {/* LIGHTFUNNELS TOP URGENCY & SCARCITY ANNOUNCEMENT BAR     */}
+            {/* ======================================================== */}
+            <div className="bg-[#18080A] text-[#FAF5EF] py-2 px-3 text-center text-[11px] sm:text-xs font-medium border-b border-[#390102] flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
+                <span className="flex items-center gap-1.5 text-amber-300 font-bold">
+                    <Flame size={14} className="text-amber-400 animate-pulse fill-amber-400" />
+                    <span>عرض خاص محدود لليوم فقط :</span>
+                </span>
+                <span className="text-[#F0ECE6]">توصيل سريع لـ 58 ولاية والدفع بعد معاينة السلعة</span>
+                <div className="inline-flex items-center gap-1 bg-[#390102] text-amber-300 px-2 py-0.5 rounded-md font-mono text-[10px] font-bold tracking-wider border border-amber-400/20">
+                    <Clock size={11} />
+                    <span>{String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}</span>
+                </div>
+            </div>
+
+            {/* ======================================================== */}
             {/* BARRE DE MARQUE HAUTE COUTURE (MINIMALISTE & RESPIRANTE)  */}
             {/* ======================================================== */}
             {landingPage.showBrandHeader !== false && (
@@ -375,9 +436,24 @@ export default function PublicLandingPage() {
             <main className="max-w-xl mx-auto px-4 pt-4 sm:pt-6 pb-12">
                 
                 {/* ======================================================== */}
-                {/* HERO : TITRE DU PACK SOBRE, FIN & ÉPURÉ                  */}
+                {/* HERO : TITRE DU PACK & PREUVE SOCIALE LIGHTFUNNELS        */}
                 {/* ======================================================== */}
                 <div className="text-center mb-3.5 sm:mb-4 px-2">
+                    {/* Stars & Social Proof Pill */}
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 border border-amber-200/80 rounded-full text-[11px] text-amber-900 font-semibold mb-2 shadow-xs">
+                        <div className="flex items-center gap-0.5 text-amber-500">
+                            {[...Array(5)].map((_, i) => (
+                                <Star key={i} size={12} className="fill-amber-400 text-amber-400" />
+                            ))}
+                        </div>
+                        <span className="font-bold">4.9/5</span>
+                        <span className="text-amber-700/80">(142 تقييم مؤكد)</span>
+                        <span className="text-amber-300">•</span>
+                        <span className="text-[#8B1E22] font-bold flex items-center gap-1">
+                            الأكثر طلباً 🔥
+                        </span>
+                    </div>
+
                     <h1 
                         className="text-lg sm:text-xl font-medium tracking-wide leading-snug font-serif"
                         style={{ color: landingPage.primaryColor || '#390102' }}
@@ -397,7 +473,7 @@ export default function PublicLandingPage() {
                 {/* ======================================================== */}
                 <article className="bg-white border border-[#F0ECE6] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_2px_16px_rgba(0,0,0,0.02)]">
                     
-                    {/* Photo Full-Width (Hero Showcase) */}
+                    {/* Photo Full-Width (Hero Showcase) avec Badges Lightfunnels */}
                     <div className="w-full bg-[#FAF9F6] border-b border-[#F0ECE6]">
                         <div className="w-full aspect-[4/3] sm:aspect-[16/11] overflow-hidden bg-[#FAF9F6] relative">
                             <img 
@@ -405,10 +481,29 @@ export default function PublicLandingPage() {
                                 alt={landingPage.title}
                                 className="w-full h-full object-cover transition-opacity duration-300"
                             />
+
+                            {/* Badge Réduction & Rareté sur Photo */}
+                            <div className="absolute top-3 right-3 bg-[#390102] text-amber-300 text-[11px] font-bold px-3 py-1 rounded-full shadow-md flex items-center gap-1 border border-amber-400/30">
+                                <Flame size={12} className="text-amber-400 fill-amber-400 animate-pulse" />
+                                <span>تخفيض حصري -23%</span>
+                            </div>
+
+                            {/* Badge Garantie & Confiance sur Photo */}
+                            <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-md text-emerald-800 text-[10px] sm:text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md flex items-center gap-1 border border-emerald-200">
+                                <ShieldCheck size={13} className="text-emerald-600" />
+                                <span>معاينة السلعة قبل الدفع</span>
+                            </div>
+
+                            {/* Compteur photo */}
+                            {landingPage.photos && landingPage.photos.length > 1 && (
+                                <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-md text-white text-[10px] font-mono font-bold px-2 py-0.5 rounded-md">
+                                    {selectedPhotoIndex + 1} / {landingPage.photos.length}
+                                </div>
+                            )}
                         </div>
 
                         {/* Miniatures Full-Width bien structurées */}
-                        {landingPage.photos.length > 1 && (
+                        {landingPage.photos && landingPage.photos.length > 1 && (
                             <div className="p-2.5 sm:p-3 bg-white border-t border-[#F0ECE6]">
                                 <div 
                                     className="grid gap-2 sm:gap-2.5 w-full"
@@ -433,6 +528,9 @@ export default function PublicLandingPage() {
                                                 alt={`Photo ${idx + 1}`} 
                                                 className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
                                             />
+                                            {selectedPhotoIndex === idx && (
+                                                <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#390102] ring-2 ring-white"></div>
+                                            )}
                                         </button>
                                     ))}
                                 </div>
@@ -444,41 +542,103 @@ export default function PublicLandingPage() {
                     <div className="p-4 sm:p-6 space-y-4">
                         
                         {/* ==================================================== */}
-                        {/* BLOC OFFRE & PRIX HAUTE CONVERSION                   */}
+                        {/* BLOC OFFRE & PRIX HAUTE CONVERSION (LIGHTFUNNELS)   */}
                         {/* ==================================================== */}
-                        <div className="bg-[#FAF9F6] border border-[#F0ECE6] rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-sm">
-                            <div className="text-right">
-                                <span className="text-[11px] text-[#7A5459] font-medium block mb-0.5">
-                                    {landingPage.priceBadgeText || `سعر الباك الكامل (${landingPage.items?.length || 0} عنصر)`}
-                                </span>
-                                <div className="flex items-baseline gap-1.5" dir="ltr">
-                                    <span 
-                                        className="text-2xl sm:text-3xl font-extrabold tracking-tight num" 
-                                        style={{ color: landingPage.primaryColor || '#390102' }}
-                                    >
-                                        {productPrice.toLocaleString('fr-DZ')}
+                        <div className="bg-[#FAF9F6] border border-[#F0ECE6] rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
+                            <div className="flex items-center justify-between">
+                                <div className="text-right">
+                                    <span className="text-[11px] text-[#7A5459] font-medium block mb-0.5">
+                                        {landingPage.priceBadgeText || `سعر الباك الكامل (${landingPage.items?.length || 0} عنصر)`}
                                     </span>
-                                    <span className="text-xs font-bold text-[#7A5459]">
-                                        {landingPage.currency || 'DA'}
+                                    <div className="flex items-baseline gap-1.5" dir="ltr">
+                                        <span 
+                                            className="text-2xl sm:text-3xl font-extrabold tracking-tight num" 
+                                            style={{ color: landingPage.primaryColor || '#390102' }}
+                                        >
+                                            {productPrice.toLocaleString('fr-DZ')}
+                                        </span>
+                                        <span className="text-xs font-bold text-[#7A5459]">
+                                            {landingPage.currency || 'DA'}
+                                        </span>
+                                        {landingPage.compareAtPrice && landingPage.compareAtPrice > productPrice && (
+                                            <span className="text-xs text-gray-400 line-through ml-2 font-normal num">
+                                                {landingPage.compareAtPrice.toLocaleString('fr-DZ')} {landingPage.currency || 'DA'}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col items-end gap-1.5">
+                                    <span 
+                                        className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#EFECE6] rounded-full text-[11px] font-semibold text-[#390102] shadow-sm"
+                                    >
+                                        <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: landingPage.accentColor || '#BFA893' }}></span>
+                                        <span>{landingPage.deliveryBadgeText || 'توصيل متوفر لـ 58 ولاية'}</span>
                                     </span>
                                     {landingPage.compareAtPrice && landingPage.compareAtPrice > productPrice && (
-                                        <span className="text-xs text-gray-400 line-through ml-2 font-normal num">
-                                            {landingPage.compareAtPrice.toLocaleString('fr-DZ')} {landingPage.currency || 'DA'}
+                                        <span className="px-2 py-0.5 rounded-md bg-rose-50 border border-rose-200 text-rose-700 text-[10px] font-bold num">
+                                            وفري {(landingPage.compareAtPrice - productPrice).toLocaleString('fr-DZ')} DA (-{Math.round(((landingPage.compareAtPrice - productPrice) / landingPage.compareAtPrice) * 100)}%)
                                         </span>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="flex flex-col items-end gap-1.5">
-                                <span 
-                                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#EFECE6] rounded-full text-[11px] font-semibold text-[#390102] shadow-sm"
-                                >
-                                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: landingPage.accentColor || '#BFA893' }}></span>
-                                    <span>{landingPage.deliveryBadgeText || 'توصيل متوفر لـ 58 ولاية'}</span>
-                                </span>
-                                <span className="text-[10px] text-emerald-700 font-medium">
-                                    الدفع كاش عند الاستلام
-                                </span>
+                            {/* Scarcity Bar Lightfunnels */}
+                            <div className="pt-2.5 border-t border-[#EFECE6] space-y-1.5">
+                                <div className="flex items-center justify-between text-[11px]">
+                                    <span className="font-bold text-[#8B1E22] flex items-center gap-1">
+                                        <Flame size={13} className="text-amber-500 fill-amber-500 animate-pulse" />
+                                        <span>سارعي قبل نفاد الكمية المخصصة لهذا العرض!</span>
+                                    </span>
+                                    <span className="text-gray-500 font-medium">متبقي <strong className="text-[#390102] font-mono">6 قطع</strong> فقط</span>
+                                </div>
+                                <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                                    <div 
+                                        className="bg-gradient-to-r from-amber-500 via-rose-500 to-[#390102] h-full rounded-full transition-all duration-500"
+                                        style={{ width: '84%' }}
+                                    />
+                                </div>
+                                <div className="text-[10px] text-gray-500 flex justify-between">
+                                    <span>تم حجز 84% من المخزون</span>
+                                    <span>عرض صالح حتى منتصف الليل</span>
+                                </div>
+                            </div>
+
+                            {/* Bouton Scroll Rapide vers Commande */}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    const el = document.getElementById('order-section');
+                                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                                }}
+                                className="w-full py-3 px-4 bg-gradient-to-r from-[#390102] via-[#5c0b11] to-[#390102] text-white rounded-xl font-bold text-xs shadow-md hover:shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 group cursor-pointer"
+                            >
+                                <span>اضغطي هنا للطلب المباشر والدفع عند الاستلام</span>
+                                <span className="group-hover:translate-y-0.5 transition-transform">👇</span>
+                            </button>
+                        </div>
+
+                        {/* 4 Badges de Confiance Lightfunnels */}
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+                            <div className="bg-[#FAF9F6] border border-[#EFECE6] rounded-xl p-2.5 text-center flex flex-col items-center justify-center gap-1">
+                                <Truck className="w-4 h-4 text-[#390102]" />
+                                <span className="text-[11px] font-bold text-[#18080A]">توصيل 58 ولاية</span>
+                                <span className="text-[9px] text-[#7A5459]">لباب الدار أو للمكتب</span>
+                            </div>
+                            <div className="bg-[#FAF9F6] border border-[#EFECE6] rounded-xl p-2.5 text-center flex flex-col items-center justify-center gap-1">
+                                <ShieldCheck className="w-4 h-4 text-emerald-700" />
+                                <span className="text-[11px] font-bold text-[#18080A]">معاينة قبل الدفع</span>
+                                <span className="text-[9px] text-[#7A5459]">افتحي شوفي سلعتك</span>
+                            </div>
+                            <div className="bg-[#FAF9F6] border border-[#EFECE6] rounded-xl p-2.5 text-center flex flex-col items-center justify-center gap-1">
+                                <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                                <span className="text-[11px] font-bold text-[#18080A]">جودة صالونات 100%</span>
+                                <span className="text-[9px] text-[#7A5459]">مستلزمات أصلية</span>
+                            </div>
+                            <div className="bg-[#FAF9F6] border border-[#EFECE6] rounded-xl p-2.5 text-center flex flex-col items-center justify-center gap-1">
+                                <PhoneCall className="w-4 h-4 text-[#390102]" />
+                                <span className="text-[11px] font-bold text-[#18080A]">تأكيد هاتفي سريع</span>
+                                <span className="text-[9px] text-[#7A5459]">فريقنا يتصل بكِ فوراً</span>
                             </div>
                         </div>
 
@@ -589,10 +749,14 @@ export default function PublicLandingPage() {
                             <div className="bg-[#FAF9F6] border border-[#EFECE6] rounded-2xl p-4 sm:p-5 space-y-4 shadow-sm">
                                 
                                 {/* En-tête de l'encart formulaire épuré */}
-                                <div className="text-right pb-2.5 border-b border-[#EFECE6]">
+                                <div className="text-right pb-2.5 border-b border-[#EFECE6] flex items-center justify-between">
                                     <h2 className="text-base sm:text-lg font-bold" style={{ color: landingPage.primaryColor || '#390102' }}>
                                         املئي معلوماتك
                                     </h2>
+                                    <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 font-medium bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
+                                        <Lock size={11} />
+                                        <span>طلب سريع بدون بطاقة بنكية</span>
+                                    </span>
                                 </div>
 
                                 <form onSubmit={handleSubmitOrder} className="space-y-3.5">
@@ -1112,6 +1276,33 @@ export default function PublicLandingPage() {
                     </span>
                 </a>
             </aside>
+
+            {/* ======================================================== */}
+            {/* LIVE BUYER POPUP TICKER (LIGHTFUNNELS SOCIAL PROOF)      */}
+            {/* ======================================================== */}
+            {showBuyerToast && (
+                <aside className="fixed bottom-20 left-4 sm:bottom-6 sm:left-6 z-40 max-w-xs bg-white/95 backdrop-blur-md border border-[#EFECE6] shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-2xl p-3 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-3 duration-300">
+                    <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-[#F0ECE6] bg-[#FAF9F6]">
+                        <img src={currentPhoto} alt="Pack Onglerie" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="text-right flex-1 min-w-0">
+                        <div className="text-xs font-bold text-[#18080A] truncate">
+                            {recentBuyers[activeBuyerIndex]?.name} من {recentBuyers[activeBuyerIndex]?.wilaya}
+                        </div>
+                        <div className="text-[10px] text-emerald-700 font-medium flex items-center gap-1 mt-0.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span>اشترت هذا الباك للتو ({recentBuyers[activeBuyerIndex]?.time})</span>
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => setShowBuyerToast(false)}
+                        className="text-gray-400 hover:text-gray-600 p-1 text-xs"
+                    >
+                        ✕
+                    </button>
+                </aside>
+            )}
 
             {/* BARRE FLOTTANTE MOBILE DE COMMANDE RAPIDE (RESPIRANTE & ÉLÉGANTE) */}
             {landingPage.showStickyCta !== false && (
