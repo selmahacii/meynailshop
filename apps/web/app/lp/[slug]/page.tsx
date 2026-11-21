@@ -269,6 +269,11 @@ export default function PublicLandingPage() {
                             value: totalAmount,
                             currency: 'DZD'
                         });
+                        (window as any).fbq('track', 'SubmitApplication', {
+                            content_name: landingPage.title,
+                            value: totalAmount,
+                            currency: 'DZD'
+                        });
                     }
                     if ((window as any).ttq) {
                         (window as any).ttq.track('PlaceAnOrder', {

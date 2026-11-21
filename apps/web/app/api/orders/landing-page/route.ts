@@ -64,6 +64,28 @@ async function sendMetaCapiPurchase(params: {
             order_id: params.orderNumber,
           },
         },
+        {
+          event_name: 'SubmitApplication',
+          event_time: Math.floor(Date.now() / 1000),
+          action_source: 'website',
+          event_source_url: `https://www.meeynailshop.com/lp/${params.landingPageSlug}`,
+          event_id: `${params.orderNumber}-sub`,
+          user_data: {
+            ph: [sha256(normalizedPhone)],
+            fn: [sha256(firstName)],
+            ln: [sha256(lastName)],
+            ct: [sha256(params.commune)],
+            st: [sha256(params.wilayaName)],
+            country: [sha256('dz')],
+            client_ip_address: params.clientIp || undefined,
+            client_user_agent: params.userAgent || undefined,
+          },
+          custom_data: {
+            currency: 'DZD',
+            value: params.totalAmount,
+            content_name: params.landingPageTitle,
+          },
+        },
       ],
     };
 
