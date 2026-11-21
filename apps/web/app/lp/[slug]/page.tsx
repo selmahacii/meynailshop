@@ -397,22 +397,35 @@ export default function PublicLandingPage() {
                             />
                         </div>
 
-                        {/* Miniatures discrètes */}
+                        {/* Miniatures Full-Width bien structurées */}
                         {landingPage.photos.length > 1 && (
-                            <div className="flex justify-center items-center gap-2.5 py-2.5 px-4 bg-white/80">
-                                {landingPage.photos.map((p, idx) => (
-                                    <button
-                                        key={idx}
-                                        onClick={() => setSelectedPhotoIndex(idx)}
-                                        className="w-12 h-12 rounded-xl overflow-hidden border transition-all focus:outline-none"
-                                        style={{
-                                            borderColor: selectedPhotoIndex === idx ? (landingPage.primaryColor || '#390102') : '#F0ECE6',
-                                            opacity: selectedPhotoIndex === idx ? 1 : 0.55
-                                        }}
-                                    >
-                                        <img src={p} alt="" className="w-full h-full object-cover" />
-                                    </button>
-                                ))}
+                            <div className="p-2.5 sm:p-3 bg-white border-t border-[#F0ECE6]">
+                                <div 
+                                    className="grid gap-2 sm:gap-2.5 w-full"
+                                    style={{ gridTemplateColumns: `repeat(${landingPage.photos.length}, minmax(0, 1fr))` }}
+                                >
+                                    {landingPage.photos.map((p, idx) => (
+                                        <button
+                                            key={idx}
+                                            type="button"
+                                            onClick={() => setSelectedPhotoIndex(idx)}
+                                            className={`relative w-full aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden border-2 transition-all cursor-pointer shadow-sm focus:outline-none ${
+                                                selectedPhotoIndex === idx
+                                                    ? 'scale-[1.02] shadow-md ring-2 ring-[#390102]/20'
+                                                    : 'border-[#F0ECE6] opacity-60 hover:opacity-100 hover:border-[#BFA893]'
+                                            }`}
+                                            style={{
+                                                borderColor: selectedPhotoIndex === idx ? (landingPage.primaryColor || '#390102') : undefined,
+                                            }}
+                                        >
+                                            <img 
+                                                src={p} 
+                                                alt={`Photo ${idx + 1}`} 
+                                                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
+                                            />
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </div>
