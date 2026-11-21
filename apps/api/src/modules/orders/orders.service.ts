@@ -302,16 +302,25 @@ export class OrdersService implements OnModuleInit {
 
       const total = subtotal - discount + shippingCost;
 
-      const orderSource = createOrderDto.source || 
+      let orderSource = createOrderDto.source || 
         (createOrderDto.notes?.includes('Landing Page') ? 'instagram' : 'website');
+      const validSources = ['website', 'instagram', 'whatsapp', 'facebook', 'store', 'other'];
+      if (!validSources.includes(orderSource)) {
+        orderSource = 'instagram';
+      }
+
+      let orderDeliveryType: 'home' | 'office' = 'home';
+      if ((createOrderDto.deliveryType as string) === 'office' || (createOrderDto.deliveryType as string) === 'desk') {
+        orderDeliveryType = 'office';
+      }
 
       const order = this.orderRepository.create({
         userId,
         orderNumber: generateOrderNumber(),
         status: 'pending',
         paymentStatus: 'pending',
-        paymentMethod: createOrderDto.paymentMethod,
-        deliveryType: createOrderDto.deliveryType,
+        paymentMethod: createOrderDto.paymentMethod || 'cash_on_delivery',
+        deliveryType: orderDeliveryType,
         source: orderSource,
         subtotal,
         shippingCost,

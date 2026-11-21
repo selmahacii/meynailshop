@@ -117,7 +117,7 @@ export async function POST(request: Request) {
     const backendPayload = {
       deliveryType,
       paymentMethod: 'cash_on_delivery',
-      source: 'landing_page',
+      source: 'instagram',
       notes: `[Commande Landing Page: /lp/${landingPageSlug}] - ${landingPageTitle}${variantName ? ` (${variantName})` : ''}`,
       shippingAddress: {
         fullName: customerName,

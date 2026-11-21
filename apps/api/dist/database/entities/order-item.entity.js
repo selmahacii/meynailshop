@@ -24,7 +24,7 @@ __decorate([
     __metadata("design:type", String)
 ], OrderItem.prototype, "orderId", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'uuid' }),
+    (0, typeorm_1.Column)({ type: 'uuid', nullable: true }),
     __metadata("design:type", String)
 ], OrderItem.prototype, "productId", void 0);
 __decorate([

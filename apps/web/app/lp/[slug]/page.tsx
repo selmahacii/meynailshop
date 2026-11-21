@@ -174,7 +174,7 @@ export default function PublicLandingPage() {
                 totalAmount: totalAmount,
                 landingPageSlug: landingPage.slug,
                 landingPageTitle: landingPage.title,
-                source: 'landing_page'
+                source: 'instagram'
             };
 
             let orderData: any = null;
@@ -203,7 +203,7 @@ export default function PublicLandingPage() {
                 const directRes = await ordersApi.createOrder({
                     deliveryType: mappedDeliveryType,
                     paymentMethod: 'cash_on_delivery',
-                    source: 'landing_page',
+                    source: 'instagram',
                     notes: `[Commande Landing Page: /lp/${landingPage.slug}] - ${landingPage.title} ${selectedVariant ? `(Formule: ${selectedVariant.name})` : ''}`,
                     shippingAddress: {
                         fullName: customerName,

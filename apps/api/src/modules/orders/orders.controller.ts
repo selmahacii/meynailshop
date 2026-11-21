@@ -81,7 +81,7 @@ export class OrdersController {
     const createOrderDto: CreateOrderDto = {
       deliveryType,
       paymentMethod: 'cash_on_delivery',
-      source: 'landing_page',
+      source: 'instagram',
       notes: `[Commande Landing Page: /lp/${landingPageSlug}] - ${landingPageTitle}${variantName ? ` (${variantName})` : ''}`,
       shippingAddress: {
         fullName: customerName,

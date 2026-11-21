@@ -256,15 +256,23 @@ let OrdersService = class OrdersService {
                 shippingCost = 0;
             }
             const total = subtotal - discount + shippingCost;
-            const orderSource = createOrderDto.source ||
+            let orderSource = createOrderDto.source ||
                 (createOrderDto.notes?.includes('Landing Page') ? 'instagram' : 'website');
+            const validSources = ['website', 'instagram', 'whatsapp', 'facebook', 'store', 'other'];
+            if (!validSources.includes(orderSource)) {
+                orderSource = 'instagram';
+            }
+            let orderDeliveryType = 'home';
+            if (createOrderDto.deliveryType === 'office' || createOrderDto.deliveryType === 'desk') {
+                orderDeliveryType = 'office';
+            }
             const order = this.orderRepository.create({
                 userId,
                 orderNumber: (0, order_number_util_1.generateOrderNumber)(),
                 status: 'pending',
                 paymentStatus: 'pending',
-                paymentMethod: createOrderDto.paymentMethod,
-                deliveryType: createOrderDto.deliveryType,
+                paymentMethod: createOrderDto.paymentMethod || 'cash_on_delivery',
+                deliveryType: orderDeliveryType,
                 source: orderSource,
                 subtotal,
                 shippingCost,
