@@ -808,15 +808,28 @@ export default function AdminLandingPagesPage() {
                                                     className="relative aspect-square rounded-xl overflow-hidden border border-[#EFE4D8] bg-[#FAF5EF] group"
                                                 >
                                                     <img src={url} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover" />
-                                                    {idx === 0 && (
-                                                        <span className="absolute top-1.5 left-1.5 bg-[#390102] text-[#BFA893] text-[9px] font-bold px-2 py-0.5 rounded shadow">
-                                                            Principale
+                                                    {idx === 0 ? (
+                                                        <span className="absolute top-1.5 left-1.5 bg-[#390102] text-[#BFA893] text-[9px] font-bold px-2 py-0.5 rounded shadow z-10">
+                                                            ★ Principale
                                                         </span>
+                                                    ) : (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                const reordered = [url, ...currentLP.photos.filter((_, i) => i !== idx)];
+                                                                setCurrentLP({ ...currentLP, photos: reordered });
+                                                                toast.success('Photo définie comme principale ! N’oubliez pas d’enregistrer.');
+                                                            }}
+                                                            className="absolute bottom-1.5 left-1.5 bg-black/75 hover:bg-[#390102] text-white text-[9px] font-bold px-2 py-0.5 rounded transition-colors shadow z-10 opacity-90 hover:opacity-100"
+                                                            title="Définir comme photo principale"
+                                                        >
+                                                            ★ Mettre en 1ère
+                                                        </button>
                                                     )}
                                                     <button
                                                         type="button"
                                                         onClick={() => handleRemovePhoto(idx)}
-                                                        className="absolute top-1.5 right-1.5 p-1 bg-red-600/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                                                        className="absolute top-1.5 right-1.5 p-1 bg-red-600/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-10"
                                                         title="Supprimer la photo"
                                                     >
                                                         <Trash2 size={13} />

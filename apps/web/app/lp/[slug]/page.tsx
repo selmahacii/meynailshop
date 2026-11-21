@@ -89,7 +89,7 @@ export default function PublicLandingPage() {
 
     const productPrice = selectedVariant?.price 
         ? Number(selectedVariant.price) 
-        : Number(landingPage.price || 6500);
+        : Number(landingPage.price || 15000);
 
     const totalAmount = productPrice + shippingCost;
 
@@ -133,7 +133,7 @@ export default function PublicLandingPage() {
     // Photo actuelle
     const currentPhoto = landingPage.photos && landingPage.photos.length > 0
         ? landingPage.photos[selectedPhotoIndex] || landingPage.photos[0]
-        : 'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=1200&q=85';
+        : 'https://meeynailshop-api.onrender.com/uploads/5e609930-a3fd-4f94-be37-656f526546c8.webp';
 
     // Soumission de commande directe
     const handleSubmitOrder = async (e: React.FormEvent) => {

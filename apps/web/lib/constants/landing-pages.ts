@@ -4,20 +4,20 @@ export const DEFAULT_LANDING_PAGES: LandingPageData[] = [
   {
     id: "lp_pack_onglerie_17",
     slug: "pack-onglerie",
-    title: "باك متكامل للأظافر والـ Press-on nails",
+    title: "PACK PRESS ON NAILS POUR DEBUTANTE ",
     subtitle: "كل الأدوات الاحترافية والدرجات الأساسية مجموعة في حقيبة واحدة باه تبداي خدمتك بكل احترافية وبدون ما تشري كل حاجة وحدها.",
     brandName: "MEEY NAIL SHOP",
     primaryColor: "#390102",
     accentColor: "#BFA893",
     backgroundColor: "#FAF5EF",
     textColor: "#18080A",
-    price: 6500,
-    compareAtPrice: 8500,
+    price: 15000,
+    compareAtPrice: 19500,
     currency: "DA",
     photos: [
-      "https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/4e73288c-a77a-4d2d-a8e2-1ec2dcbb4327.webp",
-      "https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/7a433d20-e73b-4859-bf4c-5c5c3748aeca.webp",
-      "https://hnnsaruuigqchikzdiro.supabase.co/storage/v1/object/public/products/a8c724d8-929f-4f95-a490-7ab60b051529.webp"
+      "https://meeynailshop-api.onrender.com/uploads/5e609930-a3fd-4f94-be37-656f526546c8.webp",
+      "https://meeynailshop-api.onrender.com/uploads/6733995d-bca3-4c4e-8fd5-17bd0eb19625.webp",
+      "https://meeynailshop-api.onrender.com/uploads/a0a28dab-9297-4c67-9528-f567992a5383.webp"
     ],
     items: [
       { id: "1", nameFr: "Mini lampe UV", descDz: "مصباح UV ميني عملي وخفيف باه تفيكسي الكبسولة ضربة ضربة وتشيحي الفيرني ليه ليه وبلا ما يدي بلاصة.", quantity: 1 },
